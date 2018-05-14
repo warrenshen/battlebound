@@ -10,21 +10,31 @@ contract('CardTreasury', function(accounts) {
   });
 
   it ("should allow privileged address to mint a card for self", async function() {
-    const transaction = await contract.mintCard(0, accounts[0]);
+    const recipient = accounts[0];
+
+    const transaction = await contract.mintCard(0, recipient);
     assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
     assert.equal(transaction.logs[1].event, "InstanceMinted", "expected an InstanceMinted event");
 
     const supply = await contract.instancesSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
+
+    const owner = await contract.ownerOf.call(0);
+    assert.equal(owner, recipient, "owner is not correct");
   });
 
   it ("should allow privileged address to mint a card for other", async function() {
-    const transaction = await contract.mintCard(0, accounts[1]);
+    const recipient = accounts[1];
+
+    const transaction = await contract.mintCard(0, recipient);
     assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
     assert.equal(transaction.logs[1].event, "InstanceMinted", "expected an InstanceMinted event");
 
     const supply = await contract.instancesSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
+
+    const owner = await contract.ownerOf.call(0);
+    assert.equal(owner, recipient, "owner is not correct");
   });
 
   it ("should not allow unprivileged address to mint a card", async function() {
@@ -42,22 +52,30 @@ contract('CardTreasury', function(accounts) {
   });
 
   it ("should allow privileged address to mint multiple cards", async function() {
+    const recipient = accounts[0];
+    let owner;
     let transaction;
     let supply;
 
-    transaction = await contract.mintCard(0, accounts[0], { from: accounts[0] });
+    transaction = await contract.mintCard(0, recipient, { from: accounts[0] });
     assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
     assert.equal(transaction.logs[1].event, "InstanceMinted", "expected an InstanceMinted event");
 
     supply = await contract.instancesSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of templates is not 1");
 
-    transaction = await contract.mintCard(0, accounts[0], { from: accounts[0] });
+    transaction = await contract.mintCard(0, recipient, { from: accounts[0] });
     assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
     assert.equal(transaction.logs[1].event, "InstanceMinted", "expected an InstanceMinted event");
 
     supply = await contract.instancesSupply.call();
     assert.equal(supply.valueOf(), 2, "supply of templates is not 2");
+
+    owner = await contract.ownerOf.call(0);
+    assert.equal(owner, recipient, "owner is not correct");
+
+    owner = await contract.ownerOf.call(1);
+    assert.equal(owner, recipient, "owner is not correct");
   });
 
   it ("should not allow more cards than mint limit to be minted", async function() {
