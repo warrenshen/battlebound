@@ -1,4 +1,4 @@
-var CardTreasury = artifacts.require("./CardTreasury.sol");
+const CardTreasury = artifacts.require("./CardTreasury.sol");
 
 contract('CardTreasury', function(accounts) {
 
