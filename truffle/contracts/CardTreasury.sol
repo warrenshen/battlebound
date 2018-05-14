@@ -61,7 +61,7 @@ contract CardMint is CardBase {
 
   /* EVENTS */
   event TemplateCreated(uint256 templateId);
-  event CardMinted(address owner, uint256 cardId, uint256 templateId);
+  event InstanceMinted(address owner, uint256 cardId, uint256 templateId);
 
   event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
   event Approval(address _owner, address _approved, uint256 _tokenId);
@@ -121,13 +121,15 @@ contract CardMint is CardBase {
     return newTemplateId;
   }
   
-  function mintCard(uint256 _templateId, address _owner) external onlyOwner returns (bool) {
+  function mintCard(uint256 _templateId, address _owner) external onlyOwner returns (uint256) {
     require(templateIdToMintCount[_templateId] < templateIdToMintLimit[_templateId]);
     // need safe math
     templateIdToMintCount[_templateId] = templateIdToMintCount[_templateId] + 1;
     uint256 newCardId = cards.push(_templateId) - 1;
     _transfer(0, _owner, newCardId);
-    return true;
+
+    emit InstanceMinted(_owner, newCardId, _templateId);
+    return newCardId;
   }
 }
 
