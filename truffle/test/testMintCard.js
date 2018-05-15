@@ -6,7 +6,7 @@ contract('CardTreasury', function(accounts) {
 
   beforeEach(async function() {
     contract = await CardTreasury.new();
-    contract.createTemplate("T1", 2, { from: accounts[0] });     
+    contract.createTemplate("T1", 2, { from: accounts[0] });
   });
 
   it ("should allow privileged address to mint a card for self", async function() {

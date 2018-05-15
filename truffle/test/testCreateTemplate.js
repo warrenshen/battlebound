@@ -7,7 +7,7 @@ contract('CardTreasury', function(accounts) {
   beforeEach(async function() {
      contract = await CardTreasury.new();
   });
-  
+
   it ("should start with no templates", async function() {
     const supply = await contract.templatesSupply.call();
     assert.equal(supply.valueOf(), 0, "supply of templates is not 0");
