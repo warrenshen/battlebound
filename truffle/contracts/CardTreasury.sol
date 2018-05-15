@@ -6,11 +6,11 @@ import "./Ownable.sol";
 //   // Events
 //   event Transfer(address from, address to, uint256 tokenId);
 //   event Approval(address owner, address approved, uint256 tokenId);
-  
+
 //   // Required methods
 //   function balanceOf(address _owner) public view returns (uint256 balance);
 //   function ownerOf(uint256 _tokenId) external view returns (address owner);
-  
+
 //   function approve(address _to, uint256 _tokenId) external;
 //   function transfer(address _to, uint256 _tokenId) external;
 //   function transferFrom(address _from, address _to, uint256 _tokenId) external;
@@ -65,10 +65,10 @@ contract CardMint is CardBase {
 
   event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
   event Approval(address _owner, address _approved, uint256 _tokenId);
-  
+
   /* DATA TYPES */
   struct Template {
-    // uint8 category;
+    uint8 category;
     // uint8 attribute;
     // uint8 attack;
     // uint8 cost;
@@ -82,7 +82,7 @@ contract CardMint is CardBase {
   // Template ID is index of template in `templates`.
   // Template ID => max number of cards that can be minted with this template ID.
   mapping (uint256 => uint256) internal templateIdToMintLimit;
-  // Template ID => number of cards that have been minted with this template ID. 
+  // Template ID => number of cards that have been minted with this template ID.
   mapping (uint256 => uint256) internal templateIdToMintCount;
   // Card ID is index of card in `cards`.
   // mapping (uint256 => uint256) internal cardIdToTemplateId;
@@ -91,27 +91,32 @@ contract CardMint is CardBase {
   mapping (address => uint256) internal ownerCardCount;
   // Card ID => address approved to transfer on behalf of owner.
   mapping (uint256 => address) internal cardIdToApproved;
-  
+
   /* FUNCTIONS */
   /** PRIVATE FUNCTIONS **/
   function _transfer(address _from, address _to, uint256 _tokenId) internal {
     // TODO
     ownerCardCount[_to] += 1;
     cardIdToOwner[_tokenId] = _to;
-    
+
     if (_from != address(0)) {
       ownerCardCount[_from] -= 1;
       delete cardIdToApproved[_tokenId];
     }
-    
+
     emit Transfer(_from, _to, _tokenId);
   }
 
   /** PUBLIC FUNCTIONS **/
-  function createTemplate(string _name, uint256 _mintLimit) external onlyOwner returns (uint256) {
+  function createTemplate(
+    uint8 _category,
+    string _name,
+    uint256 _mintLimit
+  ) external onlyOwner returns (uint256) {
     require(_mintLimit > 0);
 
     Template memory newTemplate = Template({
+      category: _category,
       name: _name
     });
     uint256 newTemplateId = templates.push(newTemplate) - 1;
@@ -120,7 +125,7 @@ contract CardMint is CardBase {
     emit TemplateCreated(newTemplateId);
     return newTemplateId;
   }
-  
+
   function mintCard(uint256 _templateId, address _owner) external onlyOwner returns (uint256) {
     require(templateIdToMintCount[_templateId] < templateIdToMintLimit[_templateId]);
     // need safe math
@@ -148,28 +153,28 @@ contract CardOwnership is CardMint {
     // Emit approval event.
     emit Approval(_owner, _approved, _tokenId);
   }
-  
+
   function _approvedFor(address _claimant, uint256 _tokenId) internal view returns (bool) {
     return cardIdToOwner[_tokenId] == _claimant;
   }
-  
+
   /** PUBLIC FUNCTIONS **/
   function approve(address _to, uint256 _tokenId) external onlyTokenOwner(_tokenId) {
     // Register the approval (replacing any previous approval).
     _approve(msg.sender, _to, _tokenId);
   }
-  
+
   function transfer(address _to, uint256 _tokenId) external onlyTokenOwner(_tokenId) {
     require(_to != address(0));
     require(_to != address(this));
-    
+
     _transfer(msg.sender, _to, _tokenId);
   }
-  
+
   function transferFrom(address _from, address _to, uint256 _tokenId) external {
     require(_to != address(0));
     require(_to != address(this));
-    
+
     // Check for approval and valid ownership
     require(_approvedFor(msg.sender, _tokenId));
     require(_from == cardIdToOwner[_tokenId]);
@@ -187,73 +192,83 @@ contract CardTreasury is CardOwnership {
     external
     view
     returns (
+      uint8 category,
       string name
     )
   {
+    require(_templateId < templates.length);
+
     Template storage template = templates[_templateId];
+
+    category = template.category;
     name = template.name;
   }
-  
+
   function getCard(uint256 _cardId)
     external
     view
     returns (
+      uint8 category,
       string name
     )
   {
+    require(_cardId < cards.length);
+
     uint256 templateId = cards[_cardId];
     Template storage template = templates[templateId];
+
+    category = template.category;
     name = template.name;
   }
-  
+
   function ownerOf(uint256 _tokenId) external view returns (address owner) {
     // require(_tokenId < cards.length);
     owner = cardIdToOwner[_tokenId];
     require(owner != address(0));
   }
-  
+
   function balanceOf(address _owner) public view returns (uint256 count) {
     return ownerCardCount[_owner];
   }
-  
+
   function templatesSupply() public view returns (uint256 count) {
     return templates.length;
   }
-  
+
   function instancesSupply() public view returns (uint256 count) {
     return cards.length;
   }
-  
+
   function instanceLimit(uint256 _templateId) public view returns(uint256) {
     return templateIdToMintLimit[_templateId];
   }
-  
-  function name() public view returns (string) {
+
+  function name() public pure returns (string) {
     return "Class-instance";
   }
-  
-  function symbol() public view returns (string) {
-    return "TCG";    
+
+  function symbol() public pure returns (string) {
+    return "TCG";
   }
-  
+
   function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds) {
     uint256 tokenCount = balanceOf(_owner);
-    
+
     if (tokenCount == 0) {
       return new uint256[](0);
     } else {
       uint256[] memory result = new uint256[](tokenCount);
       uint256 resultIndex = 0;
-      
+
       uint256 cardId;
-      
+
       for (cardId = 0; cardId < cards.length; cardId++) {
         if (cardIdToOwner[cardId] == _owner) {
           result[resultIndex] = cardId;
           resultIndex++;
         }
       }
-      
+
       return result;
     }
   }
