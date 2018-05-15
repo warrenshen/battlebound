@@ -19,7 +19,7 @@ contract('CardTreasury', function(accounts) {
   });
 
   it ("should allow privileged address to create a template", async function() {
-    const transaction = await contract.createTemplate("T1", 1, { from: accounts[0] });
+    const transaction = await contract.createTemplate(0, "T1", 1, { from: accounts[0] });
     assert.equal(transaction.logs[0].event, "TemplateCreated", "expected a TemplateCreated event");
 
     const supply = await contract.templatesSupply.call();
@@ -30,7 +30,7 @@ contract('CardTreasury', function(accounts) {
     let transaction = null;
 
     try {
-      transaction = await contract.createTemplate("T1", 1, { from: accounts[1] });
+      transaction = await contract.createTemplate(0, "T1", 1, { from: accounts[1] });
     } catch (error) {
       err = error
     }
@@ -44,13 +44,13 @@ contract('CardTreasury', function(accounts) {
     let transaction;
     let supply;
 
-    transaction = await contract.createTemplate("T1", 1, { from: accounts[0] });
+    transaction = await contract.createTemplate(0, "T1", 1, { from: accounts[0] });
     assert.equal(transaction.logs[0].event, "TemplateCreated", "expected a TemplateCreated event");
 
     supply = await contract.templatesSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of templates is not 1");
 
-    transaction = await contract.createTemplate("T2", 1, { from: accounts[0] });
+    transaction = await contract.createTemplate(0, "T2", 1, { from: accounts[0] });
     assert.equal(transaction.logs[0].event, "TemplateCreated", "expected a TemplateCreated event");
 
     supply = await contract.templatesSupply.call();
@@ -61,7 +61,7 @@ contract('CardTreasury', function(accounts) {
     let transaction = null;
 
     try {
-      transaction = await contract.createTemplate("T1", 0, { from: accounts[0] });
+      transaction = await contract.createTemplate(0, "T1", 0, { from: accounts[0] });
     } catch (error) {
       err = error
     }
@@ -75,11 +75,11 @@ contract('CardTreasury', function(accounts) {
     let transaction;
     let limit;
 
-    transaction = await contract.createTemplate("T1", 3, { from: accounts[0] });
+    transaction = await contract.createTemplate(0, "T1", 3, { from: accounts[0] });
     limit = await contract.instanceLimit.call(0);
     assert.equal(limit.toNumber(), 3, "instance limit is not 3");
 
-    transaction = await contract.createTemplate("T2", 8, { from: accounts[0] });
+    transaction = await contract.createTemplate(0, "T2", 8, { from: accounts[0] });
     limit = await contract.instanceLimit.call(1);
     assert.equal(limit.toNumber(), 8, "instance limit is not 8");
 
