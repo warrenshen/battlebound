@@ -68,10 +68,8 @@ contract CardMint is CardBase {
 
   /* DATA TYPES */
   struct Template {
-    uint8 category;
-    // uint8 attribute;
-    // uint8 attack;
-    // uint8 cost;
+    uint128 generation;
+    uint128 power;
     string name;
   }
 
@@ -95,7 +93,7 @@ contract CardMint is CardBase {
   /* FUNCTIONS */
   /** PRIVATE FUNCTIONS **/
   function _transfer(address _from, address _to, uint256 _tokenId) internal {
-    // TODO
+    // TODO: safe math?
     ownerCardCount[_to] += 1;
     cardIdToOwner[_tokenId] = _to;
 
@@ -109,14 +107,16 @@ contract CardMint is CardBase {
 
   /** PUBLIC FUNCTIONS **/
   function createTemplate(
-    uint8 _category,
-    string _name,
-    uint256 _mintLimit
+    uint256 _mintLimit,
+    uint128 _generation,
+    uint128 _power,
+    string _name
   ) external onlyOwner returns (uint256) {
     require(_mintLimit > 0);
 
     Template memory newTemplate = Template({
-      category: _category,
+      generation: _generation,
+      power: _power,
       name: _name
     });
     uint256 newTemplateId = templates.push(newTemplate) - 1;
@@ -192,7 +192,8 @@ contract CardTreasury is CardOwnership {
     external
     view
     returns (
-      uint8 category,
+      uint128 generation,
+      uint128 power,
       string name
     )
   {
@@ -200,7 +201,8 @@ contract CardTreasury is CardOwnership {
 
     Template storage template = templates[_templateId];
 
-    category = template.category;
+    generation = template.generation;
+    power = template.power;
     name = template.name;
   }
 
@@ -208,7 +210,8 @@ contract CardTreasury is CardOwnership {
     external
     view
     returns (
-      uint8 category,
+      uint128 generation,
+      uint128 power,
       string name
     )
   {
@@ -217,12 +220,12 @@ contract CardTreasury is CardOwnership {
     uint256 templateId = cards[_cardId];
     Template storage template = templates[templateId];
 
-    category = template.category;
+    generation = template.generation;
+    power = template.power;
     name = template.name;
   }
 
   function ownerOf(uint256 _tokenId) external view returns (address owner) {
-    // require(_tokenId < cards.length);
     owner = cardIdToOwner[_tokenId];
     require(owner != address(0));
   }
@@ -244,7 +247,7 @@ contract CardTreasury is CardOwnership {
   }
 
   function name() public pure returns (string) {
-    return "Class-instance";
+    return "TCG";
   }
 
   function symbol() public pure returns (string) {
