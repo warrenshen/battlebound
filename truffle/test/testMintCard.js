@@ -7,7 +7,7 @@ contract('CardTreasury', function(accounts) {
   describe ("should nots", function() {
     beforeEach(async function() {
       contract = await CardTreasury.new();
-      contract.createTemplate(0, "T1", 2, { from: accounts[0] });
+      await contract.createTemplate(2, 0, 9, "T1", { from: accounts[0] });
     });
 
     it ("should not allow unprivileged address to mint a card", async function() {
@@ -65,8 +65,8 @@ contract('CardTreasury', function(accounts) {
   describe ("shoulds", function() {
     beforeEach(async function() {
       contract = await CardTreasury.new();
-      contract.createTemplate(1, "T1", 2, { from: accounts[0] });
-      contract.createTemplate(2, "T2", 2, { from: accounts[0] });
+      await contract.createTemplate(2, 0, 9, "T1", { from: accounts[0] });
+      await contract.createTemplate(2, 0, 9, "T2", { from: accounts[0] });
     });
 
     it ("should allow privileged address to mint a card for self", async function() {

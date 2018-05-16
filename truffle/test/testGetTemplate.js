@@ -31,23 +31,29 @@ contract('CardTreasury', function(accounts) {
   describe ("shoulds", function() {
     before(async function() {
       contract = await CardTreasury.new();
-      contract.createTemplate(1, "T1", 1, { from: accounts[0] });
-      contract.createTemplate(2, "T2", 2, { from: accounts[0] });
+      await contract.createTemplate(1, 0, 8, "T1", { from: accounts[0] });
+      await contract.createTemplate(2, 1, 9, "T2", { from: accounts[0] });
+      // Create a card for the sake of testing function when cards exist.
+      await contract.mintCard(0, accounts[0], { from: accounts[0] });
     });
 
     it ("should return correct template information", async function() {
       let response;
-      let category;
+      let generation;
+      let power;
       let name;
 
       response = await contract.getTemplate.call(0, { from: accounts[0] });
-      [category, name] = response;
-      assert.equal(category, 1, "response category is incorrect");
+      [generation, power, name] = response;
+      assert.equal(generation, 0, "response generation is incorrect");
+      assert.equal(power, 8, "response generation is incorrect");
       assert.equal(name, "T1", "response name is incorrect");
 
       response = await contract.getTemplate.call(1, { from: accounts[0] });
       [category, name] = response;
-      assert.equal(category, 2, "response category is incorrect");
+      [generation, power, name] = response;
+      assert.equal(generation, 1, "response generation is incorrect");
+      assert.equal(power, 9, "response generation is incorrect");
       assert.equal(name, "T2", "response name is incorrect");
     });
   });
