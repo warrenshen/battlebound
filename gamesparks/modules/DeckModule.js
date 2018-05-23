@@ -1,36 +1,19 @@
 // ====================================================================================================
 //
-// Cloud Code for DeckModule, write your code here to customize the GameSparks platform.
-//
-// For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
+// A module of functions related to the PlayerDecks table and in-memory deck arrays.
 //
 // ====================================================================================================
+ 
 /**
- * Fetches Card and Template objects from the DB and combines
+ * Fetches Template objects from the DB and uses
  * them to form card objects as shown to the client.
  * 
- * @param cardIds - array of Card IDs
+ * @param deckName - string name of wanted deck
  * @return - array of Card objects
  **/
-function getDeckByCardIds(cardIds) {
+function _getDeckByCards(cards) {
     var API = Spark.getGameDataService();
-    var cards = [];
-    
-    var cardsDataQuery = API.S("id").in(cardIds);
-    var cardsDataQueryResult = API.queryItems("Card", cardsDataQuery);
-    var cardsDataQueryResultError = cardsDataQueryResult.error();
-    
-    if (cardsDataQueryResultError) {
-        Spark.setScriptError("ERROR", cardsDataQueryResultError);
-        Spark.exit();
-    } else {
-        var cardsDataCursor = cardsDataQueryResult.cursor();
-        while (cardsDataCursor.hasNext()) {
-            var cardDataItem = cardsDataCursor.next();
-            cards.push(cardDataItem.getData());
-        }    
-    }
-    
+
     // Query Template table by `templateIds`.
     var templateIds = cards.map(function(card) { return card.templateId });
     var templates = [];
@@ -79,21 +62,65 @@ function getDeckByCardIds(cardIds) {
 }
 
 /**
- * Returns array of card IDs of active deck of player.
+ * Returns array of card objects of all cards player owns.
  * 
  * @param playerId - GS player ID
- * @return array - array of card IDs
+ * @return array - array of card objects
+ **/
+function getCardsAndDecksByPlayerId(playerId) {
+    // The term instance = card + template combined.
+    var API = Spark.getGameDataService();
+    
+    var decksDataItem = API.getItem("PlayerDecks", playerId).document();
+    
+    var decksData = decksDataItem.getData();
+    var decks = decksData.decks;
+    var cardByCardId = decksData.cardByCardId;
+    
+    var cards = Object.keys(cardByCardId).map(function(cardId) {
+        return cardByCardId[cardId]; 
+    });
+    
+    // Array of instances of all cards of player;
+    var instances = _getDeckByCards(cards);
+    
+    var instanceByCardId = {};
+    instances.map(function(instance) {
+       instanceByCardId[instance.id] = instance;
+    });
+    
+    var deckNameToDeck = {};
+    Object.keys(decks).map(function(deckName) {
+        var deck = decks[deckName];
+        deckNameToDeck[deckName] = deck.map(function(cardId) {
+            return instanceByCardId[cardId];
+        });
+    });
+    return [instances, deckNameToDeck];
+}
+
+/**
+ * Returns array of card objects of active deck of player.
+ * 
+ * @param playerId - GS player ID
+ * @return array - array of card objects
  **/
 function getActiveDeckByPlayerId(playerId) {
     var API = Spark.getGameDataService();
     
-    var decksGetResult = API.getItem("PlayerDecks", playerId);
-    var decksDataItem = decksGetResult.document();
+    var decksDataItem = API.getItem("PlayerDecks", playerId).document();
+    
     var decksData = decksDataItem.getData();
     var decks = decksData.decks;
     var activeDeck = decksData.activeDeck;
+    var cardIds = decks[activeDeck];
+    var cardByCardId = decksData.cardByCardId;
     
-    return decks[activeDeck];
+    var cards = cardIds.map(function(cardId) {
+        return cardByCardId[cardId]; 
+    });
+    
+    return _getDeckByCards(cards);
 }
 
 /**

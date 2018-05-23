@@ -12,9 +12,9 @@ var playerId = Spark.getPlayer().getPlayerId();
 
 var previousName = Spark.getData().previousName;
 var name = Spark.getData().name;
-var cards = Spark.getData().cards;
+var cardIds = Spark.getData().cardIds;
 
-if (typeof previousName !== "string" || typeof name !== "string" || !Array.isArray(cards)) {
+if (typeof previousName !== "string" || typeof name !== "string" || !Array.isArray(cardIds)) {
     Spark.setScriptError("ERROR", "Invalid parameter(s)");
     Spark.exit(); 
 }
@@ -35,9 +35,16 @@ if (playerDecksDataItem === null) {
 }
 
 var playerDecksData = playerDecksDataItem.getData();
+var cardByCardId = playerDecksData.cardByCardId;
 var decks = playerDecksData.decks;
-// TODO: verify that player actually has these cards.
-decks[name] = cards;
+
+cardIds.forEach(function(cardId) {
+    if (!cardByCardId[cardId]) {
+        Spark.setScriptError("ERROR", "Invalid card ID(s)");
+        Spark.exit(); 
+    }
+});
+decks[name] = cardIds;
 
 if (decks[previousName]) {
     delete decks[previousName];
@@ -57,3 +64,4 @@ if (error) {
 }
 
 Spark.setScriptData("decks", decks);
+Spark.setScriptData("statusCode", 200);

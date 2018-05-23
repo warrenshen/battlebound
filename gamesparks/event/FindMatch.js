@@ -13,21 +13,20 @@ var matchShortCode = Spark.getData().matchShortCode;
 var playerDeck = Spark.getData().playerDeck;
 
 if (!matchShortCode || !playerDeck) {
-    Spark.setScriptError("ERROR", "Invalid parameter(s)");
+    Spark.setScriptError("ERROR", "Invalid parameter(s).");
     Spark.exit();
 }
 
-var playerDecksGetResult = API.getItem("PlayerDecks", playerId);
-var playerDecksDataItem = playerDecksGetResult.document();
+var playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 
 if (playerDecksDataItem === null) {
-    Spark.setScriptError("ERROR", "ERROR");
+    Spark.setScriptError("ERROR", "Player decks does not exist.");
     Spark.exit();
 }
 
 var playerDecksData = playerDecksDataItem.getData();
 if (!playerDecksData.decks[playerDeck]) {
-    Spark.setScriptError("ERROR", "Invalid player deck parameter");
+    Spark.setScriptError("ERROR", "Invalid player deck parameter.");
     Spark.exit();
 }
 
@@ -35,7 +34,7 @@ playerDecksData.activeDeck = playerDeck;
 
 var error = playerDecksDataItem.persistor().persist().error();
 if (error) {
-    Spark.setScriptError("ERROR", error)
+    Spark.setScriptError("ERROR", error);
     Spark.exit();
 }
 
@@ -45,7 +44,7 @@ if (matchShortCode === "CasualMatch") {
     request.skill = 0;
     request.Execute();
 } else {
-    Spark.setScriptError("ERROR", "Invalid match short code");
+    Spark.setScriptError("ERROR", "Invalid match short code.");
     Spark.exit();
 }
 
