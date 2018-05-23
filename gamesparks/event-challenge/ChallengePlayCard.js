@@ -20,39 +20,41 @@ var attributes = Spark.getData().attributes;
 // Index at which to play card.
 var fieldIndex = attributes.fieldIndex;
 
-var challengeStateData = challengeStateDataItem.getData();
-var currentChallengeState = challengeStateData.current;
+var challengeState = challengeStateData.current;
 
-var currentPlayerState = currentChallengeState[playerId];
-var currentPlayerHand = currentPlayerState.hand;
-var currentPlayerManaCurrent = currentPlayerState.manaCurrent;
-var currentPlayerField = currentPlayerState.field;
+var playerState = challengeState[playerId];
+var playerManaCurrent = playerState.manaCurrent;
+var playerHand = playerState.hand;
+var playerField = playerState.field;
 
 // Find index of card played in hand.
-var cardIndex = currentPlayerHand.findIndex(function(card) { return card.id === cardId });
-if (cardIndex < 0) {
+var handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
+if (handIndex < 0) {
     Spark.setScriptError("ERROR", "Invalid cardId parameter");
     Spark.exit();
 }
 
-if (fieldIndex < 0 || fieldIndex > currentPlayerField.length + 1) {
+// Ensure that index to play card at is valid.
+if (fieldIndex < 0 || fieldIndex > playerField.length + 1) {
     Spark.setScriptError("ERROR", "Invalid fieldIndex parameter");
     Spark.exit();
 }
 
-var playedCard = currentPlayerHand[cardIndex];
-var newHand = currentPlayerHand.slice(0, cardIndex).concat(currentPlayerHand.slice(cardIndex + 1));
-var newField = currentPlayerField.slice(0, fieldIndex).concat([playedCard]).concat(currentPlayerField.slice(fieldIndex));
+var playedCard = playerHand[handIndex];
+playedCard.canAttack = false;
 
-if (playedCard.manaCost > currentPlayerManaCurrent) {
+var newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
+var newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
+
+if (playedCard.manaCost > playerManaCurrent) {
     Spark.setScriptError("ERROR", "Card mana cost exceeds player's current mana.");
     Spark.exit();
 }
 
-currentPlayerState.manaCurrent = currentPlayerState.manaCurrent - playedCard.manaCost;
-currentPlayerState.hand = newHand;
-currentPlayerState.handSize = newHand.length;
-currentPlayerState.field = newField;
+playerState.manaCurrent = playerState.manaCurrent - playedCard.manaCost;
+playerState.hand = newHand;
+playerState.handSize = newHand.length;
+playerState.field = newField;
 
 var error = challengeStateDataItem.persistor().persist().error();
 if (error) {

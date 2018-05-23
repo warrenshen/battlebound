@@ -8,6 +8,37 @@
 // GLOBAL
 require("DeckModule");
 
+/**
+ * Card schema: {
+ *   id: string,
+ *   name: string,
+ *   level: int,
+ *   manaCost: int,
+ *   health: int,
+ *   attack: int,
+ *   canAttack: bool, (probably not set until card is played on field)
+ * }
+ * 
+ * ChallengeState schema: {
+ *   current: {
+ *     opponentIdByPlayerId: { playerId: opponentId },
+ *     [playerIdOne]: {
+ *       hasTurn: bool,
+ *       manaCurrent: int,
+ *       manaMax: int,
+ *       health: int,
+ *       armor: int,
+ *       field: [Card, ...],
+ *       hand: [Card, ...],
+ *       handSize: int,
+ *       deck: [Card, ...],
+ *       deckSize: int,
+ *     },
+ *     [playerIdTwo]: ...,
+ *   },
+ * }
+ **/
+ 
 var API = Spark.getGameDataService();
 
 var challengeId = Spark.getData().challenge.challengeId;
@@ -17,17 +48,15 @@ var challengerId = challenge.getChallengerId();
 var challengedId = challenge.getChallengedPlayerIds()[0];
 
 // Get challenger player deck for battle.
-var challengerCardIds = getActiveDeckByPlayerId(challengerId);
-var challengerDeck = getDeckByCardIds(challengerCardIds);
+var challengerDeck = getActiveDeckByPlayerId(challengerId);
 
 // Get challenged player deck for battle.
-var challengedCardIds = getActiveDeckByPlayerId(challengedId);
-var challengedDeck = getDeckByCardIds(challengedCardIds);
+var challengedDeck = getActiveDeckByPlayerId(challengedId);
 
 var challengeStateDataItem = API.createItem("ChallengeState", challengeId);
 var challengeStateData = challengeStateDataItem.getData();
 var currentChallengeState = challengeStateData.current = {};
-challengeStateData.events = [];
+// challengeStateData.events = [];
 
 var opponentIdByPlayerId = {};
 opponentIdByPlayerId[challengerId] = challengedId;
@@ -59,11 +88,11 @@ var challengedData = {
 };
 
 if (challenge.nextPlayer === challengerId) {
-    challengerData.activeTurn = true;
-    challengedData.activeTurn = false;
+    challengerData.hasTurn = true;
+    challengedData.hasTurn = false;
 } else {
-    challengerData.activeTurn = false;
-    challengedData.activeTurn = true;
+    challengerData.hasTurn = false;
+    challengedData.hasTurn = true;
 }
 
 currentChallengeState[challengerId] = challengerData;

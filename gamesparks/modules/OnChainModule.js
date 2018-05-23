@@ -5,8 +5,8 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-var INFURA_URL = "https://rinkeby.infura.io/kBLFY7NMU7NrFMdpvDR8";
-var CONTRACT_ADDRESS = "0x5Cd6BaEF2B5bd80CD699A702649591DC1fE6bf33";
+const INFURA_URL = "https://rinkeby.infura.io/kBLFY7NMU7NrFMdpvDR8";
+const CONTRACT_ADDRESS = "0x5Cd6BaEF2B5bd80CD699A702649591DC1fE6bf33";
 
 // {
 //       "to": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",

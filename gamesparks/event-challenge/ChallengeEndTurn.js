@@ -8,47 +8,45 @@
 require("ChallengeEventPrefix");
 require("DeckModule");
 
-var challengeStateData = challengeStateDataItem.getData();
-var currentChallengeState = challengeStateData.current;
-
-var currentPlayerState = currentChallengeState[playerId];
+const challengeState = challengeStateData.current;
+const playerState = challengeState[playerId];
 
 // Increase player's max mana by 1 if it's not max'ed out.
-if (currentPlayerState.manaMax < 10) {
-    currentPlayerState.manaMax += 1;
+if (playerState.manaMax < 10) {
+    playerState.manaMax += 1;
 }
 
 // Reset opponent's current mana to its max mana.
-var opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-var currentOpponentState = currentChallengeState[opponentId];
-currentOpponentState.manaCurrent = currentOpponentState.manaMax;
+const opponentState = challengeState[opponentId];
+opponentState.manaCurrent = opponentState.manaMax;
+
 
 // Draw a card for opponent to start its turn.
-var currentOpponentDeck = currentOpponentState.deck;
-var drawCardResponse = drawCard(currentOpponentDeck);
-var drawnCard = drawCardResponse[0];
-var newDeck = drawCardResponse[1];
-var handSize = currentOpponentState.hand.push(drawCardResponse[0]);
-currentOpponentState.handSize = handSize;
-currentOpponentState.deck = newDeck;
-currentOpponentState.deckSize = newDeck.length;
-// TODO: somehow tell client which card was drawn.
+const opponentDeck = opponentState.deck;
+const drawCardResponse = drawCard(opponentDeck);
+const drawnCard = drawCardResponse[0];
+const newDeck = drawCardResponse[1];
+const handSize = opponentState.hand.push(drawCardResponse[0]);
 
-var error = challengeStateDataItem.persistor().persist().error();
+opponentState.handSize = handSize;
+opponentState.deck = newDeck;
+opponentState.deckSize = newDeck.length;
+// TODO: somehow tell client/player whose turn is next which card was drawn.
+
+// Set all cards on opponent's field to be able to attack.
+opponentState.field.map(function(card) {
+    card.canAttack = true;
+})
+
+// Set `hasTurn` attributes in ChallengeState.
+playerState.hasTurn = false;
+opponentState.hasTurn = true;
+
+const error = challengeStateDataItem.persistor().persist().error();
 if (error) {
     Spark.setScriptError("ERROR", error);
     Spark.exit();
 }
 
-// //Get all the cards on the player's play field
-// var cards = Object.keys(playField[pId]);
-// //Use the allowAtk function on every card
-// cards.forEach(allowAtk)
-
-//Finish player turn
+// Finish player turn
 challenge.takeTurn(playerId);
-
-function allowAtk(obj){
-    //Set the canAtk value to true, to allow the card to attack next turn
-    playField[pId][obj].canAtk = true;
-}

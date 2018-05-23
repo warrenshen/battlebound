@@ -8,10 +8,47 @@
 function initializePlayer(playerId) {
     var error;
     var API = Spark.getGameDataService();
-
+    
+    // Array of template IDs a new user starts with.
+    var templateIds = [
+        "C0",
+        "C0",
+        "C0"
+    ];
+    
+    var cards = templateIds.map(function(templateId) {
+        return {
+            templateId: templateId,
+            level: 0,
+        };
+    });
+    
+    var cardByCardId = {};
+    cards.forEach(function(card, index) {
+        var cardId = "C" + index.toString();
+        card.id = cardId;
+        cardByCardId[cardId] = card; 
+    });
+    
+    /**
+     * PlayerDecks schema: {
+     *   cardByCardId: {
+     *     [id]: {
+     *       templateId: string,
+     *       level: int,
+     *     },
+     *     ...
+     *   },
+     *   decks: {
+     *     [name]: [int (card id), ...]
+     *   },
+     *   activeDeck: string,
+     * }
+     **/
+    
     var playerDecksDataItem = API.createItem("PlayerDecks", playerId);
     var playerDecksData = playerDecksDataItem.getData();
-    playerDecksData.cardIds = ["B0", "B1"];
+    playerDecksData.cardByCardId = cardByCardId;
     playerDecksData.decks = {};
     playerDecksData.activeDeck = "";
     
