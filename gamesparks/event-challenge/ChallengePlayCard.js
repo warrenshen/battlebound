@@ -1,8 +1,6 @@
 // ====================================================================================================
 //
-// Cloud Code for ChallengePlayCard, write your code here to customize the GameSparks platform.
-//
-// For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
+// Challenge event for when player uses a card in its hand.
 //
 // ====================================================================================================
 require("ChallengeEventPrefix");
@@ -15,49 +13,68 @@ require("ChallengeEventPrefix");
  *   It could only be in the player's hand (stored server side) if so.
  **/
  
-var cardId = Spark.getData().cardId;
-var attributes = Spark.getData().attributes;
-// Index at which to play card.
-var fieldIndex = attributes.fieldIndex;
+const CARD_TYPE_MINION = "CARD_TYPE_MINION";
+const MOVE_TYPE_PLAY_MINION = "MOVE_TYPE_PLAY_MINION";
 
-var challengeState = challengeStateData.current;
+const cardId = Spark.getData().cardId;
+const attributes = Spark.getData().attributes;
 
-var playerState = challengeState[playerId];
-var playerManaCurrent = playerState.manaCurrent;
-var playerHand = playerState.hand;
-var playerField = playerState.field;
+const challengeState = challengeStateData.current;
+
+const playerState = challengeState[playerId];
+const playerManaCurrent = playerState.manaCurrent;
+const playerHand = playerState.hand;
+const playerField = playerState.field;
 
 // Find index of card played in hand.
-var handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
+const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
 if (handIndex < 0) {
     Spark.setScriptError("ERROR", "Invalid cardId parameter");
     Spark.exit();
 }
 
-// Ensure that index to play card at is valid.
-if (fieldIndex < 0 || fieldIndex > playerField.length + 1) {
-    Spark.setScriptError("ERROR", "Invalid fieldIndex parameter");
-    Spark.exit();
+const playedCard = playerHand[handIndex];
+
+if (playedCard.type === CARD_TYPE_MINION) {
+    // Index at which to play card.
+    const fieldIndex = attributes.fieldIndex;
+
+    // Ensure that index to play card at is valid.
+    if (fieldIndex < 0 || fieldIndex > playerField.length + 1) {
+        Spark.setScriptError("ERROR", "Invalid fieldIndex parameter");
+        Spark.exit();
+    }
+    
+    playedCard.canAttack = false;
+    
+    const newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
+    const newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
+    
+    if (playedCard.manaCost > playerManaCurrent) {
+        Spark.setScriptError("ERROR", "Card mana cost exceeds player's current mana.");
+        Spark.exit();
+    }
+    
+    playerState.manaCurrent = playerState.manaCurrent - playedCard.manaCost;
+    playerState.hand = newHand;
+    playerState.handSize = newHand.length;
+    playerState.field = newField;
+    
+    const move = {
+        playerId: playerId,
+        type: MOVE_TYPE_PLAY_MINION,
+        attributes: {
+            cardId: cardId,
+            fieldIndex: fieldIndex,
+        },
+    };
+    challengeStateData.moves.push(move);
+    challengeStateData.lastMoves = [move];
+} else {
+    if (error) {
+        Spark.setScriptError("ERROR", "Unrecognized card type.");
+        Spark.exit();
+    }
 }
 
-var playedCard = playerHand[handIndex];
-playedCard.canAttack = false;
-
-var newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
-var newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
-
-if (playedCard.manaCost > playerManaCurrent) {
-    Spark.setScriptError("ERROR", "Card mana cost exceeds player's current mana.");
-    Spark.exit();
-}
-
-playerState.manaCurrent = playerState.manaCurrent - playedCard.manaCost;
-playerState.hand = newHand;
-playerState.handSize = newHand.length;
-playerState.field = newField;
-
-var error = challengeStateDataItem.persistor().persist().error();
-if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
-}
+require("PersistChallengeStateModule");

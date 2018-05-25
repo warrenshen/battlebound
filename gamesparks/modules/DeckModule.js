@@ -8,7 +8,7 @@
  * Fetches Template objects from the DB and uses
  * them to form card objects as shown to the client.
  * 
- * @param deckName - string name of wanted deck
+ * @param cards - array of cards from a PlayerDecks instance
  * @return - array of Card objects
  **/
 function _getDeckByCards(cards) {
@@ -41,6 +41,7 @@ function _getDeckByCards(cards) {
         "level"
     ];
     var templateFields = [
+        // "type",
         "attack",
         "health",
         "manaCost",
@@ -54,6 +55,7 @@ function _getDeckByCards(cards) {
         
         cardFields.map(function(field) { result[field] = card[field] });
         templateFields.map(function(field) { result[field] = template[field] });
+        result.type = "CARD_TYPE_MINION"; // Temp.
         
         return result;
     });

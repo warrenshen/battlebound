@@ -7,36 +7,30 @@
 // ====================================================================================================
 require("InitializePlayerModule");
 
-var API = Spark.getGameDataService();
-var playerId = Spark.getPlayer().getPlayerId();
+const API = Spark.getGameDataService();
+const playerId = Spark.getPlayer().getPlayerId();
 
-var previousName = Spark.getData().previousName;
-var name = Spark.getData().name;
-var cardIds = Spark.getData().cardIds;
+const previousName = Spark.getData().previousName;
+const name = Spark.getData().name;
+const cardIds = Spark.getData().cardIds;
 
 if (typeof previousName !== "string" || typeof name !== "string" || !Array.isArray(cardIds)) {
     Spark.setScriptError("ERROR", "Invalid parameter(s)");
     Spark.exit(); 
 }
 
-var playerDecksGetResult = API.getItem("PlayerDecks", playerId);
-var playerDecksDataItem = playerDecksGetResult.document();
+const playerDecksGetResult = API.getItem("PlayerDecks", playerId);
+const playerDecksDataItem = playerDecksGetResult.document();
 
 if (playerDecksDataItem === null) {
-    var error = initializePlayer(playerId);
-
-    if (error) {
-        Spark.setScriptError("ERROR", error);
-        Spark.exit();
-    } else {
-        playerDecksGetResult = API.getItem("PlayerDecks", playerId);
-        playerDecksDataItem = playerDecksGetResult.document();
-    }
+    initializePlayer(playerId);
+    playerDecksGetResult = API.getItem("PlayerDecks", playerId);
+    playerDecksDataItem = playerDecksGetResult.document();
 }
 
-var playerDecksData = playerDecksDataItem.getData();
-var cardByCardId = playerDecksData.cardByCardId;
-var decks = playerDecksData.decks;
+const playerDecksData = playerDecksDataItem.getData();
+const cardByCardId = playerDecksData.cardByCardId;
+const decks = playerDecksData.decks;
 
 cardIds.forEach(function(cardId) {
     if (!cardByCardId[cardId]) {
@@ -57,7 +51,7 @@ Object.keys(decks).forEach(function(deckName) {
     }
 });
 
-var error = playerDecksDataItem.persistor().persist().error();
+const error = playerDecksDataItem.persistor().persist().error();
 if (error) {
     Spark.setScriptError("ERROR", error)
     Spark.exit();

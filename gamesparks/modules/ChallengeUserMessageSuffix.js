@@ -10,29 +10,28 @@
 //
 // ====================================================================================================
  
- var API = Spark.getGameDataService();
+const API = Spark.getGameDataService();
 
-var playerId = Spark.getPlayer().getPlayerId();
-var challengeId = Spark.getData().challenge.challengeId;
-var challenge = Spark.getChallenge(challengeId);
+const playerId = Spark.getPlayer().getPlayerId();
+const challengeId = Spark.getData().challenge.challengeId;
+const challenge = Spark.getChallenge(challengeId);
 
-var challengeStateGetResult = API.getItem("ChallengeState", challengeId);
-var challengeStateDataItem = challengeStateGetResult.document();
+const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
 
 if (challengeStateDataItem === null) {
-    Spark.setScriptError("ERROR", "Challenge state does not exist.");
+    Spark.setScriptError("ERROR", "ChallengeState does not exist.");
     Spark.exit();
 }
 
-var challengeStateData = challengeStateDataItem.getData();
-var currentChallengeState = challengeStateData.current;
+const challengeStateData = challengeStateDataItem.getData();
+const challengeState = challengeStateData.current;
 
-var opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 
-var currentPlayerState = currentChallengeState[playerId];
-var currentOpponentState = currentChallengeState[opponentId];
+const playerState = challengeState[playerId];
+const opponentState = challengeState[opponentId];
 
-var fields = [
+const fields = [
     "hasTurn",
     "manaCurrent",
     "manaMax",
@@ -42,25 +41,29 @@ var fields = [
     "handSize",
     "deckSize",
 ];
-var playerFields = [
+const playerFields = [
     "hand",
 ];
-var opponentFields = [
-    
-];
 
-var playerState = {};
-var opponentState = {};
+const filteredPlayerState = {};
+const filteredOpponentState = {};
 fields.forEach(function(field) {
-    playerState[field] = currentPlayerState[field];
-    opponentState[field] = currentOpponentState[field];
+    filteredPlayerState[field] = playerState[field];
+    filteredOpponentState[field] = opponentState[field];
 });
 playerFields.forEach(function(field) {
-    playerState[field] = currentPlayerState[field];
-});
-opponentFields.forEach(function(field) {
-    opponentState[field] = currentOpponentState[field];
+    filteredPlayerState[field] = playerState[field];
 });
 
-challenge.setScriptData("playerState", playerState);
-challenge.setScriptData("opponentState", opponentState);
+const lastMoves = challengeStateData.lastMoves || [];
+const opponentMoves = lastMoves.filter(function(move) { return move.playerId === opponentId });
+
+if (opponentMoves.length) {
+    Spark.setScriptData("opponentMoves", opponentMoves);
+} else {
+    Spark.removeScriptData("opponentMoves");
+}
+
+Spark.setScriptData("playerState", filteredPlayerState);
+Spark.setScriptData("opponentState", filteredOpponentState);
+Spark.setScriptData("nonce", challengeStateData.nonce);
