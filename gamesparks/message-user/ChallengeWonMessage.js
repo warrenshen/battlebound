@@ -5,14 +5,21 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-
+// USER
 //If it's a ranked match, process rank
 // use casual match for now
-if(Spark.getData().challenge.shortCode === "CasualChallenge")
-{
-    //This player was victorious so declare the outcome to 'Victory'
-    var outcome = "victory";
 
-    //Depending on the outcome variable the 'processRank' module will either increase rank or decrease player rank
-    require("ProcessRank");
+require("ProcessRank");
+
+if (Spark.getData().challenge.shortCode === "CasualChallenge") {
+
+    var playerId1 = Spark.getData().challenge.challenger.id;
+    var playerId2 = Spark.getData().challenge.challenged[0].id;
+
+    var winnerPlayerId = Spark.getPlayer().getPlayerId();
+    var loserPlayerId = winnerPlayerId != playerId1 ? playerId1 : playerId2;
+
+    processRank(winnerPlayerId, loserPlayerId);
 }
+
+require("ChallengeUserMessageSuffix");

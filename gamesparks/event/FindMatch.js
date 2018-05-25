@@ -5,26 +5,26 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-var API = Spark.getGameDataService();
-var player = Spark.getPlayer();
-var playerId = player.getPlayerId();
+const API = Spark.getGameDataService();
+const player = Spark.getPlayer();
+const playerId = player.getPlayerId();
 
-var matchShortCode = Spark.getData().matchShortCode;
-var playerDeck = Spark.getData().playerDeck;
+const matchShortCode = Spark.getData().matchShortCode;
+const playerDeck = Spark.getData().playerDeck;
 
 if (!matchShortCode || !playerDeck) {
     Spark.setScriptError("ERROR", "Invalid parameter(s).");
     Spark.exit();
 }
 
-var playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
+const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 
 if (playerDecksDataItem === null) {
     Spark.setScriptError("ERROR", "Player decks does not exist.");
     Spark.exit();
 }
 
-var playerDecksData = playerDecksDataItem.getData();
+const playerDecksData = playerDecksDataItem.getData();
 if (!playerDecksData.decks[playerDeck]) {
     Spark.setScriptError("ERROR", "Invalid player deck parameter.");
     Spark.exit();
@@ -32,14 +32,14 @@ if (!playerDecksData.decks[playerDeck]) {
 
 playerDecksData.activeDeck = playerDeck;
 
-var error = playerDecksDataItem.persistor().persist().error();
+const error = playerDecksDataItem.persistor().persist().error();
 if (error) {
     Spark.setScriptError("ERROR", error);
     Spark.exit();
 }
 
 if (matchShortCode === "CasualMatch") {
-    var request = new SparkRequests.MatchmakingRequest();
+    const request = new SparkRequests.MatchmakingRequest();
     request.matchShortCode = matchShortCode;
     request.skill = 0;
     request.Execute();

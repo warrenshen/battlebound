@@ -1,58 +1,57 @@
 // ====================================================================================================
 //
-// Cloud Code for InitializePlayerModule, write your code here to customize the GameSparks platform.
+// Initializes a PlayerDecks instance for player associated with given player ID.
+// This consists of non-blockchain starter cards.
+// Note that non-blockhain templates have IDs prefixed with a "C" whereas
+// blockchain templates have IDs prefixed with a "B".
 //
-// For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
+// PlayerDecks schema: {
+//   cardByCardId: {
+//     [id]: {
+//       templateId: string,
+//       level: int,
+//     },
+//     ...
+//   },
+//   decks: {
+//    [name]: [int (card id), ...]
+//   },
+//   activeDeck: string,
+// }
 //
 // ====================================================================================================
 function initializePlayer(playerId) {
-    var error;
-    var API = Spark.getGameDataService();
+    const API = Spark.getGameDataService();
     
     // Array of template IDs a new user starts with.
-    var templateIds = [
+    const templateIds = [
         "C0",
         "C0",
         "C0"
     ];
     
-    var cards = templateIds.map(function(templateId) {
+    const cards = templateIds.map(function(templateId) {
         return {
             templateId: templateId,
             level: 0,
         };
     });
     
-    var cardByCardId = {};
+    const cardByCardId = {};
     cards.forEach(function(card, index) {
         var cardId = "C" + index.toString();
         card.id = cardId;
         cardByCardId[cardId] = card; 
     });
     
-    /**
-     * PlayerDecks schema: {
-     *   cardByCardId: {
-     *     [id]: {
-     *       templateId: string,
-     *       level: int,
-     *     },
-     *     ...
-     *   },
-     *   decks: {
-     *     [name]: [int (card id), ...]
-     *   },
-     *   activeDeck: string,
-     * }
-     **/
+    const playerDecksDataItem = API.createItem("PlayerDecks", playerId);
+    const playerDecksData = playerDecksDataItem.getData();
     
-    var playerDecksDataItem = API.createItem("PlayerDecks", playerId);
-    var playerDecksData = playerDecksDataItem.getData();
     playerDecksData.cardByCardId = cardByCardId;
     playerDecksData.decks = {};
     playerDecksData.activeDeck = "";
     
-    error = playerDecksDataItem.persistor().persist().error();
+    const error = playerDecksDataItem.persistor().persist().error();
     if (error) {
         Spark.setScriptError("ERROR", error);
         Spark.exit();

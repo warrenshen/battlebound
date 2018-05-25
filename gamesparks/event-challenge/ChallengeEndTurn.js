@@ -8,6 +8,8 @@
 require("ChallengeEventPrefix");
 require("DeckModule");
 
+const MOVE_TYPE_END_TURN = "MOVE_TYPE_END_TURN";
+
 const challengeState = challengeStateData.current;
 const playerState = challengeState[playerId];
 
@@ -23,30 +25,36 @@ opponentState.manaCurrent = opponentState.manaMax;
 
 // Draw a card for opponent to start its turn.
 const opponentDeck = opponentState.deck;
-const drawCardResponse = drawCard(opponentDeck);
-const drawnCard = drawCardResponse[0];
-const newDeck = drawCardResponse[1];
-const handSize = opponentState.hand.push(drawCardResponse[0]);
 
-opponentState.handSize = handSize;
-opponentState.deck = newDeck;
-opponentState.deckSize = newDeck.length;
-// TODO: somehow tell client/player whose turn is next which card was drawn.
+if (opponentDeck.length > 0) {
+    const drawCardResponse = drawCard(opponentDeck);
+    const drawnCard = drawCardResponse[0];
+    const newDeck = drawCardResponse[1];
+    const handSize = opponentState.hand.push(drawCardResponse[0]);
+    
+    opponentState.handSize = handSize;
+    opponentState.deck = newDeck;
+    opponentState.deckSize = newDeck.length;
+    // TODO: somehow tell client/player whose turn is next which card was drawn.
+}
 
 // Set all cards on opponent's field to be able to attack.
 opponentState.field.map(function(card) {
-    card.canAttack = true;
+    card.canAttack = 1;
 })
 
 // Set `hasTurn` attributes in ChallengeState.
 playerState.hasTurn = false;
 opponentState.hasTurn = true;
 
-const error = challengeStateDataItem.persistor().persist().error();
-if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
-}
+const move = {
+    playerId: playerId,
+    type: MOVE_TYPE_END_TURN,
+};
+challengeStateData.moves.push(move);
+challengeStateData.lastMoves = [move];
+    
+require("PersistChallengeStateModule");
 
 // Finish player turn
 challenge.takeTurn(playerId);

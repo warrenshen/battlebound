@@ -12,9 +12,11 @@
 require("ChallengeEventPrefix");
 
 const TARGET_ID_FACE = "TARGET_ID_FACE";
+const MOVE_TYPE_CARD_ATTACK = "MOVE_TYPE_CARD_ATTACK";
 
 const cardId = Spark.getData().cardId;
-const targetId = Spark.getData.targetId;
+const attributes = Spark.getData().attributes;
+const targetId = attributes.targetId;
 
 const challengeState = challengeStateData.current;
 
@@ -31,12 +33,21 @@ if (attackingIndex < 0) {
     Spark.exit();
 }
 
-var attackingCard = playerField[attackingIndex];
+const attackingCard = playerField[attackingIndex];
+// Check if card can actually attack - return error if not and
+// set it to not be able to attack anymore after this if so.
+if (attackingCard.canAttack === 0) {
+    Spark.setScriptError("ERROR", "Card cannot attack anymore.");
+    Spark.exit();
+} else {
+    attackingCard.canAttack = 0;
+}
 
 if (targetId === TARGET_ID_FACE) {
     opponentState.health -= attackingCard.attack;
-    if (opponentState.health < 0) {
+    if (opponentState.health <= 0) {
         opponentState.health = 0;
+        challenge.winChallenge(Spark.getPlayer());
     }
 } else {
     // Find index of attacking card in opponent field.
@@ -61,8 +72,15 @@ if (targetId === TARGET_ID_FACE) {
     }
 }
 
-var error = challengeStateDataItem.persistor().persist().error();
-if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
-}
+const move = {
+    playerId: playerId,
+    type: MOVE_TYPE_CARD_ATTACK,
+    attributes: {
+        cardId: cardId,
+        targetId: targetId,
+    },
+};
+challengeStateData.moves.push(move);
+challengeStateData.lastMoves = [move];
+
+require("PersistChallengeStateModule");

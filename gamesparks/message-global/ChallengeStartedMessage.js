@@ -11,19 +11,27 @@ require("DeckModule");
 /**
  * Card schema: {
  *   id: string,
+ *   type: string,
  *   name: string,
  *   level: int,
  *   manaCost: int,
  *   health: int,
  *   attack: int,
- *   canAttack: bool, (probably not set until card is played on field)
+ *   canAttack: bool, // Field probably not set until card is played on field.
+ * }
+ * 
+ * Move schema: {
+ *   type: string,
+ *   attributes: { ... },
  * }
  * 
  * ChallengeState schema: {
+ *   nonce: int, // A counter incremented every time the ChallengeState is updated.
  *   current: {
  *     opponentIdByPlayerId: { playerId: opponentId },
  *     [playerIdOne]: {
  *       hasTurn: bool,
+ *       turnCount: int,
  *       manaCurrent: int,
  *       manaMax: int,
  *       health: int,
@@ -36,34 +44,36 @@ require("DeckModule");
  *     },
  *     [playerIdTwo]: ...,
  *   },
+ *   moves: [Move, ...], // An array of moves by both players in chronological order.
+ *   lastMoves: [Move, ...], // An array of the move(s) in last request of player whose turn it is.
  * }
  **/
  
-var API = Spark.getGameDataService();
+const API = Spark.getGameDataService();
 
-var challengeId = Spark.getData().challenge.challengeId;
-var challenge = Spark.getChallenge(challengeId);
+const challengeId = Spark.getData().challenge.challengeId;
+const challenge = Spark.getChallenge(challengeId);
 
-var challengerId = challenge.getChallengerId();
-var challengedId = challenge.getChallengedPlayerIds()[0];
+const challengerId = challenge.getChallengerId();
+const challengedId = challenge.getChallengedPlayerIds()[0];
 
 // Get challenger player deck for battle.
-var challengerDeck = getActiveDeckByPlayerId(challengerId);
+const challengerDeck = getActiveDeckByPlayerId(challengerId);
 
 // Get challenged player deck for battle.
-var challengedDeck = getActiveDeckByPlayerId(challengedId);
+const challengedDeck = getActiveDeckByPlayerId(challengedId);
 
-var challengeStateDataItem = API.createItem("ChallengeState", challengeId);
-var challengeStateData = challengeStateDataItem.getData();
-var currentChallengeState = challengeStateData.current = {};
-// challengeStateData.events = [];
+const challengeStateDataItem = API.createItem("ChallengeState", challengeId);
+const challengeStateData = challengeStateDataItem.getData();
+const challengeState = challengeStateData.current = {};
+challengeStateData.moves = [];
 
-var opponentIdByPlayerId = {};
+const opponentIdByPlayerId = {};
 opponentIdByPlayerId[challengerId] = challengedId;
 opponentIdByPlayerId[challengedId] = challengerId;
 challengeStateData.opponentIdByPlayerId = opponentIdByPlayerId;
 
-var challengerData = {
+const challengerData = {
     manaCurrent: 3,
     manaMax: 3,
     health: 30,
@@ -75,7 +85,7 @@ var challengerData = {
     deckSize: challengerDeck.length
 };
 
-var challengedData = {
+const challengedData = {
     manaCurrent: 3,
     manaMax: 3,
     health: 30,
@@ -87,7 +97,7 @@ var challengedData = {
     deckSize: challengedDeck.length
 };
 
-if (challenge.nextPlayer === challengerId) {
+if (Spark.getData().challenge.nextPlayer === challengerId) {
     challengerData.hasTurn = true;
     challengedData.hasTurn = false;
 } else {
@@ -95,11 +105,7 @@ if (challenge.nextPlayer === challengerId) {
     challengedData.hasTurn = true;
 }
 
-currentChallengeState[challengerId] = challengerData;
-currentChallengeState[challengedId] = challengedData;
+challengeState[challengerId] = challengerData;
+challengeState[challengedId] = challengedData;
 
-var error = challengeStateDataItem.persistor().persist().error();
-if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
-}
+require("PersistChallengeStateModule");
