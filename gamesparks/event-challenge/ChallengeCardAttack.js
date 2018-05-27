@@ -16,6 +16,7 @@ const MOVE_TYPE_CARD_ATTACK = "MOVE_TYPE_CARD_ATTACK";
 
 const cardId = Spark.getData().cardId;
 const attributes = Spark.getData().attributes;
+// const fieldId = attributes.fieldId;
 const targetId = attributes.targetId;
 
 const challengeState = challengeStateData.current;
@@ -63,11 +64,11 @@ if (targetId === TARGET_ID_FACE) {
     defendingCard.health -= attackingCard.attack;
     
     if (attackingCard.health <= 0) {
-        var newPlayerField = playerField.slice(0, attackingIndex).concat(playerField.slice(attackingIndex + 1));
+        const newPlayerField = playerField.slice(0, attackingIndex).concat(playerField.slice(attackingIndex + 1));
         playerState.field = newPlayerField;
     }
     if (defendingCard.health <= 0) {
-        var newOpponentField = opponentField.slice(0, defendingIndex).concat(opponentField.slice(defendingIndex + 1));
+        const newOpponentField = opponentField.slice(0, defendingIndex).concat(opponentField.slice(defendingIndex + 1));
         opponentState.field = newOpponentField;
     }
 }

@@ -56,7 +56,13 @@ playerFields.forEach(function(field) {
 });
 
 const lastMoves = challengeStateData.lastMoves || [];
-const opponentMoves = lastMoves.filter(function(move) { return move.playerId === opponentId });
+const opponentMoves = lastMoves.filter(function(move) {
+    if (move === null) {
+        Spark.setScriptError("ERROR", "Move is null - did you remember to set move to something?");
+        Spark.exit();
+    }
+    return move.playerId === opponentId;
+});
 
 if (opponentMoves.length) {
     Spark.setScriptData("opponentMoves", opponentMoves);

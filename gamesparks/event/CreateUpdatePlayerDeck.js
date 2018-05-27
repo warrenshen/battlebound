@@ -16,16 +16,13 @@ const cardIds = Spark.getData().cardIds;
 
 if (typeof previousName !== "string" || typeof name !== "string" || !Array.isArray(cardIds)) {
     Spark.setScriptError("ERROR", "Invalid parameter(s)");
-    Spark.exit(); 
+    Spark.exit();
 }
 
-const playerDecksGetResult = API.getItem("PlayerDecks", playerId);
-const playerDecksDataItem = playerDecksGetResult.document();
-
+const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 if (playerDecksDataItem === null) {
-    initializePlayer(playerId);
-    playerDecksGetResult = API.getItem("PlayerDecks", playerId);
-    playerDecksDataItem = playerDecksGetResult.document();
+    Spark.setScriptError("ERROR", "PlayerDecks instance does not exist.");
+    Spark.exit();
 }
 
 const playerDecksData = playerDecksDataItem.getData();
@@ -35,7 +32,7 @@ const decks = playerDecksData.decks;
 cardIds.forEach(function(cardId) {
     if (!cardByCardId[cardId]) {
         Spark.setScriptError("ERROR", "Invalid card ID(s)");
-        Spark.exit(); 
+        Spark.exit();
     }
 });
 decks[name] = cardIds;
