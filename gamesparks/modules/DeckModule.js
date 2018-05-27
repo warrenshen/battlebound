@@ -41,7 +41,7 @@ function _getDeckByCards(cards) {
         "level"
     ];
     var templateFields = [
-        // "type",
+        "category",
         "attack",
         "health",
         "manaCost",
@@ -55,7 +55,6 @@ function _getDeckByCards(cards) {
         
         cardFields.map(function(field) { result[field] = card[field] });
         templateFields.map(function(field) { result[field] = template[field] });
-        result.type = "CARD_TYPE_MINION"; // Temp.
         
         return result;
     });
@@ -134,7 +133,7 @@ function drawCard(deck) {
         Spark.setScriptError("ERROR", "Invalid deck parameter.");
         Spark.exit();
     }
-    var deckSize = deck.length;
-    var randomIndex = Math.floor(Math.random() * (deckSize - 1));
+    const deckSize = deck.length;
+    const randomIndex = Math.floor(Math.random() * deckSize);
     return [deck[randomIndex], deck.slice(0, randomIndex).concat(deck.slice(randomIndex + 1))];
 }

@@ -8,6 +8,5 @@
 require("InitializePlayerModule");
 
 if (!Spark.hasScriptErrors() && Spark.getPlayer() !== null) {
-    var playerId = Spark.getPlayer().getPlayerId();
-    initializePlayer(playerId);
+    initializePlayer();
 }
