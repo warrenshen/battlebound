@@ -11,6 +11,7 @@
  * }
  * 
  * PlayerDecks schema: {
+ *   bCardIds: [int (card id), ...], // Card IDs of cards on the blockchain.
  *   cardByCardId: {
  *     [id]: {
  *       templateId: string,
@@ -18,8 +19,8 @@
  *     },
  *     ...
  *   },
- *   decks: {
- *    [name]: [int (card id), ...]
+ *   deckByName: {
+ *     [name]: [int (card id), ...]
  *   },
  *   activeDeck: string,
  * }
@@ -31,7 +32,9 @@
  *   level: int,
  *   manaCost: int,
  *   health: int,
+ *   healthStart: int, // The initial value of health.
  *   attack: int,
+ *   attackStart: int, // The initial value of attack.
  *   canAttack: bool, // Field probably not set until card is played on field.
  * }
  * 

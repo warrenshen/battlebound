@@ -28,13 +28,13 @@ function cleanAddress(address) {
 function convertHexToInt(hexInput) {
     hexInput = cleanHex(hexInput);
     
-    if (hexInput.length === 32) {
+    if (hexInput.length === 64) {
         return parseInt(hexInput, 16);
     } else {
-        var result = [];
-        // The = 5 and the += 2 are hacks that only work for uint256[] responses.
-        for (var i = 5; i < hexInput.length / 32; i += 2) {
-            result.push(parseInt(hexInput.substring(i * 32, (i + 1) * 32), 16));
+        const result = [];
+        // The = 2 is a hack that skip the first 2 words (word length and result count) for uint256[] responses.
+        for (var i = 2; i < hexInput.length / 64; i += 1) {
+            result.push(parseInt(hexInput.substring(i * 64, (i + 1) * 64), 16));
         }
         return result;
     }

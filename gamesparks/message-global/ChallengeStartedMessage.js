@@ -18,7 +18,6 @@ const challengedId = challenge.getChallengedPlayerIds()[0];
 
 // Get challenger player deck for battle.
 const challengerDeck = getActiveDeckByPlayerId(challengerId);
-
 // Get challenged player deck for battle.
 const challengedDeck = getActiveDeckByPlayerId(challengedId);
 
@@ -57,11 +56,11 @@ const challengedData = {
 };
 
 if (Spark.getData().challenge.nextPlayer === challengerId) {
-    challengerData.hasTurn = true;
-    challengedData.hasTurn = false;
+    challengerData.hasTurn = 1;
+    challengedData.hasTurn = 0;
 } else {
-    challengerData.hasTurn = false;
-    challengedData.hasTurn = true;
+    challengerData.hasTurn = 0;
+    challengedData.hasTurn = 1;
 }
 
 challengeState[challengerId] = challengerData;
