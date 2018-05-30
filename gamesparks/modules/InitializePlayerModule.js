@@ -58,4 +58,6 @@ function initializePlayer() {
         Spark.setScriptError("ERROR", error);
         Spark.exit();
     }
+    
+    return true;
 }

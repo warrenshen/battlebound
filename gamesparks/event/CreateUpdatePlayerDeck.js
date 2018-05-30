@@ -5,8 +5,6 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-require("InitializePlayerModule");
-
 const API = Spark.getGameDataService();
 const playerId = Spark.getPlayer().getPlayerId();
 
@@ -16,23 +14,28 @@ const cardIds = Spark.getData().cardIds;
 
 if (typeof previousName !== "string" || typeof name !== "string" || !Array.isArray(cardIds)) {
     Spark.setScriptError("ERROR", "Invalid parameter(s)");
-    Spark.exit();
+    Spark.exit(); 
 }
 
 const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 if (playerDecksDataItem === null) {
     Spark.setScriptError("ERROR", "PlayerDecks instance does not exist.");
-    Spark.exit();
+    Spark.exit(); 
 }
 
 const playerDecksData = playerDecksDataItem.getData();
+const bCardIds = playerDecksData.bCardIds || [];
 const cardByCardId = playerDecksData.cardByCardId;
 const decks = playerDecksData.decks;
 
+// Verify that player actually owns all cards in deck.
+// Note that prior to a match a similar verification happens so
+// we can simply use the data cached on the PlayerDecks instance here.
+const validCardIds = bCardIds.concat(Object.keys(cardByCardId));
 cardIds.forEach(function(cardId) {
-    if (!cardByCardId[cardId]) {
+    if (validCardIds.indexOf(cardId) < 0) {
         Spark.setScriptError("ERROR", "Invalid card ID(s)");
-        Spark.exit();
+        Spark.exit(); 
     }
 });
 decks[name] = cardIds;

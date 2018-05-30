@@ -8,6 +8,7 @@
 // - 0: minion (play on field)
 // - 1: spell (use and discard)
 // - 2: structure (play on field)
+// - 3: weapon (use and discard)
 //
 // ====================================================================================================
 require("ChallengeEventPrefix");
@@ -68,7 +69,7 @@ if (playedCard.category === CARD_TYPE_MINION) {
         Spark.exit();
     }
     
-    playedCard.canAttack = false;
+    playedCard.canAttack = 0;
     
     const newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
     playerState.field = newField;

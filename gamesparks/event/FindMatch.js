@@ -5,6 +5,8 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("DeckModule");
+
 const API = Spark.getGameDataService();
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
@@ -20,15 +22,18 @@ if (!matchShortCode || !playerDeck) {
 const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 
 if (playerDecksDataItem === null) {
-    Spark.setScriptError("ERROR", "Player decks does not exist.");
+    Spark.setScriptError("ERROR", "PlayerDecks instance does not exist.");
     Spark.exit();
 }
 
 const playerDecksData = playerDecksDataItem.getData();
-if (!playerDecksData.decks[playerDeck]) {
+if (!playerDecksData.deckByName[playerDeck]) {
     Spark.setScriptError("ERROR", "Invalid player deck parameter.");
     Spark.exit();
 }
+
+// Sync player's PlayerDecks instance with blockchain.
+const isChanged = syncPlayerDecksByPlayer(player);
 
 playerDecksData.activeDeck = playerDeck;
 
