@@ -26,7 +26,7 @@ if (playerDecksDataItem === null) {
 const playerDecksData = playerDecksDataItem.getData();
 const bCardIds = playerDecksData.bCardIds || [];
 const cardByCardId = playerDecksData.cardByCardId;
-const decks = playerDecksData.decks;
+const deckByName = playerDecksData.deckByName;
 
 // Verify that player actually owns all cards in deck.
 // Note that prior to a match a similar verification happens so
@@ -38,16 +38,16 @@ cardIds.forEach(function(cardId) {
         Spark.exit(); 
     }
 });
-decks[name] = cardIds;
+deckByName[name] = cardIds;
 
-if (decks[previousName]) {
-    delete decks[previousName];
+if (deckByName[previousName]) {
+    delete deckByName[previousName];
 }
 
 // Guarantee that all decks are valid - should be a non-empty array.
-Object.keys(decks).forEach(function(deckName) {
-    if (!Array.isArray(decks[deckName]) || decks[deckName].length === 0) {
-        delete decks[deckName];
+Object.keys(deckByName).forEach(function(deckName) {
+    if (!Array.isArray(deckByName[deckName]) || deckByName[deckName].length === 0) {
+        delete deckByName[deckName];
     }
 });
 
@@ -57,5 +57,5 @@ if (error) {
     Spark.exit();
 }
 
-Spark.setScriptData("decks", decks);
+Spark.setScriptData("deckByName", deckByName);
 Spark.setScriptData("statusCode", 200);
