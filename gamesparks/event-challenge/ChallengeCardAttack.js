@@ -44,13 +44,12 @@ if (attackingIndex < 0) {
 }
 
 const attackingCard = playerField[attackingIndex];
-// Check if card can actually attack - return error if not and
-// set it to not be able to attack anymore after this if so.
-if (attackingCard.canAttack === 0) {
+// Check if card can actually attack - return error if not and update if so.
+if (attackingCard.canAttack <= 0) {
     Spark.setScriptError("ERROR", "Card cannot attack anymore.");
     Spark.exit();
 } else {
-    attackingCard.canAttack = 0;
+    attackingCard.canAttack -= 1;
 }
 
 var defendingIndex;

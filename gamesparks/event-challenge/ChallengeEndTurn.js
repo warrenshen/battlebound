@@ -44,8 +44,8 @@ opponentState.field.map(function(card) {
 })
 
 // Set `hasTurn` attributes in ChallengeState.
-playerState.hasTurn = false;
-opponentState.hasTurn = true;
+playerState.hasTurn = 0;
+opponentState.hasTurn = 1;
 
 const move = {
     playerId: playerId,

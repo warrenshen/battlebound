@@ -50,7 +50,7 @@ function initializePlayer() {
     const playerDecksData = playerDecksDataItem.getData();
     
     playerDecksData.cardByCardId = cardByCardId;
-    playerDecksData.decks = {};
+    playerDecksData.deckByName = {};
     playerDecksData.activeDeck = "";
     
     const error = playerDecksDataItem.persistor().persist().error();
