@@ -45,8 +45,9 @@
  * 
  * ChallengeState schema: {
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
+ *   opponentIdByPlayerId: { [playerId]: opponentId },
+ *   turnCountByPlayerId: { [playerId]: int },
  *   current: {
- *     opponentIdByPlayerId: { playerId: opponentId },
  *     [playerIdOne]: {
  *       hasTurn: bool,
  *       turnCount: int,

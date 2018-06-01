@@ -14,7 +14,7 @@
 // ====================================================================================================
 const API = Spark.getGameDataService();
 
-const player = Spark.getPlayer()
+const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
 const challengeId = Spark.getData().challengeInstanceId;
 const challenge = Spark.getChallenge(challengeId);

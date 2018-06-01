@@ -40,13 +40,13 @@ function _getDeckByCards(cards) {
         "id",
         "level"
     ];
-    const templateFields = [
-        "category",
-        "attack",
-        "health",
-        "manaCost",
-        "name"
-    ];
+    const templateFieldToInstanceField = {
+        category: "category",
+        attack: "attack",
+        health: "health",
+        manaCost: "cost",
+        name: "name",
+    };
     
     // Form final card objects by combining fields of both Card and Template objects.
     const results = cards.map(function(card) {
@@ -58,8 +58,9 @@ function _getDeckByCards(cards) {
         }
         
         cardFields.map(function(field) { result[field] = card[field] });
-        templateFields.map(function(field) { result[field] = template[field] });
+        Object.keys(templateFieldToInstanceField).map(function(field) { result[templateFieldToInstanceField[field]] = template[field] });
         
+        result.image = template.name.replace(" ", "_");
         return result;
     });
     

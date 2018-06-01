@@ -31,6 +31,11 @@ opponentIdByPlayerId[challengerId] = challengedId;
 opponentIdByPlayerId[challengedId] = challengerId;
 challengeStateData.opponentIdByPlayerId = opponentIdByPlayerId;
 
+const turnCountByPlayerId = {};
+turnCountByPlayerId[challengerId] = 0;
+turnCountByPlayerId[challengedId] = 0;
+challengeStateData.turnCountByPlayerId = turnCountByPlayerId;
+
 const challengerData = {
     manaCurrent: 3,
     manaMax: 3,
