@@ -34,7 +34,7 @@ if (opponentDeck.length > 0) {
     const drawnCard = drawCardResponse[0];
     const newDeck = drawCardResponse[1];
     const handSize = opponentState.hand.push(drawCardResponse[0]);
-
+    
     opponentState.handSize = handSize;
     opponentState.deck = newDeck;
     opponentState.deckSize = newDeck.length;
@@ -74,5 +74,5 @@ const data = {
     hasTurnPlayerId: opponentId,
 };
 var success;
-success = scheduler.inSeconds("TimeRunningOutModule", 30, data, opponentRunningKey);
-success = scheduler.inSeconds("TimeLimitExpiredModule", 40, data, opponentExpiredKey);
+success = scheduler.inSeconds("TimeRunningOutModule", 50, data, opponentRunningKey);
+success = scheduler.inSeconds("TimeLimitExpiredModule", 60, data, opponentExpiredKey);

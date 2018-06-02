@@ -27,8 +27,9 @@
  * 
  * Card schema: {
  *   id: string,
- *   type: string,
+ *   category: int,
  *   name: string,
+ *   description: string,
  *   level: int,
  *   manaCost: int,
  *   health: int,
@@ -36,6 +37,8 @@
  *   attack: int,
  *   attackStart: int, // The initial value of attack.
  *   canAttack: bool, // Field probably not set until card is played on field.
+ *   hasShield: bool, // Field probably not set until card is played on field.
+ *   abilities: [int, ...],
  * }
  * 
  * Move schema: {
