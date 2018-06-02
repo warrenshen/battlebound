@@ -57,7 +57,7 @@ if (matchShortCode === "CasualMatch") {
     
     var request = new SparkRequests.MatchmakingRequest();
     request.matchShortCode = matchShortCode;
-    request.skill = 0;
+    request.skill = rankedScore;
     request.Execute();
     
 } else {

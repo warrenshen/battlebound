@@ -9,11 +9,14 @@ var playerId = Spark.getPlayer().getPlayerId();
 var matchShortCode = Spark.getData().matchShortCode;
 var participants = Spark.getData().participants;
 
-var challengeShortCode = "";
+var challengeShortCode;
 if (matchShortCode === "CasualMatch") {
     challengeShortCode = "CasualChallenge";
 } else if (matchShortCode === "RankedMatch") {
     challengeShortCode = "RankedChallenge";
+} else {
+    ptError("ERROR", "Invalid challenge short code.");
+    Spark.exit();
 }
 
 // If player is first participant - prevents double send.
