@@ -1,7 +1,5 @@
 require("DeckModule");
 
-// var cardsOnChain = fetchCardsOnChainByAddress("0x6014dC52AfEa7b5faf11458A02A5DA5761f81AEB");
-
 const player = Spark.getPlayer();
 
 const result = getCardsAndDecksByPlayer(player);

@@ -7,6 +7,10 @@
 // ====================================================================================================
 require("ChallengeEventPrefix");
 require("DeckModule");
+require("CancelScheduledTimeEventsModule");
+
+// Note that the call below must be before the `challenge.consumeTurn()` call.
+cancelScheduledTimeEvents(challengeId, playerId, challengeStateData);
 
 const MOVE_TYPE_END_TURN = "MOVE_TYPE_END_TURN";
 
@@ -22,7 +26,6 @@ if (playerState.manaMax < 10) {
 const opponentState = challengeState[opponentId];
 opponentState.manaCurrent = opponentState.manaMax;
 
-
 // Draw a card for opponent to start its turn.
 const opponentDeck = opponentState.deck;
 
@@ -31,7 +34,7 @@ if (opponentDeck.length > 0) {
     const drawnCard = drawCardResponse[0];
     const newDeck = drawCardResponse[1];
     const handSize = opponentState.hand.push(drawCardResponse[0]);
-    
+
     opponentState.handSize = handSize;
     opponentState.deck = newDeck;
     opponentState.deckSize = newDeck.length;
@@ -53,8 +56,23 @@ const move = {
 };
 challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
-    
+
+challengeStateData.turnCountByPlayerId[playerId] += 1;
+
 require("PersistChallengeStateModule");
 
-// Finish player turn
-challenge.takeTurn(playerId);
+// Finish player turn (without sending a ChallengeTurnTaken message)
+// since this will already be sent because this is a challenge event.
+challenge.consumeTurn(playerId);
+
+const scheduler = Spark.getScheduler();
+const opponentRunningKey = "TROM" + ":" + challengeId + ":" + challengeStateData.turnCountByPlayerId[opponentId];
+const opponentExpiredKey = "TLEM" + ":" + challengeId + ":" + challengeStateData.turnCountByPlayerId[opponentId];
+const data = {
+    challengeId: challengeId,
+    opponentId: opponentId,
+    hasTurnPlayerId: opponentId,
+};
+var success;
+success = scheduler.inSeconds("TimeRunningOutModule", 30, data, opponentRunningKey);
+success = scheduler.inSeconds("TimeLimitExpiredModule", 40, data, opponentExpiredKey);
