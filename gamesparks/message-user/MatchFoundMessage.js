@@ -9,21 +9,26 @@ var playerId = Spark.getPlayer().getPlayerId();
 var matchShortCode = Spark.getData().matchShortCode;
 var participants = Spark.getData().participants;
 
+var challengeShortCode = "";
 if (matchShortCode === "CasualMatch") {
-    // If player is first participant - prevents double send.
-    if (playerId === participants[0].id) {
-        var request = new SparkRequests.CreateChallengeRequest();
-        
-        var endTimeDate = new Date();
-        endTimeDate.setDate(endTimeDate.getDate() + 1)
-        var endTimeString = endTimeDate.toISOString();
+    challengeShortCode = "CasualChallenge";
+} else if (matchShortCode === "RankedMatch") {
+    challengeShortCode = "RankedChallenge";
+}
 
-        request.accessType = "PRIVATE";
-        request.challengeShortCode = "CasualChallenge";
-        request.endTime = endTimeString;
-        request.expiryTime = endTimeString;
-        request.usersToChallenge = participants[1].id;
-        
-        request.Send();
-    }
+// If player is first participant - prevents double send.
+if (playerId === participants[0].id) {
+    var request = new SparkRequests.CreateChallengeRequest();
+    
+    var endTimeDate = new Date();
+    endTimeDate.setDate(endTimeDate.getDate() + 1)
+    var endTimeString = endTimeDate.toISOString();
+
+    request.accessType = "PRIVATE";
+    request.challengeShortCode = challengeShortCode;
+    request.endTime = endTimeString;
+    request.expiryTime = endTimeString;
+    request.usersToChallenge = participants[1].id;
+    
+    request.Send();
 }

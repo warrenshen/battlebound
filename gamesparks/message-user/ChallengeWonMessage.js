@@ -8,6 +8,19 @@
 
 require("ProcessRank");
 
+if (Spark.getData().challenge.shortCode === "RankedChallenge") {
+    var playerId1 = Spark.getData().challenge.challenger.id;
+    var playerId2 = Spark.getData().challenge.challenged[0].id;
+
+    var winnerPlayerId = Spark.getPlayer().getPlayerId();
+    var loserPlayerId = winnerPlayerId != playerId1 ? playerId1 : playerId2;
+
+    var newScores = processRank(winnerPlayerId, loserPlayerId);
+
+    const newScore = newScores[winnerPlayerId];
+    setLeaderboardsScore(newScore);
+}
+
 require("ChallengeUserMessageSuffix");
 
 require("CancelScheduledTimeEventsModule");

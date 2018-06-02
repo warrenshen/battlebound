@@ -44,10 +44,22 @@ if (error) {
 }
 
 if (matchShortCode === "CasualMatch") {
-    const request = new SparkRequests.MatchmakingRequest();
+    var request = new SparkRequests.MatchmakingRequest();
     request.matchShortCode = matchShortCode;
     request.skill = 0;
     request.Execute();
+} else if (matchShortCode === "RankedMatch") {
+    var scoreRequest = new SparkRequests.GetLeaderboardEntriesRequest();
+    scoreRequest.leaderboards = ["HIGH_SCORE_LB"];
+    scoreRequest.player = playerId;
+    var response = scoreRequest.Send();
+    rankedScore = response.HIGH_SCORE_LB.SCORE_ATTR;
+    
+    var request = new SparkRequests.MatchmakingRequest();
+    request.matchShortCode = matchShortCode;
+    request.skill = 0;
+    request.Execute();
+    
 } else {
     Spark.setScriptError("ERROR", "Invalid match short code.");
     Spark.exit();
