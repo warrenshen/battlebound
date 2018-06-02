@@ -46,6 +46,8 @@ function _getDeckByCards(cards) {
         health: "health",
         manaCost: "cost",
         name: "name",
+        description: "description",
+        abilities: "abilities",
     };
     
     // Form final card objects by combining fields of both Card and Template objects.

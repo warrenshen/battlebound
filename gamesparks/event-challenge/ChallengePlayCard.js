@@ -10,17 +10,17 @@
 // - 2: structure (play on field)
 // - 3: weapon (use and discard)
 //
+// Security concerns:
+// - Is the Card played valid (attributes are not changed)?
+//   The Card is stored on server-side and cannot be tampered with.
+// - Does the player own the Card played?
+//   It could only be in the player's hand (stored server side) if so.
+//
 // ====================================================================================================
 require("ChallengeEventPrefix");
+require("CardAbilitiesModule");
+require("AttackModule");
 
-/**
- * Security concerns:
- * - Is the Card played valid (attributes are not changed)?
- *   The Card is stored on server-side and cannot be tampered with.
- * - Does the player own the Card played?
- *   It could only be in the player's hand (stored server side) if so.
- **/
- 
 const CARD_TYPE_MINION = 0;
 const CARD_TYPE_SPELL = 1;
 const CARD_TYPE_STRUCTURE = 2;
@@ -54,7 +54,11 @@ if (playedCard.manaCost > playerManaCurrent) {
     Spark.setScriptError("ERROR", "Card mana cost exceeds player's current mana.");
     Spark.exit();
 } else {
-    playerState.manaCurrent = playerState.manaCurrent - playedCard.manaCost;
+    playerState.manaCurrent = playerState.manaCurrent - playedCard.cost;
+    if (!Number.isInteger(playerState.manaCurrent)) {
+        Spark.setScriptError("ERROR", "Player mana current is no longer an int.");
+        Spark.exit();
+    }
 }
 
 var move;
@@ -69,7 +73,19 @@ if (playedCard.category === CARD_TYPE_MINION) {
         Spark.exit();
     }
     
-    playedCard.canAttack = 0;
+    if (!Array.isArray(playedCard.abilities)) {
+        playedCard.abilities = [];
+    }
+    if (playedCard.abilities.indexOf(CARD_ABILITY_CHARGE) >= 0) {
+        playedCard.canAttack = 1;
+    } else {
+        playedCard.canAttack = 0;
+    }
+    if (playedCard.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
+        playedCard.hasShield = 1;
+    } else {
+        playedCard.hasShield = 0;
+    }
     
     const newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
     playerState.field = newField;
@@ -85,7 +101,7 @@ if (playedCard.category === CARD_TYPE_MINION) {
 } else if (playedCard.category === CARD_TYPE_SPELL) {
     if (playedCard.name === "Blizzard") {
         // For now, only spell that exists is to damage all enemy cards by 1.
-        opponentField.forEach(function(card) { card.health -= 2 });
+        opponentField.forEach(function(card) { damageCard(card, 2) });
     } else {
         Spark.setScriptError("ERROR", "Unrecognized spell card name.");
         Spark.exit();
