@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CardObject : MonoBehaviour {
+public class CardObject : MonoBehaviour
+{
     private string json;
-    private Card card;
+    public Card card;
 
     private SpriteRenderer spr;
-    private Collider col;
+    public SpriteRenderer Renderer => spr;
+    private Collider coll;
     private Texture2D image;
 
     private Vector3 resetPosition;
@@ -15,6 +17,8 @@ public class CardObject : MonoBehaviour {
     private Quaternion resetRotation;
 
     private ActionManager action;
+    private float lastClicked;
+    public bool minified;
 
     public void Awake()
     {
@@ -23,24 +27,28 @@ public class CardObject : MonoBehaviour {
     }
 
     //if pass-in json overload method
-    public void InitializeCard(string json) {
+    public void InitializeCard(string json)
+    {
         Card parsed = JsonUtility.FromJson<Card>(json);
         InitializeCard(parsed);
     }
 
-    public void InitializeCard(Card card) {
+    public void InitializeCard(Card card)
+    {
         this.card = card;
         //make render changes according to card class here
-        image = Resources.Load(card.imagefile) as Texture2D;
+        image = Resources.Load(card.Image) as Texture2D;
         spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-        col = gameObject.AddComponent<BoxCollider>() as Collider;
+        spr.sortingOrder = 10;
+        coll = gameObject.AddComponent<BoxCollider>() as Collider;
+        coll.GetComponent<BoxCollider>().size = new Vector3(2.5f, 3.5f, 0.2f);
     }
 
     public void OnMouseEnter()
     {
         if (action.HasDragTarget())
             return;
-        
+
         float scaling = 1.1f;
         transform.localScale = new Vector3(scaling, scaling, scaling);
     }
@@ -49,8 +57,8 @@ public class CardObject : MonoBehaviour {
     {
         if (action.HasDragTarget())
             return;
-        
-        transform.localScale = new Vector3(1,1,1);
+
+        transform.localScale = new Vector3(1, 1, 1);
     }
 
     public void OnMouseOver()
@@ -64,7 +72,7 @@ public class CardObject : MonoBehaviour {
         resetScale = transform.localScale;
         resetRotation = transform.localRotation;
 
-        action.SetDragTarget(transform);
+        action.SetDragTarget(transform, Renderer);
     }
 
     public void OnMouseUp()
@@ -74,5 +82,27 @@ public class CardObject : MonoBehaviour {
         transform.localPosition = resetPosition;
         transform.localScale = resetScale;
         transform.localRotation = resetRotation;
+
+        if (Time.time - lastClicked < 0.5f)
+            DoubleClickUp();
+        lastClicked = Time.time;
+    }
+
+    public void DoubleClickUp()
+    {
+        Debug.Log(gameObject.name + " double clicked.");
+    }
+
+    public void Minify(bool val)
+    {
+        if(val) {
+            spr.sprite = Sprite.Create(image, new Rect(0.0f, image.height / 2 - 40, image.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
+            minified = true;
+        }
+        else {
+            spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
+            minified = false;
+        }
+
     }
 }

@@ -10,18 +10,18 @@ public static class JsonList
         return wrapper.Items;
     }
 
-    public static string ToJson<T>(List<T> array)
+    public static string ToJson<T>(List<T> array, string name)
     {
         Wrapper<T> wrapper = new Wrapper<T>();
         wrapper.Items = array;
-        return JsonUtility.ToJson(wrapper);
+        return JsonUtility.ToJson(wrapper).Replace("Items", name);
     }
 
-    public static string ToJson<T>(List<T> array, bool prettyPrint)
+    public static string ToJson<T>(List<T> array, string name, bool prettyPrint)
     {
         Wrapper<T> wrapper = new Wrapper<T>();
         wrapper.Items = array;
-        return JsonUtility.ToJson(wrapper, prettyPrint);
+        return JsonUtility.ToJson(wrapper, prettyPrint).Replace("Items", name);
     }
 
     [System.Serializable]

@@ -3,38 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ActionManager : MonoBehaviour {
+    public bool allowPan = false;
+
     private float SCROLL_DAMPING = 0.1f;
     private float M_THRESHOLD = 2000f;
     private float L_SPEED = 9f;
 
     private Camera cam;
     private Transform target;
+    private SpriteRenderer sp;
     private Quaternion[] dragTilts = new Quaternion[5];
 
-    private void Start()
+    private Collection collection;
+
+    private void Awake()
     {
         cam = Camera.main;
+        collection = cam.GetComponent<Collection>();
     }
 
     // Update is called once per frame
     void Update () {
-        ScrollToPan(new Vector3(0f, 1f, 0f));
+        if(allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
         if(target) {
             RepositionCard(target);
             AdjustCardTilt(target);
         }
+        //RaycastMouse();
 	}
 
-    public void SetDragTarget(Transform target) {
+    private void RaycastMouse() {
+        if (Input.GetMouseButton(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log("Name = " + hit.collider.name);
+            }
+        }
+    }
+
+    public void SetDragTarget(Transform target, SpriteRenderer target_sp) {
         this.target = target;
+        this.sp = target_sp;
+        this.sp.sortingOrder = 100;
     }
 
     public bool HasDragTarget() {
-        return target != null;
+        return this.target != null;
+    }
+
+    public Transform GetDragTarget() {
+        return this.target;
     }
 
     public void ClearDragTarget()
     {
+        this.sp.sortingOrder = 0;
         this.target = null;
     }
 
@@ -103,5 +129,10 @@ public class ActionManager : MonoBehaviour {
         dragTilts[3].eulerAngles = new Vector3(0, normalized);
         //no-tilt
         dragTilts[4].eulerAngles = new Vector3(0, 0, 0);
+    }
+
+    public void AddCardToDeck(CardObject card) {
+        if(collection != null)
+           collection.AddToDeck(card);
     }
 }
