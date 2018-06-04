@@ -20,6 +20,7 @@ public class CardObject : MonoBehaviour
     private float lastClicked;
     public bool minified;
 
+
     public void Awake()
     {
         action = Camera.main.GetComponent<ActionManager>();
@@ -36,6 +37,7 @@ public class CardObject : MonoBehaviour
     public void InitializeCard(Card card)
     {
         this.card = card;
+        card.wrapper = this;
         //make render changes according to card class here
         image = Resources.Load(card.Image) as Texture2D;
         spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
@@ -91,6 +93,7 @@ public class CardObject : MonoBehaviour
     public void DoubleClickUp()
     {
         Debug.Log(gameObject.name + " double clicked.");
+        action.AddCardToDeck(this);
     }
 
     public void Minify(bool val)

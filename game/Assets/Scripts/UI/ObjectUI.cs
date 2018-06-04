@@ -5,15 +5,17 @@ using UnityEngine;
 public abstract class ObjectUI : MonoBehaviour {
 	protected bool selected;
 	protected Vector3 originalSize;
+    protected float scalingFactor;
 
 	// Use this for initialization
 	protected void Initialize () {
+        scalingFactor = 1.03f;
 		originalSize = transform.localScale;
 	}
 	
 	protected void OnMouseEnter()
     {
-        transform.localScale = originalSize* 1.03f;
+        transform.localScale = originalSize * scalingFactor;
     }
 
 	protected void OnMouseExit()
