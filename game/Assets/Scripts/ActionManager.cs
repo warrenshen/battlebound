@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ActionManager : MonoBehaviour {
     public bool allowPan = false;
+    public float cardOffsetFromCamera = 8.0f;
 
     private float SCROLL_DAMPING = 0.1f;
     private float M_THRESHOLD = 2000f;
@@ -70,10 +71,8 @@ public class ActionManager : MonoBehaviour {
 
     private void RepositionCard(Transform card)
     {
-        float SELECTED_CARD_LIFT = 0.72f;
-
         //set target position by mouse position
-        Vector3 endPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.transform.position.z - SELECTED_CARD_LIFT));
+        Vector3 endPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cardOffsetFromCamera));
         card.position = Vector3.Lerp(card.position, endPos, Time.deltaTime * L_SPEED);
     }
 
@@ -123,12 +122,11 @@ public class ActionManager : MonoBehaviour {
         float normalized = maxTilt * Mathf.Clamp((magnitude - M_THRESHOLD) / 30000, 0f, 1.0f);
 
         // calculate tilts based off default
-        dragTilts[0].eulerAngles = new Vector3(normalized, 0);
-        dragTilts[1].eulerAngles = new Vector3(-normalized, 0);
-        dragTilts[2].eulerAngles = new Vector3(0, -normalized);
-        dragTilts[3].eulerAngles = new Vector3(0, normalized);
-        //no-tilt
-        dragTilts[4].eulerAngles = new Vector3(0, 0, 0);
+        dragTilts[0].eulerAngles = new Vector3(transform.rotation.eulerAngles.x - normalized, 0);
+        dragTilts[1].eulerAngles = new Vector3(transform.rotation.eulerAngles.x + normalized, 0);
+        dragTilts[2].eulerAngles = new Vector3(transform.rotation.eulerAngles.x, -normalized);
+        dragTilts[3].eulerAngles = new Vector3(transform.rotation.eulerAngles.x, normalized);
+        dragTilts[4].eulerAngles = new Vector3(transform.rotation.eulerAngles.x, 0, 0);
     }
 
     public void AddCardToDeck(CardObject card) {

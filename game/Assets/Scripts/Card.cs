@@ -39,6 +39,8 @@ public class Card {
     private string image;
     public string Image => image;
 
+    public CardObject wrapper;
+
 
     public Card(string id, string name, CardType category, int cost, int attack, int health, string image) {
         this.id = id;

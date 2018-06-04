@@ -6,12 +6,14 @@ using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
 using TMPro;
 
+[System.Serializable]
 public class Collection : MonoBehaviour {
 
     private List<Card> collection;
     private List<Deck> decks;
-    public List<Card> deckToBuild;
-    private Dictionary<Card, CardObject> cardToObject;
+    [SerializeField]
+    private Deck chosenDeck;
+    private Dictionary<string, Card> idToCard;
 
     private List<CardCutout> cutouts;
     private GameObject panel;
@@ -25,30 +27,12 @@ public class Collection : MonoBehaviour {
     private LogEventResponse cardsResponse;
 
 
-    //private class Storage
-    //{
-    //    private List<Card> used;
-    //    private List<Card> remaining;
-    //}
-
-    //private void Start()
-    //{
-    //    StartCoroutine("RotateToDeckbuilding");
-    //}
-
-    public void RotateToDeck(Deck deck) {
-        LeanTween.rotateY(gameObject, 2f, 1f).setEaseOutCubic();
-        foreach(Card card in deck.Cards) {
-            AddToDeck(cardToObject[card]);
-        }
-    }
-
     private void Awake()
     {
         collection = new List<Card>();
         decks = new List<Deck>();
         cutouts = new List<CardCutout>();
-        cardToObject = new Dictionary<Card, CardObject>();
+        idToCard = new Dictionary<string, Card>();
 
         //ping server for collection json
         GetCollectionRequest();
@@ -56,20 +40,8 @@ public class Collection : MonoBehaviour {
         cam = Camera.main;
         action = cam.GetComponent<ActionManager>();
         collectionObject = new GameObject("Collection");
-        panel = GameObject.Find("Panel");
+        panel = GameObject.Find("Build Panel");
         panelColl = panel.GetComponent<BoxCollider>() as Collider;
-    }
-
-    private void CreateDecksView() {
-        GameObject placeholders = GameObject.Find("Deck Panel Placeholders");
-        int count = 0;
-        foreach(Deck deck in decks) {
-            Transform t = placeholders.transform.GetChild(count);
-            GameObject created = Instantiate(deckPanel, t.position, t.localRotation);
-            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
-            created.GetComponent<DeckPanel>().Initialize(deck, this);
-            ++count;
-        }
     }
 
     private void Update()
@@ -107,6 +79,11 @@ public class Collection : MonoBehaviour {
                 AddToDeck(selectedCard);
                 RevertMinify(selectedCard);
             }
+            else if(Physics.Raycast(ray, out hit, 100.0F)) {
+                if(hit.collider.name == "Save Button") {
+                    SaveCollectionRequest();
+                }
+            }
         }
     }
 
@@ -121,20 +98,57 @@ public class Collection : MonoBehaviour {
         selectedCard = null;
     }
 
+    public void RotateToDeck(Deck deck)
+    {
+        LeanTween.rotateY(gameObject, 2f, 1f).setEaseOutCubic();
+        Debug.Log("# of cards in deck: " + deck.Cards.Count);
+        List<Card> existing= new List<Card>(deck.Cards);
+        chosenDeck = deck;
+        GameObject.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
+
+        foreach (Card card in existing)
+        {
+            if (card.wrapper != null)
+            {
+                AddToBuildPanel(card.wrapper);
+            }
+            else Debug.LogError(card.Name);
+        }
+    }
+
+    private void CreateDecksView()
+    {
+        GameObject placeholders = GameObject.Find("Deck Panel Placeholders");
+        int count = 0;
+        foreach (Deck deck in decks)
+        {
+            Transform t = placeholders.transform.GetChild(count);
+            GameObject created = Instantiate(deckPanel, t.position, t.localRotation);
+            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
+            created.GetComponent<DeckPanel>().Initialize(deck, this);
+            ++count;
+        }
+    }
+
     public void AddToDeck(CardObject wrapper) {
         //add to data structure
-        deckToBuild.Add(wrapper.card);
-        wrapper.gameObject.SetActive(false);
+        chosenDeck.AddCard(wrapper.card);
+        AddToBuildPanel(wrapper);
+    }
 
+    public void AddToBuildPanel(CardObject wrapper) {
+        wrapper.gameObject.SetActive(false);
         //create and set visuals
         GameObject instance = new GameObject("Added " + wrapper.card.Name) as GameObject;
         CardCutout cutout = instance.AddComponent<CardCutout>();
-        cutout.Initialize(wrapper, deckToBuild, this);
+        cutout.Initialize(wrapper, chosenDeck.Cards, this);
         cutouts.Add(cutout);
+        //reposition all cutouts
+        RenderDecklist();
     }
 
     public void RemoveFromDeck(CardObject wrapper, CardCutout cutout) {
-        deckToBuild.Remove(wrapper.card);
+        chosenDeck.RemoveCard(wrapper.card);
         wrapper.gameObject.SetActive(true);
 
         cutouts.Remove(cutout);
@@ -143,56 +157,76 @@ public class Collection : MonoBehaviour {
     }
 
     private void RenderDecklist() {
-        int count = 1;
-        foreach(CardCutout cutout in cutouts) {
-            cutout.PositionCutout(count);
-            count++;
+        for (int i = 0; i < cutouts.Count; ++i)
+        {
+            cutouts[i].PositionCutout(i);
         }
+    }
+
+    private void SaveCollectionRequest() {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("CreateUpdatePlayerDeck");
+        List<string> cardIds = new List<string>();
+        foreach(Card card in chosenDeck.Cards) {
+            cardIds.Add(card.Id);
+        }
+        request.SetEventAttribute("cardIds", cardIds);
+        request.SetEventAttribute("previousName", chosenDeck.Name);
+        request.SetEventAttribute("name", chosenDeck.Name);
+        request.Send(SaveCollectionSuccess, Error);
+    }
+
+    private void SaveCollectionSuccess(LogEventResponse resp) {
+        Debug.Log("Successfully saved deck.");
     }
 
     private void GetCollectionRequest()
     {
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("GetPlayerCards");
-        request.Send(Success, Error); //TODO: set callbacks
+        request.Send(GetCollectionSuccess, Error); //TODO: set callbacks
     }
 
-    private void Success(LogEventResponse resp)
+    private void GetCollectionSuccess(LogEventResponse resp)
     {
         cardsResponse = resp;
         GSData decksData = resp.ScriptData.GetGSData("decks");
         Debug.Log(decksData.BaseData.Count + " decks found.");
-        foreach(string key in decksData.BaseData.Keys) {
-            List<GSData> gdata = decksData.GetGSDataList(key);
-            Deck created = new Deck(key, new List<Card>(), Deck.DeckClass.Warrior);
 
-            foreach(GSData card in gdata) {
-                Card newCard = JsonUtility.FromJson<Card>(card.JSON);
-                created.Cards.Add(newCard);
-            }
-            decks.Add(created);
-        }
-
+        //Create pool of cards
         List<GSData> data = resp.ScriptData.GetGSDataList("cards");
         foreach(GSData elem in data) {
             Card newCard = JsonUtility.FromJson<Card>(elem.JSON);
             collection.Add(newCard);
         }
         CreateCardObjects();
+
+        //Create decks by mapping to cards
+        foreach (string key in decksData.BaseData.Keys)
+        {
+            List<string> gdata = decksData.GetStringList(key);
+            Deck created = new Deck(key, new List<Card>(), Deck.DeckClass.Warrior);
+            foreach (string cardId in gdata)
+            {
+                //Card newCard = JsonUtility.FromJson<Card>(card.JSON);
+                created.Cards.Add(idToCard[cardId]);
+            }
+            decks.Add(created);
+        }
         CreateDecksView();
     }
 
     private void Error(LogEventResponse resp)
     {
-        Debug.LogError("Server-side error in GetCollectionRequest().");
+        Debug.Log("Gamesparks Request Error!");
     }
 
-    private void ParseDeck(string json)
-    {
-        //json = json.Replace("DeckB", "Items");
-        Debug.Log(json);
-        deckToBuild = JsonList.FromJson<Card>(json);
-    }
+    //private void ParseDeck(string json)
+    //{
+    //    //json = json.Replace("DeckB", "Items");
+    //    Debug.Log(json);
+    //    chosenDeck.SetCards(JsonList.FromJson<Card>(json));
+    //}
 
     private void CreateCardObjects()
     {
@@ -209,9 +243,9 @@ public class Collection : MonoBehaviour {
         {
             GameObject created = new GameObject(card.Name);
             created.transform.parent = collectionObject.transform;
-            CardObject cWrapper = created.AddComponent<CardObject>();
-            cWrapper.InitializeCard(card);
-            cardToObject.Add(card, cWrapper);
+            CardObject wrapper = created.AddComponent<CardObject>();
+            wrapper.InitializeCard(card);
+            idToCard.Add(card.Id, card);
 
             created.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
             CreateGrayed(created.transform, card).parent = grayed;
@@ -236,7 +270,7 @@ public class Collection : MonoBehaviour {
     private void CreateDeckLocal()
     {
         //jank json test, for generating list of json objects
-        collection.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling(55524)"));
-        collection.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe(632)_Gold"));
+        collection.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling"));
+        collection.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
     }
 }
