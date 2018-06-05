@@ -5,7 +5,6 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-
 function cleanHex(hexInput) {
     if (hexInput.indexOf("0x") === 0) {
         return hexInput.substring(2);
@@ -38,6 +37,15 @@ function convertHexToInt(hexInput) {
         }
         return result;
     }
+}
+
+function padParameter(param) {
+    const paramString = param.toString();
+    var leftPadding = "";
+    for (var i = 0; i < 64 - paramString.length; i += 1) {
+        leftPadding += "0";
+    }
+    return leftPadding + paramString;
 }
 
 /**
