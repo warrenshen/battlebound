@@ -63,12 +63,13 @@ contract CardMint is CardBase {
   event TemplateCreated(uint256 templateId);
   event InstanceMinted(address owner, uint256 cardId, uint256 templateId);
 
-  event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
-  event Approval(address _owner, address _approved, uint256 _tokenId);
+  event Transfer(address indexed from, address indexed to, uint256 tokenId);
+  event Approval(address owner, address approved, uint256 tokenId);
 
   /* DATA TYPES */
   struct Template {
     uint128 generation;
+    // uint64 category;
     uint128 power;
     string name;
   }
@@ -150,12 +151,11 @@ contract CardOwnership is CardMint {
   /** PRIVATE FUNCTIONS **/
   function _approve(address _owner, address _approved, uint256 _tokenId) internal {
     cardIdToApproved[_tokenId] = _approved;
-    // Emit approval event.
     emit Approval(_owner, _approved, _tokenId);
   }
 
   function _approvedFor(address _claimant, uint256 _tokenId) internal view returns (bool) {
-    return cardIdToOwner[_tokenId] == _claimant;
+    return cardIdToApproved[_tokenId] == _claimant;
   }
 
   /** PUBLIC FUNCTIONS **/
@@ -225,20 +225,26 @@ contract CardTreasury is CardOwnership {
     name = template.name;
   }
 
-  function ownerOf(uint256 _tokenId) external view returns (address owner) {
-    owner = cardIdToOwner[_tokenId];
-    require(owner != address(0));
+  function templateIdOf(uint256 _tokenId) external view returns (uint256) {
+    require(_tokenId < cards.length);
+    return cards[_tokenId];
   }
 
-  function balanceOf(address _owner) public view returns (uint256 count) {
+  function ownerOf(uint256 _tokenId) external view returns (address) {
+    address owner = cardIdToOwner[_tokenId];
+    require(owner != address(0));
+    return owner;
+  }
+
+  function balanceOf(address _owner) public view returns (uint256) {
     return ownerCardCount[_owner];
   }
 
-  function templatesSupply() public view returns (uint256 count) {
+  function templatesSupply() public view returns (uint256) {
     return templates.length;
   }
 
-  function instancesSupply() public view returns (uint256 count) {
+  function instancesSupply() public view returns (uint256) {
     return cards.length;
   }
 
@@ -254,7 +260,7 @@ contract CardTreasury is CardOwnership {
     return "TCG";
   }
 
-  function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds) {
+  function tokensOfOwner(address _owner) external view returns (uint256[]) {
     uint256 tokenCount = balanceOf(_owner);
 
     if (tokenCount == 0) {
