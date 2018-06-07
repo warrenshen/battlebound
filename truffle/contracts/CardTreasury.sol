@@ -1,6 +1,7 @@
 pragma solidity ^0.4.23;
 
 import "./Ownable.sol";
+import "./CardAuction.sol";
 
 // contract ERCXXXX {
 //   // Events
@@ -90,6 +91,8 @@ contract CardMint is CardBase {
   mapping (address => uint256) internal ownerCardCount;
   // Card ID => address approved to transfer on behalf of owner.
   mapping (uint256 => address) internal cardIdToApproved;
+
+  ClockAuction public saleAuction;
 
   /* FUNCTIONS */
   /** PRIVATE FUNCTIONS **/
@@ -280,5 +283,30 @@ contract CardTreasury is CardOwnership {
 
       return result;
     }
+  }
+
+  function createSaleAuction(
+    uint256 _tokenId,
+    uint256 _startingPrice,
+    uint256 _endingPrice,
+    uint256 _duration
+  )
+    external
+    onlyTokenOwner(_tokenId)
+  {
+    _approve(msg.sender, saleAuction, _tokenId);
+    saleAuction.createAuction(
+        _tokenId,
+        _startingPrice,
+        _endingPrice,
+        _duration,
+        msg.sender
+    );
+  }
+
+  function setSaleAuction(address _address) external onlyOwner {
+    ClockAuction candidateContract = ClockAuction(_address);
+    require(candidateContract.isSaleAuction());
+    saleAuction = candidateContract;
   }
 }

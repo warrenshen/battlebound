@@ -255,6 +255,8 @@ contract ClockAuctionBase {
 /// @notice We omit a fallback function to prevent accidental sends to this contract.
 contract ClockAuction is Pausable, ClockAuctionBase {
 
+  bool public isSaleAuction = true;
+
   // /// @dev The ERC-165 interface signature for ERC-721.
   // ///  Ref: https://github.com/ethereum/EIPs/issues/165
   // ///  Ref: https://github.com/ethereum/EIPs/issues/721
@@ -313,8 +315,10 @@ contract ClockAuction is Pausable, ClockAuctionBase {
     require(_endingPrice == uint256(uint128(_endingPrice)));
     require(_duration == uint256(uint64(_duration)));
 
-    require(_owns(msg.sender, _tokenId));
-    _escrow(msg.sender, _tokenId);
+    require(msg.sender == address(nonFungibleContract));
+
+    _escrow(_seller, _tokenId);
+
     Auction memory auction = Auction(
       _seller,
       uint128(_startingPrice),
