@@ -1,7 +1,18 @@
 pragma solidity ^0.4.23;
 
-import "./Ownable.sol";
-import "./CardAuction.sol";
+import "./Pausable.sol";
+
+contract ClockAuction {
+  function createAuction(
+    uint256 _tokenId,
+    uint256 _startingPrice,
+    uint256 _endingPrice,
+    uint256 _duration,
+    address _seller
+  ) external;
+
+  function isSaleAuction() external returns (bool);
+}
 
 // contract ERCXXXX {
 //   // Events
@@ -30,7 +41,7 @@ import "./CardAuction.sol";
 //   // function supportsInterface(bytes4 _interfaceID) external view returns (bool);
 // }
 
-contract CardBase is Ownable {
+contract CardBase is Pausable {
     // bytes4 constant InterfaceSignature_ERC165 =
     //     bytes4(keccak256('supportsInterface(bytes4)'));
 
@@ -285,6 +296,12 @@ contract CardTreasury is CardOwnership {
     }
   }
 
+  function setSaleAuction(address _address) external onlyOwner {
+    ClockAuction candidateContract = ClockAuction(_address);
+    require(candidateContract.isSaleAuction());
+    saleAuction = candidateContract;
+  }
+
   function createSaleAuction(
     uint256 _tokenId,
     uint256 _startingPrice,
@@ -302,11 +319,5 @@ contract CardTreasury is CardOwnership {
         _duration,
         msg.sender
     );
-  }
-
-  function setSaleAuction(address _address) external onlyOwner {
-    ClockAuction candidateContract = ClockAuction(_address);
-    require(candidateContract.isSaleAuction());
-    saleAuction = candidateContract;
   }
 }
