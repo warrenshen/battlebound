@@ -6,9 +6,11 @@ contract('CardAuction', function(accounts) {
   let treasury;
   let auction;
 
-  const tokenId = 0;
+  const minter = accounts[0];
   const seller = accounts[1];
   const buyer = accounts[2];
+
+  const tokenId = 0;
 
   const startingPrice = 1e+4;
   const endingPrice = 1e+4;
@@ -20,21 +22,16 @@ contract('CardAuction', function(accounts) {
       treasury = await CardTreasury.new();
       auction = await CardAuction.new(treasury.address, ownerCut);
 
-      await treasury.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
-      await treasury.mintCard(0, seller, { from: accounts[0] });
+      await treasury.setSaleAuction(auction.address, { from: minter });
 
-      await treasury.approve(
-        auction.address,
+      await treasury.createTemplate(1, 0, 9, "T1", { from: minter });
+      await treasury.mintCard(tokenId, seller, { from: minter });
+
+      await treasury.createSaleAuction(
         tokenId,
-        { from: seller }
-      );
-
-      await auction.createAuction(
-        0,
         startingPrice,
         endingPrice,
         duration,
-        seller,
         { from: seller }
       );
     });
@@ -67,21 +64,16 @@ contract('CardAuction', function(accounts) {
       treasury = await CardTreasury.new();
       auction = await CardAuction.new(treasury.address, ownerCut);
 
-      await treasury.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
-      await treasury.mintCard(0, seller, { from: accounts[0] });
+      await treasury.setSaleAuction(auction.address, { from: minter });
 
-      await treasury.approve(
-        auction.address,
+      await treasury.createTemplate(1, 0, 9, "T1", { from: minter });
+      await treasury.mintCard(tokenId, seller, { from: minter });
+
+      await treasury.createSaleAuction(
         tokenId,
-        { from: seller }
-      );
-
-      await auction.createAuction(
-        0,
         startingPrice,
         endingPrice,
         duration,
-        seller,
         { from: seller }
       );
     });
