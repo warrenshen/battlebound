@@ -3,7 +3,7 @@
 // A module of functions related to the PlayerDecks table and in-memory deck arrays.
 //
 // ====================================================================================================
-require("OnChainModule");
+ require("OnChainModule");
 
 /**
  * Fetches Template objects from the DB and uses
@@ -99,8 +99,12 @@ function _getBCardsByBCardIds(bCardIds) {
 function _createBCardByBCardId(bCardId) {
     const API = Spark.getGameDataService();
 
-    const cardId = bCardId.substring(1);
-    const templateInt = fetchTemplateIdByCardId(cardId);
+    const cardInt = parseInt(bCardId.substring(1));
+    const templateInt = fetchTemplateIntByCardInt(cardInt);
+    if (!Number.isInteger(templateInt)) {
+        Spark.setScriptError("ERROR", "Invalid templateInt for cardInt.");
+        Spark.exit();
+    }
     const templateId = "B" + templateInt.toString();
 
     const cardDataItem = API.createItem("Card", bCardId);
@@ -121,7 +125,7 @@ function _getBCardIdsFromChainByPlayer(player) {
     const address = player.getScriptData("address");
     if (address) {
         const bCardInts = fetchCardIdsByAddress(address);
-        return bCardInts.map(function(t) { return "B" + t.toString() });
+        return bCardInts.map(function(cardInt) { return "B" + cardInt.toString() });
     } else {
         return [];
     }
@@ -130,7 +134,7 @@ function _getBCardIdsFromChainByPlayer(player) {
 function _getBCardIdsByPlayer(player) {
     const address = player.getScriptData("address");
     const bCardIds = _getBCardIdsFromChainByPlayer(player);
-    var bCards = _getBCardsByBCardIds(bCardIds);
+    const bCards = _getBCardsByBCardIds(bCardIds);
 
     if (bCardIds.length !== bCards.length) {
         const existingBCardIds = bCards.map(function(bCard) { return bCard.id });
@@ -139,12 +143,6 @@ function _getBCardIdsByPlayer(player) {
         missingBCardIds.forEach(function(bCardId) {
             _createBCardByBCardId(bCardId);
         });
-
-        bCards = _getBCardsByBCardIds(bCardIds);
-        if (bCardIds.length !== bCards.length) {
-            Spark.setScriptError("ERROR", "Length of bCards is incorrect.");
-            Spark.exit();
-        }
     }
 
     return bCardIds;
