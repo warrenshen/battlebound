@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CardObject : MonoBehaviour
 {
@@ -12,14 +13,16 @@ public class CardObject : MonoBehaviour
     private Collider coll;
     private Texture2D image;
 
-    private Vector3 resetPosition;
-    private Vector3 resetScale;
-    private Quaternion resetRotation;
-
     private ActionManager action;
     private float lastClicked;
     public bool minified;
 
+    public struct Reset {
+        public Vector3 resetPosition;
+        public Vector3 resetScale;
+        public Quaternion resetRotation;
+    }
+    public Reset reset;
 
     public void Awake()
     {
@@ -59,7 +62,6 @@ public class CardObject : MonoBehaviour
     {
         if (action.HasDragTarget())
             return;
-
         transform.localScale = new Vector3(1, 1, 1);
     }
 
@@ -70,20 +72,21 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseDown()
     {
-        resetPosition = transform.localPosition;
-        resetScale = transform.localScale;
-        resetRotation = transform.localRotation;
+        reset.resetPosition = transform.localPosition;
+        reset.resetScale = transform.localScale;
+        reset.resetRotation = transform.localRotation;
 
-        action.SetDragTarget(transform, Renderer);
+        action.SetDragTarget(this, Renderer);
     }
 
     public void OnMouseUp()
     {
-        action.ClearDragTarget();
+        if (!action.HasDragTarget())
+            return;
 
-        transform.localPosition = resetPosition;
-        transform.localScale = resetScale;
-        transform.localRotation = resetRotation;
+        ////resets card object position to original
+        //action.ResetTarget();
+        //action.ClearDragTarget();
 
         if (Time.time - lastClicked < 0.5f)
             DoubleClickUp();
@@ -93,7 +96,8 @@ public class CardObject : MonoBehaviour
     public void DoubleClickUp()
     {
         Debug.Log(gameObject.name + " double clicked.");
-        action.AddCardToDeck(this);
+        if(Application.loadedLevelName == "Collection")
+            action.AddCardToDeck(this);
     }
 
     public void Minify(bool val)

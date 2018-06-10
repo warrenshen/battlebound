@@ -4,6 +4,7 @@ using UnityEngine;
 using GameSparks.Core;
 using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 [System.Serializable]
@@ -56,10 +57,9 @@ public class Collection : MonoBehaviour {
         {
             if (!action.HasDragTarget())
                 return;
-            Transform floatingCard = action.GetDragTarget();
-            Ray ray = new Ray(floatingCard.position, Camera.main.transform.forward);
+            selectedCard = action.GetDragTarget();
+            Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
             RaycastHit hit;
-            selectedCard = floatingCard.GetComponent<CardObject>();
 
             if (selectedCard && panelColl.Raycast(ray, out hit, 100.0F))
                 MinifyCard(selectedCard);
@@ -82,6 +82,10 @@ public class Collection : MonoBehaviour {
             else if(Physics.Raycast(ray, out hit, 100.0F)) {
                 if(hit.collider.name == "Save Button") {
                     SaveCollectionRequest();
+                }
+                else if (hit.collider.name == "Back Button")
+                {
+                    SceneManager.LoadScene("Collection");
                 }
             }
         }

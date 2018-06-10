@@ -5,17 +5,22 @@ using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
 
 public class SparkSingleton : Singleton<SparkSingleton> {
+    public string username = "warren";
+    public string password = "password";
+
     private void Awake()
     {
         base.Awake();
-        Login();
+        Login(username, password);
     }
 
-    private void Login()
+    public void Login(string name, string password)
     {
         AuthenticationRequest request = new AuthenticationRequest();
-        request.SetUserName("warren");
-        request.SetPassword("password");
+        //request.SetUserName("warren");
+        //request.SetPassword("password");
+        request.SetUserName(name);
+        request.SetPassword(password);
         request.Send(OnLoginSuccess, OnLoginError);
     }
 
@@ -41,7 +46,7 @@ public class SparkSingleton : Singleton<SparkSingleton> {
 
     private void OnRegistrationSuccess(RegistrationResponse response)
     {
-        Login();
+        //Login();
     }
 
     private void OnRegistrationError(RegistrationResponse response)

@@ -10,7 +10,6 @@ public class CardCutout : ObjectUI {
     public void Initialize(CardObject wrapper, List<Card> deck, Collection collection) {
         this.collection = collection;
         this.wrapper = wrapper;
-
         SpriteRenderer sp = gameObject.AddComponent<SpriteRenderer>();
         Texture2D texture = wrapper.Renderer.sprite.texture;
         sp.sprite = Sprite.Create(texture, new Rect(0.0f, texture.height / 2 - 40, texture.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
