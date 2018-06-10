@@ -67,7 +67,6 @@ public class ActionManager : MonoBehaviour {
         }
         if(Input.GetMouseButtonUp(0)) {
             //TODO: check target.card.type for spell or weapon first
-            Debug.Log("Mouse up with board playable card.");
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -78,6 +77,7 @@ public class ActionManager : MonoBehaviour {
             else if (Physics.Raycast(ray, out hit, 100f, boardLayerMask) && hit.collider.name.Contains("Player"))
             {
                 //place card
+                Debug.Log("Mouse up with board playable card.");
                 battleManager.PlayCardToBoard(battleManager.you, target, hit);
             }
             else {

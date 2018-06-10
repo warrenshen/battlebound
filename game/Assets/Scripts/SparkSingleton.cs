@@ -44,7 +44,7 @@ public class SparkSingleton : Singleton<SparkSingleton> {
 
     private void OnRegistrationSuccess(RegistrationResponse response)
     {
-        //Login();
+        
     }
 
     private void OnRegistrationError(RegistrationResponse response)
