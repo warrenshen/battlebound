@@ -1,37 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class BattleManager : MonoBehaviour {
-    private Deck playerDeck;
-    private Hand playerHand;
+    public Player you;
+    public Player opponent;
+    private Board board;
 
-	// Use this for initialization
-	void Awake () {
-        playerDeck = GetDeck();
-        playerHand = new Hand(playerDeck, 4);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private int turn;
+    //private List<HistoryItem> history;
 
-    private Deck GetDeck() {
-        string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
+    // Use this for initialization
+    private void Awake()
+    {
+        you = new Player("Player");
+        opponent = new Player("Enemy");
+        board = new Board();
+    }
 
-        //do manually for now
-        List<Card> cards = new List<Card>();
-        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling"));
-        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
-        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls"));
-        cards.Add(new Card("C4", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
-        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling"));
-        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
-        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls"));
+    public void PlayCardToBoard(Player player, CardObject cardObject, RaycastHit hit) {
+        //only called for creature or structure
+        Transform targetPosition = hit.collider.transform;
+        string lastChar = hit.collider.name.Substring(hit.collider.name.Length-1);
+        int index = Int32.Parse(lastChar);
 
+        board.PlaceCard(player, cardObject.card, index);
+        PlayCardGeneric(player, cardObject);
+    }
 
-        Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter);
-        return chosen;
+    public void PlayCardGeneric(Player player, CardObject cardObject) {
+        player.PlayCard(cardObject);
+        Destroy(cardObject.gameObject);
     }
 }

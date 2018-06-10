@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class ActionManager : MonoBehaviour {
     public bool allowPan = false;
     public float cardOffsetFromCamera = 8.0f;
@@ -11,16 +12,32 @@ public class ActionManager : MonoBehaviour {
     private float L_SPEED = 9f;
 
     private Camera cam;
-    private Transform target;
-    private SpriteRenderer sp;
+    [SerializeField]
+    private CardObject target;
     private Quaternion[] dragTilts = new Quaternion[5];
 
+    //for storing prev state values
+    private SpriteRenderer sp;
+    private int selectedSortingOrder;
+
     private Collection collection;
+    private BattleManager battleManager;
+
+    private int boardLayerMask;
+
 
     private void Awake()
     {
         cam = Camera.main;
-        collection = cam.GetComponent<Collection>();
+        if (Application.loadedLevelName == "Collection")
+        {
+            collection = cam.GetComponent<Collection>();
+        }
+        else if(Application.loadedLevelName == "Battle")
+        {
+            battleManager = cam.GetComponent<BattleManager>();
+            boardLayerMask = LayerMask.GetMask("Board");
+        }
     }
 
     // Update is called once per frame
@@ -29,6 +46,8 @@ public class ActionManager : MonoBehaviour {
         if(target) {
             RepositionCard(target);
             AdjustCardTilt(target);
+            //the important one
+            RaycastMouse();
         }
         //RaycastMouse();
 	}
@@ -38,16 +57,41 @@ public class ActionManager : MonoBehaviour {
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, 100f, boardLayerMask))
             {
-                Debug.Log("Name = " + hit.collider.name);
+                if(hit.collider.name.Contains("Player")) {
+                    //check if turn square to green or red
+                    
+                }
             }
+        }
+        if(Input.GetMouseButtonUp(0)) {
+            //TODO: check target.card.type for spell or weapon first
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (target.card.Category == Card.CardType.Spell || target.card.Category == Card.CardType.Weapon)
+            {
+                battleManager.PlayCardGeneric(battleManager.you, target);
+            }
+            else if (Physics.Raycast(ray, out hit, 100f, boardLayerMask) && hit.collider.name.Contains("Player"))
+            {
+                //place card
+                Debug.Log("Mouse up with board playable card.");
+                battleManager.PlayCardToBoard(battleManager.you, target, hit);
+            }
+            else {
+                //no good activation events, return to hand or original pos/rot in collection
+                ResetTarget();
+            }
+            ClearDragTarget();
         }
     }
 
-    public void SetDragTarget(Transform target, SpriteRenderer target_sp) {
+    public void SetDragTarget(CardObject target, SpriteRenderer target_sp) {
         this.target = target;
         this.sp = target_sp;
+        selectedSortingOrder = this.sp.sortingOrder;
         this.sp.sortingOrder = 100;
     }
 
@@ -55,32 +99,45 @@ public class ActionManager : MonoBehaviour {
         return this.target != null;
     }
 
-    public Transform GetDragTarget() {
+    public CardObject GetDragTarget() {
         return this.target;
     }
 
     public void ClearDragTarget()
     {
-        this.sp.sortingOrder = 0;
+        if (!this.target)
+            return;
+        this.sp.sortingOrder = selectedSortingOrder;
         this.target = null;
+    }
+
+    public void ResetTarget() {
+        target.transform.localPosition = target.reset.resetPosition;
+        target.transform.localRotation = target.reset.resetRotation;
+        target.transform.localScale = target.reset.resetScale;
+    }
+
+    private void DestroyTarget() {
+        Destroy(target.gameObject);
     }
 
     private void ScrollToPan(Vector3 axes) {
         transform.Translate(axes * Input.mouseScrollDelta.y * SCROLL_DAMPING);
     }
 
-    private void RepositionCard(Transform card)
+    private void RepositionCard(CardObject cardObj)
     {
         //set target position by mouse position
         Vector3 endPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cardOffsetFromCamera));
-        card.position = Vector3.Lerp(card.position, endPos, Time.deltaTime * L_SPEED);
+        cardObj.transform.position = Vector3.Lerp(cardObj.transform.position, endPos, Time.deltaTime * L_SPEED);
     }
 
-    private void AdjustCardTilt(Transform card)
+    private void AdjustCardTilt(CardObject cardObj)
     {
-        Vector3 mDeltaPosition = cam.WorldToScreenPoint(card.position);
+        Vector3 mDeltaPosition = cam.WorldToScreenPoint(cardObj.transform.position);
         mDeltaPosition = Input.mousePosition - mDeltaPosition;
         var magnitude = mDeltaPosition.sqrMagnitude;
+        Vector3 resetRotation = cardObj.reset.resetRotation.eulerAngles;
 
         mDeltaPosition.Normalize();
         var heading = Vector3.Dot(mDeltaPosition, Vector3.up); //direction
@@ -88,45 +145,45 @@ public class ActionManager : MonoBehaviour {
         //determine if significant movement
         if (magnitude < M_THRESHOLD)
         {
-            card.localRotation = dragTilts[4]; //no movement, movement has slowed
+            cardObj.transform.localRotation = dragTilts[4]; //no movement, movement has slowed
         }
         else
         {
             //passed threshold, set tilt values
-            SetDragTilts(magnitude);
+            SetDragTilts(magnitude, resetRotation);
 
             if (heading >= 0.5f)
             {
-                card.localRotation = dragTilts[0];  // Up
+                cardObj.transform.localRotation = dragTilts[0];  // Up
             }
             else if (heading <= -0.5f)
             {
-                card.localRotation = dragTilts[1];  // Down
+                cardObj.transform.localRotation = dragTilts[1];  // Down
             }
             else
             {
                 heading = Vector3.Dot(mDeltaPosition, Vector3.right);
                 if (heading >= 0.5f)
                 {
-                    card.localRotation = dragTilts[2];  // Right
+                    cardObj.transform.localRotation = dragTilts[2];  // Right
                 }
-                else { card.localRotation = dragTilts[3]; }  // Left 
+                else { cardObj.transform.localRotation = dragTilts[3]; }  // Left 
             }
         }
         mDeltaPosition = Input.mousePosition;
     }
 
-    private void SetDragTilts(float magnitude)
+    private void SetDragTilts(float magnitude, Vector3 resetRotation)
     { // ex: magnitude of 40000 is decently large
         float maxTilt = 15f;
         float normalized = maxTilt * Mathf.Clamp((magnitude - M_THRESHOLD) / 30000, 0f, 1.0f);
 
         // calculate tilts based off default
-        dragTilts[0].eulerAngles = new Vector3(transform.rotation.eulerAngles.x - normalized, 0);
-        dragTilts[1].eulerAngles = new Vector3(transform.rotation.eulerAngles.x + normalized, 0);
-        dragTilts[2].eulerAngles = new Vector3(transform.rotation.eulerAngles.x, -normalized);
-        dragTilts[3].eulerAngles = new Vector3(transform.rotation.eulerAngles.x, normalized);
-        dragTilts[4].eulerAngles = new Vector3(transform.rotation.eulerAngles.x, 0, 0);
+        dragTilts[0].eulerAngles = new Vector3(resetRotation.x - normalized, 0);
+        dragTilts[1].eulerAngles = new Vector3(resetRotation.x + normalized, 0);
+        dragTilts[2].eulerAngles = new Vector3(resetRotation.x, -normalized * 0.5f);
+        dragTilts[3].eulerAngles = new Vector3(resetRotation.x, normalized * 0.5f);
+        dragTilts[4].eulerAngles = new Vector3(resetRotation.x, 0, 0);
     }
 
     public void AddCardToDeck(CardObject card) {
