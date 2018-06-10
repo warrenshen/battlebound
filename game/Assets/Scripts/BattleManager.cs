@@ -9,6 +9,7 @@ public class BattleManager : MonoBehaviour {
     private Board board;
 
     private int turn;
+    public GameObject spawnFX;
     //private List<HistoryItem> history;
 
     // Use this for initialization
@@ -26,6 +27,7 @@ public class BattleManager : MonoBehaviour {
         int index = Int32.Parse(lastChar);
 
         board.PlaceCard(player, cardObject.card, index);
+        GameObject fx = Instantiate(spawnFX, hit.collider.transform.position, Quaternion.identity);
         PlayCardGeneric(player, cardObject);
     }
 
