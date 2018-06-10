@@ -83,10 +83,7 @@ public class CardObject : MonoBehaviour
     {
         if (!action.HasDragTarget())
             return;
-
-        ////resets card object position to original
-        //action.ResetTarget();
-        //action.ClearDragTarget();
+        ////resets card object position to original, handled by actionmanager
 
         if (Time.time - lastClicked < 0.5f)
             DoubleClickUp();

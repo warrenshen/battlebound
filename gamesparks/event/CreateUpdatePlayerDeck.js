@@ -40,7 +40,7 @@ cardIds.forEach(function(cardId) {
 });
 deckByName[name] = cardIds;
 
-if (deckByName[previousName]) {
+if (previousName !== name && deckByName[previousName]) {
     delete deckByName[previousName];
 }
 

@@ -25,6 +25,7 @@ public class ActionManager : MonoBehaviour {
 
     private int boardLayerMask;
 
+
     private void Awake()
     {
         cam = Camera.main;
@@ -48,6 +49,7 @@ public class ActionManager : MonoBehaviour {
             //the important one
             RaycastMouse();
         }
+        //RaycastMouse();
 	}
 
     private void RaycastMouse() {

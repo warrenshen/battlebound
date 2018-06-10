@@ -14,6 +14,8 @@
 //
 // ====================================================================================================
 require("ChallengeEventPrefix");
+require("CardAbilitiesModule");
+require("AttackModule");
 
 const TARGET_ID_FACE = "TARGET_ID_FACE";
 const MOVE_TYPE_CARD_ATTACK = "MOVE_TYPE_CARD_ATTACK";
@@ -81,8 +83,16 @@ if (fieldId === 0) {
         newPlayerField = playerField.filter(function(card) { return card.health > 0 });
         playerState.field = newPlayerField;
     }
-}
-else {
+} else {
+    const tauntCards = opponentField.filter(function(card) { return card.abilities && card.abilities.indexOf(CARD_ABILITY_TAUNT) >= 0 });
+    const tauntIds = tauntCards.map(function(card) { return card.id });
+    
+    // `targetId` must be of a taunt card if any exist.
+    if (tauntIds.length > 0 && tauntIds.indexOf(targetId) < 0) {
+        Spark.setScriptError("ERROR", "Invalid targetId parameter - taunt cards exist.");
+        Spark.exit();
+    }
+        
     if (targetId === TARGET_ID_FACE) {
         opponentState.health -= attackingCard.attack;
         if (opponentState.health <= 0) {
@@ -99,8 +109,8 @@ else {
         
         defendingCard = opponentField[defendingIndex];
         
-        attackingCard.health -= defendingCard.attack;
-        defendingCard.health -= attackingCard.attack;
+        damageCard(defendingCard, attackingCard.attack);
+        damageCard(attackingCard, defendingCard.attack);
         
         newPlayerField = playerField.filter(function(card) { return card.health > 0 });
         playerState.field = newPlayerField;

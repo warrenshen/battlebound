@@ -17,8 +17,6 @@ public class SparkSingleton : Singleton<SparkSingleton> {
     public void Login(string name, string password)
     {
         AuthenticationRequest request = new AuthenticationRequest();
-        //request.SetUserName("warren");
-        //request.SetPassword("password");
         request.SetUserName(name);
         request.SetPassword(password);
         request.Send(OnLoginSuccess, OnLoginError);
