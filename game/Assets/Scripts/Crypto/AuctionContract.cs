@@ -21,7 +21,7 @@ public class AuctionContract
 		Account account,
 		int nonce,
 		int tokenId,
-        int price,
+        long price,
 		long gasPrice = 5000000000L
 	)
 	{
