@@ -34,7 +34,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 		// TODO: validate all input prams.
 		if (duration < 60)
 		{
-			return "Invalid duration parameter";	
+			return "Invalid duration parameter";
 		}
 
 		object[] args = new object[4] {
@@ -87,12 +87,67 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 		//request.Send(OnGetTransactionNonceError, OnGetTransactionNonceError);
 	}
     
- //   public string BidAuction(int tokenId, long price)
-	//{
-	//	// TODO: validate input prams.
-	//	GetTransactionNonce();
-	//	Account account = AuthorizeAndGetAccount();
-	//}
+	public string BidAuction(int tokenId, long bidPrice)
+	{
+		if (bidPrice <= 0)
+		{
+			return "Invalid price parameter";
+		}
+        
+		object[] args = new object[2] {
+            tokenId,
+			bidPrice
+        };
+
+		StartCoroutine("BidAuctionHelper", args);
+
+		return "";
+	}
+
+	private IEnumerator BidAuctionHelper(object[] args)
+	{
+		int tokenId = (int) args[0];
+        long bidPrice = (long) args[1];
+        
+		this.nonce = -1;
+
+        GetTransactionNonce();
+
+        while (this.nonce < 0)
+        {
+            yield return null;
+        }
+
+        Account account = AuthorizeAndGetAccount();
+        string signedTx = AuctionContract.signBidTransaction(
+            account,
+            nonce,
+            tokenId,
+			bidPrice
+        );
+        Debug.Log("Nonce: " + nonce.ToString());
+		Debug.Log("Token ID: " + tokenId.ToString());
+		Debug.Log("Bid price: " + bidPrice.ToString());
+        Debug.Log("Signed tx: " + signedTx);
+
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("SubmitBidAuctionTransaction");
+        request.SetEventAttribute("signedTx", signedTx);
+        request.SetEventAttribute("tokenId", tokenId);
+		request.SetEventAttribute("bidPrice", bidPrice);
+		request.Send(OnSubmitBidAuctionTransactionSuccess, OnSubmitBidAuctionTransactionError);
+	}
+
+	private void OnSubmitBidAuctionTransactionSuccess(LogEventResponse response)
+	{
+		string txHash = response.ScriptData.GetString("txHash");
+		Debug.Log("Got txHash: " + txHash);
+	}
+
+	private void OnSubmitBidAuctionTransactionError(LogEventResponse response)
+	{
+		Debug.Log("OnSubmitBidAuctionTransactionError request failure.");
+	}
 
 	public void UpdatePlayerAddress()
     {
