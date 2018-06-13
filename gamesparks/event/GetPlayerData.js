@@ -5,10 +5,18 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("OnChainModule");
+
 const player = Spark.getPlayer();
 
-Spark.setScriptData("address", player.getPrivateData("address"));
+const address = player.getPrivateData("address");
+var balance = null;
+if (address) {
+    balance = fetchBalanceByAddress(address);
+}
+
+Spark.setScriptData("address", address);
+Spark.setScriptData("balance", balance);
 Spark.setScriptData("winStreak", player.getPrivateData("winStreak"));
 Spark.setScriptData("level", player.getPrivateData("level"));
-// Spark.setScriptData("name", value)
 Spark.setScriptData("responseCode", 200);

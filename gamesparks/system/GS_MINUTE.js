@@ -59,6 +59,7 @@ logs.forEach(function(log) {
     if (event === BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL) {
         if (auctionIndex >= 0) {
             auctions = auctions.slice(0, auctionIndex).concat(auctions.slice(auctionIndex + 1));
+            removeAuctionByTokenId(tokenId);
         }
     } else if (event === BLOCKCHAIN_EVENT_AUCTION_CREATED) {
         if (auctionIndex < 0) {

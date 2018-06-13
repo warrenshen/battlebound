@@ -66,6 +66,14 @@ function parseAddress(rawAddress) {
     return "0x" + prefixedAddress.substring(prefixedAddress.length - 40);
 }
 
+function prefixHex(param) {
+    if (param.indexOf("0x") < 0) {
+        return "0x" + param;
+    } else {
+        return param;
+    }
+}
+
 /**
  * Converts given param to a hex string
  * and pads it to be a 32-bit word.
