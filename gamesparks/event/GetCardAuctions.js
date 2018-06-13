@@ -20,6 +20,14 @@ const master = masterDataItem.getData();
 const auctions = master.auctions;
 
 const bCardIds = auctions.map(function(cardInt) { return "B" + cardInt.toString() });
-const bCards = _getBCardsByBCardIds(bCardIds);
+const bCards = getBCardsByBCardIds(bCardIds);
 
-Spark.setScriptData("auctions", bCards);
+const AUCTIONABLE_CARD_FIELDS = [
+    "id",
+    "level",
+    "auction",
+    "seller",
+];
+const instances = getInstancesByCards(bCards, AUCTIONABLE_CARD_FIELDS);
+    
+Spark.setScriptData("auctions", instances);s
