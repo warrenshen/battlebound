@@ -56,6 +56,11 @@ public class CardAuctionObject : MonoBehaviour
         transform.localScale = new Vector3(scaling, scaling, scaling);
     }
 
+	public void OnMouseExit()
+    {
+        transform.localScale = new Vector3(1, 1, 1);
+    }
+
 	public void OnMouseUp()
 	{
 		if (Time.time - lastClicked < 0.5f)

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using GameSparks.Core;
 using GameSparks.Api.Requests;
@@ -18,16 +19,17 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 	const string PLAYER_PREFS_KEY_MNEMONIC = "PLAYER_PREFS_KEY_MNEMONIC";
 
 	private int nonce;
+	private string createAuctionTxHashI;
 
 	private void Awake()
     {
         base.Awake();
     }
 
-    public string CreateAuction(
+    public async Task<string> CreateAuction(
 		int tokenId,
-	    int startingPrice,
-        int endingPrice,
+	    long startingPrice,
+		long endingPrice,
         int duration
 	)
 	{
@@ -37,33 +39,24 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 			return "Invalid duration parameter";
 		}
 
-		object[] args = new object[4] {
+		var txHash = await CreateAuctionHelper(
 			tokenId,
 			startingPrice,
 			endingPrice,
-			duration,
-		};
+			duration
+		);
 
-		StartCoroutine("CreateAuctionHelper", args);
-
-		return "";
+		return txHash;
 	}
 
-	private IEnumerator CreateAuctionHelper(object[] args)
+	private async Task<string> CreateAuctionHelper(
+		int tokenId,
+        long startingPrice,
+        long endingPrice,
+        int duration
+	)
 	{
-		int tokenId = (int) args[0];
-		int startingPrice = (int) args[1];
-		int endingPrice = (int) args[2];
-		int duration = (int) args[3];
-
-		this.nonce = -1;
-
-		GetTransactionNonce();
-        
-        while (this.nonce < 0)
-		{
-			yield return null;
-		}
+		int nonce = (int) await FetchTransactionNonce();
 
 		Account account = AuthorizeAndGetAccount();
         string signedTx = TreasuryContract.signCreateAuctionTransaction(
@@ -77,15 +70,60 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 		Debug.Log("Nonce: " + nonce.ToString());
 		Debug.Log("Signed tx: " + signedTx);
 
-        LogEventRequest request = new LogEventRequest();
-		request.SetEventKey("SubmitCreateAuctionTransaction");
-		request.SetEventAttribute("signedTx", signedTx);
-		request.SetEventAttribute("tokenId", tokenId);
-		request.SetEventAttribute("startingPrice", startingPrice);
-		request.SetEventAttribute("endingPrice", endingPrice);
-		request.SetEventAttribute("duration", duration);
-		//request.Send(OnGetTransactionNonceError, OnGetTransactionNonceError);
+		string txHash = (string) await SubmitCreateAuctionTransaction(
+			signedTx,
+            tokenId,
+			startingPrice,
+			endingPrice,
+            duration
+		);
+
+        // Handle error case.
+		return txHash;
 	}
+
+	private IEnumerator SubmitCreateAuctionTransaction(
+		string signedTx,
+        int tokenId,
+        long startingPrice,
+        long endingPrice,
+        int duration
+	)
+	{
+		this.createAuctionTxHashI = null;
+
+		LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("SubmitCreateAuctionTransaction");
+        request.SetEventAttribute("signedTx", signedTx);
+        request.SetEventAttribute("tokenId", tokenId);
+        request.SetEventAttribute("startingPrice", startingPrice);
+        request.SetEventAttribute("endingPrice", endingPrice);
+        request.SetEventAttribute("duration", duration);
+        request.Send(
+            OnSubmitCreateAuctionTransactionSuccess,
+            OnSubmitCreateAuctionTransactionError
+        );
+
+		while (this.createAuctionTxHashI == null)
+        {
+            yield return null;
+        }
+
+		yield return this.createAuctionTxHashI;
+	}
+
+	private void OnSubmitCreateAuctionTransactionSuccess(LogEventResponse response)
+    {
+        string txHash = response.ScriptData.GetString("txHash");
+        Debug.Log("Got txHash: " + txHash);
+		this.createAuctionTxHashI = txHash;
+    }
+
+	private void OnSubmitCreateAuctionTransactionError(LogEventResponse response)
+    {
+		Debug.Log("SubmitCreateAuctionTransaction request failure.");
+		this.createAuctionTxHashI = "0x";
+    }
     
 	public string BidAuction(int tokenId, long bidPrice)
 	{
@@ -113,7 +151,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         GetTransactionNonce();
 
-        while (this.nonce < 0)
+		while (this.nonce < 0)
         {
             yield return null;
         }
@@ -121,11 +159,11 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Account account = AuthorizeAndGetAccount();
         string signedTx = AuctionContract.signBidTransaction(
             account,
-            nonce,
+			nonce,
             tokenId,
 			bidPrice
         );
-        Debug.Log("Nonce: " + nonce.ToString());
+		Debug.Log("Nonce: " + nonce.ToString());
 		Debug.Log("Token ID: " + tokenId.ToString());
 		Debug.Log("Bid price: " + bidPrice.ToString());
         Debug.Log("Signed tx: " + signedTx);
@@ -135,7 +173,10 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         request.SetEventAttribute("signedTx", signedTx);
         request.SetEventAttribute("tokenId", tokenId);
 		request.SetEventAttribute("bidPrice", bidPrice);
-		request.Send(OnSubmitBidAuctionTransactionSuccess, OnSubmitBidAuctionTransactionError);
+		request.Send(
+			OnSubmitBidAuctionTransactionSuccess,
+			OnSubmitBidAuctionTransactionError
+		);
 	}
 
 	private void OnSubmitBidAuctionTransactionSuccess(LogEventResponse response)
@@ -240,6 +281,20 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Debug.Log("Set player pref mnemonic!");
 
 		UpdatePlayerAddress();
+    }
+
+	private IEnumerator FetchTransactionNonce()
+    {
+        this.nonce = -1;
+
+        GetTransactionNonce();
+
+        while (this.nonce < 0)
+        {
+            yield return null;
+        }
+
+        yield return this.nonce;
     }
 
     private void GetTransactionNonce()
