@@ -107,17 +107,13 @@ public class Collection : MonoBehaviour {
     {
         LeanTween.rotateY(gameObject, 2f, 1f).setEaseOutCubic();
         Debug.Log("# of cards in deck: " + deck.Cards.Count);
-        List<Card> existing= new List<Card>(deck.Cards);
+        List<Card> existing = new List<Card>(deck.Cards);
         chosenDeck = deck;
         GameObject.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
 
         foreach (Card card in existing)
         {
-            if (card.wrapper != null)
-            {
-                AddToBuildPanel(card.wrapper);
-            }
-            else Debug.LogError(card.Name);
+            AddToBuildPanel(card.wrapper);
         }
     }
 

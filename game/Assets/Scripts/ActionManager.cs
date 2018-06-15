@@ -38,6 +38,7 @@ public class ActionManager : MonoBehaviour {
             battleManager = cam.GetComponent<BattleManager>();
             boardLayerMask = LayerMask.GetMask("Board");
         }
+        InitializeDragTilts();
     }
 
     // Update is called once per frame
@@ -46,47 +47,10 @@ public class ActionManager : MonoBehaviour {
         if(target) {
             RepositionCard(target);
             AdjustCardTilt(target);
-            //the important one
-            RaycastMouse();
+            if (Input.GetMouseButtonUp(0))
+                ClearDragTarget();
         }
-        //RaycastMouse();
 	}
-
-    private void RaycastMouse() {
-        if (Input.GetMouseButton(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f, boardLayerMask))
-            {
-                if(hit.collider.name.Contains("Player")) {
-                    //check if turn square to green or red
-                    
-                }
-            }
-        }
-        if(Input.GetMouseButtonUp(0)) {
-            //TODO: check target.card.type for spell or weapon first
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (target.card.Category == Card.CardType.Spell || target.card.Category == Card.CardType.Weapon)
-            {
-                battleManager.PlayCardGeneric(battleManager.you, target);
-            }
-            else if (Physics.Raycast(ray, out hit, 100f, boardLayerMask) && hit.collider.name.Contains("Player"))
-            {
-                //place card
-                Debug.Log("Mouse up with board playable card.");
-                battleManager.PlayCardToBoard(battleManager.you, target, hit);
-            }
-            else {
-                //no good activation events, return to hand or original pos/rot in collection
-                ResetTarget();
-            }
-            ClearDragTarget();
-        }
-    }
 
     public void SetDragTarget(CardObject target, SpriteRenderer target_sp) {
         this.target = target;
@@ -171,6 +135,14 @@ public class ActionManager : MonoBehaviour {
             }
         }
         mDeltaPosition = Input.mousePosition;
+    }
+
+    private void InitializeDragTilts() {
+        dragTilts[0].eulerAngles = new Vector3(70f, 0);
+        dragTilts[1].eulerAngles = new Vector3(70f, 0);
+        dragTilts[2].eulerAngles = new Vector3(70f, 0);
+        dragTilts[3].eulerAngles = new Vector3(70f, 0);
+        dragTilts[4].eulerAngles = new Vector3(70f, 0);
     }
 
     private void SetDragTilts(float magnitude, Vector3 resetRotation)

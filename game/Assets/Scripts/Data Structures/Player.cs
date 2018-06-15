@@ -7,6 +7,7 @@ using TMPro;
 [System.Serializable]
 public class Player {
     private string name;
+    public string Name => name;
     private Deck deck;
 
     [SerializeField]
@@ -50,16 +51,15 @@ public class Player {
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling"));
-        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
-        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls"));
-        cards.Add(new Card("C4", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
-        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling"));
-        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
-        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls"));
+        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling", owner: this));
+        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe", owner: this));
+        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls", owner: this));
+        cards.Add(new Card("C4", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe", owner: this));
+        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling", owner: this));
+        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe", owner: this));
+        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls", owner: this));
 
-
-        Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter);
+        Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;
     }
 }

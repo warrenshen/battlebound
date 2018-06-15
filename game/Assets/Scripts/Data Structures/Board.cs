@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Board {
+    [SerializeField]
     private Dictionary<Player, PlayingField> fields;
     private BattleManager manager;
 
     public Board() {
-        
+        //create field for each player
     }
 
     public void PlaceCard(Player player, Card card, int position) {
@@ -21,7 +23,9 @@ public class Board {
         fields[player] = created;
 	}
 
+    [System.Serializable]
     public class PlayingField {
+        [SerializeField]
         protected List<Card> creatures;
         //List<Artifact> artifacts;
 
