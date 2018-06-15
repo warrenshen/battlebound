@@ -39,10 +39,13 @@ public class Card {
     private string image;
     public string Image => image;
 
+    private Player owner;
+    public Player Owner => owner;
+
     public CardObject wrapper;
 
 
-    public Card(string id, string name, CardType category, int cost, int attack, int health, string image) {
+    public Card(string id, string name, CardType category, int cost, int attack, int health, string image, Player owner = null) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -50,5 +53,6 @@ public class Card {
         this.health = health;
         this.cost = cost;
         this.image = image;
+        this.owner = owner;
     }
 }

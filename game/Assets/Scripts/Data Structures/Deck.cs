@@ -15,7 +15,7 @@ public class Deck {
 	private DeckClass hero;
 	public DeckClass Hero => Hero;
 
-	public Deck(string name, List<Card> cards, DeckClass hero) {
+    public Deck(string name, List<Card> cards, DeckClass hero, Player owner = null) {
 		this.name = name;
 		this.cards = cards;
 		this.hero = hero;
