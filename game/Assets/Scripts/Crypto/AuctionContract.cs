@@ -21,7 +21,7 @@ public class AuctionContract
 		Account account,
 		int nonce,
 		int tokenId,
-        long price,
+        long bidPrice,
 		long gasPrice = 5000000000L
 	)
 	{
@@ -34,7 +34,7 @@ public class AuctionContract
         string signedTx = Web3.OfflineTransactionSigner.SignTransaction(
             account.PrivateKey,
             contractAddress,
-            price,
+			bidPrice,
             nonce,
             gasPrice,
             500000,

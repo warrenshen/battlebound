@@ -13,8 +13,8 @@ public class TreasuryContract
         Account account,
         int nonce,
         int tokenId,
-        int startingPrice,
-        int endingPrice,
+		long startingPrice,
+		long endingPrice,
         int duration,
         long gasPrice = 5000000000L
     )
