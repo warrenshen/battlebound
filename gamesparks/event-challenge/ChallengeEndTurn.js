@@ -9,6 +9,9 @@ require("ChallengeEventPrefix");
 require("DeckModule");
 require("CancelScheduledTimeEventsModule");
 
+// This is secure because the only thing a malicious actor
+// can do is send end turn's on time expired for themselves -
+// which would only be detrimental to themselves.
 const isExpired = Spark.getData().isExpired;
 
 // Note that the call below must be before the `challenge.consumeTurn()` call.

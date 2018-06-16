@@ -112,10 +112,9 @@ if (fieldId === 0) {
         damageCard(defendingCard, attackingCard.attack);
         damageCard(attackingCard, defendingCard.attack);
         
-        newPlayerField = playerField.filter(function(card) { return card.health > 0 });
-        playerState.field = newPlayerField;
-        newOpponentField = opponentField.filter(function(card) { return card.health > 0 });
-        opponentState.field = newOpponentField;
+        const newFields = filterDeadCardsFromFields(playerField, opponentField);
+        playerState.field = newFields[0];
+        opponentState.field = newFields[1];
     }
 }
 

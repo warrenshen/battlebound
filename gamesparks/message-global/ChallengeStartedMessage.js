@@ -7,7 +7,7 @@
 // ====================================================================================================
 // GLOBAL
 require("DeckModule");
- 
+
 const API = Spark.getGameDataService();
 
 const challengeId = Spark.getData().challenge.challengeId;
@@ -52,7 +52,7 @@ const challengerData = {
     hand: [],
     handSize: 0,
     deck: challengerDeck,
-    deckSize: challengerDeck.length
+    deckSize: challengerDeck.length,
 };
 
 const challengedData = {
@@ -64,7 +64,7 @@ const challengedData = {
     hand: [],
     handSize: 0,
     deck: challengedDeck,
-    deckSize: challengedDeck.length
+    deckSize: challengedDeck.length,
 };
 
 if (Spark.getData().challenge.nextPlayer === challengerId) {
