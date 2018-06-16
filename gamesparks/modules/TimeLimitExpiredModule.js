@@ -6,8 +6,9 @@
 // ====================================================================================================
 const challengeId = Spark.getData().challengeId;
 const hasTurnPlayerId = Spark.getData().hasTurnPlayerId;
-
+    
 const request = new SparkRequests.LogChallengeEventRequest();
 request.eventKey = "ChallengeEndTurn";
 request.challengeInstanceId = challengeId;
+request.isExpired = 1;
 const response = request.ExecuteAs(hasTurnPlayerId); // Wow this `ExecuteAs` function is really useful.

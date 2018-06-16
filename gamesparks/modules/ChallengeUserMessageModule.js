@@ -31,6 +31,9 @@ const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 const playerState = challengeState[playerId];
 const opponentState = challengeState[opponentId];
 
+const playerExpiredStreak = challengeStateData.expiredStreakByPlayerId[playerId];
+const opponentExpiredStreak = challengeStateData.expiredStreakByPlayerId[opponentId];
+
 const fields = [
     "hasTurn",
     "manaCurrent",
@@ -55,6 +58,9 @@ playerFields.forEach(function(field) {
     filteredPlayerState[field] = playerState[field];
 });
 
+filteredPlayerState.expiredStreak = playerExpiredStreak;
+filteredOpponentState.expiredStreak = opponentExpiredStreak;
+
 const lastMoves = challengeStateData.lastMoves || [];
 const opponentMoves = lastMoves.filter(function(move) {
     if (move === null) {
@@ -70,6 +76,7 @@ if (opponentMoves.length) {
     Spark.removeScriptData("opponentMoves");
 }
 
+Spark.setScriptData("challengeId", challengeId);
+Spark.setScriptData("nonce", challengeStateData.nonce);
 Spark.setScriptData("playerState", filteredPlayerState);
 Spark.setScriptData("opponentState", filteredOpponentState);
-Spark.setScriptData("nonce", challengeStateData.nonce);

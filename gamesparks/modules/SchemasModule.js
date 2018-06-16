@@ -50,6 +50,8 @@
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
  *   opponentIdByPlayerId: { [playerId]: opponentId },
  *   turnCountByPlayerId: { [playerId]: int },
+ *   moveTakenThisTurn: bool, // A bool for whether the active player has made a move this turn.
+ *   expiredStreakByPlayerId: { [playerId]: int }, // A counter for how many turns a player has expired in a row.
  *   current: {
  *     [playerIdOne]: {
  *       hasTurn: bool,

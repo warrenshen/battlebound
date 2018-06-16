@@ -21,7 +21,7 @@ if (Spark.getData().challenge.shortCode === "RankedChallenge") {
     setLeaderboardsScore(newScore);
 }
 
-require("ChallengeUserMessageSuffix");
+require("ChallengeUserMessageModule");
 
 require("CancelScheduledTimeEventsModule");
 cancelScheduledTimeEvents(challengeId, playerId, challengeStateData);

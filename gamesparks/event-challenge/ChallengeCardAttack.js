@@ -130,5 +130,6 @@ const move = {
 };
 challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
+challengeStateData.moveTakenThisTurn = 0;
 
 require("PersistChallengeStateModule");

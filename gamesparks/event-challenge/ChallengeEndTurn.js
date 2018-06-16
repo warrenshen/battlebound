@@ -9,6 +9,8 @@ require("ChallengeEventPrefix");
 require("DeckModule");
 require("CancelScheduledTimeEventsModule");
 
+const isExpired = Spark.getData().isExpired;
+
 // Note that the call below must be before the `challenge.consumeTurn()` call.
 cancelScheduledTimeEvents(challengeId, playerId, challengeStateData);
 
@@ -58,6 +60,23 @@ challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
 
 challengeStateData.turnCountByPlayerId[playerId] += 1;
+// If this is a end turn request from time expired and no move
+// has been taken this turn, increment player's expired streak.
+if (isExpired && !challengeStateData.moveTakenThisTurn) {
+    challengeStateData.expiredStreakByPlayerId[playerId] += 1;
+    
+    // If expired streak is greater than 2, auto-surrender player.
+    if (challengeStateData.expiredStreakByPlayerId[playerId] > 2) {
+        // TODO: refactor this with ChallengeSurrender event.
+        // TODO: log challenge winner in ChallengeState.
+        const opponent = Spark.loadPlayer(opponentId);
+        challenge.winChallenge(opponent);
+    }
+} else {
+    challengeStateData.expiredStreakByPlayerId[playerId] = 0;
+}
+// Player with next turn should start with no move taken.
+challengeStateData.moveTakenThisTurn = 0;
 
 require("PersistChallengeStateModule");
 

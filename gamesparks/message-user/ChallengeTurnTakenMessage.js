@@ -1,2 +1,2 @@
 // USER
-require("ChallengeUserMessageSuffix");
+require("ChallengeUserMessageModule");
