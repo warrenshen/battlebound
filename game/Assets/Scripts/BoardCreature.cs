@@ -44,14 +44,16 @@ public class BoardCreature : MonoBehaviour {
     TextMeshPro textMesh;
 
     public void Initialize(CardObject cardObject, Player owner) {
+        CreatureCard creature = cardObject.card as CreatureCard;
+
         this.battleManager = Camera.main.GetComponent<BattleManager>();
         this.fx = GameObject.Find("FX Pool").GetComponent<FXPool>();
 
-        this.uid = cardObject.card.Id;
-        this.cost = cardObject.card.Cost;
-        this.attack = cardObject.card.Attack;
-        this.health = cardObject.card.Health;
-        this.image = cardObject.card.Image;
+        this.uid = creature.Id;
+        this.cost = creature.Cost;
+        this.attack = creature.Attack;
+        this.health = creature.Health;
+        this.image = creature.Image;
 
         this.canAttack = false;
         this.attacksThisTurn = 0;

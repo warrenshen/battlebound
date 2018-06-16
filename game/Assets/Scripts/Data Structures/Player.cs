@@ -20,9 +20,11 @@ public class Player {
     public int MaxMana => maxMana;
 
     private Board.PlayingField field;
+    public bool active;
 
     public Player(string name)
     {
+        this.active = false;
         this.name = name;
         deck = GetDeck();
         hand = new Hand(deck, 7, this.name);
@@ -51,15 +53,28 @@ public class Player {
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling", owner: this));
-        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe", owner: this));
-        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls", owner: this));
-        cards.Add(new Card("C4", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe", owner: this));
-        cards.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling", owner: this));
-        cards.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe", owner: this));
-        cards.Add(new Card("C3", "Crushing Walls", Card.CardType.Spell, 7, 3, 2, "Crushing_Walls", owner: this));
+        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, owner: this));
+        cards.Add(new WeaponCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new SpellCard("C3", "Crushing Walls", 7, "Crushing_Walls", owner: this));
+        cards.Add(new WeaponCard("C4", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, owner: this));
+        cards.Add(new WeaponCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new SpellCard("C3", "Crushing Walls", 7, "Crushing_Walls", owner: this));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;
+    }
+
+    public void NewTurn() {
+        maxMana = Math.Min(maxMana + 1, 10);
+        mana = maxMana;
+        hand.Draw(deck, 1);
+        this.active = true;
+        RenderMana();
+
+        //placeholder indicator
+        Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
+        Transform light = GameObject.Find("Point Light").transform;
+        light.position = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
     }
 }
