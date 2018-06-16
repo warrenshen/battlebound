@@ -76,6 +76,10 @@ if (playedCard.category === CARD_TYPE_MINION) {
     if (!Array.isArray(playedCard.abilities)) {
         playedCard.abilities = [];
     }
+    if (!Array.isArray(playedCard.buffs)) {
+        playedCard.buffs = [];    
+    }
+    
     if (playedCard.abilities.indexOf(CARD_ABILITY_CHARGE) >= 0) {
         playedCard.canAttack = 1;
     } else {
@@ -86,6 +90,32 @@ if (playedCard.category === CARD_TYPE_MINION) {
     } else {
         playedCard.hasShield = 0;
     }
+    
+    if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
+        // Iterate through cards already on field and grant them buff(s).
+        playerField.forEach(function(card) {
+            if (card.category === CARD_TYPE_MINION) {
+                card.attack += 1;
+                card.buffs.push({
+                    granterId: playedCard.id,
+                    attack: 1,
+                    abilities: [],
+                });
+            }
+        });
+    }
+    
+    // Iterate through cards already on field and grant played card buff(s).
+    playerField.forEach(function(fieldCard) {
+        if (fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
+            playedCard.attack += 1;
+            playedCard.buffs.push({
+                granterId: fieldCard.id,
+                attack: 1,
+                abilities: [],
+            });
+        }
+    });
     
     const newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
     playerState.field = newField;
@@ -107,8 +137,12 @@ if (playedCard.category === CARD_TYPE_MINION) {
         Spark.exit();
     }
     
-    const newOpponentField = opponentField.filter(function(card) { return card.health > 0 });
-    opponentState.field = newOpponentField;
+    const deadCards = opponentField.filter(function(card) { return card.health <= 0 });
+    const deadCardIds = deadCards.map(function(card) { return card.id });
+    
+    const newFields = filterDeadCardsFromFields(playerField, opponentField);
+    playerState.field = newFields[0];
+    opponentState.field = newFields[1];
     
     move = {
         playerId: playerId,

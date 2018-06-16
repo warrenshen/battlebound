@@ -8,6 +8,7 @@
  * Player scriptData schema: {
  *   address: string, // Ethereum address.
  *   addressChallenge: string, // Challenge string used for address update.
+ *   winStreak: int, // Player's current win streak.
  * }
  * 
  * PlayerDecks schema: {
@@ -25,7 +26,7 @@
  *   activeDeck: string,
  * }
  * 
- * Card schema: {
+ * ChallengeCard schema: {
  *   id: string,
  *   category: int,
  *   name: string,
@@ -38,7 +39,15 @@
  *   attackStart: int, // The initial value of attack.
  *   canAttack: bool, // Field probably not set until card is played on field.
  *   hasShield: bool, // Field probably not set until card is played on field.
- *   abilities: [int, ...],
+ *   abilities: [int, ...], // Array of enums of abilities card possesses.
+ *   buffs: [
+ *     {
+ *       granterId: int, // Card ID granting this buff.
+ *       attack: int,
+ *       abilities: [int, ...],
+ *     },
+ *     ...
+ *   ],
  * }
  * 
  * Move schema: {
