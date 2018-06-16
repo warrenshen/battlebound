@@ -45,7 +45,7 @@ public class CardAuctionObject : MonoBehaviour
 		textMesh.text = "Price: " +
 			cardAuction.Auction.StartingPrice +
 			"\nSeller: " +
-			cardAuction.Auction.Seller;
+			cardAuction.Seller;
     }
 
 	public void OnMouseEnter()
@@ -71,12 +71,6 @@ public class CardAuctionObject : MonoBehaviour
 	public void DoubleClickUp()
     {
 		Debug.Log(gameObject.name + " double clicked.");
-		//CryptoSingleton.Instance.CreateAuction(
-		//	Int32.Parse(cardAuction.Id.Substring(1)),
-  //          100,
-  //          100,
-  //          3600
-		//);
 
 		CryptoSingleton.Instance.BidAuction(
             Int32.Parse(cardAuction.Id.Substring(1)),

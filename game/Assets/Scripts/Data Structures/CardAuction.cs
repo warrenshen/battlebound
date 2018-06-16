@@ -18,6 +18,10 @@ public class CardAuction
 	public string Image => image;
 
 	[SerializeField]
+    private string seller;
+    public string Seller => seller;
+
+	[SerializeField]
 	private Auction auction;
 	public Auction Auction => auction;
 
@@ -27,10 +31,6 @@ public class CardAuction
 [System.Serializable]
 public class Auction
 {
-	[SerializeField]
-	private string seller;
-	public string Seller => seller;
-
 	[SerializeField]
 	private int startingPrice;
 	public int StartingPrice => startingPrice;
