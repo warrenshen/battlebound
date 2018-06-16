@@ -31,14 +31,13 @@ public class CollectionManager : MonoBehaviour {
     private void Awake()
     {
         Instance = this;
-    }
-
-    private void Start() {
         this.collection = new List<Card>();
         this.decks = new List<Deck>();
         this.cutouts = new List<CardCutout>();
         this.idToCard = new Dictionary<string, Card>();
+    }
 
+    private void Start() {
         //ping server for collection json
         GetCollectionRequest();
 

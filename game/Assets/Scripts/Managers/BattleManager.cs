@@ -31,15 +31,14 @@ public class BattleManager : MonoBehaviour {
     private void Awake()
     {
         Instance = this;
+        this.you = new Player("Player");
+        this.opponent = new Player("Enemy");
+        this.board = new Board();
     }
 
     private void Start()
     {
         // Use this for initialization
-        you = new Player("Player");
-        opponent = new Player("Enemy");
-        board = new Board();
-
         battleLayer = 9;
         boardLayer = LayerMask.GetMask("Board");
         GameStart();
