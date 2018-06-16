@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FXPool : MonoBehaviour {
+public class FXPoolManager : MonoBehaviour {
     public Dictionary<string, int> effectIndices;
+
+    public static FXPoolManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
 	// Use this for initialization
 	void Start () {

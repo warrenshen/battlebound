@@ -6,7 +6,6 @@ using UnityEngine;
 public class Board {
     [SerializeField]
     private Dictionary<Player, PlayingField> fields;
-    private BattleManager manager;
 
     public Board() {
         //create field for each player
