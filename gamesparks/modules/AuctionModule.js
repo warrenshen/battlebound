@@ -5,7 +5,6 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-require("OnChainModule");
 require("DeckModule");
 
 function findAuctionedCardsBySeller(address) {

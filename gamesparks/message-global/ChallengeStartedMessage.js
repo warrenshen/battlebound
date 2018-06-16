@@ -36,6 +36,13 @@ turnCountByPlayerId[challengerId] = 0;
 turnCountByPlayerId[challengedId] = 0;
 challengeStateData.turnCountByPlayerId = turnCountByPlayerId;
 
+const expiredStreakByPlayerId = {};
+expiredStreakByPlayerId[challengerId] = 0;
+expiredStreakByPlayerId[challengedId] = 0;
+challengeStateData.expiredStreakByPlayerId = expiredStreakByPlayerId;
+
+challengeStateData.moveTakenThisTurn = 0;
+
 const challengerData = {
     manaCurrent: 3,
     manaMax: 3,
