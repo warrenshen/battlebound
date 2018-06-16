@@ -30,4 +30,4 @@ const AUCTIONABLE_CARD_FIELDS = [
 ];
 const instances = getInstancesByCards(bCards, AUCTIONABLE_CARD_FIELDS);
     
-Spark.setScriptData("auctions", instances);s
+Spark.setScriptData("auctions", instances);
