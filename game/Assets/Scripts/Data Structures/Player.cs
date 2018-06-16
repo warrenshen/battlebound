@@ -55,11 +55,11 @@ public class Player {
         List<Card> cards = new List<Card>();
         cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, owner: this));
         cards.Add(new WeaponCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new SpellCard("C3", "Crushing Walls", 7, "Crushing_Walls", owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
         cards.Add(new WeaponCard("C4", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
         cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, owner: this));
         cards.Add(new WeaponCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new SpellCard("C3", "Crushing Walls", 7, "Crushing_Walls", owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;

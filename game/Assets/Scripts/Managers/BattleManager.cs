@@ -7,8 +7,6 @@ using UnityEngine;
 public class BattleManager : MonoBehaviour {
     private Player you;
     private Player opponent;
-    [SerializeField]
-    private Board board;
 
     [SerializeField]
     private Player activePlayer;
@@ -18,7 +16,6 @@ public class BattleManager : MonoBehaviour {
 
     public int battleLayer;
     public int boardLayer;
-    public GameObject spawnFX;
     //private List<HistoryItem> history;
 
     private BoardCreature mouseDownCreature;
@@ -33,7 +30,6 @@ public class BattleManager : MonoBehaviour {
         Instance = this;
         this.you = new Player("Player");
         this.opponent = new Player("Enemy");
-        this.board = new Board();
     }
 
     private void Start()
@@ -157,16 +153,36 @@ public class BattleManager : MonoBehaviour {
             ActionManager.Instance.ResetTarget();
             return false;
         }
-        else if (target.card.GetType() == typeof(SpellCard) || target.card.GetType() == typeof(WeaponCard))
+        else if (target.card.GetType() == typeof(SpellCard))
         {
-            this.PlayCardGeneric(target.card.Owner, target);
+            SpellCard spell = target.card as SpellCard;
+            if(spell.Targeted)
+            {
+                if(Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle"))) {
+                    this.PlayTargetedSpell(spell, target, hit);
+                    return true;  
+                }
+                else {
+                    ActionManager.Instance.ResetTarget();
+                    return false;
+                }
+            }
+            else  //not targeted spell, play freely
+            {
+                this.UseCard(target.card.Owner, target); //change to own board spell func
+                return true;
+            }
+        }
+        else if (target.card.GetType() == typeof(WeaponCard))
+        {
+            this.UseCard(target.card.Owner, target);    //to-do: change to own weapon func
             return true;
         }
         else if (Physics.Raycast(ray, out hit, 100f, boardLayer) && hit.collider.name.Contains(target.card.Owner.Name))
         {
             //place card
             Debug.Log("Mouse up with board playable card.");
-            this.PlayCardToBoard(target.card.Owner, target, hit);
+            this.PlayCardToBoard(target, hit);
             return true;
         }
         else
@@ -177,32 +193,40 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    public void PlayCardToBoard(Player player, CardObject cardObject, RaycastHit hit) {
-        
+    public void PlayCardToBoard(CardObject cardObject, RaycastHit hit) {
+        Player player = cardObject.card.Owner;
+
         //only called for creature or structure
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length-1);
         int index = Int32.Parse(lastChar);
 
-        board.PlaceCard(player, cardObject.card, index);
-        GameObject fx = GameObject.Instantiate(spawnFX, hit.collider.transform.position + new Vector3(0f, 0f, -0.1f), Quaternion.identity);
-        CreateBoardCreature(cardObject, player, hit.collider.transform.position);
-        PlayCardGeneric(player, cardObject);
+        FXPoolManager.Instance.PlayEffect("Spawn", hit.collider.transform.position + new Vector3(0f, 0f, -0.1f));
+        BoardCreature created = CreateBoardCreature(cardObject, player, hit.collider.transform.position);
+        Board.Instance().PlaceCreature(created, player, index);
+        UseCard(player, cardObject);
+    }
+
+    public void PlayTargetedSpell(SpellCard spell, CardObject target, RaycastHit hit) {
+        BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
+        spell.Activate(targetedCreature, "l_bolt");
+        UseCard(target.card.Owner, target);
     }
 
 
-    public void PlayCardGeneric(Player player, CardObject cardObject) {
+    public void UseCard(Player player, CardObject cardObject) {
         
         player.PlayCard(cardObject);    //removes card from hand, spend mana
         GameObject.Destroy(cardObject.gameObject);
     }
 
 
-    public void CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos) {
+    public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos) {
         
         GameObject created = new GameObject(cardObject.card.Name);
         created.transform.position = pos;
         BoardCreature creature = created.AddComponent<BoardCreature>();
         creature.Initialize(cardObject, owner);
+        return creature;
     }
 }
