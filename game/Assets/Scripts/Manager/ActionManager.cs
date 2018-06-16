@@ -11,7 +11,6 @@ public class ActionManager : MonoBehaviour {
     private float M_THRESHOLD = 2000f;
     private float L_SPEED = 9f;
 
-    private Camera cam;
     [SerializeField]
     private CardObject target;
     private Quaternion[] dragTilts = new Quaternion[5];
@@ -20,29 +19,23 @@ public class ActionManager : MonoBehaviour {
     private SpriteRenderer sp;
     private int selectedSortingOrder;
 
-    private Collection collection;
-    private BattleManager battleManager;
-
     private int boardLayerMask;
 
+    public static ActionManager Instance { get; private set; }
 
     private void Awake()
     {
-        cam = Camera.main;
-        if (Application.loadedLevelName == "Collection")
-        {
-            collection = cam.GetComponent<Collection>();
-        }
-        else if(Application.loadedLevelName == "Battle")
-        {
-            battleManager = cam.GetComponent<BattleManager>();
+        Instance = this;
+    }
+
+    private void Start() {
+        if (Application.loadedLevelName == "Battle")
             boardLayerMask = LayerMask.GetMask("Board");
-        }
         InitializeDragTilts();
     }
 
     // Update is called once per frame
-    void Update () {
+    private void Update () {
         if(allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
         if(target) {
             RepositionCard(target);
@@ -82,23 +75,23 @@ public class ActionManager : MonoBehaviour {
     }
 
     private void DestroyTarget() {
-        Destroy(target.gameObject);
+        GameObject.Destroy(target.gameObject);
     }
 
     private void ScrollToPan(Vector3 axes) {
-        transform.Translate(axes * Input.mouseScrollDelta.y * SCROLL_DAMPING);
+        Camera.main.transform.Translate(axes * Input.mouseScrollDelta.y * SCROLL_DAMPING);
     }
 
     private void RepositionCard(CardObject cardObj)
     {
         //set target position by mouse position
-        Vector3 endPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cardOffsetFromCamera));
+        Vector3 endPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cardOffsetFromCamera));
         cardObj.transform.position = Vector3.Lerp(cardObj.transform.position, endPos, Time.deltaTime * L_SPEED);
     }
 
     private void AdjustCardTilt(CardObject cardObj)
     {
-        Vector3 mDeltaPosition = cam.WorldToScreenPoint(cardObj.transform.position);
+        Vector3 mDeltaPosition = Camera.main.WorldToScreenPoint(cardObj.transform.position);
         mDeltaPosition = Input.mousePosition - mDeltaPosition;
         var magnitude = mDeltaPosition.sqrMagnitude;
         Vector3 resetRotation = cardObj.reset.resetRotation.eulerAngles;
@@ -159,7 +152,7 @@ public class ActionManager : MonoBehaviour {
     }
 
     public void AddCardToDeck(CardObject card) {
-        if(collection != null)
-           collection.AddToDeck(card);
+        if(CollectionManager.Instance != null)
+            CollectionManager.Instance.AddToDeck(card);
     }
 }

@@ -24,51 +24,26 @@ public class BattleManager : MonoBehaviour {
     private BoardCreature mouseDownCreature;
     private BoardCreature mouseUpCreature;
 
-    private ActionManager actionManager;
     public LineRenderer attackArrow;
 
+    public static BattleManager Instance { get; private set; }
 
-    // Use this for initialization
     private void Awake()
     {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        // Use this for initialization
         you = new Player("Player");
         opponent = new Player("Enemy");
         board = new Board();
 
         battleLayer = 9;
         boardLayer = LayerMask.GetMask("Board");
-        actionManager = Camera.main.GetComponent<ActionManager>();
-    }
-
-
-    private void Start()
-    {
         GameStart();
     }
-
-
-    private void GameStart() {
-        players = new List<Player>();
-        players.Add(you);
-        players.Add(opponent);
-
-        turnIndex = UnityEngine.Random.Range(0, players.Count);
-        turnCount = 0;
-        NextTurn();
-    }
-
-
-    private void NextTurn() {
-        activePlayer.active = false;
-        turnCount++;
-        turnIndex++;
-        activePlayer = players[turnIndex % players.Count];
-
-        //do some turn transition render
-        activePlayer.NewTurn();
-
-    }
-
 
     private void Update()
     {
@@ -95,10 +70,12 @@ public class BattleManager : MonoBehaviour {
             {
                 CheckFight(hit);
             }
-            else if(CheckPlayCard(ray, hit)) {
+            else if (CheckPlayCard(ray, hit))
+            {
                 //do something?
             }
-            else if(cast && hit.collider.name == "End Turn") {
+            else if (cast && hit.collider.name == "End Turn")
+            {
                 NextTurn();
             }
             //reset state
@@ -116,6 +93,29 @@ public class BattleManager : MonoBehaviour {
                 attackArrow.SetPosition(1, hit.point);
             }
         }
+    }
+
+
+    private void GameStart() {
+        players = new List<Player>();
+        players.Add(you);
+        players.Add(opponent);
+
+        turnIndex = UnityEngine.Random.Range(0, players.Count);
+        turnCount = 0;
+        NextTurn();
+    }
+
+
+    private void NextTurn() {
+        activePlayer.active = false;
+        turnCount++;
+        turnIndex++;
+        activePlayer = players[turnIndex % players.Count];
+
+        //do some turn transition render
+        activePlayer.NewTurn();
+
     }
 
 
@@ -141,21 +141,21 @@ public class BattleManager : MonoBehaviour {
     private bool CheckPlayCard(Ray ray, RaycastHit hit) {
         
         //TODO: check target.card.type for spell or weapon first
-        if (!actionManager.HasDragTarget())
+        if (!ActionManager.Instance.HasDragTarget())
             return false;
-        CardObject target = actionManager.GetDragTarget();
+        CardObject target = ActionManager.Instance.GetDragTarget();
         //TODO: think about using displacement distance as activation indicator vs screen height
         float minThreshold = 0.20f;
         if (target.card.Cost > target.card.Owner.Mana)
         {
             //can't play card due to mana
-            actionManager.ResetTarget();
+            ActionManager.Instance.ResetTarget();
             return false;
         }
         else if (Input.mousePosition.y < Screen.height * minThreshold)
         {
             //didn't lift card high enough to activate
-            actionManager.ResetTarget();
+            ActionManager.Instance.ResetTarget();
             return false;
         }
         else if (target.card.GetType() == typeof(SpellCard) || target.card.GetType() == typeof(WeaponCard))
@@ -173,7 +173,7 @@ public class BattleManager : MonoBehaviour {
         else
         {
             //no good activation events, return to hand or original pos/rot in collection
-            actionManager.ResetTarget();
+            ActionManager.Instance.ResetTarget();
             return false;
         }
     }
@@ -186,7 +186,7 @@ public class BattleManager : MonoBehaviour {
         int index = Int32.Parse(lastChar);
 
         board.PlaceCard(player, cardObject.card, index);
-        GameObject fx = Instantiate(spawnFX, hit.collider.transform.position + new Vector3(0f, 0f, -0.1f), Quaternion.identity);
+        GameObject fx = GameObject.Instantiate(spawnFX, hit.collider.transform.position + new Vector3(0f, 0f, -0.1f), Quaternion.identity);
         CreateBoardCreature(cardObject, player, hit.collider.transform.position);
         PlayCardGeneric(player, cardObject);
     }
@@ -195,7 +195,7 @@ public class BattleManager : MonoBehaviour {
     public void PlayCardGeneric(Player player, CardObject cardObject) {
         
         player.PlayCard(cardObject);    //removes card from hand, spend mana
-        Destroy(cardObject.gameObject);
+        GameObject.Destroy(cardObject.gameObject);
     }
 
 
@@ -206,6 +206,4 @@ public class BattleManager : MonoBehaviour {
         BoardCreature creature = created.AddComponent<BoardCreature>();
         creature.Initialize(cardObject, owner);
     }
-
-
 }

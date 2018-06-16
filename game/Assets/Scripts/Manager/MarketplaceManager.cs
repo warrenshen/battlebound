@@ -5,14 +5,20 @@ using GameSparks.Core;
 using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
 
-public class Marketplace : MonoBehaviour {
+public class MarketplaceManager : MonoBehaviour {
 
 	private List<CardAuction> cardAuctions;
-	//private List<CardAuction> activePlayerCardAuctions;
+    private GameObject cardAuctionsGO;
+    //private List<CardAuction> activePlayerCardAuctions;
 
-	private GameObject cardAuctionsGO;
+    public static MarketplaceManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     
-	private void Awake()
+	private void Start()
 	{
 		CreateAuctionModalPanel.Instance().HideModal();
 

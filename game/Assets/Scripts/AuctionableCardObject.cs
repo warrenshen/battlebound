@@ -10,13 +10,11 @@ public class AuctionableCardObject : MonoBehaviour
     private Collider coll;
     private Texture2D image;
 
-    private ActionManager action;
     private float lastClicked;
 
     public void Awake()
     {
 		CreateAuctionModalPanel.Instance().HideModal();
-        action = Camera.main.GetComponent<ActionManager>();
         spr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
     }
 

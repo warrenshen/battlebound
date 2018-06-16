@@ -38,16 +38,11 @@ public class BoardCreature : MonoBehaviour {
     public Player Owner => owner;
 
     private SpriteRenderer sp;
-    private BattleManager battleManager;
-    private FXPool fx;
 
     TextMeshPro textMesh;
 
     public void Initialize(CardObject cardObject, Player owner) {
         CreatureCard creature = cardObject.card as CreatureCard;
-
-        this.battleManager = Camera.main.GetComponent<BattleManager>();
-        this.fx = GameObject.Find("FX Pool").GetComponent<FXPool>();
 
         this.uid = creature.Id;
         this.cost = creature.Cost;
@@ -87,8 +82,8 @@ public class BoardCreature : MonoBehaviour {
         other.health -= this.attack;
 
         //to-do this string should be chosen from some dict set by text file later
-        fx.PlayEffect("Slash", this.transform.position);
-        fx.PlayEffect("Slash", other.transform.position);
+        FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
+        FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
 
         Vector3 delta = (this.transform.position - other.transform.position)/3.0f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();

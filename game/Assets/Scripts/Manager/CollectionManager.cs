@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 [System.Serializable]
-public class Collection : MonoBehaviour {
+public class CollectionManager : MonoBehaviour {
 
     private List<Card> collection;
     private List<Deck> decks;
@@ -20,27 +20,28 @@ public class Collection : MonoBehaviour {
     private List<CardCutout> cutouts;
     private GameObject panel;
     private Collider panelColl;
-    private Camera cam;
-    private ActionManager action;
     private GameObject collectionObject;
 
     private CardObject selectedCard;
     public GameObject deckPanel;
     private LogEventResponse cardsResponse;
 
+    public static CollectionManager Instance { get; private set; }
 
     private void Awake()
     {
-        collection = new List<Card>();
-        decks = new List<Deck>();
-        cutouts = new List<CardCutout>();
-        idToCard = new Dictionary<string, Card>();
+        Instance = this;
+    }
+
+    private void Start() {
+        this.collection = new List<Card>();
+        this.decks = new List<Deck>();
+        this.cutouts = new List<CardCutout>();
+        this.idToCard = new Dictionary<string, Card>();
 
         //ping server for collection json
         GetCollectionRequest();
 
-        cam = Camera.main;
-        action = cam.GetComponent<ActionManager>();
         collectionObject = new GameObject("Collection");
         panel = GameObject.Find("Build Panel");
         panelColl = panel.GetComponent<BoxCollider>() as Collider;
@@ -56,9 +57,9 @@ public class Collection : MonoBehaviour {
     {
         if (Input.GetMouseButton(0))
         {
-            if (!action.HasDragTarget())
+            if (!ActionManager.Instance.HasDragTarget())
                 return;
-            selectedCard = action.GetDragTarget();
+            selectedCard = ActionManager.Instance.GetDragTarget();
             Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
             RaycastHit hit;
 
@@ -105,7 +106,7 @@ public class Collection : MonoBehaviour {
 
     public void RotateToDeck(Deck deck)
     {
-        LeanTween.rotateY(gameObject, 2f, 1f).setEaseOutCubic();
+        LeanTween.rotateY(Camera.main.gameObject, 2f, 1f).setEaseOutCubic();
         Debug.Log("# of cards in deck: " + deck.Cards.Count);
         List<Card> existing = new List<Card>(deck.Cards);
         chosenDeck = deck;
@@ -124,9 +125,9 @@ public class Collection : MonoBehaviour {
         foreach (Deck deck in decks)
         {
             Transform t = placeholders.transform.GetChild(count);
-            GameObject created = Instantiate(deckPanel, t.position, t.localRotation);
+            GameObject created = GameObject.Instantiate(deckPanel, t.position, t.localRotation);
             created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
-            created.GetComponent<DeckPanel>().Initialize(deck, this);
+            created.GetComponent<DeckPanel>().Initialize(deck);
             ++count;
         }
     }
@@ -142,7 +143,7 @@ public class Collection : MonoBehaviour {
         //create and set visuals
         GameObject instance = new GameObject("Added " + wrapper.card.Name) as GameObject;
         CardCutout cutout = instance.AddComponent<CardCutout>();
-        cutout.Initialize(wrapper, chosenDeck.Cards, this);
+        cutout.Initialize(wrapper, chosenDeck.Cards);
         cutouts.Add(cutout);
         //reposition all cutouts
         RenderDecklist();
@@ -221,13 +222,6 @@ public class Collection : MonoBehaviour {
     {
         Debug.Log("Gamesparks Request Error!");
     }
-
-    //private void ParseDeck(string json)
-    //{
-    //    //json = json.Replace("DeckB", "Items");
-    //    Debug.Log(json);
-    //    chosenDeck.SetCards(JsonList.FromJson<Card>(json));
-    //}
 
     private void CreateCardObjects()
     {
