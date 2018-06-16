@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 [System.Serializable]
@@ -58,21 +59,6 @@ public class CreatureCard : Card {
     }
 }
 
-public class SpellCard : Card
-{
-    private bool targeted;      //affects single target or whole board?
-    public bool Targeted => targeted;
-    public SpellCard(string id, string name, int cost, string image, Player owner = null)
-    {
-        this.id = id;
-        this.name = name;
-        //this.category = category;
-        this.cost = cost;
-        this.image = image;
-        this.owner = owner;
-    }
-}
-
 public class WeaponCard : Card
 {
     [SerializeField]
@@ -107,5 +93,45 @@ public class StructureCard : Card
         this.cost = cost;
         this.image = image;
         this.owner = owner;
+    }
+}
+
+public class SpellCard : Card
+{
+    private static Dictionary<string, string> spellToMethod;
+
+    private bool targeted;      //affects single target or whole board?
+    public bool Targeted => targeted;
+
+    public SpellCard(string id, string name, int cost, string image, bool targeted = false, Player owner = null)
+    {
+        this.id = id;
+        this.name = name;
+        //this.category = category;
+        this.cost = cost;
+        this.image = image;
+        this.targeted = targeted;
+        this.owner = owner;
+
+        if(spellToMethod == null) {
+            InitSpellDict();
+        }
+    }
+
+    private void InitSpellDict() {
+        spellToMethod = new Dictionary<string, string>();
+        spellToMethod["l_bolt"] = "LightningBolt";
+    }
+
+    public void Activate(BoardCreature creature, string shortName) {
+        string methodName = spellToMethod[shortName];
+        MethodInfo method = typeof(SpellCard).GetMethod(methodName);
+        method.Invoke(this, new object[]{ creature });
+    }
+
+    public void LightningBolt(BoardCreature target) {
+        target.TakeDamage(3);
+        //play effect
+        FXPoolManager.Instance.PlayEffect("LightningBolt", target.transform.position);
     }
 }
