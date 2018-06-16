@@ -1,14 +1,6 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
-using Nethereum.Util;
-using Nethereum.Web3;
+﻿using Nethereum.Web3;
 using Nethereum.Contracts;
 using Nethereum.Web3.Accounts;
-using Nethereum.HdWallet;
-using Nethereum.Hex.HexTypes;
-using Nethereum.Signer;
-using Nethereum.Hex.HexConvertors.Extensions;
 
 public class AuctionContract
 {
@@ -25,7 +17,6 @@ public class AuctionContract
 		long gasPrice = 5000000000L
 	)
 	{
-		//Web3 web3 = new Web3(web3Url);
 		Web3 web3 = new Web3();
         Contract contract = web3.Eth.GetContract(contractAbi, contractAddress);
         

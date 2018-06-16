@@ -21,11 +21,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 	private int nonce;
 	private string createAuctionTxHashI;
 
-	private void Awake()
-    {
-        base.Awake();
-    }
-
     public async Task<string> CreateAuction(
 		int tokenId,
 	    long startingPrice,
