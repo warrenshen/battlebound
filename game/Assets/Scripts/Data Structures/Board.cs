@@ -18,7 +18,6 @@ public class Board
         return instance;
     }
 
-
     public Board() {
         //create field for each player
         playerToFields = new Dictionary<Player, PlayingField>();
