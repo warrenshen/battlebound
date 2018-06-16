@@ -14,7 +14,6 @@ public class CardAuctionObject : MonoBehaviour
 	private TextMeshPro textMesh;
 	private GameObject go;
 
-	private ActionManager action;
 	private float lastClicked;
 
 	public void Awake()
@@ -29,7 +28,6 @@ public class CardAuctionObject : MonoBehaviour
 
 		go.transform.SetParent(gameObject.transform, false);
 
-        action = Camera.main.GetComponent<ActionManager>();
         spr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
     }
 

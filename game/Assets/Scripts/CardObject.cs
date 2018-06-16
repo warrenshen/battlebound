@@ -13,7 +13,6 @@ public class CardObject : MonoBehaviour
     private Collider coll;
     private Texture2D image;
 
-    private ActionManager action;
     private float lastClicked;
     public bool minified;
 
@@ -26,7 +25,6 @@ public class CardObject : MonoBehaviour
 
     public void Awake()
     {
-        action = Camera.main.GetComponent<ActionManager>();
         spr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
     }
 
@@ -53,7 +51,7 @@ public class CardObject : MonoBehaviour
     {
         if (!card.Owner.active)
             return;
-        if (action.HasDragTarget())
+        if (ActionManager.Instance.HasDragTarget())
             return;
 
         float scaling = 1.1f;
@@ -64,7 +62,7 @@ public class CardObject : MonoBehaviour
     {
         if (!card.Owner.active)
             return;
-        if (action.HasDragTarget())
+        if (ActionManager.Instance.HasDragTarget())
             return;
         transform.localScale = new Vector3(1, 1, 1);
     }
@@ -80,21 +78,21 @@ public class CardObject : MonoBehaviour
     {
         if (!card.Owner.active)
             return;
-        if (action.HasDragTarget())
+        if (ActionManager.Instance.HasDragTarget())
             return;
         //set defaults
         reset.resetPosition = transform.localPosition;
         reset.resetScale = transform.localScale;
         reset.resetRotation = transform.localRotation;
 
-        action.SetDragTarget(this, Renderer);
+        ActionManager.Instance.SetDragTarget(this, Renderer);
     }
 
     public void OnMouseUp()
     {
         if (!card.Owner.active)
             return;
-        if (!action.HasDragTarget())
+        if (!ActionManager.Instance.HasDragTarget())
             return;
         ////resets card object position to original, handled by actionmanager
         if (Time.time - lastClicked < 0.5f)
@@ -106,12 +104,12 @@ public class CardObject : MonoBehaviour
     {
         Debug.Log(gameObject.name + " double clicked.");
         if(Application.loadedLevelName == "Collection")
-            action.AddCardToDeck(this);
+            ActionManager.Instance.AddCardToDeck(this);
     }
 
-    public void Minify(bool val)
+    public void Minify(bool value)
     {
-        if(val) {
+        if(value) {
             spr.sprite = Sprite.Create(image, new Rect(0.0f, image.height / 2 - 40, image.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
             minified = true;
         }

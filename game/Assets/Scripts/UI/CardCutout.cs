@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CardCutout : ObjectUI {
-    Collection collection;
     CardObject wrapper;
 
 	// Use this for initialization
-    public void Initialize(CardObject wrapper, List<Card> deck, Collection collection) {
-        this.collection = collection;
+    public void Initialize(CardObject wrapper, List<Card> deck) {
         this.wrapper = wrapper;
 
         SpriteRenderer sp = gameObject.AddComponent<SpriteRenderer>();
@@ -32,7 +30,7 @@ public class CardCutout : ObjectUI {
 
     public void OnMouseDown()
     {
-        collection.RemoveFromDeck(wrapper, this);
+        CollectionManager.Instance.RemoveFromDeck(wrapper, this);
         Destroy(gameObject);
     }
 }

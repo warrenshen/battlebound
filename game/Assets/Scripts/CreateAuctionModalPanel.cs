@@ -26,6 +26,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
 	[SerializeField]
     private GameObject modalPanelObject;
 
+    //TO-DO: NEEDS REVIEW, possible creation of duplicate due to already existing copy via monobehavior and placement in scene
 	public static CreateAuctionModalPanel Instance()
 	{
 		if (!modalPanel)
