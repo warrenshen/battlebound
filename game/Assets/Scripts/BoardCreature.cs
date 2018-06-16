@@ -38,17 +38,19 @@ public class BoardCreature : MonoBehaviour {
     public Player Owner => owner;
 
     private SpriteRenderer sp;
+    private CreatureCard card;
+    public CreatureCard Card => card;
 
     TextMeshPro textMesh;
 
     public void Initialize(CardObject cardObject, Player owner) {
-        CreatureCard creature = cardObject.card as CreatureCard;
+        this.card = cardObject.card as CreatureCard;
 
-        this.uid = creature.Id;
-        this.cost = creature.Cost;
-        this.attack = creature.Attack;
-        this.health = creature.Health;
-        this.image = creature.Image;
+        this.uid = this.card.Id;
+        this.cost = this.card.Cost;
+        this.attack = this.card.Attack;
+        this.health = this.card.Health;
+        this.image = this.card.Image;
 
         this.canAttack = false;
         this.attacksThisTurn = 0;
@@ -93,6 +95,12 @@ public class BoardCreature : MonoBehaviour {
             this.UpdateStatText();
         if (other.CheckAlive())
             other.UpdateStatText();
+    }
+
+    //taking damage
+    public void TakeDamage(int amount) {
+        this.health -= amount;
+        this.UpdateStatText();
     }
 
     public bool CheckAlive() {
