@@ -271,7 +271,7 @@ public class Collection : MonoBehaviour {
     private void CreateDeckLocal()
     {
         //jank json test, for generating list of json objects
-        collection.Add(new Card("C1", "Direhorn Hatchling", Card.CardType.Creature, 5, 3, 6, "Direhorn_Hatchling"));
-        collection.Add(new Card("C2", "Fiery War Axe", Card.CardType.Weapon, 3, 3, 2, "Fiery_War_Axe"));
+        collection.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6));
+        collection.Add(new CreatureCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2));
     }
 }

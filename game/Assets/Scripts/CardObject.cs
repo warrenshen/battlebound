@@ -51,6 +51,8 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseEnter()
     {
+        if (!card.Owner.active)
+            return;
         if (action.HasDragTarget())
             return;
 
@@ -60,6 +62,8 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseExit()
     {
+        if (!card.Owner.active)
+            return;
         if (action.HasDragTarget())
             return;
         transform.localScale = new Vector3(1, 1, 1);
@@ -67,11 +71,18 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseOver()
     {
+        if (!card.Owner.active)
+            return;
         if (Input.GetMouseButtonUp(1)) Debug.Log("Pressed right click.");
     }
 
     public void OnMouseDown()
     {
+        if (!card.Owner.active)
+            return;
+        if (action.HasDragTarget())
+            return;
+        //set defaults
         reset.resetPosition = transform.localPosition;
         reset.resetScale = transform.localScale;
         reset.resetRotation = transform.localRotation;
@@ -81,6 +92,8 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseUp()
     {
+        if (!card.Owner.active)
+            return;
         if (!action.HasDragTarget())
             return;
         ////resets card object position to original, handled by actionmanager

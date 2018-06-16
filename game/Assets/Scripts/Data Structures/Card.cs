@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Card {
-    public enum CardType: byte { Creature, Spell, Weapon, Structure };
+public abstract class Card {
+    //public enum CardType: byte { Creature, Spell, Weapon, Structure };
 
     [SerializeField]
-    private string id;
+    protected string id;
     public string Id => id;
 
-    //read-only
     [SerializeField]
-    private string name;
+    protected string name;
     public string Name => name;
 
-    [SerializeField]
-    private CardType category;
-    public CardType Category => category;
+    //[SerializeField]
+    //protected CardType category;
+    //public CardType Category => category;
 
     [SerializeField]
-    private int cost;
+    protected int cost;
     public int Cost
     {
         get { return cost; }
@@ -28,29 +27,83 @@ public class Card {
     }
 
     [SerializeField]
-    private int attack;
-    public int Attack => attack;
-
-    [SerializeField]
-    private int health;
-    public int Health => health;
-
-    [SerializeField]
-    private string image;
+    protected string image;
     public string Image => image;
 
-    private Player owner;
+    protected Player owner;
     public Player Owner => owner;
 
     public CardObject wrapper;
+}
 
+public class CreatureCard : Card {
+    [SerializeField]
+    protected int attack;
+    public int Attack => attack;
 
-    public Card(string id, string name, CardType category, int cost, int attack, int health, string image, Player owner = null) {
+    [SerializeField]
+    protected int health;
+    public int Health => health;
+
+    public CreatureCard(string id, string name, int cost, string image, int attack, int health, Player owner = null) {
         this.id = id;
         this.name = name;
-        this.category = category;
+        //this.category = category;
+        this.cost = cost;
+        this.image = image;
+        this.owner = owner;
+
         this.attack = attack;
         this.health = health;
+    }
+}
+
+public class SpellCard : Card
+{
+    private bool targeted;      //affects single target or whole board?
+    public bool Targeted => targeted;
+    public SpellCard(string id, string name, int cost, string image, Player owner = null)
+    {
+        this.id = id;
+        this.name = name;
+        //this.category = category;
+        this.cost = cost;
+        this.image = image;
+        this.owner = owner;
+    }
+}
+
+public class WeaponCard : Card
+{
+    [SerializeField]
+    protected int attack;
+    public int Attack => attack;
+
+    [SerializeField]
+    protected int durability;
+    public int Durability => durability;
+
+    public WeaponCard(string id, string name, int cost, string image, int attack, int durability, Player owner = null)
+    {
+        this.id = id;
+        this.name = name;
+        //this.category = category;
+        this.cost = cost;
+        this.image = image;
+        this.owner = owner;
+
+        this.attack = attack;
+        this.durability = durability;
+    }
+}
+
+public class StructureCard : Card
+{
+    public StructureCard(string id, string name, int cost, string image, int attack, int durability, Player owner = null)
+    {
+        this.id = id;
+        this.name = name;
+        //this.category = category;
         this.cost = cost;
         this.image = image;
         this.owner = owner;
