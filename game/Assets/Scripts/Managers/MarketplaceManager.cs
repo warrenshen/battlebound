@@ -16,14 +16,13 @@ public class MarketplaceManager : MonoBehaviour {
     private void Awake()
     {
         Instance = this;
+        this.cardAuctions = new List<CardAuction>();
+        this.cardAuctionsGO = new GameObject("Card Auctions");
     }
     
 	private void Start()
 	{
 		CreateAuctionModalPanel.Instance().HideModal();
-
-		cardAuctions = new List<CardAuction>();
-		cardAuctionsGO = new GameObject("Card Auctions");
 
 		GetCardAuctions();
 		GetPlayerCardAuctions();

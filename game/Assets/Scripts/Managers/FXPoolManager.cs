@@ -10,11 +10,11 @@ public class FXPoolManager : MonoBehaviour {
     private void Awake()
     {
         Instance = this;
+        this.effectIndices = new Dictionary<string, int>();
     }
 
 	// Use this for initialization
 	void Start () {
-        effectIndices = new Dictionary<string, int>();
         foreach(Transform effect in transform) {
             effectIndices.Add(effect.name, 0);
         }
