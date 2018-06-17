@@ -40,6 +40,10 @@ public class Board
         playerToFields[player] = created;
 	}
 
+    public PlayingField GetField(Player player) {
+        return playerToFields[player];
+    }
+
 
     [System.Serializable]
     public class PlayingField {
@@ -61,6 +65,10 @@ public class Board
                 creatures[index] = creature;
                 return true;
             }
+        }
+
+        public BoardCreature[] GetCreatures() {
+            return creatures;
         }
     }
 }

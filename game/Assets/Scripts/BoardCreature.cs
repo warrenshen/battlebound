@@ -41,6 +41,9 @@ public class BoardCreature : MonoBehaviour {
     private CreatureCard card;
     public CreatureCard Card => card;
 
+    [SerializeField]
+    private List<string> abilities;
+
     TextMeshPro textMesh;
 
     public void Initialize(CardObject cardObject, Player owner) {
@@ -51,6 +54,7 @@ public class BoardCreature : MonoBehaviour {
         this.attack = this.card.Attack;
         this.health = this.card.Health;
         this.image = this.card.Image;
+        this.abilities = this.card.Abilities;
 
         this.canAttack = false;
         this.attacksThisTurn = 0;
@@ -87,9 +91,12 @@ public class BoardCreature : MonoBehaviour {
         FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
         FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
 
+        if (other.Taunt())
+            SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
+
         Vector3 delta = (this.transform.position - other.transform.position)/3.0f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
-        LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
+        //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
         if (this.CheckAlive())
             this.UpdateStatText();
@@ -100,15 +107,29 @@ public class BoardCreature : MonoBehaviour {
     //taking damage
     public void TakeDamage(int amount) {
         this.health -= amount;
-        this.UpdateStatText();
+        if(CheckAlive()) {
+            this.UpdateStatText();
+        }
     }
 
     public bool CheckAlive() {
-        return true;
+        if (this.health > 0) {
+            return true;
+        }
+        else {
+            //to-do, delay creature death
+            FXPoolManager.Instance.PlayEffect("CreatureDeath", this.transform.position);
+            Destroy(gameObject);
+            return false;
+        }
     }
 
     public void UpdateStatText() {
         textMesh.text = String.Format("{0} / {1}", this.attack, this.health);
+    }
+
+    public bool Taunt() {
+        return abilities != null && abilities.Contains("taunt");
     }
 
 }

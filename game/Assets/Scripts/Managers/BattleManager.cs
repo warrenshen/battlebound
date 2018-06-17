@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -63,7 +64,7 @@ public class BattleManager : MonoBehaviour {
             bool cast = Physics.Raycast(ray, out hit, 100f);
             if (cast && hit.collider.gameObject.layer == battleLayer && mouseDownCreature != null) //use battle layer mask
             {
-                CheckFight(hit);
+                CheckFight(mouseDownCreature, hit);
             }
             else if (CheckPlayCard(ray, hit))
             {
@@ -90,7 +91,6 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-
     private void GameStart() {
         players = new List<Player>();
         players.Add(you);
@@ -113,8 +113,28 @@ public class BattleManager : MonoBehaviour {
 
     }
 
+    private List<BoardCreature> GetValidTargets(BoardCreature attacker)
+    {
 
-    private void CheckFight(RaycastHit hit) {
+        List<BoardCreature> allTargets = new List<BoardCreature>();
+        foreach (Player player in players)
+        {
+            if (player == attacker.Owner)
+                continue;
+            BoardCreature[] fieldCreatures = Board.Instance().GetField(player).GetCreatures();
+            allTargets.AddRange(fieldCreatures);
+        }
+
+        List<BoardCreature> priorityTargets = new List<BoardCreature>();
+        priorityTargets = allTargets.Where(creature => creature.Taunt()) as List<BoardCreature>;
+        if (priorityTargets != null && priorityTargets.Count > 0)
+            return priorityTargets;
+        else
+            return allTargets;
+    }
+
+
+    private void CheckFight(BoardCreature attacker, RaycastHit hit) {
         
         if (!attackArrow.enabled)
             return;
@@ -124,7 +144,7 @@ public class BattleManager : MonoBehaviour {
             //show creature details
             Debug.Log("Show details.");
         }
-        else if (mouseUpCreature.Owner != mouseDownCreature.Owner)
+        else if (GetValidTargets(attacker).Contains(mouseUpCreature))
         { //should wrap in a helper function isEnemy() for 2v2
           //valid attack
             Debug.Log("Attack made.");
