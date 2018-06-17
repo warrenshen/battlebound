@@ -46,10 +46,10 @@ public class CreatureCard : Card {
     protected int health;
     public int Health => health;
 
-    private List<int> abilities;
-    //temporary: 0 = taunt, 1 = divine shield
+    private List<string> abilities;
+    public List<string> Abilities => abilities;
 
-    public CreatureCard(string id, string name, int cost, string image, int attack, int health, Player owner = null, List<int> abilities = null) {
+    public CreatureCard(string id, string name, int cost, string image, int attack, int health, Player owner = null, List<string> abilities = null) {
         this.id = id;
         this.name = name;
         //this.category = category;
