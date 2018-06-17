@@ -218,6 +218,7 @@ public class BattleManager : MonoBehaviour {
         
         player.PlayCard(cardObject);    //removes card from hand, spend mana
         GameObject.Destroy(cardObject.gameObject);
+        SoundManager.Instance.PlaySound("Play", transform.position);
     }
 
 
