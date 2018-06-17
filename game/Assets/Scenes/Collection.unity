@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0.3
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073993, b: 0.3587269, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -9993,8 +9993,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb3417ac7326492bb5e1a58ea041167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chosenDeck:
-    cards: []
   deckPanel: {fileID: 1682544773196616, guid: 1c7395cdf5c8b4a32a4adca2630d06c7, type: 2}
 --- !u!20 &282840813
 Camera:
@@ -10058,6 +10056,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowPan: 1
   cardOffsetFromCamera: 8.5
+  target: {fileID: 0}
 --- !u!1 &290305041
 GameObject:
   m_ObjectHideFlags: 0
@@ -16753,7 +16752,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 3
-  lt: {fileID: 0}
   followCamPositionY: 1
 --- !u!108 &1044068231
 Light:
@@ -16764,8 +16762,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 2
-  m_Color: {r: 0.3915094, g: 1, b: 0.976175, a: 1}
-  m_Intensity: 10
+  m_Color: {r: 0.56078434, g: 0.94509804, b: 1, a: 1}
+  m_Intensity: 17
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -17355,7 +17353,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 3
-  lt: {fileID: 0}
   followCamPositionY: 1
 --- !u!108 &1232161272
 Light:
@@ -17366,8 +17363,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 2
-  m_Color: {r: 0.3915094, g: 1, b: 0.976175, a: 1}
-  m_Intensity: 10
+  m_Color: {r: 0.56078434, g: 0.94509804, b: 1, a: 1}
+  m_Intensity: 17
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
