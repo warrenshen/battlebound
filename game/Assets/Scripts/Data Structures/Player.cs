@@ -74,7 +74,7 @@ public class Player {
 
         //placeholder indicator
         Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
-        Transform light = GameObject.Find("Point Light").transform;
-        light.position = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+        GameObject light = GameObject.Find("Point Light");
+        LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
     }
 }
