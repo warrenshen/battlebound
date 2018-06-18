@@ -292,7 +292,7 @@ namespace GameSparks.Platforms
 							if (ExceptionReporter != null) {
 								ExceptionReporter (e);
 							} else {
-								Debug.LogError (e);
+								Debug.Log (e);
 							}
 						}
 					}
