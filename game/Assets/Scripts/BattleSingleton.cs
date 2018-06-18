@@ -20,6 +20,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
         ChallengeIssuedMessage.Listener += ChallengeIssuedMessageHandler;
 		ChallengeStartedMessage.Listener += ChallengeStartedMessageHandler;
 		ChallengeTurnTakenMessage.Listener += ChallengeTurnTakenMessageHandler;
+		ChallengeWonMessage.Listener += ChallengeWonMessageHandler;
+		ChallengeLostMessage.Listener += ChallengeLostMessageHandler;
+		ScriptMessage_ChallengeTimeRunningOutMessage.Listener += ChallengeTimeRunningOutMessageHandler;
 	}
 
     private void ChallengeIssuedMessageHandler(ChallengeIssuedMessage message)
@@ -40,8 +43,24 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	private void ChallengeTurnTakenMessageHandler(ChallengeTurnTakenMessage message)
 	{
+		Debug.Log("ChallengeTurnTakenMessage received.");
 		GSData scriptData = message.ScriptData;
 		ProcessChallengeScriptData(scriptData);
+	}
+
+	private void ChallengeWonMessageHandler(ChallengeWonMessage message)
+	{
+		Debug.Log("ChallengeWonMessage received.");
+	}
+
+	private void ChallengeLostMessageHandler(ChallengeLostMessage message)
+	{
+		Debug.Log("ChallengeLostMessage received.");
+	}
+
+	private void ChallengeTimeRunningOutMessageHandler(ScriptMessage_ChallengeTimeRunningOutMessage message)
+	{
+		Debug.Log("ChallengeTimeRunningOutMessage received.");
 	}
 
 	private void ProcessChallengeScriptData(GSData scriptData)
@@ -78,6 +97,12 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	public void SendChallengeEndTurnRequest()
     {
+		if (this.challengeId == null)
+		{
+			Debug.LogError("Cannot send ChallengeEndTurn request without challengeId set.");
+			return;
+		}
+
         LogChallengeEventRequest request = new LogChallengeEventRequest();
         request.SetEventKey("ChallengeEndTurn");
         request.SetEventAttribute("challengeInstanceId", this.challengeId);
@@ -86,7 +111,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void OnChallengeEndTurnSuccess(LogChallengeEventResponse response)
     {
-        Debug.LogError("ChallengeEndTurn request success.");
+		Debug.Log("ChallengeEndTurn request success.");
     }
 
     private void OnChallengeEndTurnError(LogChallengeEventResponse response)
@@ -99,6 +124,12 @@ public class BattleSingleton : Singleton<BattleSingleton>
 		PlayCardAttributes attributes
 	)
 	{
+		if (this.challengeId == null)
+        {
+			Debug.LogError("Cannot send ChallengeEndTurn request without challengeId set.");
+            return;
+        }
+
 		LogChallengeEventRequest request = new LogChallengeEventRequest();
         request.SetEventKey("ChallengeEndTurn");
         request.SetEventAttribute("challengeInstanceId", this.challengeId);
@@ -109,11 +140,40 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	private void OnChallengePlayCardSuccess(LogChallengeEventResponse response)
     {
-        Debug.LogError("ChallengeEndTurn request success.");
+		Debug.Log("ChallengeEndTurn request success.");
     }
 
 	private void OnChallengePlayCardError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengeEndTurn request error.");
+    }
+
+	public void SendChallengeCardAttackRequest(
+        string cardId,
+        CardAttackAttributes attributes
+    )
+    {
+		if (this.challengeId == null)
+        {
+			Debug.LogError("Cannot send ChallengeCardAttack request without challengeId set.");
+            return;
+        }
+
+        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        request.SetEventKey("ChallengeCardAttack");
+        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("cardId", cardId);
+        request.SetEventAttribute("attributes", JsonUtility.ToJson(attributes));
+		request.Send(OnChallengeCardAttackSuccess, OnChallengeCardAttackError);
+    }
+
+	private void OnChallengeCardAttackSuccess(LogChallengeEventResponse response)
+    {
+		Debug.Log("ChallengeCardAttack request success.");
+    }
+
+	private void OnChallengeCardAttackError(LogChallengeEventResponse response)
+    {
+		Debug.LogError("ChallengeCardAttack request error.");
     }
 }
