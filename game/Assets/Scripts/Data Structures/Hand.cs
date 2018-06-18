@@ -6,7 +6,6 @@ using UnityEngine;
 public class Hand {
     [SerializeField]
     private List<Card> cards;
-    //private List<CardObject> cardObjects;
 
     private string name;
 
@@ -14,39 +13,28 @@ public class Hand {
         this.cards = new List<Card>();
         this.name = name;
         Draw(deck, size);
-        Visualize();
     }
 
-    public Hand(List<Card> cards) {
-        this.cards = cards;
-        Visualize();
-    }
-
-    public void Visualize() {
-        CreateCards();
-        RepositionCards();
-    }
-
-    public int Draw(Deck deck) {
+    private int Draw(Deck deck) {
         if (deck.Cards.Count < 1)
-            return 1; //amount overdraw
+            return 1; //amount fatigue
         
         Card drawn = deck.Cards[0];
         deck.Cards.RemoveAt(0);
         cards.Add(drawn);
-
+        CreateCardObjects(drawn);
         return 0;
     }
 
     public int Draw(Deck deck, int amount) {
-        int overdraw = 0;
+        int fatigue = 0;
 
         while(amount > 0) {
-            overdraw += Draw(deck);
+            fatigue += Draw(deck);
             amount--;
         }
-        return overdraw;
-        //TODO: create drawn card's wrapper
+        RepositionCards();
+        return fatigue;
     }
 
     public void Discard(int count) {
@@ -59,17 +47,18 @@ public class Hand {
         RepositionCards();
     }
 
-    private void CreateCards()
+    private void CreateCardObjects(Card card) {
+        GameObject created = new GameObject(card.Name);
+        CardObject wrapper = created.AddComponent<CardObject>();
+        wrapper.InitializeCard(card);
+        created.transform.parent = GameObject.Find(name + " Hand").transform;
+    }
+
+    private void CreateCardObjects(List<Card> toCreate)
     {
-        //cardObjects = new List<CardObject>();
-        foreach (Card card in cards)
+        foreach (Card card in toCreate)
         {
-            GameObject created = new GameObject(card.Name);
-            //created.transform.parent = collectionObject.transform;
-            CardObject wrapper = created.AddComponent<CardObject>();
-            wrapper.InitializeCard(card);
-            created.transform.parent = GameObject.Find(name + " Hand").transform;
-            //cardObjects.Add(wrapper);
+            CreateCardObjects(card);
         }
     }
 

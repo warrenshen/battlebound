@@ -5,7 +5,8 @@ using UnityEngine;
 using TMPro;
 
 [System.Serializable]
-public class BoardCreature : MonoBehaviour {
+public class BoardCreature : MonoBehaviour
+{
 
     [SerializeField]
     private string uid;     //for server unique tracking/reference?
@@ -44,9 +45,11 @@ public class BoardCreature : MonoBehaviour {
     [SerializeField]
     private List<string> abilities;
 
+    Material dissolve;
     TextMeshPro textMesh;
 
-    public void Initialize(CardObject cardObject, Player owner) {
+    public void Initialize(CardObject cardObject, Player owner)
+    {
         this.card = cardObject.card as CreatureCard;
 
         this.uid = this.card.Id;
@@ -79,11 +82,17 @@ public class BoardCreature : MonoBehaviour {
         textContainer.anchoredPosition = new Vector3(0.8f, 1.5f, -0.5f);
         textHolder.transform.SetParent(gameObject.transform, false);
 
+        //ehh
+        dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
+        sp.material = dissolve;
+
         //method calls
-        UpdateStatText();
+        this.UpdateStatText();
+        this.RenderAbilities();
     }
 
-    public void Fight(BoardCreature other) {
+    public void Fight(BoardCreature other)
+    {
         this.health -= other.attack;
         other.health -= this.attack;
 
@@ -93,8 +102,10 @@ public class BoardCreature : MonoBehaviour {
 
         if (other.Taunt())
             SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
+        else
+            SoundManager.Instance.PlaySound("Splatter", other.transform.position);
 
-        Vector3 delta = (this.transform.position - other.transform.position)/3.0f;
+        Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
         //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
@@ -105,31 +116,70 @@ public class BoardCreature : MonoBehaviour {
     }
 
     //taking damage
-    public void TakeDamage(int amount) {
+    public bool TakeDamage(int amount)
+    {
+        if (this.Shielded())
+        {
+            abilities.Remove("shielded");
+            RenderAbilities(); //to-do: needs review in future
+            return false;
+        }
+
         this.health -= amount;
-        if(CheckAlive()) {
+        if (CheckAlive())
+        {
             this.UpdateStatText();
         }
+        return true; //true implies did take damage, e.g. for poison
     }
 
-    public bool CheckAlive() {
-        if (this.health > 0) {
+    public bool CheckAlive()
+    {
+        if (this.health > 0)
+        {
             return true;
         }
-        else {
+        else
+        {
             //to-do, delay creature death
+            Board.Instance().RemoveCreature(this);
             FXPoolManager.Instance.PlayEffect("CreatureDeath", this.transform.position);
-            Destroy(gameObject);
+            StartCoroutine("Dissolve", 2);
             return false;
         }
     }
 
-    public void UpdateStatText() {
+    private IEnumerator Dissolve(float duration)
+    {
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            sp.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(gameObject);
+    }
+
+    public void UpdateStatText()
+    {
         textMesh.text = String.Format("{0} / {1}", this.attack, this.health);
     }
 
-    public bool Taunt() {
+    private void RenderAbilities()
+    {
+        if (this.Taunt())
+            this.transform.localScale *= 1.2f;  //to-do, do better than this pls
+    }
+
+    public bool Taunt()
+    {
         return abilities != null && abilities.Contains("taunt");
+    }
+
+    public bool Shielded()
+    {
+        return abilities != null && abilities.Contains("shielded");
     }
 
 }

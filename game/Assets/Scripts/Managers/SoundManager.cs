@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    [SerializeField]
     public Dictionary<string, int> soundIndices;
 
     public static SoundManager Instance { get; private set; }

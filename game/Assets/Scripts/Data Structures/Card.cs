@@ -134,6 +134,7 @@ public class SpellCard : Card
     }
 
     public void LightningBolt(BoardCreature target) {
+        SoundManager.Instance.PlaySound("Shot", target.transform.position);
         target.TakeDamage(3);
         //play effect
         FXPoolManager.Instance.PlayEffect("LightningBolt", target.transform.position);
