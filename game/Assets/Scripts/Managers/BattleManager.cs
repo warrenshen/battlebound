@@ -111,6 +111,7 @@ public class BattleManager : MonoBehaviour {
         //do some turn transition render
         activePlayer.NewTurn();
 
+		BattleSingleton.Instance.SendChallengeEndTurnRequest();
     }
 
     private List<BoardCreature> GetValidTargets(BoardCreature attacker)
