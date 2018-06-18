@@ -5,7 +5,8 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public class BattleManager : MonoBehaviour {
+public class BattleManager : MonoBehaviour
+{
     private Player you;
     private Player opponent;
 
@@ -21,6 +22,7 @@ public class BattleManager : MonoBehaviour {
 
     private BoardCreature mouseDownCreature;
     private BoardCreature mouseUpCreature;
+    private List<BoardCreature> validTargets; //used to store/cache valid targets
 
     public LineRenderer attackArrow;
 
@@ -52,6 +54,7 @@ public class BattleManager : MonoBehaviour {
                 mouseDownCreature = hit.collider.GetComponent<BoardCreature>();
                 if (mouseDownCreature.Owner.active)
                 {
+                    validTargets = GetValidTargets(mouseDownCreature);
                     //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
                     attackArrow.SetPosition(0, hit.collider.transform.position);
                     attackArrow.enabled = true;
@@ -78,6 +81,7 @@ public class BattleManager : MonoBehaviour {
             mouseDownCreature = null;
             mouseUpCreature = null;
             attackArrow.enabled = false;
+            validTargets = null;
         }
 
         //render attack arrow correctly
@@ -91,7 +95,8 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    private void GameStart() {
+    private void GameStart()
+    {
         players = new List<Player>();
         players.Add(you);
         players.Add(opponent);
@@ -102,7 +107,8 @@ public class BattleManager : MonoBehaviour {
     }
 
 
-    private void NextTurn() {
+    private void NextTurn()
+    {
         activePlayer.active = false;
         turnCount++;
         turnIndex++;
@@ -111,7 +117,6 @@ public class BattleManager : MonoBehaviour {
         //do some turn transition render
         activePlayer.NewTurn();
 
-		BattleSingleton.Instance.SendChallengeEndTurnRequest();
     }
 
     private List<BoardCreature> GetValidTargets(BoardCreature attacker)
@@ -135,8 +140,9 @@ public class BattleManager : MonoBehaviour {
     }
 
 
-    private void CheckFight(BoardCreature attacker, RaycastHit hit) {
-        
+    private void CheckFight(BoardCreature attacker, RaycastHit hit)
+    {
+
         if (!attackArrow.enabled)
             return;
         mouseUpCreature = hit.collider.GetComponent<BoardCreature>();
@@ -145,17 +151,16 @@ public class BattleManager : MonoBehaviour {
             //show creature details
             Debug.Log("Show details.");
         }
-        else if (GetValidTargets(attacker).Contains(mouseUpCreature))
-        { //should wrap in a helper function isEnemy() for 2v2
-          //valid attack
-            Debug.Log("Attack made.");
+        else if (validTargets.Contains(mouseUpCreature))
+        {
             mouseDownCreature.Fight(mouseUpCreature);
         }
     }
 
 
-    private bool CheckPlayCard(Ray ray, RaycastHit hit) {
-        
+    private bool CheckPlayCard(Ray ray, RaycastHit hit)
+    {
+
         //TODO: check target.card.type for spell or weapon first
         if (!ActionManager.Instance.HasDragTarget())
             return false;
@@ -177,13 +182,15 @@ public class BattleManager : MonoBehaviour {
         else if (target.card.GetType() == typeof(SpellCard))
         {
             SpellCard spell = target.card as SpellCard;
-            if(spell.Targeted)
+            if (spell.Targeted)
             {
-                if(Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle"))) {
+                if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle")))
+                {
                     this.PlayTargetedSpell(spell, target, hit);
-                    return true;  
+                    return true;
                 }
-                else {
+                else
+                {
                     ActionManager.Instance.ResetTarget();
                     return false;
                 }
@@ -214,37 +221,41 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    public void PlayCardToBoard(CardObject cardObject, RaycastHit hit) {
+    public void PlayCardToBoard(CardObject cardObject, RaycastHit hit)
+    {
         Player player = cardObject.card.Owner;
 
         //only called for creature or structure
         Transform targetPosition = hit.collider.transform;
-        string lastChar = hit.collider.name.Substring(hit.collider.name.Length-1);
+        string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
 
         FXPoolManager.Instance.PlayEffect("Spawn", hit.collider.transform.position + new Vector3(0f, 0f, -0.1f));
         BoardCreature created = CreateBoardCreature(cardObject, player, hit.collider.transform.position);
-        Board.Instance().PlaceCreature(created, player, index);
+        Board.Instance().PlaceCreature(created, index);
         UseCard(player, cardObject);
     }
 
-    public void PlayTargetedSpell(SpellCard spell, CardObject target, RaycastHit hit) {
+    public void PlayTargetedSpell(SpellCard spell, CardObject target, RaycastHit hit)
+    {
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
         spell.Activate(targetedCreature, "l_bolt");
         UseCard(target.card.Owner, target);
     }
 
 
-    public void UseCard(Player player, CardObject cardObject) {
-        
+    public void UseCard(Player player, CardObject cardObject)
+    {
+
         player.PlayCard(cardObject);    //removes card from hand, spend mana
         GameObject.Destroy(cardObject.gameObject);
         SoundManager.Instance.PlaySound("Play", transform.position);
     }
 
 
-    public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos) {
-        
+    public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos)
+    {
+
         GameObject created = new GameObject(cardObject.card.Name);
         created.transform.position = pos;
         BoardCreature creature = created.AddComponent<BoardCreature>();

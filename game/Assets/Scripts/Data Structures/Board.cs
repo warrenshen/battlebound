@@ -24,13 +24,17 @@ public class Board
         playerToFields = new Dictionary<Player, PlayingField>();
     }
 
-    public void PlaceCreature(BoardCreature creature, Player player, int position) {
-        if (!playerToFields.ContainsKey(player)) {
-            AddPlayer(player);
+    public void PlaceCreature(BoardCreature creature, int position) {
+        if (!playerToFields.ContainsKey(creature.Owner)) {
+            AddPlayer(creature.Owner);
         }
-        PlayingField selected = playerToFields[player];
+        PlayingField selected = playerToFields[creature.Owner];
         selected.Place(creature, position);
+    }
 
+    public void RemoveCreature(BoardCreature creature) {
+        PlayingField selected = playerToFields[creature.Owner];
+        selected.Remove(creature);
     }
 
 	// Update is called once per frame
@@ -64,6 +68,13 @@ public class Board
             else {
                 creatures[index] = creature;
                 return true;
+            }
+        }
+
+        public void Remove(BoardCreature creature) {
+            for (int i = 0; i < creatures.Length; i++) {
+                if (creatures[i] == creature)
+                    creatures[i] = null;
             }
         }
 
