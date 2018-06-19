@@ -45,6 +45,9 @@ public class BoardCreature : MonoBehaviour
     [SerializeField]
     private List<string> abilities;
 
+    private bool silenced;
+    public bool Silenced => silenced;
+
     Material dissolve;
     TextMeshPro textMesh;
 
@@ -100,7 +103,7 @@ public class BoardCreature : MonoBehaviour
         FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
         FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
 
-        if (other.Taunt())
+        if (other.HasAbility("taunt"))
             SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         else
             SoundManager.Instance.PlaySound("Splatter", other.transform.position);
@@ -118,7 +121,7 @@ public class BoardCreature : MonoBehaviour
     //taking damage
     public bool TakeDamage(int amount)
     {
-        if (this.Shielded())
+        if (this.HasAbility("shielded"))
         {
             abilities.Remove("shielded");
             RenderAbilities(); //to-do: needs review in future
@@ -151,6 +154,7 @@ public class BoardCreature : MonoBehaviour
 
     private IEnumerator Dissolve(float duration)
     {
+        SoundManager.Instance.PlaySound("BurnDestroy", this.transform.position);
         float elapsedTime = 0;
         while (elapsedTime < duration)
         {
@@ -168,18 +172,27 @@ public class BoardCreature : MonoBehaviour
 
     private void RenderAbilities()
     {
-        if (this.Taunt())
+        if (this.HasAbility("taunt"))
+        {
             this.transform.localScale *= 1.2f;  //to-do, do better than this pls
+        }
+        //to-do: if shielded, spawn shield effect
+        if(this.HasAbility("shielded"))
+        {
+            
+        }
     }
 
-    public bool Taunt()
-    {
-        return abilities != null && abilities.Contains("taunt");
+    public bool HasAbility(string ability) {
+        if (this.silenced)
+            return false;
+        switch(ability) {
+            case "taunt":
+                return abilities != null && abilities.Contains("taunt");
+            case "shielded":
+                return abilities != null && abilities.Contains("shielded");
+            default:
+                return false;
+        }
     }
-
-    public bool Shielded()
-    {
-        return abilities != null && abilities.Contains("shielded");
-    }
-
 }

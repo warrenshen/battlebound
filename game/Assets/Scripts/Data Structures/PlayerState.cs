@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [System.Serializable]
 public class PlayerState
@@ -25,8 +26,8 @@ public class PlayerState
 	public int Armor => armor;
 
 	[SerializeField]
-	private List<Card> field;
-	public List<Card> Field => field;
+    private BoardCreature[] field;
+    public BoardCreature[] Field => field;
 
 	[SerializeField]
 	private int handSize;
@@ -39,4 +40,31 @@ public class PlayerState
 	[SerializeField]
 	private List<Card> hand;
 	public List<Card> Hand => hand;
+
+
+    public PlayerState(Player player) {
+        this.Sync(player);
+    }
+
+    public void Sync(Player player) {
+        this.hasTurn = Convert.ToInt32(player.hasTurn);
+        this.manaCurrent = player.Mana;
+        this.manaMax = player.MaxMana;
+        this.health = player.Health;
+        this.armor = player.Armor;
+        this.field = player.Field.GetCreatures();
+        this.handSize = player.Hand.Size();
+        this.deckSize = player.Deck.Size();
+    }
+
+    public bool Equals(PlayerState other) {
+        return this.hasTurn == other.HasTurn &&
+               this.manaCurrent == other.ManaCurrent &&
+               this.manaMax == other.ManaMax &&
+               this.health == other.Health &&
+               this.armor == other.Armor &&
+               this.field == other.Field &&
+               this.handSize == other.HandSize &&
+               this.deckSize == other.DeckSize;
+    }
 }

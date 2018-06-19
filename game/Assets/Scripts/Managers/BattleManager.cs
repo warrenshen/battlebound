@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -25,6 +24,8 @@ public class BattleManager : MonoBehaviour
     private List<BoardCreature> validTargets; //used to store/cache valid targets
 
     public LineRenderer attackArrow;
+    [SerializeField]
+    List<BoardCreature> allTargets;
 
     public static BattleManager Instance { get; private set; }
 
@@ -52,7 +53,7 @@ public class BattleManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100f) && hit.collider.gameObject.layer == battleLayer) //use battle layer mask
             {
                 mouseDownCreature = hit.collider.GetComponent<BoardCreature>();
-                if (mouseDownCreature.Owner.active)
+                if (mouseDownCreature.Owner.hasTurn)
                 {
                     validTargets = GetValidTargets(mouseDownCreature);
                     //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
@@ -100,6 +101,9 @@ public class BattleManager : MonoBehaviour
         players = new List<Player>();
         players.Add(you);
         players.Add(opponent);
+        Board.Instance().AddPlayer(you);
+        Board.Instance().AddPlayer(opponent);   //to-do make this into for loop
+        Debug.Log(players.Count + " players in play.");
 
         turnIndex = UnityEngine.Random.Range(0, players.Count);
         turnCount = 0;
@@ -109,7 +113,7 @@ public class BattleManager : MonoBehaviour
 
     private void NextTurn()
     {
-        activePlayer.active = false;
+        activePlayer.hasTurn = false;
         turnCount++;
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
@@ -121,22 +125,37 @@ public class BattleManager : MonoBehaviour
 
     private List<BoardCreature> GetValidTargets(BoardCreature attacker)
     {
-
-        List<BoardCreature> allTargets = new List<BoardCreature>();
+        allTargets = new List<BoardCreature>();
         foreach (Player player in players)
         {
             if (player == attacker.Owner)
                 continue;
             BoardCreature[] fieldCreatures = Board.Instance().GetField(player).GetCreatures();
-            allTargets.AddRange(fieldCreatures);
+            for (int i = 0; i < fieldCreatures.Length; i++)
+            {
+                if (fieldCreatures[i] != null)
+                    allTargets.Add(fieldCreatures[i]);
+            }
+
         }
 
+        //Debug.LogWarning(allTargets.Count + " enemies found.");
         List<BoardCreature> priorityTargets = new List<BoardCreature>();
-        priorityTargets = allTargets.Where(creature => creature.Taunt()) as List<BoardCreature>;
+        for (int j = 0; j < allTargets.Count; j++)
+        {
+            if (allTargets[j].HasAbility("taunt"))
+                priorityTargets.Add(allTargets[j]);
+        }
+
         if (priorityTargets != null && priorityTargets.Count > 0)
+        {
             return priorityTargets;
+        }
         else
+        {
+            //Debug.LogWarning("No priority targets found. " + priorityTargets.Count);
             return allTargets;
+        }
     }
 
 
