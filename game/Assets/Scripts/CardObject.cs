@@ -49,7 +49,7 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        if (!card.Owner.hasTurn)
+        if (!card.Owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
@@ -60,7 +60,7 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseExit()
     {
-        if (!card.Owner.hasTurn)
+        if (!card.Owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
@@ -69,14 +69,14 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if (!card.Owner.hasTurn)
+        if (!card.Owner.HasTurn)
             return;
         if (Input.GetMouseButtonUp(1)) Debug.Log("Pressed right click.");
     }
 
     public void OnMouseDown()
     {
-        if (!card.Owner.hasTurn)
+        if (!card.Owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
@@ -90,7 +90,7 @@ public class CardObject : MonoBehaviour
 
     public void OnMouseUp()
     {
-        if (!card.Owner.hasTurn)
+        if (!card.Owner.HasTurn)
             return;
         if (!ActionManager.Instance.HasDragTarget())
             return;

@@ -25,6 +25,7 @@ public class Board
     }
 
     public void PlaceCreature(BoardCreature creature, int position) {
+		Debug.Log(creature.Owner);
         if (!playerToFields.ContainsKey(creature.Owner)) {
             AddPlayer(creature.Owner);
         }
@@ -36,8 +37,7 @@ public class Board
         PlayingField selected = playerToFields[creature.Owner];
         selected.Remove(creature);
     }
-
-	// Update is called once per frame
+    
 	public void AddPlayer (Player player) {
         PlayingField created = new PlayingField();
         player.SetPlayingField(created);
