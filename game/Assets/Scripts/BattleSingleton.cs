@@ -43,6 +43,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	private void ChallengeTurnTakenMessageHandler(ChallengeTurnTakenMessage message)
 	{
+		// Call some function in BattleManager so Nick can react to event.
 		Debug.Log("ChallengeTurnTakenMessage received.");
 		GSData scriptData = message.ScriptData;
 		ProcessChallengeScriptData(scriptData);
@@ -50,16 +51,19 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	private void ChallengeWonMessageHandler(ChallengeWonMessage message)
 	{
+		// Call some function in BattleManager so Nick can react to event.
 		Debug.Log("ChallengeWonMessage received.");
 	}
 
 	private void ChallengeLostMessageHandler(ChallengeLostMessage message)
 	{
+		// Call some function in BattleManager so Nick can react to event.
 		Debug.Log("ChallengeLostMessage received.");
 	}
 
 	private void ChallengeTimeRunningOutMessageHandler(ScriptMessage_ChallengeTimeRunningOutMessage message)
 	{
+		// Call some function in BattleManager so Nick can react to event.
 		Debug.Log("ChallengeTimeRunningOutMessage received.");
 	}
 
@@ -90,9 +94,37 @@ public class BattleSingleton : Singleton<BattleSingleton>
 		this.playerState = JsonUtility.FromJson<PlayerState>(playerJSON);
 		this.opponentState = JsonUtility.FromJson<PlayerState>(opponentJSON);
 
-		Debug.Log(this.playerState.ToString());
-		Debug.Log(this.opponentState.ToString());
-        // Call some function in BattleManager so Nick can react to events.
+		if (BattleManager.Instance == null)
+		{
+			return;
+		}
+
+		PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
+		PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+
+		if (!this.playerState.Equals(devicePlayerState))
+		{
+			Debug.LogError("Server vs device player state mismatch.");
+			Debug.LogError("Server: " + JsonUtility.ToJson(this.playerState));
+			Debug.LogError("Device: " + JsonUtility.ToJson(devicePlayerState));
+		}
+		else
+		{
+			Debug.Log("Server vs device player state match.");
+			Debug.LogError("State: " + JsonUtility.ToJson(this.playerState));
+		}
+
+		if (!this.opponentState.Equals(deviceOpponentState))
+		{
+			Debug.LogError("Server vs device opponent state mismatch.");
+			Debug.LogError("Server: " + JsonUtility.ToJson(this.opponentState));
+			Debug.LogError("Device: " + JsonUtility.ToJson(deviceOpponentState));
+		}
+		else
+		{
+			Debug.Log("Server vs device opponent state match.");
+			Debug.LogError("State: " + JsonUtility.ToJson(this.opponentState));
+		}
 	}
 
 	public void SendChallengeEndTurnRequest()

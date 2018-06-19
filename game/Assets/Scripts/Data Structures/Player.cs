@@ -5,27 +5,28 @@ using System;
 using TMPro;
 
 [System.Serializable]
-public class Player {
+public class Player
+{
     private string name;
     public string Name => name;
+
     private Deck deck;
     public Deck Deck => deck;
 
-    [SerializeField]
     private Hand hand;
     public Hand Hand => hand;
 
     private int mana;
     public int Mana => mana;
+
     private int maxMana;
     public int MaxMana => maxMana;
 
     private Board.PlayingField field;
     public Board.PlayingField Field => Field;
-    public bool hasTurn;
 
-    private PlayerState state;
-    public PlayerState State => State;
+	private bool hasTurn;
+	public bool HasTurn => hasTurn;
 
     private int health;
     public int Health => health;
@@ -33,17 +34,17 @@ public class Player {
     private int armor;
     public int Armor => armor;
 
-
     public Player(string name)
     {
+		this.name = name;
         this.hasTurn = false;
-        this.name = name;
-        this.state = new PlayerState(this);
         this.health = 30;
         this.deck = GetDeck();
         this.hand = new Hand(deck, 7, this.name);
         this.mana = 10;
         this.maxMana = 10;
+
+		Debug.Log(GeneratePlayerState());
     }
 
     public void PlayCard(CardObject cardObject) {
@@ -82,6 +83,11 @@ public class Player {
         return chosen;
     }
 
+	public void SetHasTurn(bool newTurn)
+	{
+		this.hasTurn = newTurn;
+	}
+
     public void NewTurn() {
         maxMana = Math.Min(maxMana + 1, 10);
         mana = maxMana;
@@ -94,4 +100,19 @@ public class Player {
         GameObject light = GameObject.Find("Point Light");
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
     }
+
+	public PlayerState GeneratePlayerState()
+	{
+		PlayerState playerState = new PlayerState();
+
+		playerState.SetHasTurn(this.hasTurn ? 1 : 0);
+		playerState.SetManaCurrent(this.mana);
+		playerState.SetManaMax(this.maxMana);
+		playerState.SetHealth(this.health);
+		playerState.SetArmor(this.Armor);
+		playerState.SetHandSize(this.Hand.Size());
+		playerState.SetDeckSize(this.Deck.Size());
+
+		return playerState;
+	}
 }

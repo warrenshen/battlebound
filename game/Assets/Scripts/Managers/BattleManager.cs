@@ -33,6 +33,7 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
         this.you = new Player("Player");
+		Debug.Log(this.you.Deck);
         this.opponent = new Player("Enemy");
     }
 
@@ -53,7 +54,7 @@ public class BattleManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100f) && hit.collider.gameObject.layer == battleLayer) //use battle layer mask
             {
                 mouseDownCreature = hit.collider.GetComponent<BoardCreature>();
-                if (mouseDownCreature.Owner.hasTurn)
+                if (mouseDownCreature.Owner.HasTurn)
                 {
                     validTargets = GetValidTargets(mouseDownCreature);
                     //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
@@ -99,8 +100,9 @@ public class BattleManager : MonoBehaviour
     private void GameStart()
     {
         players = new List<Player>();
-        players.Add(you);
-        players.Add(opponent);
+        players.Add(this.you);
+        players.Add(this.opponent);
+
         Board.Instance().AddPlayer(you);
         Board.Instance().AddPlayer(opponent);   //to-do make this into for loop
         Debug.Log(players.Count + " players in play.");
@@ -110,17 +112,18 @@ public class BattleManager : MonoBehaviour
         NextTurn();
     }
 
-
+    
     private void NextTurn()
     {
-        activePlayer.hasTurn = false;
+		activePlayer.SetHasTurn(false);
+		BattleSingleton.Instance.SendChallengeEndTurnRequest();
+
         turnCount++;
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
 
         //do some turn transition render
         activePlayer.NewTurn();
-
     }
 
     private List<BoardCreature> GetValidTargets(BoardCreature attacker)
@@ -281,4 +284,14 @@ public class BattleManager : MonoBehaviour
         creature.Initialize(cardObject, owner);
         return creature;
     }
+
+    public PlayerState GetPlayerState()
+	{
+		return this.you.GeneratePlayerState();
+	}
+
+    public PlayerState GetOpponentState()
+	{
+		return this.opponent.GeneratePlayerState();
+	}
 }

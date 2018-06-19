@@ -26,44 +26,64 @@ public class PlayerState
 	public int Armor => armor;
 
 	[SerializeField]
-    private BoardCreature[] field;
-    public BoardCreature[] Field => field;
-
-	[SerializeField]
 	private int handSize;
 	public int HandSize => handSize;
+
+	[SerializeField]
+    private List<Card> hand;
+    public List<Card> Hand => hand;
 
 	[SerializeField]
 	private int deckSize;
 	public int DeckSize => deckSize;
 
 	[SerializeField]
-	private List<Card> hand;
-	public List<Card> Hand => hand;
+    private BoardCreature[] field;
+    public BoardCreature[] Field => field;
+    
+	public void SetHasTurn(int hasTurn)
+	{
+		this.hasTurn = hasTurn;
+	}
 
+    public void SetManaCurrent(int manaCurrent)
+	{
+		this.manaCurrent = manaCurrent;
+	}
 
-    public PlayerState(Player player) {
-        this.Sync(player);
-    }
+    public void SetManaMax(int manaMax)
+	{
+		this.manaCurrent = manaMax;
+	}
 
-    public void Sync(Player player) {
-        this.hasTurn = Convert.ToInt32(player.hasTurn);
-        this.manaCurrent = player.Mana;
-        this.manaMax = player.MaxMana;
-        this.health = player.Health;
-        this.armor = player.Armor;
-        this.field = player.Field.GetCreatures();
-        this.handSize = player.Hand.Size();
-        this.deckSize = player.Deck.Size();
-    }
+    public void SetHealth(int health)
+	{
+		this.health = health;
+	}
 
-    public bool Equals(PlayerState other) {
+    public void SetArmor(int armor)
+	{
+		this.armor = armor;
+	}
+
+    public void SetHandSize(int handSize)
+	{
+		this.handSize = handSize;
+	}
+
+    public void SetDeckSize(int deckSize)
+	{
+		this.deckSize = deckSize;
+	}
+
+    public bool Equals(PlayerState other)
+	{
+		// TODO: add in hand and field.
         return this.hasTurn == other.HasTurn &&
                this.manaCurrent == other.ManaCurrent &&
                this.manaMax == other.ManaMax &&
                this.health == other.Health &&
                this.armor == other.Armor &&
-               this.field == other.Field &&
                this.handSize == other.HandSize &&
                this.deckSize == other.DeckSize;
     }
