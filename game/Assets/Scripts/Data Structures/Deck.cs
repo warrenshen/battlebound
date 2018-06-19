@@ -44,4 +44,8 @@ public class Deck {
         }
         return output.Substring(0, output.Length - 1);
     }
+
+    public int Size() {
+        return cards.Count;
+    }
 }

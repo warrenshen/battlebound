@@ -83,4 +83,8 @@ public class Hand {
             LeanTween.rotateLocal(cards[k].wrapper.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
         }
     }
+
+    public int Size() {
+        return cards.Count;
+    }
 }

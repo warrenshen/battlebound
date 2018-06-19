@@ -38,7 +38,7 @@ public class Board
     }
 
 	// Update is called once per frame
-	void AddPlayer (Player player) {
+	public void AddPlayer (Player player) {
         PlayingField created = new PlayingField();
         player.SetPlayingField(created);
         playerToFields[player] = created;

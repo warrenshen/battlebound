@@ -9,6 +9,7 @@ public class Player {
     private string name;
     public string Name => name;
     private Deck deck;
+    public Deck Deck => deck;
 
     [SerializeField]
     private Hand hand;
@@ -20,16 +21,29 @@ public class Player {
     public int MaxMana => maxMana;
 
     private Board.PlayingField field;
-    public bool active;
+    public Board.PlayingField Field => Field;
+    public bool hasTurn;
+
+    private PlayerState state;
+    public PlayerState State => State;
+
+    private int health;
+    public int Health => health;
+
+    private int armor;
+    public int Armor => armor;
+
 
     public Player(string name)
     {
-        this.active = false;
+        this.hasTurn = false;
         this.name = name;
-        deck = GetDeck();
-        hand = new Hand(deck, 7, this.name);
-        mana = 10;
-        maxMana = 10;
+        this.state = new PlayerState(this);
+        this.health = 30;
+        this.deck = GetDeck();
+        this.hand = new Hand(deck, 7, this.name);
+        this.mana = 10;
+        this.maxMana = 10;
     }
 
     public void PlayCard(CardObject cardObject) {
@@ -72,7 +86,7 @@ public class Player {
         maxMana = Math.Min(maxMana + 1, 10);
         mana = maxMana;
         hand.Draw(deck, 1);
-        this.active = true;
+        this.hasTurn = true;
         RenderMana();
 
         //placeholder indicator
