@@ -69,9 +69,10 @@ public class ActionManager : MonoBehaviour {
     }
 
     public void ResetTarget() {
-        target.transform.localPosition = target.reset.resetPosition;
-        target.transform.localRotation = target.reset.resetRotation;
-        target.transform.localScale = target.reset.resetScale;
+        //target.transform.localPosition = target.reset.resetPosition;
+        //target.transform.localRotation = target.reset.resetRotation;
+        //target.transform.localScale = target.reset.resetScale;
+        target.card.Owner.Hand.RepositionCards();
     }
 
     private void DestroyTarget() {

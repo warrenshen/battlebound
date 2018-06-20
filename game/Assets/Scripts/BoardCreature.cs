@@ -51,10 +51,11 @@ public class BoardCreature : MonoBehaviour
     Material dissolve;
     TextMeshPro textMesh;
 
+
     public void Initialize(CardObject cardObject, Player owner)
     {
+        //data structure stuff
         this.card = cardObject.card as CreatureCard;
-
         this.uid = this.card.Id;
         this.cost = this.card.Cost;
         this.attack = this.card.Attack;
@@ -67,6 +68,10 @@ public class BoardCreature : MonoBehaviour
 
         this.owner = owner;
         this.gameObject.layer = 9;
+
+        //pre-sprite visuals
+        transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
 
         //Render everything (labels, image, etc) method call here
         sp = gameObject.AddComponent<SpriteRenderer>();
