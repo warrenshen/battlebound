@@ -7,7 +7,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
 {
 	private static CreateAuctionModalPanel modalPanel;
 
-	private Card card;
+	private CardRaw card;
 
 	[SerializeField]
 	private Image cardImage;
@@ -21,42 +21,30 @@ public class CreateAuctionModalPanel : MonoBehaviour
 	private Button cancelButton;
 	[SerializeField]
 	private Button submitButton;
-	[SerializeField]
-    private GameObject modalPanelObject;
 
-    //TO-DO: NEEDS REVIEW, possible creation of duplicate due to already existing copy via monobehavior and placement in scene
-	public static CreateAuctionModalPanel Instance()
-	{
-		if (!modalPanel)
-		{
-			modalPanel = FindObjectOfType(typeof(CreateAuctionModalPanel)) as CreateAuctionModalPanel;
-			Debug.Log(modalPanel);
-			if (!modalPanel)
-			{
-				Debug.LogError("There needs to be a CreateAuctionModalPanel script on a GameObject in your scene.");
-			}
-		}
-
-		return modalPanel;
-	}
+	public static CreateAuctionModalPanel Instance { get; private set; }
 
 	public void Awake()
 	{
-		cancelButton.onClick.AddListener(HideModal);
+		Instance = this;
+
+		cancelButton.onClick.AddListener(Close);
 		submitButton.onClick.AddListener(SubmitTransaction);
-	}
 
-	public void HideModal()
+		Close();
+	}
+    
+	private void Close()
 	{
-		modalPanelObject.SetActive(false);	
+		this.gameObject.SetActive(false);	
 	}
 
-	public void ShowModalForCard(Card card)
+	public void ShowModalForCard(CardRaw card)
 	{
 		this.card = card;
 		Texture2D image = Resources.Load(card.Image) as Texture2D;
 		cardImage.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-		modalPanelObject.SetActive(true);
+		this.gameObject.SetActive(true);
 	}
     
     public void SubmitTransaction()
@@ -93,7 +81,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
             duration
         );
 
-		HideModal();
+		Close();
 
 		return txHash;
 	}

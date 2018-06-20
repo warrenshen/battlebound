@@ -1,31 +1,132 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using GameSparks.Core;
 using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
 
-public class MarketplaceManager : MonoBehaviour {
+public class MarketplaceManager : MonoBehaviour
+{
+	public static int MARKETPLACE_MODE_BUY = 0;
+	public static int MARKETPLACE_MODE_SELL = 1;
+	public static int MARKETPLACE_MODE_CANCEL = 2;
 
-	private List<CardAuction> cardAuctions;
-    private GameObject cardAuctionsGO;
-    //private List<CardAuction> activePlayerCardAuctions;
+	private int mode = MARKETPLACE_MODE_BUY;
+
+	[SerializeField]
+	private Button buyModeButton;
+	[SerializeField]
+	private Button sellModeButton;
+	[SerializeField]
+	private Button cancelModeButton;
+
+	[SerializeField]
+	private GameObject buyableCardListItem;
+	[SerializeField]
+	private GameObject sellableCardListItem;
+	[SerializeField]
+	private GameObject cancelableCardlistItem;
+
+	[SerializeField]
+	private Transform contentPanel;
+
+	private List<CardAuction> buyableCards;
+	private List<CardRaw> sellableCards;
+	private List<CardAuction> cancelableCards;
 
     public static MarketplaceManager Instance { get; private set; }
 
     private void Awake()
     {
         Instance = this;
-        this.cardAuctions = new List<CardAuction>();
-        this.cardAuctionsGO = new GameObject("Card Auctions");
+		this.buyModeButton.onClick.AddListener(OnBuyModeButtonClick);
+		this.sellModeButton.onClick.AddListener(OnSellModeButtonClick);
+		this.cancelModeButton.onClick.AddListener(OnCancelModeButtonClick);
     }
     
 	private void Start()
 	{
-		CreateAuctionModalPanel.Instance().HideModal();
+		buyableCards = new List<CardAuction>();
+		sellableCards = new List<CardRaw>();
+		cancelableCards = new List<CardAuction>();
 
 		GetCardAuctions();
 		GetPlayerCardAuctions();
+	}
+
+    private void OnBuyModeButtonClick()
+	{
+		this.mode = MARKETPLACE_MODE_BUY;
+		RenderListItems();
+	}
+
+	private void OnSellModeButtonClick()
+    {
+		this.mode = MARKETPLACE_MODE_SELL;
+		RenderListItems();
+    }
+
+    private void OnCancelModeButtonClick()
+	{
+		this.mode = MARKETPLACE_MODE_CANCEL;
+		RenderListItems();
+	}
+
+	private void RenderListItems()
+	{
+		foreach (Transform child in this.contentPanel)
+		{
+			Debug.Log(child.gameObject);
+			Destroy(child.gameObject);
+		}
+
+		if (this.mode == MARKETPLACE_MODE_BUY)
+		{
+			CreateBuyableCardListItems(this.buyableCards);
+		}
+		else if (this.mode == MARKETPLACE_MODE_SELL)
+		{
+			CreateSellableCardListItems(this.sellableCards);
+		}
+		else
+		{
+			// Render player's auctioned cards.
+			CreateCancelableCardListItems(this.cancelableCards);
+		}
+	}
+
+	private void CreateBuyableCardListItems(List<CardAuction> cardAuctions)
+	{
+		foreach (CardAuction cardAuction in cardAuctions)
+        {
+			GameObject listItemGO = Instantiate(buyableCardListItem) as GameObject;
+			BuyableCardListItem listItem = listItemGO.GetComponent<BuyableCardListItem>();
+			listItem.InitializeCardAuction(cardAuction);
+			listItemGO.transform.SetParent(contentPanel);
+        }
+	}
+ 
+	private void CreateCancelableCardListItems(List<CardAuction> auctionedCards)
+    {
+        foreach (CardAuction auctionedCard in auctionedCards)
+        {
+            GameObject listItemGO = Instantiate(cancelableCardlistItem) as GameObject;
+            CancelableListItem listItem = listItemGO.GetComponent<CancelableListItem>();
+            listItem.InitializeCardAuction(auctionedCard);
+            listItemGO.transform.SetParent(contentPanel);
+        }
+    }
+
+	private void CreateSellableCardListItems(List<CardRaw> cardRaws)
+	{
+		foreach (CardRaw card in cardRaws)
+        {
+			GameObject listItemGO = Instantiate(sellableCardListItem) as GameObject;
+			SellableCardListItem listItem = listItemGO.GetComponent<SellableCardListItem>();
+            listItem.InitializeCard(card);
+			listItemGO.transform.SetParent(contentPanel);
+        }
 	}
 
 	private void GetCardAuctions()
@@ -41,41 +142,18 @@ public class MarketplaceManager : MonoBehaviour {
 		List<GSData> dataList = response.ScriptData.GetGSDataList("auctions");
 		Debug.Log(dataList.Count + " auctions found.");
 
+		buyableCards = new List<CardAuction>();
 		foreach (GSData data in dataList)
 		{
 			CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(data.JSON);
-			cardAuctions.Add(cardAuction);
+			buyableCards.Add(cardAuction);
 		}
-
-		//CreateAuctionsUI();
 	}
 
 	private void OnGetCardAuctionsError(LogEventResponse response)
 	{
 		GSData errors = response.Errors;
 		Debug.Log(errors);
-	}
-
-    private void CreateAuctionsUI()
-	{
-		int index = 0;
-        int rowSize = 4;
-
-        Vector3 topLeft = new Vector3(-5.05f, 3.11f, 18.18f);
-        Vector3 horizontalOffset = new Vector3(4.64f, 0f, 0f);
-        Vector3 verticalOffset = new Vector3(0f, -3.75f, 0f);
-
-        Transform grayed = new GameObject("Grayed").transform as Transform;
-        foreach (CardAuction cardAuction in cardAuctions)
-        {
-            GameObject cardAuctionGO = new GameObject(cardAuction.Name);
-			cardAuctionGO.transform.parent = cardAuctionsGO.transform;
-			CardAuctionObject wrapper = cardAuctionGO.AddComponent<CardAuctionObject>();
-            wrapper.InitializeCardAuction(cardAuction);
-
-			cardAuctionGO.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
-            index++;
-        }
 	}
 
     private void GetPlayerCardAuctions()
@@ -94,50 +172,24 @@ public class MarketplaceManager : MonoBehaviour {
 		List<GSData> auctionedDataList = response.ScriptData.GetGSDataList("auctionedCards");
 		Debug.Log(auctionedDataList.Count + " auctioned cards found.");
 
-		List<Card> auctionableCards = new List<Card>();
+		sellableCards = new List<CardRaw>();
 		foreach (GSData data in auctionableDataList)
         {
-            Card card = JsonUtility.FromJson<Card>(data.JSON);
-			auctionableCards.Add(card);
+			CardRaw card = JsonUtility.FromJson<CardRaw>(data.JSON);
+			sellableCards.Add(card);
         }
-
-		CreatePlayerAuctionsUI(auctionableCards);
-
-		List<Card> auctionedCards = new List<Card>();
+        
+		cancelableCards = new List<CardAuction>();
 		foreach (GSData data in auctionedDataList)
         {
-            Card card = JsonUtility.FromJson<Card>(data.JSON);
-			auctionedCards.Add(card);
+			CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(data.JSON);
+			cancelableCards.Add(cardAuction);
         }
-
-        // Render auctioned cards.
 	}
 
 	private void OnGetPlayerCardAuctionsError(LogEventResponse response)
 	{
 		GSData errors = response.Errors;
         Debug.Log(errors);
-	}
-
-	private void CreatePlayerAuctionsUI(List<Card> auctionableCards)
-	{
-		int index = 0;
-        int rowSize = 4;
-
-        Vector3 topLeft = new Vector3(-5.05f, 3.11f, 18.18f);
-        Vector3 horizontalOffset = new Vector3(4.64f, 0f, 0f);
-        Vector3 verticalOffset = new Vector3(0f, 3.75f, 0f);
-        
-        Transform grayed = new GameObject("Grayed").transform as Transform;
-		foreach (Card auctionableCard in auctionableCards)
-        {
-			GameObject cardGO = new GameObject(auctionableCard.Name);
-			cardGO.transform.parent = cardAuctionsGO.transform;
-			AuctionableCardObject wrapper = cardGO.AddComponent<AuctionableCardObject>();
-			wrapper.InitializeCard(auctionableCard);
-
-			cardGO.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
-            index++;
-        }
 	}
 }

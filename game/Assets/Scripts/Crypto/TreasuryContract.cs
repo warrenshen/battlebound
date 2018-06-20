@@ -19,7 +19,6 @@ public class TreasuryContract
         long gasPrice = 5000000000L
     )
     {
-        //Web3 web3 = new Web3(web3Url);
         Web3 web3 = new Web3();
         Contract contract = web3.Eth.GetContract(contractAbi, contractAddress);
 

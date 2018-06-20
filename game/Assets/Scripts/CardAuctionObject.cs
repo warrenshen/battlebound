@@ -28,13 +28,12 @@ public class CardAuctionObject : MonoBehaviour
 
 		go.transform.SetParent(gameObject.transform, false);
 
-        spr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
+		spr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
     }
 
 	public void InitializeCardAuction(CardAuction cardAuction)
     {
 		this.cardAuction = cardAuction;
-		cardAuction.wrapper = this;
         //make render changes according to card class here
         image = Resources.Load(cardAuction.Image) as Texture2D;
         spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);

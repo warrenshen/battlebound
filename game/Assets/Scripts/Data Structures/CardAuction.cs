@@ -24,8 +24,6 @@ public class CardAuction
 	[SerializeField]
 	private Auction auction;
 	public Auction Auction => auction;
-
-	public CardAuctionObject wrapper;
 }
 
 [System.Serializable]
