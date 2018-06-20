@@ -62,7 +62,7 @@ public class Hand {
         }
     }
 
-    private void RepositionCards() {
+    public void RepositionCards() {
         int size = cards.Count;
         //if no cards, return
         if (size <= 0)
@@ -78,7 +78,7 @@ public class Hand {
             cards[k].wrapper.Renderer.sortingOrder = 10 + k;
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth, 0, vOffset);
-            float tweenTime = 0.05f;
+            float tweenTime = 0.1f;
             LeanTween.moveLocal(cards[k].wrapper.gameObject, adjustedPos, tweenTime);
             LeanTween.rotateLocal(cards[k].wrapper.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
         }

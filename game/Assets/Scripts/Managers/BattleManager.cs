@@ -42,7 +42,16 @@ public class BattleManager : MonoBehaviour
         // Use this for initialization
         battleLayer = 9;
         boardLayer = LayerMask.GetMask("Board");
+        ChooseRandomSetting();
         GameStart();
+    }
+
+    private void ChooseRandomSetting() {
+        Transform pool = GameObject.Find("Setting Pool").transform as Transform;
+        foreach(Transform child in pool) {
+            child.gameObject.SetActive(false);
+        }
+        pool.GetChild(UnityEngine.Random.Range(0, pool.childCount)).gameObject.SetActive(true);
     }
 
     private void Update()
