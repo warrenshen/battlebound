@@ -32,9 +32,10 @@ var auctions = master.auctions;
 const fromBlock = master.blockNumber;
 
 const auctionCreatedLogs = fetchLogsByBlockRange(BLOCKCHAIN_EVENT_AUCTION_CREATED, fromBlock, toBlock);
+const auctionCanceledLogs = fetchLogsByBlockRange(BLOCKCHAIN_EVENT_AUCTION_CANCELED, fromBlock, toBlock);
 const auctionSuccessfulLogs = fetchLogsByBlockRange(BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL, fromBlock, toBlock);
 
-const logs = auctionCreatedLogs.concat(auctionSuccessfulLogs);
+const logs = auctionCreatedLogs.concat(auctionCanceledLogs.concat(auctionSuccessfulLogs));
 // Sort logs into "chronological" order.
 logs.sort(function(logA, logB) {
     const blockNumberA = parseInt(logA.blockNumber, 16);
@@ -56,7 +57,7 @@ logs.forEach(function(log) {
     
     const auctionIndex = auctions.indexOf(tokenId);
     
-    if (event === BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL) {
+    if (event === BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL || event === BLOCKCHAIN_EVENT_AUCTION_CANCELED) {
         if (auctionIndex >= 0) {
             auctions = auctions.slice(0, auctionIndex).concat(auctions.slice(auctionIndex + 1));
             removeAuctionByTokenId(tokenId);

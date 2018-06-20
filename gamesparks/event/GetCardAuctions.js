@@ -7,6 +7,13 @@
 // ====================================================================================================
 require("DeckModule");
 
+const player = Spark.getPlayer();
+var address = player.getPrivateData("address");
+if (address === null)
+{
+    address = "";
+}
+
 const API = Spark.getGameDataService();
 
 const masterDataItem = API.getItem("Master", "master").document();
@@ -29,5 +36,6 @@ const AUCTIONABLE_CARD_FIELDS = [
     "seller",
 ];
 const instances = getInstancesByCards(bCards, AUCTIONABLE_CARD_FIELDS);
+const validAuctions = instances.filter(function(instance) { return instance.seller != prefixHex(address.toLowerCase()) });
     
-Spark.setScriptData("auctions", instances);
+Spark.setScriptData("auctions", validAuctions);

@@ -7,7 +7,7 @@
 // ====================================================================================================
 // GLOBAL
 require("DeckModule");
-
+ 
 const API = Spark.getGameDataService();
 
 const challengeId = Spark.getData().challenge.challengeId;
