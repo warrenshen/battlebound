@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public class PlayCardAttributes
 {
     [SerializeField]
-    private int fieldIndex;
-	public int FieldIndex => fieldIndex;
+	private int fieldId;
+	public int FieldId => fieldId;
 }

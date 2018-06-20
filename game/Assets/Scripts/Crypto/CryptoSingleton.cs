@@ -19,7 +19,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 	const string PLAYER_PREFS_KEY_MNEMONIC = "PLAYER_PREFS_KEY_MNEMONIC";
 
 	private int nonce;
-	private string createAuctionTxHashI;
+	private string txHash;
 
     public async Task<string> CreateAuction(
 		int tokenId,
@@ -34,14 +34,12 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 			return "Invalid duration parameter";
 		}
 
-		var txHash = await CreateAuctionHelper(
+		return await CreateAuctionHelper(
 			tokenId,
 			startingPrice,
 			endingPrice,
 			duration
 		);
-
-		return txHash;
 	}
 
 	private async Task<string> CreateAuctionHelper(
@@ -65,16 +63,13 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 		Debug.Log("Nonce: " + nonce.ToString());
 		Debug.Log("Signed tx: " + signedTx);
 
-		string txHash = (string) await SubmitCreateAuctionTransaction(
+		return (string) await SubmitCreateAuctionTransaction(
 			signedTx,
             tokenId,
 			startingPrice,
 			endingPrice,
             duration
 		);
-
-        // Handle error case.
-		return txHash;
 	}
 
 	private IEnumerator SubmitCreateAuctionTransaction(
@@ -85,7 +80,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         int duration
 	)
 	{
-		this.createAuctionTxHashI = null;
+		this.txHash = null;
 
 		LogEventRequest request = new LogEventRequest();
         request.SetEventKey("SubmitCreateAuctionTransaction");
@@ -99,28 +94,27 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             OnSubmitCreateAuctionTransactionError
         );
 
-		while (this.createAuctionTxHashI == null)
+		while (this.txHash == null)
         {
             yield return null;
         }
 
-		yield return this.createAuctionTxHashI;
+		yield return this.txHash;
 	}
 
 	private void OnSubmitCreateAuctionTransactionSuccess(LogEventResponse response)
     {
-        string txHash = response.ScriptData.GetString("txHash");
-        Debug.Log("Got txHash: " + txHash);
-		this.createAuctionTxHashI = txHash;
+		this.txHash = response.ScriptData.GetString("txHash");
+		Debug.Log("Got txHash: " + this.txHash);
     }
 
 	private void OnSubmitCreateAuctionTransactionError(LogEventResponse response)
     {
 		Debug.Log("SubmitCreateAuctionTransaction request failure.");
-		this.createAuctionTxHashI = "0x";
+		this.txHash = "0x";
     }
     
-	public string BidAuction(int tokenId, long bidPrice)
+	public async Task<string> BidAuction(int tokenId, long bidPrice)
 	{
 		if (bidPrice <= 0)
 		{
@@ -132,58 +126,142 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 			bidPrice
         };
 
-		StartCoroutine("BidAuctionHelper", args);
-
-		return "";
+		return await BidAuctionHelper(
+            tokenId,
+            bidPrice
+        );
 	}
 
-	private IEnumerator BidAuctionHelper(object[] args)
-	{
-		int tokenId = (int) args[0];
-        long bidPrice = (long) args[1];
-        
-		this.nonce = -1;
+	private async Task<string> BidAuctionHelper(
+        int tokenId,
+		long bidPrice
+    )
+    {
+        int nonce = (int) await FetchTransactionNonce();
 
-        GetTransactionNonce();
+        Account account = AuthorizeAndGetAccount();
+		string signedTx = AuctionContract.signBidAuctionTransaction(
+            account,
+            nonce,
+            tokenId,
+            bidPrice
+        );
+        Debug.Log("Nonce: " + nonce.ToString());
+		Debug.Log("Signed tx: " + signedTx);
 
-		while (this.nonce < 0)
+        return (string) await SubmitBidAuctionTransaction(
+            signedTx,
+            tokenId,
+            bidPrice
+        );
+    }
+
+	private IEnumerator SubmitBidAuctionTransaction(
+        string signedTx,
+        int tokenId,
+        long bidPrice
+    )
+    {
+        this.txHash = null;
+
+		LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("SubmitBidAuctionTransaction");
+        request.SetEventAttribute("signedTx", signedTx);
+        request.SetEventAttribute("tokenId", tokenId);
+        request.SetEventAttribute("bidPrice", bidPrice);
+        request.Send(
+            OnSubmitBidAuctionTransactionSuccess,
+            OnSubmitBidAuctionTransactionError
+        );
+
+        while (this.txHash == null)
         {
             yield return null;
         }
 
-        Account account = AuthorizeAndGetAccount();
-        string signedTx = AuctionContract.signBidTransaction(
-            account,
-			nonce,
-            tokenId,
-			bidPrice
-        );
-		Debug.Log("Nonce: " + nonce.ToString());
-		Debug.Log("Token ID: " + tokenId.ToString());
-		Debug.Log("Bid price: " + bidPrice.ToString());
-        Debug.Log("Signed tx: " + signedTx);
-
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("SubmitBidAuctionTransaction");
-        request.SetEventAttribute("signedTx", signedTx);
-        request.SetEventAttribute("tokenId", tokenId);
-		request.SetEventAttribute("bidPrice", bidPrice);
-		request.Send(
-			OnSubmitBidAuctionTransactionSuccess,
-			OnSubmitBidAuctionTransactionError
-		);
-	}
+        yield return this.txHash;
+    }
 
 	private void OnSubmitBidAuctionTransactionSuccess(LogEventResponse response)
 	{
-		string txHash = response.ScriptData.GetString("txHash");
 		Debug.Log("Got txHash: " + txHash);
+		this.txHash = response.ScriptData.GetString("txHash");
 	}
 
 	private void OnSubmitBidAuctionTransactionError(LogEventResponse response)
 	{
 		Debug.Log("OnSubmitBidAuctionTransactionError request failure.");
+		this.txHash = "0x";
 	}
+
+	public async Task<string> CancelAuction(int tokenId)
+    {
+        // TODO: validate all input prams.
+        if (tokenId < 0)
+        {
+            return "Invalid tokenId parameter";
+        }
+        
+        return await CancelAuctionHelper(tokenId);
+    }
+
+    private async Task<string> CancelAuctionHelper(int tokenId)
+    {
+        int nonce = (int) await FetchTransactionNonce();
+        
+        Account account = AuthorizeAndGetAccount();
+		string signedTx = AuctionContract.signCancelAuctionTransaction(
+            account,
+            nonce,
+            tokenId
+        );
+        Debug.Log("Nonce: " + nonce.ToString());
+        Debug.Log("Signed tx: " + signedTx);
+
+        string txHash = (string) await SubmitCancelAuctionTransaction(
+            signedTx,
+            tokenId
+        );
+
+        // Handle error case.
+        return txHash;
+    }
+
+	private IEnumerator SubmitCancelAuctionTransaction(
+        string signedTx,
+        int tokenId
+    )
+    {
+		this.txHash = null;
+
+        LogEventRequest request = new LogEventRequest();
+		request.SetEventKey("SubmitCancelAuctionTransaction");
+        request.SetEventAttribute("signedTx", signedTx);
+        request.SetEventAttribute("tokenId", tokenId);
+        request.Send(
+			OnSubmitCancelAuctionTransactionSuccess,
+			OnSubmitCancelAuctionTransactionError
+        );
+
+		while (this.txHash == null)
+        {
+            yield return null;
+        }
+
+		yield return this.txHash;
+    }
+
+	private void OnSubmitCancelAuctionTransactionSuccess(LogEventResponse response)
+    {
+        this.txHash = response.ScriptData.GetString("txHash");
+        Debug.Log("Got txHash: " + this.txHash);
+    }
+
+	private void OnSubmitCancelAuctionTransactionError(LogEventResponse response)
+    {
+		Debug.Log("SubmitCancelAuctionTransaction request failure.");
+        this.txHash = "0x";
+    }
 
 	public void UpdatePlayerAddress()
     {

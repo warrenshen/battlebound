@@ -33,7 +33,7 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
         this.you = new Player("Player");
-		Debug.Log(this.you.Deck);
+        Debug.Log(this.you.Deck);
         this.opponent = new Player("Enemy");
     }
 
@@ -121,11 +121,11 @@ public class BattleManager : MonoBehaviour
         NextTurn();
     }
 
-    
+
     private void NextTurn()
     {
 		activePlayer.SetHasTurn(false);
-		//BattleSingleton.Instance.SendChallengeEndTurnRequest();
+        BattleSingleton.Instance.SendChallengeEndTurnRequest();
 
         turnCount++;
         turnIndex++;
@@ -295,12 +295,12 @@ public class BattleManager : MonoBehaviour
     }
 
     public PlayerState GetPlayerState()
-	{
-		return this.you.GeneratePlayerState();
-	}
+    {
+        return this.you.GeneratePlayerState();
+    }
 
     public PlayerState GetOpponentState()
-	{
-		return this.opponent.GeneratePlayerState();
-	}
+    {
+        return this.opponent.GeneratePlayerState();
+    }
 }

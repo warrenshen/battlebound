@@ -151,6 +151,30 @@ public class BattleSingleton : Singleton<BattleSingleton>
         Debug.LogError("ChallengeEndTurn request error.");
     }
 
+	public void SendChallengeSurrenderRequest()
+	{
+		if (this.challengeId == null)
+        {
+			Debug.LogError("Cannot send ChallengeSurrender request without challengeId set.");
+            return;
+        }
+        
+		LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("ChallengeSurrender");
+        request.SetEventAttribute("challengeId", this.challengeId);
+		request.Send(OnChallengeSurrenderSuccess, OnChallengeSurrenderError);
+	}
+
+	private void OnChallengeSurrenderSuccess(LogEventResponse response)
+	{
+		Debug.Log("ChallengeSurrender request success.");
+	}
+
+	private void OnChallengeSurrenderError(LogEventResponse response)
+	{
+		Debug.Log("ChallengeSurrender request error.");
+	}
+
 	public void SendChallengePlayCardRequest(
 		string cardId,
 		PlayCardAttributes attributes
