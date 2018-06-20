@@ -44,6 +44,7 @@ public class BoardCreature : MonoBehaviour
 
     [SerializeField]
     private List<string> abilities;
+    private Dictionary<string, GameObject> abilitiesFX;
 
     private bool silenced;
     public bool Silenced => silenced;
@@ -68,10 +69,8 @@ public class BoardCreature : MonoBehaviour
 
         this.owner = owner;
         this.gameObject.layer = 9;
-
-        //pre-sprite visuals
-        transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
+        if(this.abilities != null)
+            this.abilitiesFX = new Dictionary<string, GameObject>();
 
         //Render everything (labels, image, etc) method call here
         sp = gameObject.AddComponent<SpriteRenderer>();
@@ -97,12 +96,18 @@ public class BoardCreature : MonoBehaviour
         //method calls
         this.UpdateStatText();
         this.RenderAbilities();
+
+        //post-collider-construction visuals
+        transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
     }
 
     public void Fight(BoardCreature other)
     {
-        this.health -= other.attack;
-        other.health -= this.attack;
+        //move/animate
+        Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
+        LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
+        //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
         //to-do this string should be chosen from some dict set by text file later
         FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
@@ -113,14 +118,8 @@ public class BoardCreature : MonoBehaviour
         else
             SoundManager.Instance.PlaySound("Splatter", other.transform.position);
 
-        Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-        LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
-        //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
-
-        if (this.CheckAlive())
-            this.UpdateStatText();
-        if (other.CheckAlive())
-            other.UpdateStatText();
+        this.TakeDamage(other.Attack);
+        other.TakeDamage(this.attack);
     }
 
     //taking damage
@@ -128,7 +127,7 @@ public class BoardCreature : MonoBehaviour
     {
         if (this.HasAbility("shielded"))
         {
-            abilities.Remove("shielded");
+            this.abilities.Remove("shielded");
             RenderAbilities(); //to-do: needs review in future
             return false;
         }
@@ -177,15 +176,33 @@ public class BoardCreature : MonoBehaviour
 
     private void RenderAbilities()
     {
-        if (this.HasAbility("taunt"))
+        if (abilities == null)
+            return;
+        
+        //doing additions
+        foreach (string ability in abilities)
         {
-            this.transform.localScale *= 1.2f;  //to-do, do better than this pls
+            if (abilitiesFX.ContainsKey(ability))
+                continue;
+            abilitiesFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
         }
-        //to-do: if shielded, spawn shield effect
-        if(this.HasAbility("shielded"))
-        {
-            
+        //do removals
+        foreach (string key in abilitiesFX.Keys) {
+            if (abilities.Contains(key))
+                continue;
+            //if not continue, needs removal
+            GameObject effect = abilitiesFX[key];
+            FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
         }
+    }
+
+    public void AddAbility(string ability) {
+        if (abilities == null) {
+            abilities = new List<string>();
+            abilitiesFX = new Dictionary<string, GameObject>();
+        }
+        abilities.Add(ability);
+        RenderAbilities();
     }
 
     public bool HasAbility(string ability) {

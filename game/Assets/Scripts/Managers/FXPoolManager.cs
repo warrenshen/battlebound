@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FXPoolManager : MonoBehaviour {
     public Dictionary<string, int> effectIndices;
+    public Dictionary<string, string> shortToFull;
 
     public static FXPoolManager Instance { get; private set; }
 
@@ -11,6 +12,10 @@ public class FXPoolManager : MonoBehaviour {
     {
         Instance = this;
         this.effectIndices = new Dictionary<string, int>();
+        this.shortToFull = new Dictionary<string, string>();
+        //init conversion
+        this.shortToFull["shielded"] = "DivineShield";
+        this.shortToFull["taunt"] = "Taunt";
     }
 
 	// Use this for initialization
@@ -19,12 +24,42 @@ public class FXPoolManager : MonoBehaviour {
             effectIndices.Add(effect.name, 0);
         }
 	}
+
+    private bool IsShortname(string initial) {
+        if (shortToFull.ContainsKey(initial))
+            return true;
+        else return false;
+    }
+
+    private Transform GetEffect(string name) {
+        if (IsShortname(name))
+            name = shortToFull[name];
+        GameObject container = GameObject.Find(name);
+
+        if (container == null)
+            Debug.LogError(string.Format("Effect {0} not found!", name));
+        Transform chosen = container.transform.GetChild(effectIndices[name]);
+        effectIndices[name] = (effectIndices[name] + 1) % container.transform.childCount;
+        return chosen;
+    }
 	
     public void PlayEffect(string name, Vector3 pos) {
-        GameObject parent = GameObject.Find(name);
-        Transform chosen = parent.transform.GetChild(effectIndices[name]);
+        Transform chosen = GetEffect(name);
         chosen.position = pos;
         chosen.gameObject.SetActive(true);
-        effectIndices[name] = (effectIndices[name] + 1) % parent.transform.childCount;
+    }
+
+    public Transform AssignEffect(string name, Transform parent) {
+        Transform chosen = GetEffect(name);
+        chosen.parent = parent;
+        chosen.localPosition = Vector3.zero;
+        chosen.gameObject.SetActive(true);
+        return chosen;
+    }
+
+    public void UnassignEffect(string name, GameObject effect, Transform parent) {
+        effect.SetActive(false);
+        effect.transform.parent = GetEffect(name);
+        effect.transform.localPosition = Vector3.zero;
     }
 }

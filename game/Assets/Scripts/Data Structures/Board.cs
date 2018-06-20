@@ -25,7 +25,6 @@ public class Board
     }
 
     public void PlaceCreature(BoardCreature creature, int position) {
-		Debug.Log(creature.Owner);
         if (!playerToFields.ContainsKey(creature.Owner)) {
             AddPlayer(creature.Owner);
         }

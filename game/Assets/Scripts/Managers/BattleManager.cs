@@ -125,7 +125,7 @@ public class BattleManager : MonoBehaviour
     private void NextTurn()
     {
 		activePlayer.SetHasTurn(false);
-		BattleSingleton.Instance.SendChallengeEndTurnRequest();
+		//BattleSingleton.Instance.SendChallengeEndTurnRequest();
 
         turnCount++;
         turnIndex++;
