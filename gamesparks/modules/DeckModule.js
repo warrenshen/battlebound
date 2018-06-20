@@ -162,7 +162,7 @@ function getBCardsByBCardIds(bCardIds) {
     return bCards;
 }
 
-function _createBCardByBCardId(bCardId) {
+function createBCardByBCardId(bCardId) {
     const API = Spark.getGameDataService();
 
     const cardInt = parseInt(bCardId.substring(1));
@@ -185,6 +185,8 @@ function _createBCardByBCardId(bCardId) {
         Spark.setScriptError("ERROR", error);
         Spark.exit();
     }
+    
+    return cardDataItem;
 }
 
 function _getBCardIdsFromChainByPlayer(player) {
@@ -206,7 +208,7 @@ function _getBCardIdsByPlayer(player) {
         const missingBCardIds = bCardIds.filter(function(bCardId) { return existingBCardIds.indexOf(bCardId) < 0 });
         
         missingBCardIds.forEach(function(bCardId) {
-            _createBCardByBCardId(bCardId);
+            createBCardByBCardId(bCardId);
         });
     }
 

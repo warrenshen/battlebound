@@ -14,6 +14,7 @@ const TREASURY_CONTRACT_ADDRESS = "0xed0f506bc7f9738d0d607e75b612239fe1f405f6";
 const AUCTION_CONTRACT_ADDRESS = "0xEFa6737A7439BFAee477C471241822dAd3558CB2";
 
 const BLOCKCHAIN_EVENT_AUCTION_CREATED = "BLOCKCHAIN_EVENT_AUCTION_CREATED";
+const BLOCKCHAIN_EVENT_AUCTION_CANCELED = "BLOCKCHAIN_EVENT_AUCTION_CANCELED";
 const BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL = "BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL";
 
 function recoverAddressBySignature(challenge, signature) {
@@ -187,6 +188,8 @@ function _getTopicForEvent(event) {
     switch (event) {
         case BLOCKCHAIN_EVENT_AUCTION_CREATED:
             return "0xa9c8dfcda5664a5a124c713e386da27de87432d5b668e79458501eb296389ba7";
+        case BLOCKCHAIN_EVENT_AUCTION_CANCELED:
+            return "0x2809c7e17bf978fbc7194c0a694b638c4215e9140cacc6c38ca36010b45697df";
         case BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL:
             return "0x4fcc30d90a842164dd58501ab874a101a3749c3d4747139cefe7c876f4ccebd2";
         default:
@@ -215,18 +218,12 @@ function _getTopicForEvent(event) {
  **/
 function _parseLogs(event, rawLogs) {
     return rawLogs.map(function(rawLog) {
-        const dataInts = convertHexToIntFixedLength(rawLog.data);
+        const data = convertHexToIntFixedLength(rawLog.data);
         
         if (event === BLOCKCHAIN_EVENT_AUCTION_CREATED) {
             return {
                 event: event,
-                tokenId: dataInts[0],
-                // data: {
-                //     tokenId: dataInts[0],
-                //     startingPrice: dataInts[1],
-                //     endingPrice: dataInts[2],
-                //     duration: dataInts[3],
-                // },
+                tokenId: data[0], // data is an array with token ID as first element.
                 blockNumber: rawLog.blockNumber,
                 transactionHash: rawLog.transactionHash,
                 transactionIndex: rawLog.transactionIndex,
@@ -235,10 +232,16 @@ function _parseLogs(event, rawLogs) {
         } else if (event === BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL) {
             return {
                 event: event,
-                tokenId: dataInts[0],
-                // data: {
-                //     tokenId: dataInts[0],
-                // },
+                tokenId: data[0], // data is an array with token ID as first element.
+                blockNumber: rawLog.blockNumber,
+                transactionHash: rawLog.transactionHash,
+                transactionIndex: rawLog.transactionIndex,
+                logIndex: rawLog.logIndex,
+            };
+        } else if (event === BLOCKCHAIN_EVENT_AUCTION_CANCELED) {
+            return {
+                event: event,
+                tokenId: data, // data is the token ID.
                 blockNumber: rawLog.blockNumber,
                 transactionHash: rawLog.transactionHash,
                 transactionIndex: rawLog.transactionIndex,
@@ -397,6 +400,38 @@ function submitCreateAuctionTransaction(signedTx) {
  * @return string - transaction hash of submitted transaction
  **/
 function submitBidAuctionTransaction(signedTx) {
+    const formattedSignedTx = prefixHex(signedTx);
+    const json = {
+        jsonrpc: "2.0",
+        method: "eth_sendRawTransaction",
+        id: 1,
+        params: [formattedSignedTx],
+    };
+    
+    const jsonString = JSON.stringify(json);
+    const response = Spark.getHttp(INFURA_URL).postString(jsonString);
+    const responseCode = response.getResponseCode();
+    const responseJson = response.getResponseJson();
+    
+    if (responseCode === 200) {
+        const error = responseJson.error;
+        if (error && error.code) {
+            Spark.setScriptError("ERROR", "Insufficient funds to submit transaction.");
+            Spark.exit();
+        }
+        
+        return responseJson.result;
+    } else {
+        Spark.setScriptError("ERROR", "JSON RPC request error.");
+        Spark.exit();
+    }
+}
+
+/**
+ * @param string signedTx - signed transaction
+ * @return string - transaction hash of submitted transaction
+ **/
+function submitCancelAuctionTransaction(signedTx) {
     const formattedSignedTx = prefixHex(signedTx);
     const json = {
         jsonrpc: "2.0",

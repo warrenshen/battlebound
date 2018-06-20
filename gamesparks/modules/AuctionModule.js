@@ -61,13 +61,16 @@ function syncAuctionByTokenId(tokenId) {
     const API = Spark.getGameDataService();
     
     const bCardId = "B" + tokenId.toString();
-    const cardDataItem = API.getItem("Card", bCardId).document();
-    
+    var cardDataItem = API.getItem("Card", bCardId).document();
+    if (cardDataItem === null)
+    {
+        cardDataItem = createBCardByBCardId(bCardId);
+    }
     const cardData = cardDataItem.getData();
     
     // We put the auction seller on the card directly
     // so we can query it (it is an indexed field).
-    cardData.seller = cleanHex(auctionOnChain.seller.toLowerCase());
+    cardData.seller = prefixHex(auctionOnChain.seller.toLowerCase());
         
     if (!cardData.auction) {
         cardData.auction = {};
