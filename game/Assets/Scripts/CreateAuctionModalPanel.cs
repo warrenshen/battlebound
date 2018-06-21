@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class CreateAuctionModalPanel : MonoBehaviour
 {
-	private static CreateAuctionModalPanel modalPanel;
-
 	private CardRaw card;
 
 	[SerializeField]

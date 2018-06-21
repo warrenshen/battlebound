@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using GameSparks.Core;
 using GameSparks.Api.Requests;
@@ -89,10 +90,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
 			return;
 		}
 
-		string playerJSON = scriptData.GetGSData("playerState").JSON;
-        string opponentJSON = scriptData.GetGSData("opponentState").JSON;
-		this.playerState = JsonUtility.FromJson<PlayerState>(playerJSON);
-		this.opponentState = JsonUtility.FromJson<PlayerState>(opponentJSON);
+		string playerJson = scriptData.GetGSData("playerState").JSON;
+        string opponentJson = scriptData.GetGSData("opponentState").JSON;
+		this.playerState = JsonUtility.FromJson<PlayerState>(playerJson);
+		this.opponentState = JsonUtility.FromJson<PlayerState>(opponentJson);
 
 		if (BattleManager.Instance == null)
 		{
@@ -124,6 +125,25 @@ public class BattleSingleton : Singleton<BattleSingleton>
 		{
 			Debug.Log("Server vs device opponent state match.");
 			Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
+		}
+
+		List<GSData> movesData = scriptData.GetGSDataList("moves");
+		List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
+		foreach (GSData moveData in movesData)
+		{
+			challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
+		}
+
+		EmitChallengeMoves(challengeMoves);
+	}
+
+	public void EmitChallengeMoves(List<ChallengeMove> challengeMoves)
+	{
+		Debug.Log("BattleSingleton.EmitChallengeMoves called.");
+		foreach (ChallengeMove challengeMove in challengeMoves)
+		{
+			Debug.Log(JsonUtility.ToJson(challengeMove));
+			// TODO: call receive function in BattleManager.
 		}
 	}
 

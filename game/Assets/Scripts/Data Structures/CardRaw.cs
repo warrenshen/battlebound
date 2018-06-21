@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class CardRaw {
+public class CardRaw
+{
     public enum CardType: byte { Creature, Spell, Weapon, Structure };
 
     [SerializeField]
