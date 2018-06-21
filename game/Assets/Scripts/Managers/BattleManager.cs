@@ -263,7 +263,7 @@ public class BattleManager : MonoBehaviour
     public void PlayCardToBoard(CardObject cardObject, int index) {
         //to-do: animation here
         Player player = cardObject.card.Owner;
-        Transform boardPlace = GameObject.Find(String.Format("Player {0}", index)).transform;
+        Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, index)).transform;
         //shared spawning + fx
         SpawnCardToBoard(cardObject, index, boardPlace);
     }

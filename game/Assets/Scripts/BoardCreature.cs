@@ -111,6 +111,10 @@ public class BoardCreature : MonoBehaviour
 
     public void Fight(BoardCreature other)
     {
+        if(this.canAttack <= 0) {
+            Debug.LogError("Fight called when canAttack is 0 or below!");
+            return;
+        }
         this.canAttack -= 1;
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
