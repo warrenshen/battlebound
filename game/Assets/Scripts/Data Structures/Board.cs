@@ -80,5 +80,13 @@ public class Board
         public BoardCreature[] GetCreatures() {
             return creatures;
         }
+
+        public void RecoverCreatures() {
+            for (int i = 0; i < creatures.Length; i++)
+            {
+                if (creatures[i] != null)
+                    creatures[i].RecoverAttack();
+            }
+        }
     }
 }

@@ -28,9 +28,10 @@ public class BoardCreature : MonoBehaviour
     private string image;
     public string Image => image;
 
+    private int maxAttacks;
     [SerializeField]
-    private bool canAttack;
-    public bool CanAttack => canAttack;
+    private int canAttack;
+    public int CanAttack => canAttack;
 
     private int attacksThisTurn;
 
@@ -64,7 +65,8 @@ public class BoardCreature : MonoBehaviour
         this.image = this.card.Image;
         this.abilities = this.card.Abilities;
 
-        this.canAttack = false;
+        this.canAttack = 0;
+        this.maxAttacks = 1;
         this.attacksThisTurn = 0;
 
         this.owner = owner;
@@ -102,8 +104,13 @@ public class BoardCreature : MonoBehaviour
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
     }
 
+    public void RecoverAttack() {
+        this.canAttack = this.maxAttacks;
+    }
+
     public void Fight(BoardCreature other)
     {
+        this.canAttack -= 1;
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();

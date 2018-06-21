@@ -63,12 +63,12 @@ public class BattleManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100f) && hit.collider.gameObject.layer == battleLayer) //use battle layer mask
             {
                 mouseDownCreature = hit.collider.GetComponent<BoardCreature>();
-                if (mouseDownCreature.Owner.HasTurn)
+                if (mouseDownCreature.Owner.HasTurn && mouseDownCreature.CanAttack > 0)
                 {
                     validTargets = GetValidTargets(mouseDownCreature);
                     //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
                     attackArrow.SetPosition(0, hit.collider.transform.position);
-                    attackArrow.enabled = true;
+                    attackArrow.enabled = true; //this is being used as a validity check!!
                 }
             }
         }
@@ -87,6 +87,10 @@ public class BattleManager : MonoBehaviour
             else if (cast && hit.collider.name == "End Turn")
             {
                 NextTurn();
+            }
+            else if (cast && hit.collider.name == "Surrender")
+            {
+                Surrender();
             }
             //reset state
             mouseDownCreature = null;
@@ -133,6 +137,10 @@ public class BattleManager : MonoBehaviour
 
         //do some turn transition render
         activePlayer.NewTurn();
+    }
+
+    private void Surrender() {
+        Debug.LogWarning("Surrender action pressed.");
     }
 
     private List<BoardCreature> GetValidTargets(BoardCreature attacker)

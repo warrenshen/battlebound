@@ -89,6 +89,9 @@ public class Player
 	}
 
     public void NewTurn() {
+        //board resetting
+        field.RecoverCreatures();
+
         maxMana = Math.Min(maxMana + 1, 10);
         mana = maxMana;
         hand.Draw(deck, 1);
@@ -115,4 +118,9 @@ public class Player
 
 		return playerState;
 	}
+
+    public bool TakeDamage(int amount) {
+        this.health -= amount;
+        return this.health > 0;
+    }
 }

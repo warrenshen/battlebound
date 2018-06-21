@@ -74,10 +74,10 @@ public class Hand {
         for (int k = 0; k < size; k++)
         {
             int pos = -((size - 1) / 2) + k;
-            float vOffset = -0.12f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
+            float vOffset = -0.16f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
             cards[k].wrapper.Renderer.sortingOrder = 10 + k;
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth, 0, vOffset);
+            Vector3 adjustedPos = new Vector3(pos * cardWidth/1.11f, 0, vOffset);
             float tweenTime = 0.1f;
             LeanTween.moveLocal(cards[k].wrapper.gameObject, adjustedPos, tweenTime);
             LeanTween.rotateLocal(cards[k].wrapper.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
