@@ -260,19 +260,30 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public void PlayCardToBoard(CardObject cardObject, int index) {
+        //to-do: animation here
+        Player player = cardObject.card.Owner;
+        Transform boardPlace = GameObject.Find(String.Format("Player {0}", index)).transform;
+        //shared spawning + fx
+        SpawnCardToBoard(cardObject, index, boardPlace);
+    }
+
     public void PlayCardToBoard(CardObject cardObject, RaycastHit hit)
     {
-        Player player = cardObject.card.Owner;
-
         //only called for creature or structure
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
+        Player player = cardObject.card.Owner;
+        //shared spawning + fx
+        SpawnCardToBoard(cardObject, index, hit.collider.transform);
+    }
 
-        FXPoolManager.Instance.PlayEffect("Spawn", hit.collider.transform.position + new Vector3(0f, 0f, -0.1f));
-        BoardCreature created = CreateBoardCreature(cardObject, player, hit.collider.transform.position);
+    private void SpawnCardToBoard(CardObject cardObject, int index, Transform target) {
+        FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
+        BoardCreature created = CreateBoardCreature(cardObject, cardObject.card.Owner, target.position);
         Board.Instance().PlaceCreature(created, index);
-        UseCard(player, cardObject);
+        UseCard(cardObject.card.Owner, cardObject);
     }
 
     public void PlayTargetedSpell(SpellCard spell, CardObject target, RaycastHit hit)
@@ -280,6 +291,20 @@ public class BattleManager : MonoBehaviour
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
         spell.Activate(targetedCreature, "l_bolt");
         UseCard(target.card.Owner, target);
+    }
+
+    public void ReceivePlayCardMove(string playerId, string cardId, int fieldIndex) {
+        Player active = opponent;
+        CardObject target = opponent.Hand.GetCard(cardId).wrapper;
+        if (target == null) {
+            Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
+            return;
+        }
+        PlayCardToBoard(target, fieldIndex);
+    }
+
+    public void ReceiveCardAttackMove(string playerId, string cardId, string targetId) {
+        
     }
 
 

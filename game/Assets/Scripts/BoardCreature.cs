@@ -86,9 +86,10 @@ public class BoardCreature : MonoBehaviour
         textMesh = textHolder.AddComponent<TextMeshPro>();
         textMesh.fontSize = 6;
         textMesh.fontStyle = FontStyles.Bold;
+        textMesh.alignment = TextAlignmentOptions.Center;
         RectTransform textContainer = textMesh.GetComponent<RectTransform>();
         textContainer.sizeDelta = new Vector2(3, 2);
-        textContainer.anchoredPosition = new Vector3(0.8f, 1.5f, -0.5f);
+        textContainer.anchoredPosition = new Vector3(0, 2.2f, -0.5f);
         textHolder.transform.SetParent(gameObject.transform, false);
 
         //ehh
@@ -178,7 +179,7 @@ public class BoardCreature : MonoBehaviour
 
     public void UpdateStatText()
     {
-        textMesh.text = String.Format("{0} / {1}", this.attack, this.health);
+        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.uid);
     }
 
     private void RenderAbilities()

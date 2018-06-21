@@ -26,6 +26,14 @@ public class Hand {
         return 0;
     }
 
+    public Card GetCard(string id) {
+        foreach (Card card in cards) {
+            if (card.Id == id)
+                return card;
+        }
+        return null;
+    }
+
     public int Draw(Deck deck, int amount) {
         int fatigue = 0;
 
