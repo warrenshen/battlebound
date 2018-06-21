@@ -104,26 +104,26 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 		if (!this.playerState.Equals(devicePlayerState))
 		{
-			Debug.LogError("Server vs device player state mismatch.");
-			Debug.LogError("Server: " + JsonUtility.ToJson(this.playerState));
-			Debug.LogError("Device: " + JsonUtility.ToJson(devicePlayerState));
+			Debug.LogWarning("Server vs device player state mismatch.");
+			Debug.LogWarning("Server: " + JsonUtility.ToJson(this.playerState));
+			Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
 		}
 		else
 		{
 			Debug.Log("Server vs device player state match.");
-			Debug.LogError("State: " + JsonUtility.ToJson(this.playerState));
+			Debug.Log("State: " + JsonUtility.ToJson(this.playerState));
 		}
 
 		if (!this.opponentState.Equals(deviceOpponentState))
 		{
-			Debug.LogError("Server vs device opponent state mismatch.");
-			Debug.LogError("Server: " + JsonUtility.ToJson(this.opponentState));
-			Debug.LogError("Device: " + JsonUtility.ToJson(deviceOpponentState));
+			Debug.LogWarning("Server vs device opponent state mismatch.");
+			Debug.LogWarning("Server: " + JsonUtility.ToJson(this.opponentState));
+			Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
 		}
 		else
 		{
 			Debug.Log("Server vs device opponent state match.");
-			Debug.LogError("State: " + JsonUtility.ToJson(this.opponentState));
+			Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
 		}
 	}
 
@@ -131,7 +131,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
 		if (this.challengeId == null)
 		{
-			Debug.LogError("Cannot send ChallengeEndTurn request without challengeId set.");
+			Debug.LogWarning("Cannot send ChallengeEndTurn request without challengeId set.");
 			return;
 		}
 
@@ -155,7 +155,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 	{
 		if (this.challengeId == null)
         {
-			Debug.LogError("Cannot send ChallengeSurrender request without challengeId set.");
+			Debug.LogWarning("Cannot send ChallengeSurrender request without challengeId set.");
             return;
         }
         
@@ -182,7 +182,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 	{
 		if (this.challengeId == null)
         {
-			Debug.LogError("Cannot send ChallengeEndTurn request without challengeId set.");
+			Debug.LogWarning("Cannot send ChallengeEndTurn request without challengeId set.");
             return;
         }
 
@@ -211,7 +211,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
 		if (this.challengeId == null)
         {
-			Debug.LogError("Cannot send ChallengeCardAttack request without challengeId set.");
+			Debug.LogWarning("Cannot send ChallengeCardAttack request without challengeId set.");
             return;
         }
 
