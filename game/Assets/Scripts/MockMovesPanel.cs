@@ -30,12 +30,8 @@ public class MockMovesPanel : MonoBehaviour
 	private Button submitMoveButton;
     
 	private string moveCategory;
-    
-	private static string MOVE_CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
-	private static string MOVE_CATEGORY_PLAY_CARD = "MOVE_CATEGORY_PLAY_CARD";
-	private static string MOVE_CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
 
-	public void Awake()
+	private void Awake()
 	{
 		this.endTurnButton.onClick.AddListener(OnEndTurnButtonClick);
 		this.playCardButton.onClick.AddListener(OnPlayCardButtonClick);
@@ -58,13 +54,13 @@ public class MockMovesPanel : MonoBehaviour
 
     private void OnEndTurnButtonClick()
 	{
-		this.moveCategory = MOVE_CATEGORY_END_TURN;
+		this.moveCategory = ChallengeMove.CATEGORY_END_TURN;
 		DeactivateAllFields();
 	}
 
     private void OnPlayCardButtonClick()
 	{
-		this.moveCategory = MOVE_CATEGORY_PLAY_CARD;
+		this.moveCategory = ChallengeMove.CATEGORY_PLAY_CARD;
 		DeactivateAllFields();
 		ActivateField(this.cardIdInputField);
 		ActivateField(this.fieldIndexInputField);
@@ -72,7 +68,7 @@ public class MockMovesPanel : MonoBehaviour
 
 	private void OnCardAttackButtonClick()
 	{
-		this.moveCategory = MOVE_CATEGORY_CARD_ATTACK;
+		this.moveCategory = ChallengeMove.CATEGORY_CARD_ATTACK;
 		DeactivateAllFields();
 		ActivateField(this.cardIdInputField);
 		ActivateField(this.fieldIdInputField);
@@ -83,15 +79,15 @@ public class MockMovesPanel : MonoBehaviour
 	{
 		List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
 		ChallengeMove challengeMove = new ChallengeMove();
-		ChallengeMove.Attributes attributes = new ChallengeMove.Attributes();
+		ChallengeMove.ChallengeMoveAttributes attributes = new ChallengeMove.ChallengeMoveAttributes();
 
-		if (this.moveCategory == MOVE_CATEGORY_END_TURN)
+		if (this.moveCategory == ChallengeMove.CATEGORY_END_TURN)
 		{
-			challengeMove.SetCategory(MOVE_CATEGORY_END_TURN);
+			challengeMove.SetCategory(ChallengeMove.CATEGORY_END_TURN);
 		}
-		else if (this.moveCategory == MOVE_CATEGORY_PLAY_CARD)
+		else if (this.moveCategory == ChallengeMove.CATEGORY_PLAY_CARD)
 		{
-			challengeMove.SetCategory(MOVE_CATEGORY_PLAY_CARD);
+			challengeMove.SetCategory(ChallengeMove.CATEGORY_PLAY_CARD);
 			attributes.SetCardId(this.cardIdInputField.text);
 			attributes.SetFieldIndex(Int32.Parse(fieldIndexInputField.text));
 		}

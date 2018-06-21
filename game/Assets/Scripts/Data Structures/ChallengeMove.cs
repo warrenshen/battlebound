@@ -3,6 +3,10 @@
 [System.Serializable]
 public class ChallengeMove
 {
+	public static string CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
+	public static string CATEGORY_PLAY_CARD = "MOVE_CATEGORY_PLAY_CARD";
+	public static string CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
+
 	[SerializeField]
 	private string playerId;
 	public string PlayerId => playerId;
@@ -12,11 +16,11 @@ public class ChallengeMove
 	public string Category => category;
 
 	[SerializeField]
-	private Attributes moveAttributes;
-	public Attributes MoveAttributes => moveAttributes;
+	private ChallengeMoveAttributes attributes;
+	public ChallengeMoveAttributes Attributes => attributes;
     
 	[System.Serializable]
-	public class Attributes
+	public class ChallengeMoveAttributes
 	{
 		[SerializeField]
 		private string cardId;
@@ -65,8 +69,8 @@ public class ChallengeMove
 		this.category = category;
 	}
 
-	public void SetMoveAttributes(Attributes moveAttributes)
+	public void SetMoveAttributes(ChallengeMoveAttributes attributes)
 	{
-		this.moveAttributes = moveAttributes;	
+		this.attributes = attributes;	
 	}
 }

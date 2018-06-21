@@ -143,7 +143,14 @@ public class BattleSingleton : Singleton<BattleSingleton>
 		foreach (ChallengeMove challengeMove in challengeMoves)
 		{
 			Debug.Log(JsonUtility.ToJson(challengeMove));
-			// TODO: call receive function in BattleManager.
+			if (challengeMove.Category == ChallengeMove.CATEGORY_PLAY_CARD)
+			{
+				BattleManager.Instance.ReceivePlayCardMove(
+					null,
+					challengeMove.Attributes.CardId,
+					challengeMove.Attributes.FieldIndex
+				);
+			}
 		}
 	}
 
