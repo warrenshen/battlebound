@@ -4,7 +4,8 @@
 public class ChallengeMove
 {
 	public static string CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
-	public static string CATEGORY_PLAY_CARD = "MOVE_CATEGORY_PLAY_CARD";
+	public static string MOVE_CATEGORY_PLAY_MINION = "MOVE_CATEGORY_PLAY_MINION";
+	public static string MOVE_CATEGORY_PLAY_SPELL = "MOVE_CATEGORY_PLAY_SPELL";
 	public static string CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
 
 	[SerializeField]

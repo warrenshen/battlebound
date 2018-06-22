@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -91,6 +92,11 @@ public class Hand {
             LeanTween.rotateLocal(cards[k].wrapper.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
         }
     }
+
+	public Card GetCardByIndex(int index)
+	{
+		return this.cards.ElementAt(index);
+	}
 
     public int Size() {
         return cards.Count;

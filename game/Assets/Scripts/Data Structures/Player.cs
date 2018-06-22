@@ -43,9 +43,6 @@ public class Player
         this.hand = new Hand(deck, 7, this.name);
         this.mana = 10;
         this.maxMana = 10;
-
-        //should always exist in scene
-		Debug.Log(GeneratePlayerState()); //todo what is the point of logging this??
     }
 
     public void PlayCard(CardObject cardObject) {
@@ -116,6 +113,65 @@ public class Player
 		playerState.SetArmor(this.Armor);
 		playerState.SetHandSize(this.Hand.Size());
 		playerState.SetDeckSize(this.Deck.Size());
+
+		List<PlayerState.ChallengeCard> handCards = new List<PlayerState.ChallengeCard>();
+		for (int i = 0; i < this.hand.Size(); i += 1)
+		{
+			Card card = this.hand.GetCardByIndex(i);
+			PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+
+			challengeCard.SetId(card.Id);
+			challengeCard.SetName(card.Name);
+			//challengeCard.SetDescription(boardCreature.Card.Description);
+			//challengeCard.SetLevel(boardCreature.Card.Level);
+			challengeCard.SetManaCost(card.Cost);
+
+			if (card.GetType() == typeof(CreatureCard))
+			{
+				challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
+				challengeCard.SetHealth(((CreatureCard) card).Health);
+				challengeCard.SetAttack(((CreatureCard) card).Attack);
+			}
+			else if (card.GetType() == typeof(SpellCard))
+			{
+				challengeCard.SetCategory(Card.CARD_CATEGORY_SPELL);
+			}
+			// abilities
+
+			handCards.Add(challengeCard);
+		}
+		playerState.SetHand(handCards);
+
+		PlayerState.ChallengeCard[] fieldCards = new PlayerState.ChallengeCard[6];
+		for (int i = 0; i < 6; i += 1)
+		{
+			BoardCreature boardCreature = this.field.GetCreatureByIndex(i);
+			PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+
+			if (boardCreature == null)
+			{
+				challengeCard.SetId("EMPTY");
+			}
+			else
+			{
+				challengeCard.SetId(boardCreature.Card.Id);
+				challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
+				challengeCard.SetName(boardCreature.Card.Name);
+				//challengeCard.SetDescription(boardCreature.Card.Description);
+				//challengeCard.SetLevel(boardCreature.Card.Level);
+				challengeCard.SetManaCost(boardCreature.Card.Cost);
+				challengeCard.SetHealth(boardCreature.Health);
+				challengeCard.SetHealthStart(boardCreature.Card.Health);
+				challengeCard.SetAttack(boardCreature.Attack);
+				challengeCard.SetAttackStart(boardCreature.Card.Attack);
+				challengeCard.SetCanAttack(boardCreature.CanAttack);
+				//challengeCard.SetHasShield(boardCreature.HasShield);
+				// abilities
+			}
+
+			fieldCards.SetValue(challengeCard, i);
+		}
+		playerState.SetField(fieldCards);
 
 		return playerState;
 	}

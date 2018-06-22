@@ -58,6 +58,11 @@ public class Board
         public PlayingField() {
             creatures = new BoardCreature[6];
         }
+        
+		public BoardCreature GetCreatureByIndex(int index)
+		{
+			return this.creatures[index];
+		}
 
         public bool Place(BoardCreature creature, int index) {
             if(creatures[index] != null) {

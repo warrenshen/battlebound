@@ -4,8 +4,11 @@ using System.Reflection;
 using UnityEngine;
 
 [System.Serializable]
-public abstract class Card {
-    //public enum CardType: byte { Creature, Spell, Weapon, Structure };
+public abstract class Card
+{
+	public static int CARD_CATEGORY_MINION = 0;
+	public static int CARD_CATEGORY_SPELL = 1;
+	public static int CARD_CATEGORY_STRUCTURE = 2;
 
     [SerializeField]
     protected string id;
@@ -14,10 +17,6 @@ public abstract class Card {
     [SerializeField]
     protected string name;
     public string Name => name;
-
-    //[SerializeField]
-    //protected CardType category;
-    //public CardType Category => category;
 
     [SerializeField]
     protected int cost;

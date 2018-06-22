@@ -139,11 +139,15 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	public void EmitChallengeMoves(List<ChallengeMove> challengeMoves)
 	{
-		Debug.Log("BattleSingleton.EmitChallengeMoves called.");
+		PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
+        PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+		Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
+		Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
+
 		foreach (ChallengeMove challengeMove in challengeMoves)
 		{
 			Debug.Log(JsonUtility.ToJson(challengeMove));
-			if (challengeMove.Category == ChallengeMove.CATEGORY_PLAY_CARD)
+			if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
 			{
 				BattleManager.Instance.ReceivePlayCardMove(
 					null,
