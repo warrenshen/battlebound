@@ -60,7 +60,7 @@ public class MockMovesPanel : MonoBehaviour
 
     private void OnPlayCardButtonClick()
 	{
-		this.moveCategory = ChallengeMove.CATEGORY_PLAY_CARD;
+		this.moveCategory = ChallengeMove.MOVE_CATEGORY_PLAY_MINION;
 		DeactivateAllFields();
 		ActivateField(this.cardIdInputField);
 		ActivateField(this.fieldIndexInputField);
@@ -85,9 +85,9 @@ public class MockMovesPanel : MonoBehaviour
 		{
 			challengeMove.SetCategory(ChallengeMove.CATEGORY_END_TURN);
 		}
-		else if (this.moveCategory == ChallengeMove.CATEGORY_PLAY_CARD)
+		else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
 		{
-			challengeMove.SetCategory(ChallengeMove.CATEGORY_PLAY_CARD);
+			challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
 			attributes.SetCardId(this.cardIdInputField.text);
 			attributes.SetFieldIndex(Int32.Parse(fieldIndexInputField.text));
 		}
