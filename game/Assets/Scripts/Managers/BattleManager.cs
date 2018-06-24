@@ -23,7 +23,7 @@ public class BattleManager : MonoBehaviour
     private BoardCreature mouseUpCreature;
     private List<BoardCreature> validTargets; //used to store/cache valid targets
 
-    public LineRenderer attackArrow;
+    public CurvedLineRenderer attackCommand;
     [SerializeField]
     List<BoardCreature> allTargets;
 
@@ -35,6 +35,7 @@ public class BattleManager : MonoBehaviour
         this.you = new Player("Player");
         Debug.Log(this.you.Deck);
         this.opponent = new Player("Enemy");
+        attackCommand.SetWidth(0);
     }
 
     private void Start()
@@ -67,8 +68,10 @@ public class BattleManager : MonoBehaviour
                 {
                     validTargets = GetValidTargets(mouseDownCreature);
                     //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
-                    attackArrow.SetPosition(0, hit.collider.transform.position);
-                    attackArrow.enabled = true; //this is being used as a validity check!!
+                    attackCommand.SetPointPositions(mouseDownCreature.transform.position, hit.point);
+                    attackCommand.SetWidth(1.33f);
+                    //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
+                    Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
                 }
             }
         }
@@ -93,19 +96,23 @@ public class BattleManager : MonoBehaviour
                 Surrender();
             }
             //reset state
+            attackCommand.SetWidth(0);
             mouseDownCreature = null;
             mouseUpCreature = null;
-            attackArrow.enabled = false;
             validTargets = null;
+            Cursor.SetCursor(ActionManager.Instance.cursors[0], Vector2.zero, CursorMode.Auto);
         }
-
-        //render attack arrow correctly
-        if (Input.GetMouseButton(0))
+        else if (attackCommand.lineRenderer.startWidth > 0 && Input.GetMouseButton(0))
         {
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f))
+            bool cast = Physics.Raycast(ray, out hit, 100f);
+            if (cast)
             {
-                attackArrow.SetPosition(1, hit.point);
+                attackCommand.SetPointPositions(mouseDownCreature.transform.position, hit.point);
+                if (hit.collider.gameObject.layer == battleLayer && mouseDownCreature != null)
+                    Cursor.SetCursor(ActionManager.Instance.cursors[5], Vector2.zero, CursorMode.Auto);
+                else
+                    Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
             }
         }
     }
@@ -182,7 +189,7 @@ public class BattleManager : MonoBehaviour
     private void CheckFight(BoardCreature attacker, RaycastHit hit)
     {
 
-        if (!attackArrow.enabled)
+        if (!attackCommand.enabled)
             return;
         mouseUpCreature = hit.collider.GetComponent<BoardCreature>();
         if (mouseUpCreature == mouseDownCreature)
@@ -190,7 +197,7 @@ public class BattleManager : MonoBehaviour
             //show creature details
             Debug.Log("Show details.");
         }
-        else if (validTargets.Contains(mouseUpCreature))
+        else if (validTargets.Count > 0 && validTargets.Contains(mouseUpCreature))
         {
             mouseDownCreature.Fight(mouseUpCreature);
         }

@@ -38,16 +38,17 @@ public class CardObject : MonoBehaviour
     public void InitializeCard(Card card)
     {
         this.card = card;
+        this.gameObject.layer = LayerMask.NameToLayer("Card");
         card.wrapper = this;
         //make render changes according to card class here
         image = Resources.Load(card.Image) as Texture2D;
         spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
         spr.sortingOrder = 10;
         coll = gameObject.AddComponent<BoxCollider>() as Collider;
-        coll.GetComponent<BoxCollider>().size = new Vector3(2.5f, 3.5f, 0.2f);
+        coll.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.2f, 0.1f);
     }
 
-    public void OnMouseEnter()
+    public void EnterFocus()
     {
         if (!card.Owner.HasTurn)
             return;
@@ -58,7 +59,7 @@ public class CardObject : MonoBehaviour
         transform.localScale = new Vector3(scaling, scaling, scaling);
     }
 
-    public void OnMouseExit()
+    public void ExitFocus()
     {
         if (!card.Owner.HasTurn)
             return;
@@ -67,14 +68,14 @@ public class CardObject : MonoBehaviour
         transform.localScale = new Vector3(1, 1, 1);
     }
 
-    public void OnMouseOver()
-    {
-        if (!card.Owner.HasTurn)
-            return;
-        if (Input.GetMouseButtonUp(1)) Debug.Log("Pressed right click.");
-    }
+    //public void InFocus()
+    //{
+    //    if (!card.Owner.HasTurn)
+    //        return;
+    //    if (Input.GetMouseButtonUp(1)) Debug.Log("Pressed right click.");
+    //}
 
-    public void OnMouseDown()
+    public void MouseDown()
     {
         if (!card.Owner.HasTurn)
             return;
@@ -88,7 +89,7 @@ public class CardObject : MonoBehaviour
         ActionManager.Instance.SetDragTarget(this, Renderer);
     }
 
-    public void OnMouseUp()
+    public void MouseUp()
     {
         if (!card.Owner.HasTurn)
             return;
