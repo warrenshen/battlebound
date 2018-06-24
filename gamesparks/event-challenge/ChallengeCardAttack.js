@@ -16,9 +16,9 @@
 require("ChallengeEventPrefix");
 require("CardAbilitiesModule");
 require("AttackModule");
+require("ChallengeMovesModule");
 
 const TARGET_ID_FACE = "TARGET_ID_FACE";
-const MOVE_TYPE_CARD_ATTACK = "MOVE_TYPE_CARD_ATTACK";
 
 const cardId = Spark.getData().cardId;
 const attributes = Spark.getData().attributes;
@@ -120,7 +120,7 @@ if (fieldId === 0) {
 
 const move = {
     playerId: playerId,
-    type: MOVE_TYPE_CARD_ATTACK,
+    category: MOVE_CATEGORY_CARD_ATTACK,
     attributes: {
         cardId: cardId,
         fieldId: fieldId,
@@ -129,6 +129,6 @@ const move = {
 };
 challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
-challengeStateData.moveTakenThisTurn = 0;
+challengeStateData.moveTakenThisTurn = 1;
 
 require("PersistChallengeStateModule");

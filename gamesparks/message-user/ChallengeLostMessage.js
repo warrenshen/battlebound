@@ -5,8 +5,14 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ProcessRankModule");
+require("CancelScheduledTimeEventsModule");
+require("ChallengeGrantExperienceModule");
 
-require("ProcessRank");
+// This needs to be up here since it defines the `challengeId`, `playerId`, and `challengeStateData` variables.
+require("ChallengeUserMessageModule");
+
+cancelScheduledTimeEvents(challengeId, playerId);
 
 if (Spark.getData().challenge.shortCode === "RankedChallenge") {
     var playerId1 = Spark.getData().challenge.challenger.id;
@@ -22,7 +28,5 @@ if (Spark.getData().challenge.shortCode === "RankedChallenge") {
     setLeaderboardsScore(newScore);
 }
 
-require("ChallengeUserMessageModule");
-
-require("CancelScheduledTimeEventsModule");
-cancelScheduledTimeEvents(challengeId, playerId, challengeStateData);
+const resultCards = grantExperienceByPlayerAndChallenge(playerId, challengeStateData);
+Spark.setScriptData("resultCards", resultCards);

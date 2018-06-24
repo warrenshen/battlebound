@@ -9,7 +9,8 @@
 // change the ChallengeState and "user messages" just read from it.
 //
 // ====================================================================================================
- 
+require("ChallengeMovesModule");
+
 const API = Spark.getGameDataService();
 
 const playerId = Spark.getPlayer().getPlayerId();
@@ -58,23 +59,32 @@ playerFields.forEach(function(field) {
     filteredPlayerState[field] = playerState[field];
 });
 
+filteredPlayerState.id = playerId;
+filteredOpponentState.id = opponentId;
 filteredPlayerState.expiredStreak = playerExpiredStreak;
 filteredOpponentState.expiredStreak = opponentExpiredStreak;
 
 const lastMoves = challengeStateData.lastMoves || [];
-const opponentMoves = lastMoves.filter(function(move) {
+const obfuscatedMoves = lastMoves.map(function(move) {
+    if (move.playerId === opponentId && move.category === MOVE_CATEGORY_DRAW_CARD) {
+        return {
+            playerId: move.playerId,
+            category: move.category,
+        };
+    } else {
+        return move;
+    }
+});
+const newMoves = obfuscatedMoves.filter(function(move) {
     if (move === null) {
         Spark.setScriptError("ERROR", "Move is null - did you remember to set move to something?");
         Spark.exit();
     }
-    return move.playerId === opponentId;
+    
+    return move.playerId === opponentId || move.category === MOVE_CATEGORY_DRAW_CARD;
 });
 
-if (opponentMoves.length) {
-    Spark.setScriptData("opponentMoves", opponentMoves);
-} else {
-    Spark.removeScriptData("opponentMoves");
-}
+Spark.setScriptData("newMoves", newMoves);
 
 Spark.setScriptData("challengeId", challengeId);
 Spark.setScriptData("nonce", challengeStateData.nonce);
