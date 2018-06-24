@@ -44,7 +44,8 @@ public class Player
         this.mana = 10;
         this.maxMana = 10;
 
-		Debug.Log(GeneratePlayerState());
+        //should always exist in scene
+		Debug.Log(GeneratePlayerState()); //todo what is the point of logging this??
     }
 
     public void PlayCard(CardObject cardObject) {

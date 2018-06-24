@@ -123,6 +123,9 @@ public class BattleManager : MonoBehaviour
         players.Add(this.you);
         players.Add(this.opponent);
 
+
+        InitializeAvatar(you);
+        InitializeAvatar(opponent);
         Board.Instance().AddPlayer(you);
         Board.Instance().AddPlayer(opponent);   //to-do make this into for loop
         Debug.Log(players.Count + " players in play.");
@@ -130,6 +133,12 @@ public class BattleManager : MonoBehaviour
         turnIndex = UnityEngine.Random.Range(0, players.Count);
         turnCount = 0;
         NextTurn();
+    }
+
+    private void InitializeAvatar(Player player)
+    {
+        PlayerAvatar avatar = GameObject.Find(String.Format("{0} Avatar", player.Name)).GetComponent<PlayerAvatar>();
+        avatar.Initialize(player);
     }
 
 
