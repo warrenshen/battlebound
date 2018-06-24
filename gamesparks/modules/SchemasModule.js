@@ -10,7 +10,7 @@
  *   addressChallenge: string, // Challenge string used for address update.
  *   winStreak: int, // Player's current win streak.
  * }
- * 
+ *
  * PlayerDecks schema: {
  *   bCardIds: [int (card id), ...], // Card IDs of cards on the blockchain.
  *   cardByCardId: {
@@ -25,7 +25,22 @@
  *   },
  *   activeDeck: string,
  * }
- * 
+ *
+ * Card schema: {
+ *   id: string,
+ *   level: int,
+ *   exp: int, // Experience points card has now.
+ *   expMax: int, // Experience points necessary to level - max level reached if 0.
+ *   seller: string,
+ *   txHash: string,
+ *   auction: {
+ *     startingPrice: int,
+ *     endingPrice: int,
+ *     duration: int,
+ *     startedAt: int,
+ *   },
+ * }
+ *
  * ChallengeCard schema: {
  *   id: string,
  *   category: int,
@@ -37,8 +52,8 @@
  *   healthStart: int, // The initial value of health.
  *   attack: int,
  *   attackStart: int, // The initial value of attack.
- *   canAttack: bool, // Field probably not set until card is played on field.
- *   hasShield: bool, // Field probably not set until card is played on field.
+ *   canAttack: bool (int), // Field probably not set until card is played on field.
+ *   hasShield: bool (int), // Field probably not set until card is played on field.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
  *   buffs: [
  *     {
@@ -49,12 +64,13 @@
  *     ...
  *   ],
  * }
- * 
+ *
  * Move schema: {
- *   type: string,
+ *   playerId: string,
+ *   category: string,
  *   attributes: { ... },
  * }
- * 
+ *
  * ChallengeState schema: {
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
  *   opponentIdByPlayerId: { [playerId]: opponentId },
@@ -63,17 +79,19 @@
  *   expiredStreakByPlayerId: { [playerId]: int }, // A counter for how many turns a player has expired in a row.
  *   current: {
  *     [playerIdOne]: {
+ *       id: string, // Player ID for convenience.
  *       hasTurn: bool,
  *       turnCount: int,
  *       manaCurrent: int,
  *       manaMax: int,
  *       health: int,
  *       armor: int,
- *       field: [Card, ...],
+ *       field: [Card, ...], // 6-element array (object of { id: "EMPTY" } = empty space).
  *       hand: [Card, ...],
  *       handSize: int,
  *       deck: [Card, ...],
  *       deckSize: int,
+ *       expiredStreak: int,
  *     },
  *     [playerIdTwo]: ...,
  *   },

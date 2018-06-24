@@ -16,6 +16,10 @@ function damageCard(card, damage) {
 }
 
 function _removeBuffsFromCard(card, deadCardIds) {
+    if (card.id === "EMPTY") {
+        return card;
+    }
+    
     const newBuffs = [];
     card.buffs.forEach(function(buff) {
         if (deadCardIds.indexOf(buff.granterId) >= 0) {
@@ -30,25 +34,25 @@ function _removeBuffsFromCard(card, deadCardIds) {
 
 /**
  * Given two player fields, updates the fields based on which cards
- * have non-positive health and returns the new player fields (cards of positive health).
+ * have non-positive health and returns the new player fields (cards of positive health remain).
  * 
  * @param array playerField
  * @param array opponentField
  * @return array - two-element array of [array of new player field, array of new opponent field]
  **/
 function filterDeadCardsFromFields(playerField, opponentField) {
-    const playerDeadCards = playerField.filter(function(card) { return card.health <= 0 });
-    const opponentDeadCards = opponentField.filter(function(card) { return card.health <= 0 });
+    const playerDeadCards = playerField.filter(function(card) { return card.id !== "EMPTY" && card.health <= 0 });
+    const opponentDeadCards = opponentField.filter(function(card) { return card.id !== "EMPTY" && card.health <= 0 });
     
     const playerDeadCardIds = playerDeadCards.map(function(card) { return card.id });
     const opponentDeadCardIds = opponentDeadCards.map(function(card) { return card.id });
     const deadCardIds = playerDeadCardIds.concat(opponentDeadCardIds);
     
     const newOpponentField = opponentField
-        .filter(function(card) { return card.health > 0 })
+        .map(function(card) { return (card.health && card.health > 0) ? card : { id: "EMPTY" } })
         .map(function(card) { return _removeBuffsFromCard(card, deadCardIds) });
     const newPlayerField = playerField
-        .filter(function(card) { return card.health > 0 })
+        .map(function(card) { return (card.health && card.health > 0) ? card : { id: "EMPTY" } })
         .map(function(card) { return _removeBuffsFromCard(card, deadCardIds) });
         
     return [newPlayerField, newOpponentField];

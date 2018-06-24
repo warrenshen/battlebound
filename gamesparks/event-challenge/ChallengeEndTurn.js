@@ -8,6 +8,7 @@
 require("ChallengeEventPrefix");
 require("DeckModule");
 require("CancelScheduledTimeEventsModule");
+require("ChallengeMovesModule");
 
 // This is secure because the only thing a malicious actor
 // can do is send end turn's on time expired for themselves -
@@ -15,11 +16,11 @@ require("CancelScheduledTimeEventsModule");
 const isExpired = Spark.getData().isExpired;
 
 // Note that the call below must be before the `challenge.consumeTurn()` call.
-cancelScheduledTimeEvents(challengeId, playerId, challengeStateData);
-
-const MOVE_TYPE_END_TURN = "MOVE_TYPE_END_TURN";
+cancelScheduledTimeEvents(challengeId, playerId);
 
 const challengeState = challengeStateData.current;
+
+// PLAYER STATE UPDATES //
 const playerState = challengeState[playerId];
 
 // Increase player's max mana by 1 if it's not max'ed out.
@@ -27,9 +28,47 @@ if (playerState.manaMax < 10) {
     playerState.manaMax += 1;
 }
 
-// Reset opponent's current mana to its max mana.
+// Set `hasTurn` attributes in ChallengeState.
+playerState.hasTurn = 0;
+
+// Reset `lastMoves` attribute in ChallengeState.
+challengeStateData.lastMoves = [];
+
+var move = {
+    playerId: playerId,
+    category: MOVE_CATEGORY_END_TURN,
+};
+challengeStateData.moves.push(move);
+challengeStateData.lastMoves.push(move);
+
+challengeStateData.turnCountByPlayerId[playerId] += 1;
+// If this is a end turn request from time expired and no move
+// has been taken this turn, increment player's expired streak.
+if (isExpired && challengeStateData.moveTakenThisTurn === 0) {
+    challengeStateData.expiredStreakByPlayerId[playerId] += 1;
+    
+    // If expired streak is greater than 2, auto-surrender player.
+    if (challengeStateData.expiredStreakByPlayerId[playerId] > 2) {
+        move = {
+            playerId: playerId,
+            category: MOVE_CATEGORY_SURRENDER_BY_EXPIRE,
+        };
+        challengeStateData.moves.push(move);
+        challengeStateData.lastMoves.push(move);
+
+        // TODO: log challenge winner in ChallengeState.
+        const opponent = Spark.loadPlayer(opponentId);
+        challenge.winChallenge(opponent);
+    }
+} else {
+    challengeStateData.expiredStreakByPlayerId[playerId] = 0;
+}
+
+// OPPONENT STATE UPDATES //
 const opponentState = challengeState[opponentId];
+
 opponentState.manaCurrent = opponentState.manaMax;
+opponentState.hasTurn = 1;
 
 // Draw a card for opponent to start its turn.
 const opponentDeck = opponentState.deck;
@@ -44,40 +83,26 @@ if (opponentDeck.length > 0) {
     opponentState.deck = newDeck;
     opponentState.deckSize = newDeck.length;
     // TODO: somehow tell client/player whose turn is next which card was drawn.
+    
+    move = {
+        playerId: opponentId,
+        category: MOVE_CATEGORY_DRAW_CARD,
+        attributes: {
+            card: drawnCard,
+        },
+    };
+    challengeStateData.moves.push(move);
+    challengeStateData.lastMoves.push(move);
 }
 
 // Set all cards on opponent's field to be able to attack.
-opponentState.field.map(function(card) {
-    card.canAttack = 1;
+opponentState.field.forEach(function(card) {
+    if (card.id !== "EMPTY") {
+        // TODO: maybe should not set to 1 for all cards.
+        card.canAttack = 1;
+    }
 })
 
-// Set `hasTurn` attributes in ChallengeState.
-playerState.hasTurn = 0;
-opponentState.hasTurn = 1;
-
-const move = {
-    playerId: playerId,
-    type: MOVE_TYPE_END_TURN,
-};
-challengeStateData.moves.push(move);
-challengeStateData.lastMoves = [move];
-
-challengeStateData.turnCountByPlayerId[playerId] += 1;
-// If this is a end turn request from time expired and no move
-// has been taken this turn, increment player's expired streak.
-if (isExpired && !challengeStateData.moveTakenThisTurn) {
-    challengeStateData.expiredStreakByPlayerId[playerId] += 1;
-    
-    // If expired streak is greater than 2, auto-surrender player.
-    if (challengeStateData.expiredStreakByPlayerId[playerId] > 2) {
-        // TODO: refactor this with ChallengeSurrender event.
-        // TODO: log challenge winner in ChallengeState.
-        const opponent = Spark.loadPlayer(opponentId);
-        challenge.winChallenge(opponent);
-    }
-} else {
-    challengeStateData.expiredStreakByPlayerId[playerId] = 0;
-}
 // Player with next turn should start with no move taken.
 challengeStateData.moveTakenThisTurn = 0;
 
@@ -88,13 +113,13 @@ require("PersistChallengeStateModule");
 challenge.consumeTurn(playerId);
 
 const scheduler = Spark.getScheduler();
-const opponentRunningKey = "TROM" + ":" + challengeId + ":" + challengeStateData.turnCountByPlayerId[opponentId];
-const opponentExpiredKey = "TLEM" + ":" + challengeId + ":" + challengeStateData.turnCountByPlayerId[opponentId];
+const opponentRunningKey = "TROM" + ":" + challengeId + ":" + opponentId;
+const opponentExpiredKey = "TLEM" + ":" + challengeId + ":" + opponentId;
 const data = {
     challengeId: challengeId,
     opponentId: opponentId,
     hasTurnPlayerId: opponentId,
 };
 var success;
-success = scheduler.inSeconds("TimeRunningOutModule", 50, data, opponentRunningKey);
-success = scheduler.inSeconds("TimeLimitExpiredModule", 60, data, opponentExpiredKey);
+success = scheduler.inSeconds("TimeRunningOutModule", 60, data, opponentRunningKey);
+success = scheduler.inSeconds("TimeLimitExpiredModule", 75, data, opponentExpiredKey);

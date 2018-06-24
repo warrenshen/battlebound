@@ -43,28 +43,35 @@ challengeStateData.expiredStreakByPlayerId = expiredStreakByPlayerId;
 
 challengeStateData.moveTakenThisTurn = 0;
 
+const challengerDrawCardsResponse = drawCards(challengerDeck, 3);
+const challengerHand = challengerDrawCardsResponse[0];
+const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
 const challengerData = {
     manaCurrent: 3,
     manaMax: 3,
     health: 30,
     armor: 0,
-    field: [],
-    hand: [],
-    handSize: 0,
-    deck: challengerDeck,
-    deckSize: challengerDeck.length,
+    // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
+    field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
+    hand: challengerHand,
+    handSize: challengerHand.length,
+    deck: challengerDeckAfterDraw,
+    deckSize: challengerDeckAfterDraw.length,
 };
 
+const challengedDrawCardsResponse = drawCards(challengedDeck, 3);
+const challengedHand = challengedDrawCardsResponse[0];
+const challengedDeckAfterDraw = challengedDrawCardsResponse[1];
 const challengedData = {
     manaCurrent: 3,
     manaMax: 3,
     health: 30,
     armor: 0,
-    field: [],
-    hand: [],
-    handSize: 0,
-    deck: challengedDeck,
-    deckSize: challengedDeck.length,
+    field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
+    hand: challengedHand,
+    handSize: challengedHand.length,
+    deck: challengedDeckAfterDraw,
+    deckSize: challengedDeckAfterDraw.length,
 };
 
 if (Spark.getData().challenge.nextPlayer === challengerId) {

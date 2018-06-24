@@ -20,13 +20,7 @@
 require("ChallengeEventPrefix");
 require("CardAbilitiesModule");
 require("AttackModule");
-
-const CARD_TYPE_MINION = 0;
-const CARD_TYPE_SPELL = 1;
-const CARD_TYPE_STRUCTURE = 2;
-
-const MOVE_TYPE_PLAY_MINION = "MOVE_TYPE_PLAY_MINION";
-const MOVE_TYPE_PLAY_SPELL = "MOVE_TYPE_PLAY_SPELL";
+require("ChallengeMovesModule");
 
 const cardId = Spark.getData().cardId;
 const attributes = Spark.getData().attributes;
@@ -63,13 +57,18 @@ if (playedCard.manaCost > playerManaCurrent) {
 
 var move;
 
-if (playedCard.category === CARD_TYPE_MINION) {
+if (playedCard.category === CARD_CATEGORY_MINION) {
     // Index at which to play card.
     const fieldIndex = attributes.fieldIndex;
 
     // Ensure that index to play card at is valid.
-    if (fieldIndex < 0 || fieldIndex > playerField.length + 1) {
-        Spark.setScriptError("ERROR", "Invalid fieldIndex parameter");
+    if (fieldIndex < 0 || fieldIndex > 5) {
+        Spark.setScriptError("ERROR", "Invalid fieldIndex parameter.");
+        Spark.exit();
+    }
+    
+    if (playerField[fieldIndex].id !== "EMPTY") {
+        Spark.setScriptError("ERROR", "Invalid fieldIndex parameter - card exists at fieldIndex.");
         Spark.exit();
     }
     
@@ -94,7 +93,7 @@ if (playedCard.category === CARD_TYPE_MINION) {
     if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
         // Iterate through cards already on field and grant them buff(s).
         playerField.forEach(function(card) {
-            if (card.category === CARD_TYPE_MINION) {
+            if (card.category === CARD_CATEGORY_MINION) {
                 card.attack += 1;
                 card.buffs.push({
                     granterId: playedCard.id,
@@ -107,7 +106,7 @@ if (playedCard.category === CARD_TYPE_MINION) {
     
     // Iterate through cards already on field and grant played card buff(s).
     playerField.forEach(function(fieldCard) {
-        if (fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
+        if (fieldCard.abilities && fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
             playedCard.attack += 1;
             playedCard.buffs.push({
                 granterId: fieldCard.id,
@@ -117,18 +116,17 @@ if (playedCard.category === CARD_TYPE_MINION) {
         }
     });
     
-    const newField = playerField.slice(0, fieldIndex).concat([playedCard]).concat(playerField.slice(fieldIndex));
-    playerState.field = newField;
+    playerField[fieldIndex] = playedCard;
     
     move = {
         playerId: playerId,
-        type: MOVE_TYPE_PLAY_MINION,
+        category: MOVE_CATEGORY_PLAY_MINION,
         attributes: {
             cardId: cardId,
             fieldIndex: fieldIndex,
         },
     };
-} else if (playedCard.category === CARD_TYPE_SPELL) {
+} else if (playedCard.category === CARD_CATEGORY_SPELL) {
     if (playedCard.name === "Blizzard") {
         // For now, only spell that exists is to damage all enemy cards by 1.
         opponentField.forEach(function(card) { damageCard(card, 2) });
@@ -146,7 +144,7 @@ if (playedCard.category === CARD_TYPE_MINION) {
     
     move = {
         playerId: playerId,
-        type: MOVE_TYPE_PLAY_SPELL,
+        category: MOVE_CATEGORY_PLAY_SPELL,
         attributes: {
             cardId: cardId,
         },
@@ -165,6 +163,6 @@ playerState.handSize = newHand.length;
     
 challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
-challengeStateData.moveTakenThisTurn = 0;
+challengeStateData.moveTakenThisTurn = 1;
     
 require("PersistChallengeStateModule");
