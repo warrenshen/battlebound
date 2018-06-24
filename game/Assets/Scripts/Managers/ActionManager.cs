@@ -5,23 +5,29 @@ using UnityEngine;
 [System.Serializable]
 public class ActionManager : MonoBehaviour {
     public bool allowPan = false;
-    public float cardOffsetFromCamera = 8.0f;
+    public float cardOffsetFromCamera = 8;
 
     private float SCROLL_DAMPING = 0.1f;
-    private float M_THRESHOLD = 2000f;
-    private float L_SPEED = 9f;
+    private float M_THRESHOLD = 2000;
+    private float L_SPEED = 10;
 
-    [SerializeField]
-    private CardObject target;
     private Quaternion[] dragTilts = new Quaternion[5];
 
     //for storing prev state values
     private SpriteRenderer sp;
     private int selectedSortingOrder;
 
+    private int cardLayerMask;
     private int boardLayerMask;
+    public Texture2D[] cursors;
 
     public static ActionManager Instance { get; private set; }
+
+    [SerializeField]
+    private CardObject target;
+
+    private CardObject lastHitCard;
+
 
     private void Awake()
     {
@@ -31,25 +37,68 @@ public class ActionManager : MonoBehaviour {
     private void Start() {
         if (Application.loadedLevelName == "Battle")
             boardLayerMask = LayerMask.GetMask("Board");
+        cardLayerMask = LayerMask.GetMask("Card");
         InitializeDragTilts();
     }
 
     // Update is called once per frame
     private void Update () {
         if(allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
-        if(target) {
+        MouseWatchCards();
+	}
+
+    private void LateUpdate()
+    {
+        if (target)
+        {
             RepositionCard(target);
             AdjustCardTilt(target);
             if (Input.GetMouseButtonUp(0))
                 ClearDragTarget();
         }
-	}
+    }
 
     public void SetDragTarget(CardObject target, SpriteRenderer target_sp) {
         this.target = target;
         this.sp = target_sp;
         selectedSortingOrder = this.sp.sortingOrder;
         this.sp.sortingOrder = 100;
+        Cursor.SetCursor(cursors[1], Vector2.zero, CursorMode.Auto);
+    }
+
+    private void MouseWatchCards() {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (!Physics.Raycast(ray, out hit, 100f, cardLayerMask)) {
+            ResetLastHitCard();
+            return;
+        }
+        CardObject hitCard = hit.collider.GetComponent<CardObject>();
+        if (hitCard == null)
+            return;
+        if (Input.GetMouseButtonDown(0))
+        {
+            hitCard.MouseDown();
+        }
+        else if(Input.GetMouseButtonUp(0))
+        {
+            hitCard.MouseUp();
+        }
+        else if (hitCard != lastHitCard)
+        {
+            ResetLastHitCard();
+            hitCard.EnterFocus();
+        }
+        lastHitCard = hitCard;
+    }
+
+    private void ResetLastHitCard() {
+        if (lastHitCard)
+        {
+            lastHitCard.ExitFocus();
+            lastHitCard = null;
+        }
     }
 
     public bool HasDragTarget() {
@@ -66,6 +115,7 @@ public class ActionManager : MonoBehaviour {
             return;
         this.sp.sortingOrder = selectedSortingOrder;
         this.target = null;
+        Cursor.SetCursor(cursors[0], Vector2.zero, CursorMode.Auto);
     }
 
     public void ResetTarget() {

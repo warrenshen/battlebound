@@ -80,9 +80,11 @@ public class BoardCreature : MonoBehaviour
         Texture2D texture = cardObject.Renderer.sprite.texture;
         sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
         BoxCollider coll = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        coll.size += new Vector3(0, 0, 1.2f);
+        coll.center += new Vector3(0, 0, -0.45f);
 
         //maybe do this manually in prefab later
-        GameObject textHolder = new GameObject();
+        GameObject textHolder = new GameObject("Text Label");
         textMesh = textHolder.AddComponent<TextMeshPro>();
         textMesh.fontSize = 6;
         textMesh.fontStyle = FontStyles.Bold;
@@ -105,7 +107,8 @@ public class BoardCreature : MonoBehaviour
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
     }
 
-    public void RecoverAttack() {
+    public void RecoverAttack()
+    {
         this.canAttack = this.maxAttacks;
     }
 
@@ -130,8 +133,8 @@ public class BoardCreature : MonoBehaviour
         else
             SoundManager.Instance.PlaySound("Splatter", other.transform.position);
 
-        this.TakeDamage(other.Attack);
         other.TakeDamage(this.attack);
+        this.TakeDamage(other.Attack);
     }
 
     //taking damage
