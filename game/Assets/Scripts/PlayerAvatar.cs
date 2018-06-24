@@ -15,6 +15,9 @@ public class PlayerAvatar : MonoBehaviour {
     private int health;
     public int Health => health;
 
+    private int maxHealth;
+    public int MaxHealth => maxHealth;
+
     [SerializeField]
     private BoardWeapon weapon;
     public BoardWeapon Weapon => weapon;
@@ -42,7 +45,8 @@ public class PlayerAvatar : MonoBehaviour {
     public void Initialize(Player player)
     {
         this.armor = 0;
-        this.health = 30;
+        this.maxHealth = 30;
+        this.health = this.maxHealth;
         this.weapon = null;
         //to-do: load avatar from player
         //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
@@ -50,21 +54,22 @@ public class PlayerAvatar : MonoBehaviour {
         this.maxAttacks = 1;
         this.canAttack = 1;
 
-        spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = -5;
 
         //maybe do this manually in prefab later
         GameObject textHolder = new GameObject("Text Label");
         textMesh = textHolder.AddComponent<TextMeshPro>();
-        textMesh.fontSize = 6;
+        textMesh.fontSize = 4;
         textMesh.fontStyle = FontStyles.Bold;
         textMesh.alignment = TextAlignmentOptions.Center;
         RectTransform textContainer = textMesh.GetComponent<RectTransform>();
-        textContainer.sizeDelta = new Vector2(3, 2);
-        textContainer.anchoredPosition = new Vector3(0, 2.2f, -0.5f);
+        textContainer.sizeDelta = new Vector2(2, 1);
+        textContainer.anchoredPosition = new Vector3(0, 1.85f, -0.5f);
         textHolder.transform.SetParent(gameObject.transform, false);
 
         //already has cylinder collider in scene
+        UpdateStatText();
     }
 
     public void Fight(BoardCreature other)
@@ -137,7 +142,7 @@ public class PlayerAvatar : MonoBehaviour {
 
     public void UpdateStatText()
     {
-        textMesh.text = String.Format("{0} hp", this.health);
+        textMesh.text = String.Format("{0}/{1}", this.health, this.maxHealth);
     }
 
 	// Update is called once per frame
