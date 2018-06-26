@@ -199,6 +199,8 @@ public class BoardCreature : MonoBehaviour
         {
             if (abilitiesFX.ContainsKey(ability))
                 continue;
+            if (!FXPoolManager.Instance.HasEffect(ability))
+                continue;
             abilitiesFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
         }
         //do removals
