@@ -54,7 +54,7 @@ public class MockMovesPanel : MonoBehaviour
 
     private void OnEndTurnButtonClick()
 	{
-		this.moveCategory = ChallengeMove.CATEGORY_END_TURN;
+		this.moveCategory = ChallengeMove.MOVE_CATEGORY_END_TURN;
 		DeactivateAllFields();
 	}
 
@@ -68,7 +68,7 @@ public class MockMovesPanel : MonoBehaviour
 
 	private void OnCardAttackButtonClick()
 	{
-		this.moveCategory = ChallengeMove.CATEGORY_CARD_ATTACK;
+		this.moveCategory = ChallengeMove.MOVE_CATEGORY_CARD_ATTACK;
 		DeactivateAllFields();
 		ActivateField(this.cardIdInputField);
 		ActivateField(this.fieldIdInputField);
@@ -81,9 +81,9 @@ public class MockMovesPanel : MonoBehaviour
 		ChallengeMove challengeMove = new ChallengeMove();
 		ChallengeMove.ChallengeMoveAttributes attributes = new ChallengeMove.ChallengeMoveAttributes();
 
-		if (this.moveCategory == ChallengeMove.CATEGORY_END_TURN)
+		if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_END_TURN)
 		{
-			challengeMove.SetCategory(ChallengeMove.CATEGORY_END_TURN);
+			challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
 		}
 		else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
 		{

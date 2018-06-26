@@ -4,6 +4,11 @@
 public class PlayCardAttributes
 {
     [SerializeField]
-	private int fieldId;
-	public int FieldId => fieldId;
+	private int fieldIndex;
+	public int FieldIndex => fieldIndex;
+    
+	public PlayCardAttributes(int fieldIndex)
+	{
+		this.fieldIndex = fieldIndex;
+	}
 }

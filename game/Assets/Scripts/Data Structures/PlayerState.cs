@@ -7,6 +7,10 @@ using System;
 public class PlayerState
 {
 	[SerializeField]
+	private string id;
+	public string Id => id;
+
+	[SerializeField]
 	private int hasTurn;
 	public int HasTurn => hasTurn;
 
@@ -27,10 +31,6 @@ public class PlayerState
 	public int Armor => armor;
 
 	[SerializeField]
-	private int handSize;
-	public int HandSize => handSize;
-
-	[SerializeField]
 	private List<ChallengeCard> hand;
 	public List<ChallengeCard> Hand => hand;
 
@@ -42,6 +42,11 @@ public class PlayerState
 	private ChallengeCard[] field;
 	public ChallengeCard[] Field => field;
     
+    public void SetId(string id)
+	{
+		this.id = id;
+	}
+
 	public void SetHasTurn(int hasTurn)
 	{
 		this.hasTurn = hasTurn;
@@ -67,11 +72,6 @@ public class PlayerState
 		this.armor = armor;
 	}
 
-    public void SetHandSize(int handSize)
-	{
-		this.handSize = handSize;
-	}
-
     public void SetHand(List<ChallengeCard> hand)
     {
         this.hand = Hand;
@@ -89,25 +89,36 @@ public class PlayerState
 
     public bool Equals(PlayerState other)
 	{
-		if (this.hand.Count != other.Hand.Count)
+		if (this.field.Length != other.Field.Length)
 		{
 			return false;
 		}
-		else if (this.field.Length != other.Field.Length)
+		if (this.hand.Count != other.Hand.Count)
 		{
 			return false;
 		}
 
 		bool areHandsEqual = true;
 		bool areFieldsEqual = true;
+        
+        if (this.hand != null && other.Hand != null)
+        {
+			// If both hands are not null and they have different lengths,
+            // there is some discrepancy between the two states.
+			if (this.hand.Count != other.Hand.Count)
+			{
+				return false;
+			}
 
-		for (int i = 0; i < this.hand.Count; i += 1)
-		{
-			areHandsEqual &= !this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
-		}
+			for (int i = 0; i < this.hand.Count; i += 1)
+            {
+                areHandsEqual &= !this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
+            }
+        }
+        
 		for (int i = 0; i < this.field.Length; i += 1)
 		{
-			areFieldsEqual &= !this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
+			areFieldsEqual &= !this.field.ElementAt(i).Equals(other.Field.ElementAt(i));
 		}
 
 		if (!areHandsEqual || !areFieldsEqual)
@@ -115,14 +126,24 @@ public class PlayerState
 			return false;
 		}
 
-        return this.hasTurn == other.HasTurn &&
+        return this.id == other.id &&
+			   this.hasTurn == other.HasTurn &&
                this.manaCurrent == other.ManaCurrent &&
                this.manaMax == other.ManaMax &&
                this.health == other.Health &&
                this.armor == other.Armor &&
-               this.handSize == other.HandSize &&
                this.deckSize == other.DeckSize;
     }
+    
+    public List<Card> GetCardsFromChallengeCards(Player owner)
+	{
+		List<Card> cards = new List<Card>();
+		foreach (ChallengeCard challengeCard in this.hand)
+		{
+			cards.Add(challengeCard.GetCard(owner));
+		}
+		return cards;
+	}
 
 	[System.Serializable]
     public class ChallengeCard
@@ -142,6 +163,10 @@ public class PlayerState
 		[SerializeField]
 		private string description;
 		public string Description => description;
+
+		[SerializeField]
+		private string image;
+		public string Image => image;
 
 		[SerializeField]
 		private int level;
@@ -272,5 +297,32 @@ public class PlayerState
 				this.abilities.SequenceEqual(other.Abilities)
 			);
 		}
+
+		public Card GetCard(Player owner)
+        {
+			if (this.category == Card.CARD_CATEGORY_MINION)
+			{
+				return new CreatureCard(
+					this.id,
+                    this.name,
+					this.manaCost,
+                    this.image,
+					this.attack,
+					this.health,
+					this.abilities,
+                    owner
+				);
+			}
+			else
+			{
+				return new SpellCard(
+                    this.id,
+                    this.name,
+                    this.manaCost,
+                    this.image,
+					owner: owner
+                );
+			}
+        }
 	}
 }

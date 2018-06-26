@@ -15,6 +15,9 @@ public class BattleManager : MonoBehaviour
     private int turnCount;
     private List<Player> players;
 
+	private Dictionary<string, Player> playerIdToPlayer;
+	public Dictionary<string, Player> PlayerIdToPlayer => playerIdToPlayer;
+
     public int battleLayer;
     public int boardLayer;
     //private List<HistoryItem> history;
@@ -32,9 +35,31 @@ public class BattleManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        this.you = new Player("Player");
-        Debug.Log(this.you.Deck);
-        this.opponent = new Player("Enemy");
+
+		if (InspectorControlPanel.Instance.DevelopmentMode)
+		{
+			if (!BattleSingleton.Instance.ChallengeStarted)
+			{
+				throw new Exception("Challenge not started - did you enter this scene from the matchmaking scene?");
+			}
+			else
+			{
+				Debug.Log("BattleManager in Connected Development Mode.");
+			}
+
+			this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
+			this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
+		}
+		else
+		{
+			this.you = new Player("Player", "Player");
+			this.opponent = new Player("Enemy", "Enemy");
+		}
+
+		this.playerIdToPlayer = new Dictionary<string, Player>();
+		this.playerIdToPlayer[this.you.Id] = this.you;
+		this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
         attackCommand.SetWidth(0);
     }
 
@@ -89,7 +114,7 @@ public class BattleManager : MonoBehaviour
             }
             else if (cast && hit.collider.name == "End Turn")
             {
-                NextTurn();
+				OnEndTurnClick();
             }
             else if (cast && hit.collider.name == "Surrender")
             {
@@ -123,16 +148,27 @@ public class BattleManager : MonoBehaviour
         players.Add(this.you);
         players.Add(this.opponent);
 
-
         InitializeAvatar(you);
         InitializeAvatar(opponent);
         Board.Instance().AddPlayer(you);
         Board.Instance().AddPlayer(opponent);   //to-do make this into for loop
         Debug.Log(players.Count + " players in play.");
 
-        turnIndex = UnityEngine.Random.Range(0, players.Count);
-        turnCount = 0;
-        NextTurn();
+		if (!InspectorControlPanel.Instance.DevelopmentMode)
+		{
+			turnIndex = UnityEngine.Random.Range(0, players.Count);
+			turnCount = 0;
+			NextTurn();
+		}
+		else
+		{
+			turnIndex = this.players.FindIndex(player => player.HasTurn);
+			turnCount = 0;
+			activePlayer = players[turnIndex % players.Count];
+
+            //do some turn transition render
+            activePlayer.NewTurn();
+		}
     }
 
     private void InitializeAvatar(Player player)
@@ -141,11 +177,18 @@ public class BattleManager : MonoBehaviour
         avatar.Initialize(player);
     }
 
+    private void OnEndTurnClick()
+	{
+		if (this.activePlayer.Id == this.you.Id)
+		{
+			BattleSingleton.Instance.SendChallengeEndTurnRequest();
+			NextTurn();
+		}
+	}
 
     private void NextTurn()
     {
 		activePlayer.SetHasTurn(false);
-        BattleSingleton.Instance.SendChallengeEndTurnRequest();
 
         turnCount++;
         turnIndex++;
@@ -155,8 +198,10 @@ public class BattleManager : MonoBehaviour
         activePlayer.NewTurn();
     }
 
-    private void Surrender() {
+    private void Surrender()
+	{
         Debug.LogWarning("Surrender action pressed.");
+		BattleSingleton.Instance.SendChallengeSurrenderRequest();
     }
 
     private List<BoardCreature> GetValidTargets(BoardCreature attacker)
@@ -296,6 +341,15 @@ public class BattleManager : MonoBehaviour
     }
 
     private void SpawnCardToBoard(CardObject cardObject, int index, Transform target) {
+		if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+			PlayCardAttributes attributes = new PlayCardAttributes(index);
+            BattleSingleton.Instance.SendChallengePlayCardRequest(
+				cardObject.card.Id,
+				attributes
+			);
+        }
+
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
         BoardCreature created = CreateBoardCreature(cardObject, cardObject.card.Owner, target.position);
         Board.Instance().PlaceCreature(created, index);
@@ -309,24 +363,54 @@ public class BattleManager : MonoBehaviour
         UseCard(target.card.Owner, target);
     }
 
-    public void ReceivePlayCardMove(string playerId, string cardId, int fieldIndex) {
-        Player active = opponent;
-        CardObject target = opponent.Hand.GetCard(cardId).wrapper;
-        if (target == null) {
-            Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
-            return;
-        }
-        PlayCardToBoard(target, fieldIndex);
+
+	public void ReceiveMoveEndTurn(string playerId)
+	{
+		NextTurn();
+	}
+
+    /*
+     * @param card - may be null
+     */ 
+	public void ReceiveMoveDrawCard(string playerId, Card card)
+    {
+		this.activePlayer.Hand.AddDrawnCard(card);
     }
 
-    public void ReceiveCardAttackMove(string playerId, string cardId, string targetId) {
+	public void ReceiveMovePlayMinion(string playerId, string cardId, Card card, int handIndex, int fieldIndex)
+	{
+		if (!InspectorControlPanel.Instance.DevelopmentMode)
+		{
+			CardObject target = opponent.Hand.GetCardById(cardId).wrapper;
+			if (target == null)
+			{
+				Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
+				return;
+			}
+			PlayCardToBoard(target, fieldIndex);
+		}
+		else
+		{
+			CardObject target = opponent.Hand.GetCardByIndex(handIndex).wrapper;
+			target.InitializeCard(card);
+            PlayCardToBoard(target, fieldIndex);
+			UseCard(card.Owner, target);
+		}
+    }
+
+	public void ReceiveMovePlaySpell(string playerId, string cardId, Card card)
+	{
+		
+	}
+
+	public void ReceiveMoveCardAttack(string playerId, string cardId, string targetId)
+	{
         
     }
 
 
     public void UseCard(Player player, CardObject cardObject)
     {
-
         player.PlayCard(cardObject);    //removes card from hand, spend mana
         GameObject.Destroy(cardObject.gameObject);
         SoundManager.Instance.PlaySound("Play", transform.position);
@@ -334,8 +418,7 @@ public class BattleManager : MonoBehaviour
 
 
     public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos)
-    {
-
+    {      
         GameObject created = new GameObject(cardObject.card.Name);
         created.transform.position = pos;
         BoardCreature creature = created.AddComponent<BoardCreature>();

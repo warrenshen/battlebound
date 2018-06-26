@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ActionManager : MonoBehaviour {
+public class ActionManager : MonoBehaviour 
+{
     public bool allowPan = false;
     public float cardOffsetFromCamera = 8;
 
