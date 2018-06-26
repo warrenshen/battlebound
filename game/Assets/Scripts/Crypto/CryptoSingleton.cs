@@ -120,11 +120,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 		{
 			return "Invalid price parameter";
 		}
-        
-		object[] args = new object[2] {
-            tokenId,
-			bidPrice
-        };
 
 		return await BidAuctionHelper(
             tokenId,

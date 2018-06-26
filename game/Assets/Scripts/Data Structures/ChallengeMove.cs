@@ -3,10 +3,13 @@
 [System.Serializable]
 public class ChallengeMove
 {
-	public static string CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
+	public static string MOVE_CATEGORY_SURRENDER_BY_CHOICE = "MOVE_CATEGORY_SURRENDER_BY_CHOICE";
+	public static string MOVE_CATEGORY_SURRENDER_BY_EXPIRE = "MOVE_CATEGORY_SURRENDER_BY_EXPIRE";
+	public static string MOVE_CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
+	public static string MOVE_CATEGORY_DRAW_CARD = "MOVE_CATEGORY_DRAW_CARD";
 	public static string MOVE_CATEGORY_PLAY_MINION = "MOVE_CATEGORY_PLAY_MINION";
 	public static string MOVE_CATEGORY_PLAY_SPELL = "MOVE_CATEGORY_PLAY_SPELL";
-	public static string CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
+	public static string MOVE_CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
 
 	[SerializeField]
 	private string playerId;
@@ -36,8 +39,16 @@ public class ChallengeMove
 		public string TargetId => targetId;
 
 		[SerializeField]
+		private int handIndex;
+		public int HandIndex => handIndex;
+
+		[SerializeField]
 		private int fieldIndex;
 		public int FieldIndex => fieldIndex;
+
+		[SerializeField]
+		private PlayerState.ChallengeCard card;
+		public PlayerState.ChallengeCard Card => card;
 
         public void SetCardId(string cardId)
 		{
@@ -54,9 +65,19 @@ public class ChallengeMove
 			this.targetId = targetId;
 		}
 
+        public void SetHandIndex(int handIndex)
+		{
+			this.handIndex = handIndex;
+		}
+
         public void SetFieldIndex(int fieldIndex)
 		{
 			this.fieldIndex = fieldIndex;
+		}
+
+		public void SetCard(PlayerState.ChallengeCard card)
+		{
+			this.card = card;
 		}
 	}
 

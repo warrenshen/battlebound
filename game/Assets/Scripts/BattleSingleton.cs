@@ -9,21 +9,32 @@ using GameSparks.Api.Messages;
 public class BattleSingleton : Singleton<BattleSingleton>
 {
 	private PlayerState playerState;
+	public PlayerState PlayerState => playerState;
 	private PlayerState opponentState;
+	public PlayerState OpponentState => opponentState;
 
-	private string challengeId;
 	private int nonce = -1;
 
-	private new void Awake()
+	private string challengeId;
+	public string ChallengeId => challengeId;
+    
+	private bool challengeStarted;
+	public bool ChallengeStarted => challengeStarted;
+
+	private void Awake()
 	{
+		Debug.Log("My challengeId is: " + this.challengeId);
+
 		base.Awake();
 
-        ChallengeIssuedMessage.Listener += ChallengeIssuedMessageHandler;
-		ChallengeStartedMessage.Listener += ChallengeStartedMessageHandler;
-		ChallengeTurnTakenMessage.Listener += ChallengeTurnTakenMessageHandler;
-		ChallengeWonMessage.Listener += ChallengeWonMessageHandler;
-		ChallengeLostMessage.Listener += ChallengeLostMessageHandler;
-		ScriptMessage_ChallengeTimeRunningOutMessage.Listener += ChallengeTimeRunningOutMessageHandler;
+		this.challengeStarted = false;
+        
+        ChallengeIssuedMessage.Listener = ChallengeIssuedMessageHandler;
+		ChallengeStartedMessage.Listener = ChallengeStartedMessageHandler;
+		ChallengeTurnTakenMessage.Listener = ChallengeTurnTakenMessageHandler;
+		ChallengeWonMessage.Listener = ChallengeWonMessageHandler;
+		ChallengeLostMessage.Listener = ChallengeLostMessageHandler;
+		ScriptMessage_ChallengeTimeRunningOutMessage.Listener = ChallengeTimeRunningOutMessageHandler;
 	}
 
     private void ChallengeIssuedMessageHandler(ChallengeIssuedMessage message)
@@ -36,8 +47,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
 		Debug.Log("ChallengeStartedMessage received.");
 
 		GSData scriptData = message.ScriptData;
-		this.challengeId = scriptData.GetString("challengeId");
-		ProcessChallengeScriptData(scriptData);
+        this.challengeId = scriptData.GetString("challengeId");
+        Debug.Log("Setting challengeId to: " + this.challengeId);
+        ProcessChallengeScriptData(scriptData);
+
+        this.challengeStarted = true;
 
 		SceneManager.LoadScene("Battle");
 	}
@@ -71,24 +85,23 @@ public class BattleSingleton : Singleton<BattleSingleton>
 	private void ProcessChallengeScriptData(GSData scriptData)
 	{
 		string messageChallengeId = scriptData.GetString("challengeId");
-
-		if (!messageChallengeId.Equals(this.challengeId))
+        
+		if (!messageChallengeId.Equals(BattleSingleton.Instance.ChallengeId))
 		{
-			Debug.Log("Got message with different challenge ID than expected.");
+			Debug.Log(BattleSingleton.Instance.ChallengeId);
+			Debug.Log("Got message with different challenge ID than expected: " + BattleSingleton.Instance.ChallengeId + " vs " + messageChallengeId + ".");
 			return;
 		}
 
 		int messageNonce = (int) scriptData.GetInt("nonce");
 		Debug.Log("Got message with nonce: " + messageNonce.ToString());
-        if (messageNonce > this.nonce)
-        {
-			this.nonce = messageNonce;
-			Debug.Log("Updating nonce and player states.");
-        }
-		else
+        if (messageNonce <= this.nonce)
 		{
 			return;
 		}
+
+		Debug.Log("Updating nonce and player states.");
+		this.nonce = messageNonce;
 
 		string playerJson = scriptData.GetGSData("playerState").JSON;
         string opponentJson = scriptData.GetGSData("opponentState").JSON;
@@ -100,34 +113,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 			return;
 		}
 
-		PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
-		PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
-
-		if (!this.playerState.Equals(devicePlayerState))
-		{
-			Debug.LogWarning("Server vs device player state mismatch.");
-			Debug.LogWarning("Server: " + JsonUtility.ToJson(this.playerState));
-			Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
-		}
-		else
-		{
-			Debug.Log("Server vs device player state match.");
-			Debug.Log("State: " + JsonUtility.ToJson(this.playerState));
-		}
-
-		if (!this.opponentState.Equals(deviceOpponentState))
-		{
-			Debug.LogWarning("Server vs device opponent state mismatch.");
-			Debug.LogWarning("Server: " + JsonUtility.ToJson(this.opponentState));
-			Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
-		}
-		else
-		{
-			Debug.Log("Server vs device opponent state match.");
-			Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
-		}
-
-		List<GSData> movesData = scriptData.GetGSDataList("moves");
+		List<GSData> movesData = scriptData.GetGSDataList("newMoves");
 		List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
 		foreach (GSData moveData in movesData)
 		{
@@ -139,23 +125,78 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	public void EmitChallengeMoves(List<ChallengeMove> challengeMoves)
 	{
-		PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
-        PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
-		Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
-		Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
-
 		foreach (ChallengeMove challengeMove in challengeMoves)
 		{
 			Debug.Log(JsonUtility.ToJson(challengeMove));
-			if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
+
+			if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
 			{
-				BattleManager.Instance.ReceivePlayCardMove(
-					null,
+				BattleManager.Instance.ReceiveMoveEndTurn(
+					challengeMove.PlayerId
+				);
+			}
+			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD)
+			{
+				Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
+				Card card = challengeMove.Attributes.Card.GetCard(owner);
+
+				BattleManager.Instance.ReceiveMoveDrawCard(
+					challengeMove.PlayerId,
+					card
+				);
+			}
+			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
+			{
+				Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
+				Card card = challengeMove.Attributes.Card.GetCard(owner);
+
+				BattleManager.Instance.ReceiveMovePlayMinion(
+					challengeMove.PlayerId,
 					challengeMove.Attributes.CardId,
+					card,
+					challengeMove.Attributes.HandIndex,
 					challengeMove.Attributes.FieldIndex
 				);
 			}
+			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL)
+			{
+				Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
+				Card card = challengeMove.Attributes.Card.GetCard(owner);
+
+				BattleManager.Instance.ReceiveMovePlaySpell(
+                    challengeMove.PlayerId,
+                    challengeMove.Attributes.CardId,
+                    card
+                );
+			}
 		}
+
+		PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
+        PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+
+        if (!this.playerState.Equals(devicePlayerState))
+        {
+            Debug.LogWarning("Server vs device player state mismatch.");
+            Debug.LogWarning("Server: " + JsonUtility.ToJson(this.playerState));
+            Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
+        }
+        else
+        {
+            Debug.Log("Server vs device player state match.");
+            Debug.Log("State: " + JsonUtility.ToJson(this.playerState));
+        }
+
+        if (!this.opponentState.Equals(deviceOpponentState))
+        {
+            Debug.LogWarning("Server vs device opponent state mismatch.");
+            Debug.LogWarning("Server: " + JsonUtility.ToJson(this.opponentState));
+            Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
+        }
+        else
+        {
+            Debug.Log("Server vs device opponent state match.");
+            Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
+        }
 	}
 
 	public void SendChallengeEndTurnRequest()
@@ -213,26 +254,26 @@ public class BattleSingleton : Singleton<BattleSingleton>
 	{
 		if (this.challengeId == null)
         {
-			Debug.LogWarning("Cannot send ChallengeEndTurn request without challengeId set.");
+			Debug.LogWarning("Cannot send ChallengePlayCard request without challengeId set.");
             return;
         }
 
 		LogChallengeEventRequest request = new LogChallengeEventRequest();
-        request.SetEventKey("ChallengeEndTurn");
+        request.SetEventKey("ChallengePlayCard");
         request.SetEventAttribute("challengeInstanceId", this.challengeId);
 		request.SetEventAttribute("cardId", cardId);
-		request.SetEventAttribute("attributes", JsonUtility.ToJson(attributes));
+		request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
 		request.Send(OnChallengePlayCardSuccess, OnChallengePlayCardError);
 	}
 
 	private void OnChallengePlayCardSuccess(LogChallengeEventResponse response)
     {
-		Debug.Log("ChallengeEndTurn request success.");
+		Debug.Log("ChallengePlayCard request success.");
     }
 
 	private void OnChallengePlayCardError(LogChallengeEventResponse response)
     {
-        Debug.LogError("ChallengeEndTurn request error.");
+		Debug.LogError("ChallengePlayCard request error.");
     }
 
 	public void SendChallengeCardAttackRequest(

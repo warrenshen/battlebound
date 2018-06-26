@@ -10,11 +10,20 @@ public class Hand {
 
     private string name;
 
-    public Hand(Deck deck, int size, string name="Player") {
+    public Hand(Deck deck, int size, string name="Player")
+	{
         this.cards = new List<Card>();
         this.name = name;
         Draw(deck, size);
     }
+
+	public Hand(string name, List<Card> cards)
+	{
+		this.name = name;
+		this.cards = cards;
+		CreateCardObjects(this.cards);
+		RepositionCards();
+	}
 
     private int Draw(Deck deck) {
         if (deck.Cards.Count < 1)
@@ -27,10 +36,14 @@ public class Hand {
         return 0;
     }
 
-    public Card GetCard(string id) {
-        foreach (Card card in cards) {
-            if (card.Id == id)
-                return card;
+    public Card GetCardById(string id)
+	{
+        foreach (Card card in cards)
+		{
+			if (card.Id == id)
+			{
+				return card;
+			}
         }
         return null;
     }
@@ -45,6 +58,14 @@ public class Hand {
         RepositionCards();
         return fatigue;
     }
+
+    public int AddDrawnCard(Card drawnCard)
+	{
+		this.cards.Add(drawnCard);
+		CreateCardObjects(drawnCard);
+		RepositionCards();
+		return 1;
+	}
 
     public void Discard(int count) {
         

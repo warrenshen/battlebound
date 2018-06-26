@@ -36,7 +36,8 @@ public abstract class Card
     public CardObject wrapper;
 }
 
-public class CreatureCard : Card {
+public class CreatureCard : Card
+{
     [SerializeField]
     protected int attack;
     public int Attack => attack;
@@ -48,17 +49,26 @@ public class CreatureCard : Card {
     private List<string> abilities;
     public List<string> Abilities => abilities;
 
-    public CreatureCard(string id, string name, int cost, string image, int attack, int health, Player owner = null, List<string> abilities = null) {
+    public CreatureCard(
+		string id,
+		string name,
+		int cost,
+		string image,
+		int attack,
+		int health,
+		List<string> abilities,
+		Player owner = null
+	)
+	{
         this.id = id;
         this.name = name;
-        //this.category = category;
         this.cost = cost;
         this.image = image;
-        this.owner = owner;
-
         this.attack = attack;
         this.health = health;
         this.abilities = abilities;
+
+		this.owner = owner;
     }
 }
 
