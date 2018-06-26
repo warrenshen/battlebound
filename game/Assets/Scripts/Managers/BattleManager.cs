@@ -179,10 +179,17 @@ public class BattleManager : MonoBehaviour
 
     private void OnEndTurnClick()
 	{
-		if (this.activePlayer.Id == this.you.Id)
+		if (!InspectorControlPanel.Instance.DevelopmentMode)
 		{
-			BattleSingleton.Instance.SendChallengeEndTurnRequest();
 			NextTurn();
+		}
+		else
+		{
+			if (this.activePlayer.Id == this.you.Id)
+			{
+				BattleSingleton.Instance.SendChallengeEndTurnRequest();
+				NextTurn();
+			}
 		}
 	}
 
