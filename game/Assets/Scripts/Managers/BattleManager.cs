@@ -328,14 +328,21 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void PlayCardToBoard(CardObject cardObject, int index) {
+    /*
+     * Play card to board after receiving play card move from server. 
+     */
+    public void PlayCardToBoard(CardObject cardObject, int index)
+	{
         //to-do: animation here
         Player player = cardObject.card.Owner;
         Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, index)).transform;
         //shared spawning + fx
-        SpawnCardToBoard(cardObject, index, boardPlace);
+		SpawnCardToBoard(cardObject, index, boardPlace);
     }
 
+    /*
+     * Play card to board after user on-device drags card from hand to field. 
+     */
     public void PlayCardToBoard(CardObject cardObject, RaycastHit hit)
     {
         //only called for creature or structure
@@ -345,18 +352,19 @@ public class BattleManager : MonoBehaviour
         Player player = cardObject.card.Owner;
         //shared spawning + fx
         SpawnCardToBoard(cardObject, index, hit.collider.transform);
-    }
 
-    private void SpawnCardToBoard(CardObject cardObject, int index, Transform target) {
 		if (InspectorControlPanel.Instance.DevelopmentMode)
         {
-			PlayCardAttributes attributes = new PlayCardAttributes(index);
+            PlayCardAttributes attributes = new PlayCardAttributes(index);
             BattleSingleton.Instance.SendChallengePlayCardRequest(
-				cardObject.card.Id,
-				attributes
-			);
+                cardObject.card.Id,
+                attributes
+            );
         }
+    }
 
+	private void SpawnCardToBoard(CardObject cardObject, int index, Transform target)
+	{
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
         BoardCreature created = CreateBoardCreature(cardObject, cardObject.card.Owner, target.position);
         Board.Instance().PlaceCreature(created, index);
@@ -376,9 +384,6 @@ public class BattleManager : MonoBehaviour
 		NextTurn();
 	}
 
-    /*
-     * @param card - may be null
-     */ 
 	public void ReceiveMoveDrawCard(string playerId, Card card)
     {
 		this.activePlayer.Hand.AddDrawnCard(card);
