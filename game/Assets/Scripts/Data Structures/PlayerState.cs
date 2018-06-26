@@ -74,7 +74,7 @@ public class PlayerState
 
     public void SetHand(List<ChallengeCard> hand)
     {
-        this.hand = Hand;
+		this.hand = hand;
     }
 
     public void SetDeckSize(int deckSize)
@@ -293,8 +293,8 @@ public class PlayerState
 				this.attack == other.Attack &&
 				this.attackStart == other.AttackStart &&
 				this.canAttack == other.CanAttack &&
-				this.hasShield == other.HasShield &&
-				this.abilities.SequenceEqual(other.Abilities)
+				this.hasShield == other.HasShield
+				//this.abilities.SequenceEqual(other.Abilities)
 			);
 		}
 

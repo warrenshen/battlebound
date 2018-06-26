@@ -23,8 +23,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 	private void Awake()
 	{
-		Debug.Log("My challengeId is: " + this.challengeId);
-
 		base.Awake();
 
 		this.challengeStarted = false;
@@ -88,7 +86,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
 		if (!messageChallengeId.Equals(BattleSingleton.Instance.ChallengeId))
 		{
-			Debug.Log(BattleSingleton.Instance.ChallengeId);
 			Debug.Log("Got message with different challenge ID than expected: " + BattleSingleton.Instance.ChallengeId + " vs " + messageChallengeId + ".");
 			return;
 		}
