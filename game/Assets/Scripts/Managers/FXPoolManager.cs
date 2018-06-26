@@ -35,9 +35,11 @@ public class FXPoolManager : MonoBehaviour {
         if (IsShortname(name))
             name = shortToFull[name];
         GameObject container = GameObject.Find(name);
-
         if (container == null)
-            Debug.LogError(string.Format("Effect {0} not found!", name));
+        {
+            Debug.LogWarning(string.Format("Effect {0} not found!", name));
+            return null;
+        }
         Transform chosen = container.transform.GetChild(effectIndices[name]);
         effectIndices[name] = (effectIndices[name] + 1) % container.transform.childCount;
         return chosen;
@@ -45,6 +47,8 @@ public class FXPoolManager : MonoBehaviour {
 	
     public void PlayEffect(string name, Vector3 pos) {
         Transform chosen = GetEffect(name);
+        if (chosen == null)
+            return;
         chosen.position = pos;
         chosen.gameObject.SetActive(true);
     }

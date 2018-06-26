@@ -56,7 +56,7 @@ public class CardObject : MonoBehaviour
 		spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
 		spr.sortingOrder = 10;
 		coll = gameObject.AddComponent<BoxCollider>() as Collider;
-		coll.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.2f, 0.1f);
+		coll.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.2f, 0.06f);
 	}
 
 	public void EnterFocus()
@@ -67,7 +67,8 @@ public class CardObject : MonoBehaviour
 			return;
 
 		float scaling = 1.1f;
-		transform.localScale = new Vector3(scaling, scaling, scaling);
+        LeanTween.scale(gameObject, new Vector3(scaling, scaling, scaling), 0.05f);
+		//transform.localScale = new Vector3(scaling, scaling, scaling);
 	}
 
 	public void ExitFocus()
@@ -76,7 +77,8 @@ public class CardObject : MonoBehaviour
 			return;
 		if (ActionManager.Instance.HasDragTarget())
 			return;
-		transform.localScale = new Vector3(1, 1, 1);
+        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.05f);
+		//transform.localScale = new Vector3(1, 1, 1);
 	}
 
 	//public void InFocus()
