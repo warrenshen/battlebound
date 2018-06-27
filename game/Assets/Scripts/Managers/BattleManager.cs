@@ -171,7 +171,8 @@ public class BattleManager : MonoBehaviour
             activePlayer = players[turnIndex % players.Count];
 
             //do some turn transition render
-            activePlayer.NewTurn();
+            activePlayer.SetHasTurn(true);
+            activePlayer.RenderTurnStart();
         }
     }
 
@@ -203,6 +204,7 @@ public class BattleManager : MonoBehaviour
 
         turnCount++;
         turnIndex++;
+
         activePlayer = players[turnIndex % players.Count];
 
         //do some turn transition render
@@ -411,7 +413,7 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveMoveDrawCard(string playerId, Card card)
     {
-        this.activePlayer.Hand.AddDrawnCard(card);
+        this.activePlayer.AddDrawnCard(card);
     }
 
     public void ReceiveMovePlayMinion(string playerId, string cardId, Card card, int handIndex, int fieldIndex)

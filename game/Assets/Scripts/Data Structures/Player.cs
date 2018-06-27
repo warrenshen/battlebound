@@ -118,19 +118,25 @@ public class Player
 
     public void NewTurn()
     {
+        this.hasTurn = true;
+
+        this.maxMana = Math.Min(maxMana + 1, 10);
+        this.mana = maxMana;
+
         //board resetting
         field.RecoverCreatures();
-
-        maxMana = Math.Min(maxMana + 1, 10);
-        mana = maxMana;
-
-        this.hasTurn = true;
-        RenderMana();
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
             hand.Draw(deck, 1);
         }
+
+        this.RenderTurnStart();
+    }
+
+    public void RenderTurnStart()
+    {
+        RenderMana();
 
         //placeholder indicator
         Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
@@ -221,5 +227,11 @@ public class Player
     public int GetOpponentHandIndex(int handIndex)
     {
         return this.Hand.Size() - 1 - handIndex;
+    }
+
+    public void AddDrawnCard(Card card)
+    {
+        this.deckSize -= 1;
+        this.Hand.AddDrawnCard(card);
     }
 }
