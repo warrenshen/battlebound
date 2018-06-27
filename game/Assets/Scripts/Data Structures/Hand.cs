@@ -36,11 +36,11 @@ public class Hand {
         return 0;
     }
 
-    public Card GetCardById(string id)
+    public Card GetCardById(string cardId)
 	{
-        foreach (Card card in cards)
+        foreach (Card card in this.cards)
 		{
-			if (card.Id == id)
+			if (card.Id == cardId)
 			{
 				return card;
 			}
@@ -71,7 +71,7 @@ public class Hand {
         
     }
 
-    public void Remove(CardObject cardObject) {
+    public void RemoveAndReposition(CardObject cardObject) {
         //cardObjects.Remove(cardObject);
         cards.Remove(cardObject.card);
         RepositionCards();
@@ -92,7 +92,8 @@ public class Hand {
         }
     }
 
-    public void RepositionCards() {
+    public void RepositionCards()
+	{
         int size = cards.Count;
         //if no cards, return
         if (size <= 0)

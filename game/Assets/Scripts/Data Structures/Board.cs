@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ using UnityEngine;
 public class Board
 {
     [SerializeField]
-    private Dictionary<Player, PlayingField> playerToFields;
+    private Dictionary<string, PlayingField> playerIdToFields;
     private static Board instance;
 
     public static Board Instance()
@@ -19,74 +19,103 @@ public class Board
     }
 
 
-    public Board() {
+    public Board()
+    {
         //create field for each player
-        playerToFields = new Dictionary<Player, PlayingField>();
+        this.playerIdToFields = new Dictionary<string, PlayingField>();
     }
 
-    public void PlaceCreature(BoardCreature creature, int position) {
-        if (!playerToFields.ContainsKey(creature.Owner)) {
+    public void PlaceCreature(BoardCreature creature, int position)
+    {
+        if (!this.playerIdToFields.ContainsKey(creature.Owner.Id))
+        {
             AddPlayer(creature.Owner);
         }
-        PlayingField selected = playerToFields[creature.Owner];
+        PlayingField selected = this.playerIdToFields[creature.Owner.Id];
         selected.Place(creature, position);
     }
 
-    public void RemoveCreature(BoardCreature creature) {
-        PlayingField selected = playerToFields[creature.Owner];
+    public void RemoveCreature(BoardCreature creature)
+    {
+        PlayingField selected = this.playerIdToFields[creature.Owner.Id];
         selected.Remove(creature);
     }
-    
-	public void AddPlayer (Player player) {
+
+    public void AddPlayer(Player player)
+    {
         PlayingField created = new PlayingField();
         player.SetPlayingField(created);
-        playerToFields[player] = created;
-	}
-
-    public PlayingField GetField(Player player) {
-        return playerToFields[player];
+        Debug.Log(player.Id);
+        this.playerIdToFields[player.Id] = created;
     }
 
+    public PlayingField GetFieldByPlayerId(string playerId)
+    {
+        return this.playerIdToFields[playerId];
+    }
+
+    public BoardCreature GetCreatureByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        PlayingField field = GetFieldByPlayerId(playerId);
+        return field.GetCreatureByCardId(cardId);
+    }
 
     [System.Serializable]
-    public class PlayingField {
-        
+    public class PlayingField
+    {
+
         [SerializeField]
         protected BoardCreature[] creatures;
         //List<Artifact> artifacts;
 
-        public PlayingField() {
-            creatures = new BoardCreature[6];
+        public PlayingField()
+        {
+            this.creatures = new BoardCreature[6];
         }
-        
-		public BoardCreature GetCreatureByIndex(int index)
-		{
-			return this.creatures[index];
-		}
 
-        public bool Place(BoardCreature creature, int index) {
-            if(creatures[index] != null) {
+        public BoardCreature GetCreatureByIndex(int index)
+        {
+            return this.creatures[index];
+        }
+
+        public bool Place(BoardCreature creature, int index)
+        {
+            if (creatures[index] != null)
+            {
                 Debug.LogError("Attempting to place unit where one exists.");
                 return false;
             }
-            else {
+            else
+            {
                 creatures[index] = creature;
                 return true;
             }
         }
 
-        public void Remove(BoardCreature creature) {
-            for (int i = 0; i < creatures.Length; i++) {
+        public void Remove(BoardCreature creature)
+        {
+            for (int i = 0; i < creatures.Length; i++)
+            {
                 if (creatures[i] == creature)
                     creatures[i] = null;
             }
         }
 
-        public BoardCreature[] GetCreatures() {
+        public BoardCreature[] GetCreatures()
+        {
             return creatures;
         }
 
-        public void RecoverCreatures() {
+        public BoardCreature GetCreatureByCardId(string cardId)
+        {
+            return Array.Find(
+                this.creatures,
+                creature => creature != null && creature.Card.Id == cardId
+            );
+        }
+
+        public void RecoverCreatures()
+        {
             for (int i = 0; i < creatures.Length; i++)
             {
                 if (creatures[i] != null)

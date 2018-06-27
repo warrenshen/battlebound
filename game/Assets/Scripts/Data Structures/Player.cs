@@ -74,7 +74,7 @@ public class Player
 
 	public void PlayCard(CardObject cardObject)
 	{
-		hand.Remove(cardObject);
+		hand.RemoveAndReposition(cardObject);
 		mana -= cardObject.card.Cost;
 		RenderMana();
 	}
@@ -216,5 +216,10 @@ public class Player
 	{
 		this.health -= amount;
 		return this.health > 0;
+	}
+
+	public int GetOpponentHandIndex(int handIndex)
+	{
+		return this.Hand.Size() - 1 - handIndex;
 	}
 }

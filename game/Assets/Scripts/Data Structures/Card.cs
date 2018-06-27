@@ -6,9 +6,9 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Card
 {
-	public static int CARD_CATEGORY_MINION = 0;
-	public static int CARD_CATEGORY_SPELL = 1;
-	public static int CARD_CATEGORY_STRUCTURE = 2;
+    public static int CARD_CATEGORY_MINION = 0;
+    public static int CARD_CATEGORY_SPELL = 1;
+    public static int CARD_CATEGORY_STRUCTURE = 2;
 
     [SerializeField]
     protected string id;
@@ -50,16 +50,16 @@ public class CreatureCard : Card
     public List<string> Abilities => abilities;
 
     public CreatureCard(
-		string id,
-		string name,
-		int cost,
-		string image,
-		int attack,
-		int health,
-		List<string> abilities,
-		Player owner = null
-	)
-	{
+        string id,
+        string name,
+        int cost,
+        string image,
+        int attack,
+        int health,
+        List<string> abilities,
+        Player owner = null
+    )
+    {
         this.id = id;
         this.name = name;
         this.cost = cost;
@@ -68,7 +68,7 @@ public class CreatureCard : Card
         this.health = health;
         this.abilities = abilities;
 
-		this.owner = owner;
+        this.owner = owner;
     }
 }
 
@@ -126,23 +126,27 @@ public class SpellCard : Card
         this.targeted = targeted;
         this.owner = owner;
 
-        if(spellToMethod == null) {
+        if (spellToMethod == null)
+        {
             InitSpellDict();
         }
     }
 
-    private void InitSpellDict() {
+    private void InitSpellDict()
+    {
         spellToMethod = new Dictionary<string, string>();
         spellToMethod["l_bolt"] = "LightningBolt";
     }
 
-    public void Activate(BoardCreature creature, string shortName) {
+    public void Activate(BoardCreature creature, string shortName)
+    {
         string methodName = spellToMethod[shortName];
         MethodInfo method = typeof(SpellCard).GetMethod(methodName);
-        method.Invoke(this, new object[]{ creature });
+        method.Invoke(this, new object[] { creature });
     }
 
-    public void LightningBolt(BoardCreature target) {
+    public void LightningBolt(BoardCreature target)
+    {
         SoundManager.Instance.PlaySound("Shot", target.transform.position);
         target.TakeDamage(3);
         //play effect

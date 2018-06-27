@@ -101,21 +101,10 @@ public class PlayerState
 		bool areHandsEqual = true;
 		bool areFieldsEqual = true;
         
-        if (this.hand != null && other.Hand != null)
+		for (int i = 0; i < this.hand.Count; i += 1)
         {
-			// If both hands are not null and they have different lengths,
-            // there is some discrepancy between the two states.
-			if (this.hand.Count != other.Hand.Count)
-			{
-				return false;
-			}
-
-			for (int i = 0; i < this.hand.Count; i += 1)
-            {
-                areHandsEqual &= !this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
-            }
-        }
-        
+            areHandsEqual &= !this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
+        }        
 		for (int i = 0; i < this.field.Length; i += 1)
 		{
 			areFieldsEqual &= !this.field.ElementAt(i).Equals(other.Field.ElementAt(i));
@@ -134,6 +123,43 @@ public class PlayerState
                this.armor == other.Armor &&
                this.deckSize == other.DeckSize;
     }
+
+    /*
+     * Returns the first difference between this and other PlayerState instance.
+     */
+	public string FirstDiff(PlayerState other)
+	{
+		if (this.id != other.id)
+		{
+			return string.Format("Id: {0} vs {1}", this.id, other.id); 
+		}
+		else if (this.hasTurn != other.HasTurn)
+		{
+			return string.Format("HasTurn: {0} vs {1}", this.hasTurn, other.HasTurn);
+		}
+		else if (this.manaCurrent != other.ManaCurrent)
+		{
+			return string.Format("ManaCurrent: {0} vs {1}", this.manaCurrent, other.ManaCurrent);
+		}
+		else if (this.manaMax != other.ManaMax)
+        {
+			return string.Format("ManaMax: {0} vs {1}", this.manaMax, other.ManaMax);
+        }
+		else if (this.health != other.Health)
+		{
+			return string.Format("Health: {0} vs {1}", this.health, other.Health);
+		}
+		else if (this.armor != other.Armor)
+        {
+            return string.Format("Armor: {0} vs {1}", this.armor, other.Armor);
+        }
+		else if (this.deckSize != other.DeckSize)
+        {
+			return string.Format("Health: {0} vs {1}", this.deckSize, other.DeckSize);
+        }
+
+		return "Hand/Field diff";
+	}
     
     public List<Card> GetCardsFromChallengeCards(Player owner)
 	{

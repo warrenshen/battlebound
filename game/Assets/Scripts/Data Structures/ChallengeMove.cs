@@ -60,7 +60,7 @@ public class ChallengeMove
 			this.fieldId = fieldId;
 		}
 
-        public void SetTargetid(string targetId)
+        public void SetTargetId(string targetId)
 		{
 			this.targetId = targetId;
 		}
