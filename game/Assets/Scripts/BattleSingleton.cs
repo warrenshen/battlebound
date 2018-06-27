@@ -171,36 +171,42 @@ public class BattleSingleton : Singleton<BattleSingleton>
 				BattleManager.Instance.ReceiveMoveCardAttack(
 					challengeMove.PlayerId,
 					challengeMove.Attributes.CardId,
+					challengeMove.Attributes.FieldId,
 					challengeMove.Attributes.TargetId
 				);
 			}
 		}
 
-		PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
-		PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+		if (InspectorControlPanel.Instance.DevelopmentMode)
+		{
+			PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
+			PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
 
-		if (!this.playerState.Equals(devicePlayerState))
-		{
-			Debug.LogWarning("Server vs device player state mismatch.");
-			Debug.LogWarning("Server: " + JsonUtility.ToJson(this.playerState));
-			Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
-		}
-		else
-		{
-			Debug.Log("Server vs device player state match.");
-			Debug.Log("State: " + JsonUtility.ToJson(this.playerState));
-		}
+			if (!this.playerState.Equals(devicePlayerState))
+			{
+				Debug.LogWarning("Server vs device player state mismatch.");
+				Debug.LogWarning("Server: " + JsonUtility.ToJson(this.playerState));
+				Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
+				Debug.LogWarning("First diff: " + this.playerState.FirstDiff(devicePlayerState));
+			}
+			else
+			{
+				Debug.Log("Server vs device player state match.");
+				Debug.Log("State: " + JsonUtility.ToJson(this.playerState));
+			}
 
-		if (!this.opponentState.Equals(deviceOpponentState))
-		{
-			Debug.LogWarning("Server vs device opponent state mismatch.");
-			Debug.LogWarning("Server: " + JsonUtility.ToJson(this.opponentState));
-			Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
-		}
-		else
-		{
-			Debug.Log("Server vs device opponent state match.");
-			Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
+			if (!this.opponentState.Equals(deviceOpponentState))
+			{
+				Debug.LogWarning("Server vs device opponent state mismatch.");
+				Debug.LogWarning("Server: " + JsonUtility.ToJson(this.opponentState));
+				Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
+				Debug.LogWarning("First diff: " + this.opponentState.FirstDiff(deviceOpponentState));
+			}
+			else
+			{
+				Debug.Log("Server vs device opponent state match.");
+				Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
+			}
 		}
 	}
 

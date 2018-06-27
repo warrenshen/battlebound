@@ -81,6 +81,8 @@ public class MockMovesPanel : MonoBehaviour
 		ChallengeMove challengeMove = new ChallengeMove();
 		ChallengeMove.ChallengeMoveAttributes attributes = new ChallengeMove.ChallengeMoveAttributes();
 
+		challengeMove.SetPlayerId(BattleManager.Instance.ActivePlayer.Id);
+
 		if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_END_TURN)
 		{
 			challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
@@ -90,6 +92,13 @@ public class MockMovesPanel : MonoBehaviour
 			challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
 			attributes.SetCardId(this.cardIdInputField.text);
 			attributes.SetFieldIndex(Int32.Parse(fieldIndexInputField.text));
+		}
+		else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_CARD_ATTACK)
+		{
+			challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
+			attributes.SetCardId(this.cardIdInputField.text);
+			attributes.SetFieldId(this.fieldIdInputField.text);
+			attributes.SetTargetId(this.targetIdInputField.text);
 		}
 
 		challengeMove.SetMoveAttributes(attributes);
