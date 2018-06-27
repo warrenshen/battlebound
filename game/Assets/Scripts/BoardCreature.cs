@@ -52,7 +52,7 @@ public class BoardCreature : Targetable
     public void Initialize(CardObject cardObject, Player owner)
     {
         //data structure stuff
-        this.card = cardObject.card as CreatureCard;
+        this.card = cardObject.Card as CreatureCard;
         this.cost = this.card.Cost;
         this.attack = this.card.Attack;
         this.health = this.card.Health;

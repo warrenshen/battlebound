@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ActionManager : MonoBehaviour 
+public class ActionManager : MonoBehaviour
 {
     public bool allowPan = false;
     public float cardOffsetFromCamera = 8;
@@ -35,7 +35,8 @@ public class ActionManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start() {
+    private void Start()
+    {
         if (Application.loadedLevelName == "Battle")
             boardLayerMask = LayerMask.GetMask("Board");
         cardLayerMask = LayerMask.GetMask("Card");
@@ -43,10 +44,11 @@ public class ActionManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update () {
-        if(allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
+    private void Update()
+    {
+        if (allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
         MouseWatchCards();
-	}
+    }
 
     private void LateUpdate()
     {
@@ -59,7 +61,8 @@ public class ActionManager : MonoBehaviour
         }
     }
 
-    public void SetDragTarget(CardObject target, SpriteRenderer target_sp) {
+    public void SetDragTarget(CardObject target, SpriteRenderer target_sp)
+    {
         this.target = target;
         this.sp = target_sp;
         selectedSortingOrder = this.sp.sortingOrder;
@@ -67,11 +70,13 @@ public class ActionManager : MonoBehaviour
         Cursor.SetCursor(cursors[1], Vector2.zero, CursorMode.Auto);
     }
 
-    private void MouseWatchCards() {
+    private void MouseWatchCards()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (!Physics.Raycast(ray, out hit, 100f, cardLayerMask)) {
+        if (!Physics.Raycast(ray, out hit, 100f, cardLayerMask))
+        {
             ResetLastHitCard();
             return;
         }
@@ -82,7 +87,7 @@ public class ActionManager : MonoBehaviour
         {
             hitCard.MouseDown();
         }
-        else if(Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0))
         {
             hitCard.MouseUp();
         }
@@ -94,7 +99,8 @@ public class ActionManager : MonoBehaviour
         lastHitCard = hitCard;
     }
 
-    private void ResetLastHitCard() {
+    private void ResetLastHitCard()
+    {
         if (lastHitCard)
         {
             lastHitCard.ExitFocus();
@@ -102,11 +108,13 @@ public class ActionManager : MonoBehaviour
         }
     }
 
-    public bool HasDragTarget() {
+    public bool HasDragTarget()
+    {
         return this.target != null;
     }
 
-    public CardObject GetDragTarget() {
+    public CardObject GetDragTarget()
+    {
         return this.target;
     }
 
@@ -119,18 +127,21 @@ public class ActionManager : MonoBehaviour
         Cursor.SetCursor(cursors[0], Vector2.zero, CursorMode.Auto);
     }
 
-    public void ResetTarget() {
+    public void ResetTarget()
+    {
         //target.transform.localPosition = target.reset.resetPosition;
         //target.transform.localRotation = target.reset.resetRotation;
         //target.transform.localScale = target.reset.resetScale;
-        target.card.Owner.Hand.RepositionCards();
+        target.Card.Owner.Hand.RepositionCards();
     }
 
-    private void DestroyTarget() {
+    private void DestroyTarget()
+    {
         GameObject.Destroy(target.gameObject);
     }
 
-    private void ScrollToPan(Vector3 axes) {
+    private void ScrollToPan(Vector3 axes)
+    {
         Camera.main.transform.Translate(axes * Input.mouseScrollDelta.y * SCROLL_DAMPING);
     }
 
@@ -182,7 +193,8 @@ public class ActionManager : MonoBehaviour
         mDeltaPosition = Input.mousePosition;
     }
 
-    private void InitializeDragTilts() {
+    private void InitializeDragTilts()
+    {
         dragTilts[0].eulerAngles = new Vector3(70f, 0);
         dragTilts[1].eulerAngles = new Vector3(70f, 0);
         dragTilts[2].eulerAngles = new Vector3(70f, 0);
@@ -203,8 +215,9 @@ public class ActionManager : MonoBehaviour
         dragTilts[4].eulerAngles = new Vector3(resetRotation.x, 0, 0);
     }
 
-    public void AddCardToDeck(CardObject card) {
-        if(CollectionManager.Instance != null)
+    public void AddCardToDeck(CardObject card)
+    {
+        if (CollectionManager.Instance != null)
             CollectionManager.Instance.AddToDeck(card);
     }
 }

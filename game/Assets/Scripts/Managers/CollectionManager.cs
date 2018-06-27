@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 [System.Serializable]
-public class CollectionManager : MonoBehaviour {
+public class CollectionManager : MonoBehaviour
+{
 
     private List<Card> collection;
     private List<Deck> decks;
@@ -37,7 +38,8 @@ public class CollectionManager : MonoBehaviour {
         this.idToCard = new Dictionary<string, Card>();
     }
 
-    private void Start() {
+    private void Start()
+    {
         //ping server for collection json
         GetCollectionRequest();
 
@@ -69,8 +71,10 @@ public class CollectionManager : MonoBehaviour {
         }
     }
 
-    private void RaycastMouseUp() {
-        if (Input.GetMouseButtonUp(0)) {
+    private void RaycastMouseUp()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -80,8 +84,10 @@ public class CollectionManager : MonoBehaviour {
                 AddToDeck(selectedCard);
                 RevertMinify(selectedCard);
             }
-            else if(Physics.Raycast(ray, out hit, 100.0F)) {
-                if(hit.collider.name == "Save Button") {
+            else if (Physics.Raycast(ray, out hit, 100.0F))
+            {
+                if (hit.collider.name == "Save Button")
+                {
                     SaveCollectionRequest();
                 }
                 else if (hit.collider.name == "Back Button")
@@ -92,12 +98,14 @@ public class CollectionManager : MonoBehaviour {
         }
     }
 
-    private void MinifyCard(CardObject wrapper) {
-        if(!wrapper.minified)
+    private void MinifyCard(CardObject wrapper)
+    {
+        if (!wrapper.minified)
             wrapper.Minify(true);
     }
 
-    private void RevertMinify(CardObject wrapper) {
+    private void RevertMinify(CardObject wrapper)
+    {
         if (wrapper.minified)
             wrapper.Minify(false);
         selectedCard = null;
@@ -131,16 +139,18 @@ public class CollectionManager : MonoBehaviour {
         }
     }
 
-    public void AddToDeck(CardObject wrapper) {
+    public void AddToDeck(CardObject wrapper)
+    {
         //add to data structure
-        chosenDeck.AddCard(wrapper.card);
+        chosenDeck.AddCard(wrapper.Card);
         AddToBuildPanel(wrapper);
     }
 
-    public void AddToBuildPanel(CardObject wrapper) {
+    public void AddToBuildPanel(CardObject wrapper)
+    {
         wrapper.gameObject.SetActive(false);
         //create and set visuals
-        GameObject instance = new GameObject("Added " + wrapper.card.Name) as GameObject;
+        GameObject instance = new GameObject("Added " + wrapper.Card.Name) as GameObject;
         CardCutout cutout = instance.AddComponent<CardCutout>();
         cutout.Initialize(wrapper, chosenDeck.Cards);
         cutouts.Add(cutout);
@@ -148,8 +158,9 @@ public class CollectionManager : MonoBehaviour {
         RenderDecklist();
     }
 
-    public void RemoveFromDeck(CardObject wrapper, CardCutout cutout) {
-        chosenDeck.RemoveCard(wrapper.card);
+    public void RemoveFromDeck(CardObject wrapper, CardCutout cutout)
+    {
+        chosenDeck.RemoveCard(wrapper.Card);
         wrapper.gameObject.SetActive(true);
 
         cutouts.Remove(cutout);
@@ -157,18 +168,21 @@ public class CollectionManager : MonoBehaviour {
         RenderDecklist();
     }
 
-    private void RenderDecklist() {
+    private void RenderDecklist()
+    {
         for (int i = 0; i < cutouts.Count; ++i)
         {
             cutouts[i].PositionCutout(i);
         }
     }
 
-    private void SaveCollectionRequest() {
+    private void SaveCollectionRequest()
+    {
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("CreateUpdatePlayerDeck");
         List<string> cardIds = new List<string>();
-        foreach(Card card in chosenDeck.Cards) {
+        foreach (Card card in chosenDeck.Cards)
+        {
             cardIds.Add(card.Id);
         }
         request.SetEventAttribute("cardIds", cardIds);
@@ -177,7 +191,8 @@ public class CollectionManager : MonoBehaviour {
         request.Send(SaveCollectionSuccess, Error);
     }
 
-    private void SaveCollectionSuccess(LogEventResponse resp) {
+    private void SaveCollectionSuccess(LogEventResponse resp)
+    {
         Debug.Log("Successfully saved deck.");
     }
 
@@ -196,7 +211,8 @@ public class CollectionManager : MonoBehaviour {
 
         //Create pool of cards
         List<GSData> data = resp.ScriptData.GetGSDataList("cards");
-        foreach(GSData elem in data) {
+        foreach (GSData elem in data)
+        {
             Card newCard = JsonUtility.FromJson<Card>(elem.JSON);
             collection.Add(newCard);
         }
@@ -264,7 +280,7 @@ public class CollectionManager : MonoBehaviour {
     private void CreateDeckLocal()
     {
         //jank json test, for generating list of json objects
-		collection.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, new List<string>()));
-		collection.Add(new CreatureCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, new List<string>()));
+        collection.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, new List<string>()));
+        collection.Add(new CreatureCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, new List<string>()));
     }
 }

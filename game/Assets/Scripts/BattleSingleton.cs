@@ -155,15 +155,30 @@ public class BattleSingleton : Singleton<BattleSingleton>
 					challengeMove.Attributes.FieldIndex
 				);
 			}
-			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL)
+			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_GENERAL)
 			{
 				Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
 				Card card = challengeMove.Attributes.Card.GetCard(owner);
 
-				BattleManager.Instance.ReceiveMovePlaySpell(
+				BattleManager.Instance.ReceiveMovePlaySpellGeneral(
 					challengeMove.PlayerId,
 					challengeMove.Attributes.CardId,
-					card
+					card,
+					challengeMove.Attributes.HandIndex
+				);
+			}
+			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
+			{
+				Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
+				Card card = challengeMove.Attributes.Card.GetCard(owner);
+
+				BattleManager.Instance.ReceiveMovePlaySpellTargeted(
+					challengeMove.PlayerId,
+					challengeMove.Attributes.CardId,
+					card,
+					challengeMove.Attributes.HandIndex,
+					challengeMove.Attributes.FieldId,
+					challengeMove.Attributes.TargetId
 				);
 			}
 			else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_CARD_ATTACK)

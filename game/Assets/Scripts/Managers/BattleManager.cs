@@ -25,13 +25,14 @@ public class BattleManager : MonoBehaviour
     //private List<HistoryItem> history;
 
     private BoardCreature mouseDownCreature;
-    private Targetable mouseUpCreature;
-    private List<Targetable> validTargets; //used to store/cache valid targets
+    private BoardCreature mouseUpCreature;
+    private List<BoardCreature> validTargets; //used to store/cache valid targets
 
     public CurvedLineRenderer attackCommand;
+    [SerializeField]
+    List<BoardCreature> allTargets;
 
     public static BattleManager Instance { get; private set; }
-
 
     private void Awake()
     {
@@ -60,6 +61,7 @@ public class BattleManager : MonoBehaviour
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.playerIdToPlayer[this.you.Id] = this.you;
         this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
         attackCommand.SetWidth(0);
     }
 
@@ -172,6 +174,7 @@ public class BattleManager : MonoBehaviour
             activePlayer.NewTurn();
         }
     }
+
     private void InitializeAvatar(Player player)
     {
         PlayerAvatar avatar = GameObject.Find(String.Format("{0} Avatar", player.Name)).GetComponent<PlayerAvatar>();
@@ -197,6 +200,7 @@ public class BattleManager : MonoBehaviour
     private void NextTurn()
     {
         activePlayer.SetHasTurn(false);
+
         turnCount++;
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
@@ -205,16 +209,15 @@ public class BattleManager : MonoBehaviour
         activePlayer.NewTurn();
     }
 
-
     private void Surrender()
     {
         Debug.LogWarning("Surrender action pressed.");
         BattleSingleton.Instance.SendChallengeSurrenderRequest();
     }
 
-    private List<Targetable> GetValidTargets(BoardCreature attacker)
+    private List<BoardCreature> GetValidTargets(BoardCreature attacker)
     {
-        List<Targetable> allTargets = new List<Targetable>();
+        allTargets = new List<BoardCreature>();
         foreach (Player player in players)
         {
             if (player == attacker.Owner)
@@ -225,18 +228,14 @@ public class BattleManager : MonoBehaviour
                 if (fieldCreatures[i] != null)
                     allTargets.Add(fieldCreatures[i]);
             }
-            allTargets.Add(player.avatar);
         }
 
         //Debug.LogWarning(allTargets.Count + " enemies found.");
-        List<Targetable> priorityTargets = new List<Targetable>();
+        List<BoardCreature> priorityTargets = new List<BoardCreature>();
         for (int j = 0; j < allTargets.Count; j++)
         {
-            if (allTargets[j].IsAvatar)
-                continue;
-            BoardCreature creature = allTargets[j] as BoardCreature;
-            if (creature.HasAbility("taunt"))
-                priorityTargets.Add(creature);
+            if (allTargets[j].HasAbility("taunt"))
+                priorityTargets.Add(allTargets[j]);
         }
 
         if (priorityTargets != null && priorityTargets.Count > 0)
@@ -253,10 +252,12 @@ public class BattleManager : MonoBehaviour
 
     private void CheckFight(BoardCreature attacker, RaycastHit hit)
     {
-
         if (!attackCommand.enabled)
+        {
             return;
-        mouseUpCreature = hit.collider.GetComponent<Targetable>();
+        }
+
+        mouseUpCreature = hit.collider.GetComponent<BoardCreature>();
         if (mouseUpCreature == mouseDownCreature)
         {
             //show creature details
@@ -278,7 +279,7 @@ public class BattleManager : MonoBehaviour
         CardObject target = ActionManager.Instance.GetDragTarget();
         //TODO: think about using displacement distance as activation indicator vs screen height
         float minThreshold = 0.20f;
-        if (target.card.Cost > target.card.Owner.Mana)
+        if (target.Card.Cost > target.Card.Owner.Mana)
         {
             //can't play card due to mana
             ActionManager.Instance.ResetTarget();
@@ -290,14 +291,14 @@ public class BattleManager : MonoBehaviour
             ActionManager.Instance.ResetTarget();
             return false;
         }
-        else if (target.card.GetType() == typeof(SpellCard))
+        else if (target.Card.GetType() == typeof(SpellCard))
         {
-            SpellCard spell = target.card as SpellCard;
+            SpellCard spell = target.Card as SpellCard;
             if (spell.Targeted)
             {
                 if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle")))
                 {
-                    this.PlayTargetedSpell(spell, target, hit);
+                    this.PlayTargetedSpell(target, hit);
                     return true;
                 }
                 else
@@ -308,16 +309,16 @@ public class BattleManager : MonoBehaviour
             }
             else  //not targeted spell, play freely
             {
-                this.UseCard(target.card.Owner, target); //change to own board spell func
+                this.UseCard(target.Card.Owner, target); //change to own board spell func
                 return true;
             }
         }
-        else if (target.card.GetType() == typeof(WeaponCard))
+        else if (target.Card.GetType() == typeof(WeaponCard))
         {
-            this.UseCard(target.card.Owner, target);    //to-do: change to own weapon func
+            this.UseCard(target.Card.Owner, target);    //to-do: change to own weapon func
             return true;
         }
-        else if (Physics.Raycast(ray, out hit, 100f, boardLayer) && hit.collider.name.Contains(target.card.Owner.Name))
+        else if (Physics.Raycast(ray, out hit, 100f, boardLayer) && hit.collider.name.Contains(target.Card.Owner.Name))
         {
             //place card
             Debug.Log("Mouse up with board playable card.");
@@ -338,7 +339,7 @@ public class BattleManager : MonoBehaviour
     public void PlayCardToBoard(CardObject cardObject, int index)
     {
         //to-do: animation here
-        Player player = cardObject.card.Owner;
+        Player player = cardObject.Card.Owner;
         Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, index)).transform;
         //shared spawning + fx
         SpawnCardToBoard(cardObject, index, boardPlace);
@@ -352,7 +353,7 @@ public class BattleManager : MonoBehaviour
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
-        Player player = cardObject.card.Owner;
+        Player player = cardObject.Card.Owner;
         //shared spawning + fx
         SpawnCardToBoard(cardObject, index, hit.collider.transform);
 
@@ -360,7 +361,7 @@ public class BattleManager : MonoBehaviour
         {
             PlayCardAttributes attributes = new PlayCardAttributes(index);
             BattleSingleton.Instance.SendChallengePlayCardRequest(
-                cardObject.card.Id,
+                cardObject.Card.Id,
                 attributes
             );
         }
@@ -369,16 +370,22 @@ public class BattleManager : MonoBehaviour
     private void SpawnCardToBoard(CardObject cardObject, int index, Transform target)
     {
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
-        BoardCreature created = CreateBoardCreature(cardObject, cardObject.card.Owner, target.position);
+        BoardCreature created = CreateBoardCreature(cardObject, cardObject.Card.Owner, target.position);
         Board.Instance().PlaceCreature(created, index);
-        UseCard(cardObject.card.Owner, cardObject);
+        UseCard(cardObject.Card.Owner, cardObject);
     }
 
-    public void PlayTargetedSpell(SpellCard spell, CardObject target, RaycastHit hit)
+    public void PlayTargetedSpell(CardObject target, RaycastHit hit)
     {
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
-        spell.Activate(targetedCreature, "l_bolt");
-        UseCard(target.card.Owner, target);
+        ((SpellCard)target.Card).Activate(targetedCreature, "l_bolt");
+        UseCard(target.Card.Owner, target);
+    }
+
+    public void PlayTargetedSpell(CardObject target, BoardCreature victimCreature)
+    {
+        ((SpellCard)target.Card).Activate(victimCreature, "l_bolt");
+        UseCard(target.Card.Owner, target);
     }
 
     public void UseCard(Player player, CardObject cardObject)
@@ -390,7 +397,7 @@ public class BattleManager : MonoBehaviour
 
     public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos)
     {
-        GameObject created = new GameObject(cardObject.card.Name);
+        GameObject created = new GameObject(cardObject.Card.Name);
         created.transform.position = pos;
         BoardCreature creature = created.AddComponent<BoardCreature>();
         creature.Initialize(cardObject, owner);
@@ -428,9 +435,48 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMovePlaySpell(string playerId, string cardId, Card card)
+    public void ReceiveMovePlaySpellGeneral(string playerId, string cardId, Card card, int handIndex)
     {
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            CardObject target = opponent.Hand.GetCardById(cardId).wrapper;
+            if (target == null)
+            {
+                Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
+                return;
+            }
+            //PlayCardToBoard(target, fieldIndex);
+        }
+        else
+        {
+            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
+            CardObject target = opponent.Hand.GetCardByIndex(opponentHandIndex).wrapper;
+            target.InitializeCard(card);
+            //PlayCardToBoard(target, fieldIndex);
+        }
+    }
 
+    public void ReceiveMovePlaySpellTargeted(string playerId, string cardId, Card card, int handIndex, string fieldId, string targetId)
+    {
+        BoardCreature victimCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            CardObject target = opponent.Hand.GetCardById(cardId).wrapper;
+            if (target == null)
+            {
+                Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
+                return;
+            }
+            PlayTargetedSpell(target, victimCreature);
+        }
+        else
+        {
+            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
+            CardObject target = opponent.Hand.GetCardByIndex(opponentHandIndex).wrapper;
+            target.InitializeCard(card);
+            PlayTargetedSpell(target, victimCreature);
+        }
     }
 
     public void ReceiveMoveCardAttack(

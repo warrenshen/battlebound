@@ -8,13 +8,14 @@ public class ChallengeMove
 	public static string MOVE_CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
 	public static string MOVE_CATEGORY_DRAW_CARD = "MOVE_CATEGORY_DRAW_CARD";
 	public static string MOVE_CATEGORY_PLAY_MINION = "MOVE_CATEGORY_PLAY_MINION";
-	public static string MOVE_CATEGORY_PLAY_SPELL = "MOVE_CATEGORY_PLAY_SPELL";
+	public static string MOVE_CATEGORY_PLAY_SPELL_GENERAL = "MOVE_CATEGORY_PLAY_SPELL_GENERAL";
+	public static string MOVE_CATEGORY_PLAY_SPELL_TARGETED = "MOVE_CATEGORY_PLAY_SPELL_TARGETED";
 	public static string MOVE_CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
 
 	[SerializeField]
 	private string playerId;
 	public string PlayerId => playerId;
-    
+
 	[SerializeField]
 	private string category;
 	public string Category => category;
@@ -22,7 +23,7 @@ public class ChallengeMove
 	[SerializeField]
 	private ChallengeMoveAttributes attributes;
 	public ChallengeMoveAttributes Attributes => attributes;
-    
+
 	[System.Serializable]
 	public class ChallengeMoveAttributes
 	{
@@ -50,27 +51,27 @@ public class ChallengeMove
 		private PlayerState.ChallengeCard card;
 		public PlayerState.ChallengeCard Card => card;
 
-        public void SetCardId(string cardId)
+		public void SetCardId(string cardId)
 		{
 			this.cardId = cardId;
 		}
 
-        public void SetFieldId(string fieldId)
+		public void SetFieldId(string fieldId)
 		{
 			this.fieldId = fieldId;
 		}
 
-        public void SetTargetId(string targetId)
+		public void SetTargetId(string targetId)
 		{
 			this.targetId = targetId;
 		}
 
-        public void SetHandIndex(int handIndex)
+		public void SetHandIndex(int handIndex)
 		{
 			this.handIndex = handIndex;
 		}
 
-        public void SetFieldIndex(int fieldIndex)
+		public void SetFieldIndex(int fieldIndex)
 		{
 			this.fieldIndex = fieldIndex;
 		}
@@ -81,7 +82,7 @@ public class ChallengeMove
 		}
 	}
 
-    public void SetPlayerId(string playerId)
+	public void SetPlayerId(string playerId)
 	{
 		this.playerId = playerId;
 	}
@@ -93,6 +94,6 @@ public class ChallengeMove
 
 	public void SetMoveAttributes(ChallengeMoveAttributes attributes)
 	{
-		this.attributes = attributes;	
+		this.attributes = attributes;
 	}
 }
