@@ -59,7 +59,7 @@ public class PlayerState
 
     public void SetManaMax(int manaMax)
     {
-        this.manaCurrent = manaMax;
+        this.manaMax = manaMax;
     }
 
     public void SetHealth(int health)
@@ -155,7 +155,7 @@ public class PlayerState
         }
         else if (this.deckSize != other.DeckSize)
         {
-            return string.Format("Health: {0} vs {1}", this.deckSize, other.DeckSize);
+            return string.Format("Deck size: {0} vs {1}", this.deckSize, other.DeckSize);
         }
 
         return "Hand/Field diff";
