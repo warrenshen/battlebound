@@ -8,10 +8,6 @@ using TMPro;
 public class BoardCreature : Targetable
 {
     [SerializeField]
-    private string uid;     //for server unique tracking/reference?
-    public string Uid => uid;
-
-    [SerializeField]
     private int cost;           //cost retained for conditional removal cards
     public int Cost => cost;    //e.g. remove all cards with cost 2 or less
 
@@ -57,7 +53,6 @@ public class BoardCreature : Targetable
     {
         //data structure stuff
         this.card = cardObject.card as CreatureCard;
-        this.uid = this.card.Id;
         this.cost = this.card.Cost;
         this.attack = this.card.Attack;
         this.health = this.card.Health;
@@ -104,6 +99,11 @@ public class BoardCreature : Targetable
         //post-collider-construction visuals
         transform.localScale = new Vector3(0, 0, 0);
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
+    }
+
+    public string getCardId()
+    {
+        return this.card.Id;
     }
 
     public void RecoverAttack()
@@ -195,7 +195,7 @@ public class BoardCreature : Targetable
 
     public void UpdateStatText()
     {
-        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.uid);
+        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.getCardId());
     }
 
     private void RenderAbilities()

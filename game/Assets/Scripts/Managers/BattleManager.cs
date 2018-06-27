@@ -381,12 +381,26 @@ public class BattleManager : MonoBehaviour
         UseCard(target.card.Owner, target);
     }
 
+    public void UseCard(Player player, CardObject cardObject)
+    {
+        player.PlayCard(cardObject);    //removes card from hand, spend mana
+        GameObject.Destroy(cardObject.gameObject);
+        SoundManager.Instance.PlaySound("Play", transform.position);
+    }
+
+    public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos)
+    {
+        GameObject created = new GameObject(cardObject.card.Name);
+        created.transform.position = pos;
+        BoardCreature creature = created.AddComponent<BoardCreature>();
+        creature.Initialize(cardObject, owner);
+        return creature;
+    }
 
     public void ReceiveMoveEndTurn(string playerId)
     {
         NextTurn();
     }
-
 
     public void ReceiveMoveDrawCard(string playerId, Card card)
     {
@@ -419,27 +433,16 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    public void ReceiveMoveCardAttack(string playerId, string cardId, string targetId)
+    public void ReceiveMoveCardAttack(
+        string playerId,
+        string cardId,
+        string fieldId,
+        string targetId
+    )
     {
-
-    }
-
-
-    public void UseCard(Player player, CardObject cardObject)
-    {
-        player.PlayCard(cardObject);    //removes card from hand, spend mana
-        GameObject.Destroy(cardObject.gameObject);
-        SoundManager.Instance.PlaySound("Play", transform.position);
-    }
-
-
-    public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos)
-    {
-        GameObject created = new GameObject(cardObject.card.Name);
-        created.transform.position = pos;
-        BoardCreature creature = created.AddComponent<BoardCreature>();
-        creature.Initialize(cardObject, owner);
-        return creature;
+        BoardCreature attackingCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        BoardCreature defendingCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+        attackingCreature.Fight(defendingCreature);
     }
 
     public PlayerState GetPlayerState()
