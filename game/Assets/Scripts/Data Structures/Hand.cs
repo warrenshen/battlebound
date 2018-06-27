@@ -11,11 +11,10 @@ public class Hand
 
     private string name;
 
-    public Hand(Deck deck, int size, string name = "Player")
+    public Hand(string name = "Player")
     {
         this.cards = new List<Card>();
         this.name = name;
-        Draw(deck, size);
     }
 
     public Hand(string name, List<Card> cards)
@@ -24,18 +23,6 @@ public class Hand
         this.cards = cards;
         CreateCardObjects(this.cards);
         RepositionCards();
-    }
-
-    private int Draw(Deck deck)
-    {
-        if (deck.Cards.Count < 1)
-            return 1; //amount fatigue
-
-        Card drawn = deck.Cards[0];
-        deck.Cards.RemoveAt(0);
-        cards.Add(drawn);
-        CreateCardObjects(drawn);
-        return 0;
     }
 
     public Card GetCardById(string cardId)
@@ -48,19 +35,6 @@ public class Hand
             }
         }
         return null;
-    }
-
-    public int Draw(Deck deck, int amount)
-    {
-        int fatigue = 0;
-
-        while (amount > 0)
-        {
-            fatigue += Draw(deck);
-            amount--;
-        }
-        RepositionCards();
-        return fatigue;
     }
 
     public int AddDrawnCard(Card drawnCard)

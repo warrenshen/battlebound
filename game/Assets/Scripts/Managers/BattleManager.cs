@@ -154,14 +154,19 @@ public class BattleManager : MonoBehaviour
 
         InitializeAvatar(you);
         InitializeAvatar(opponent);
+
         Board.Instance().AddPlayer(you);
         Board.Instance().AddPlayer(opponent);   //to-do make this into for loop
         Debug.Log(players.Count + " players in play.");
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
+            this.you.DrawCards(5);
+            this.opponent.DrawCards(5);
+
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             turnCount = 0;
+
             NextTurn();
         }
         else
