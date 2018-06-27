@@ -22,8 +22,7 @@ const challenge = Spark.getChallenge(challengeId);
 const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
 
 if (challengeStateDataItem === null) {
-    Spark.setScriptError("ERROR", "Challenge state does not exist.");
-    Spark.exit();
+    setScriptError("Challenge state does not exist.");
 }
 
 const challengeStateData = challengeStateDataItem.getData();

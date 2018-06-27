@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("OnChainModule");
 
 const player = Spark.getPlayer();
@@ -17,6 +18,7 @@ if (address) {
 
 Spark.setScriptData("address", address);
 Spark.setScriptData("balance", balance);
+Spark.setScriptData("activeChallengeId", player.getPrivateData("activeChallengeId"));
 Spark.setScriptData("winStreak", player.getPrivateData("winStreak"));
 Spark.setScriptData("level", player.getPrivateData("level"));
-Spark.setScriptData("responseCode", 200);
+setScriptSuccess();

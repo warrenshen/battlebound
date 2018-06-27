@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("AuctionModule");
 
 const player = Spark.getPlayer();
@@ -14,3 +15,4 @@ const auctionedCards = findAuctionedCardsBySeller(player.getPrivateData("address
 
 Spark.setScriptData("auctionableCards", bCards);
 Spark.setScriptData("auctionedCards", auctionedCards);
+setScriptSuccess();

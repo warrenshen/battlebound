@@ -6,8 +6,6 @@
 // and `playerId` to know which player's cards to add experience to.
 //
 // ====================================================================================================
-require("ChallengeMovesModule");
-
 /**
  * @return array - array of Card-like objects with levelPrevious and expPrevious fields.
  **/ 
@@ -17,7 +15,8 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
     const playerMoves = moves.filter(function(move) { return move.playerId === playerId });
     
     const expMoveCategories = [
-        MOVE_CATEGORY_PLAY_SPELL,
+        MOVE_CATEGORY_PLAY_SPELL_GENERAL,
+        MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         MOVE_CATEGORY_CARD_ATTACK,
     ];
     
@@ -60,8 +59,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
         
         const error = cardDataItem.persistor().persist().error();
         if (error) {
-            Spark.setScriptError("ERROR", error);
-            Spark.exit();
+            setScriptError(error);
         }
     });
     
@@ -96,8 +94,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
     
     const error = decksDataItem.persistor().persist().error();
     if (error) {
-        Spark.setScriptError("ERROR", error);
-        Spark.exit();
+        setScriptError(error);
     }
     
     return resultCards;

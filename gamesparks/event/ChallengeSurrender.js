@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("ChallengeMovesModule");
 
 const API = Spark.getGameDataService();
@@ -15,15 +16,13 @@ const challengeId = Spark.getData().challengeId;
 const challenge = Spark.getChallenge(challengeId);
 
 if (challenge.getRunState() != "RUNNING") {
-    Spark.setScriptError("ERROR", "Challenge is not running.");
-    Spark.exit();
+    setScriptError("Challenge is not running.");
 }
 
 const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
 
 if (challengeStateDataItem === null) {
-    Spark.setScriptError("ERROR", "ChallengeState does not exist.");
-    Spark.exit();
+    setScriptError("ChallengeState does not exist.");
 }
 
 const challengeStateData = challengeStateDataItem.getData();
@@ -41,3 +40,5 @@ require("PersistChallengeStateModule");
 
 const opponent = Spark.loadPlayer(opponentId);
 challenge.winChallenge(opponent);
+
+setScriptSuccess();

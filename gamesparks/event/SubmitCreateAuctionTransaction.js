@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("OnChainModule");
 
 const signedTx = Spark.getData().signedTx;
@@ -13,13 +14,11 @@ const startingPrice = Spark.getData().startingPrice;
 const endingPrice = Spark.getData().endingPrice;
 
 if (tokenId < 0) {
-    Spark.setScriptError("ERROR", "Invalid token ID.");
-    Spark.exit();
+    setScriptError("Invalid token ID.");
 }
 
 if (startingPrice <= 0 || endingPrice <= 0) {
-    Spark.setScriptError("ERROR", "Starting price and ending price must be greater than 0.");
-    Spark.exit();
+    setScriptError("Starting price and ending price must be greater than 0.");
 }
 
 // Check that auction for token does not exist yet (started at should be 0).
@@ -28,11 +27,27 @@ const auctionOnChain = fetchAuctionByCardInt(tokenId);
 const startedAt = auctionOnChain.startedAt;
 
 if (startedAt > 0) {
-    Spark.setScriptError("ERROR", "Token is already on auction.");
-    Spark.exit();
+    setScriptError("Token is already on auction.");
 }
 
 const txHash = submitCreateAuctionTransaction(signedTx);
 
+// Get auction start.
+const API = Spark.getGameDataService();
+    
+const bCardId = "B" + tokenId.toString();
+const cardDataItem = API.getItem("Card", bCardId).document();
+
+const cardData = cardDataItem.getData();
+const auction = cardData.auction;
+// Get auction end.
+
+cardData.txHash = txHash;
+
+const error = cardDataItem.persistor().persist().error();
+if (error) {
+    setScriptError(error);
+}
+
 Spark.setScriptData("txHash", txHash);
-Spark.setScriptData("statusCode", 200);
+setScriptSuccess();

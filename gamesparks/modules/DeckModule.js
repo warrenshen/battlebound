@@ -29,8 +29,7 @@ function getInstancesByCards(cards, cardFields) {
     const templatesDataQueryResultError = templatesDataQueryResult.error();
     
     if (templatesDataQueryResultError) {
-        Spark.setScriptError("ERROR", templatesDataQueryResultError);
-        Spark.exit();
+        setScriptError(templatesDataQueryResultError);
     } else {
         const templatesDataCursor = templatesDataQueryResult.cursor();
         while (templatesDataCursor.hasNext()) {
@@ -56,8 +55,7 @@ function getInstancesByCards(cards, cardFields) {
         const result = {};
         const template = templateIdToTemplate[card.templateId];
         if (!template) {
-            Spark.setScriptError("ERROR", "Template " + card.templateId + " does not exist.");
-            Spark.exit();
+            setScriptError("Template " + card.templateId + " does not exist.");
         }
         
         cardFields.map(function(field) { result[field] = card[field] });
@@ -89,8 +87,7 @@ function _getCardAuctionsByBCards(bCards) {
     const templatesDataQueryResultError = templatesDataQueryResult.error();
     
     if (templatesDataQueryResultError) {
-        Spark.setScriptError("ERROR", templatesDataQueryResultError);
-        Spark.exit();
+        setScriptError(templatesDataQueryResultError);
     } else {
         const templatesDataCursor = templatesDataQueryResult.cursor();
         while (templatesDataCursor.hasNext()) {
@@ -121,8 +118,7 @@ function _getCardAuctionsByBCards(bCards) {
         const result = {};
         const template = templateIdToTemplate[card.templateId];
         if (!template) {
-            Spark.setScriptError("ERROR", "Template " + card.templateId + " does not exist.");
-            Spark.exit();
+            setScriptError("Template " + card.templateId + " does not exist.");
         }
         
         cardFields.map(function(field) { result[field] = card[field] });
@@ -150,8 +146,7 @@ function getBCardsByBCardIds(bCardIds) {
     const dataQueryResultError = dataQueryResult.error();
  
     if (dataQueryResultError) {
-        Spark.setScriptError("ERROR", dataQueryResultError);
-        Spark.exit();
+        setScriptError(dataQueryResultError);
     } else {
         const dataCursor = dataQueryResult.cursor();
         while (dataCursor.hasNext()) {
@@ -168,8 +163,7 @@ function createBCardByBCardId(bCardId) {
     const cardInt = parseInt(bCardId.substring(1));
     const templateInt = fetchTemplateIntByCardInt(cardInt);
     if (!Number.isInteger(templateInt)) {
-        Spark.setScriptError("ERROR", "Invalid templateInt for cardInt.");
-        Spark.exit();
+        setScriptError("Invalid templateInt for cardInt.");
     }
     const templateId = "B" + templateInt.toString();
     
@@ -184,8 +178,7 @@ function createBCardByBCardId(bCardId) {
     
     const error = cardDataItem.persistor().persist().error();
     if (error) {
-        Spark.setScriptError("ERROR", error);
-        Spark.exit();
+        setScriptError(error);
     }
     
     return cardDataItem;
@@ -324,8 +317,7 @@ function getActiveDeckByPlayerId(playerId) {
     const cCardIds = cardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });;
     
     if (bCardIds.length + cCardIds.length !== cardIds.length) {
-        Spark.setScriptError("ERROR", "Invalid card ID present in deck.");
-        Spark.exit();
+        setScriptError("Invalid card ID present in deck.");
     }
     
     const bCards = getBCardsByBCardIds(bCardIds);
@@ -375,8 +367,7 @@ function getBCardsByPlayer(player) {
  **/
 function drawCard(deck) {
     if (!Array.isArray(deck) || deck.length === 0) {
-        Spark.setScriptError("ERROR", "Invalid deck parameter.");
-        Spark.exit();
+        setScriptError("Invalid deck parameter.");
     }
     const deckSize = deck.length;
     const randomIndex = Math.floor(Math.random() * deckSize);
@@ -390,11 +381,9 @@ function drawCard(deck) {
  **/
 function drawCards(deck, count) {
     if (!Array.isArray(deck) || deck.length === 0) {
-        Spark.setScriptError("ERROR", "Invalid deck parameter.");
-        Spark.exit();
+        setScriptError("Invalid deck parameter.");
     } else if (count < 0) {
-        Spark.setScriptError("ERROR", "Invalid count parameter.");
-        Spark.exit();
+        setScriptError("Invalid count parameter.");
     }
     
     var response;

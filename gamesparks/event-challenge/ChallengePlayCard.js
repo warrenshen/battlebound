@@ -17,13 +17,26 @@
 //   It could only be in the player's hand (stored server side) if so.
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("ChallengeEventPrefix");
 require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
 
 const cardId = Spark.getData().cardId;
-const attributes = Spark.getData().attributes;
+const attributesJson = Spark.getData().attributesJson;
+const attributesString = Spark.getData().attributesString;
+
+var attributes;
+
+if (attributesJson.fieldIndex) {
+    attributes = attributesJson;
+} else {
+    attributes = JSON.parse(attributesString);
+    if (!attributes.fieldIndex) {
+        setScriptError("Invalid attributesJson or attributesString parameter");
+    }
+}
 
 const challengeState = challengeStateData.current;
 
@@ -38,20 +51,17 @@ const opponentField = opponentState.field;
 // Find index of card played in hand.
 const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
 if (handIndex < 0) {
-    Spark.setScriptError("ERROR", "Invalid cardId parameter");
-    Spark.exit();
+    setScriptError("Invalid cardId parameter");
 }
 
 const playedCard = playerHand[handIndex];
 
 if (playedCard.manaCost > playerManaCurrent) {
-    Spark.setScriptError("ERROR", "Card mana cost exceeds player's current mana.");
-    Spark.exit();
+    setScriptError("Card mana cost exceeds player's current mana.");
 } else {
     playerState.manaCurrent = playerState.manaCurrent - playedCard.cost;
     if (!Number.isInteger(playerState.manaCurrent)) {
-        Spark.setScriptError("ERROR", "Player mana current is no longer an int.");
-        Spark.exit();
+        setScriptError("Player mana current is no longer an int.");
     }
 }
 
@@ -63,13 +73,11 @@ if (playedCard.category === CARD_CATEGORY_MINION) {
 
     // Ensure that index to play card at is valid.
     if (fieldIndex < 0 || fieldIndex > 5) {
-        Spark.setScriptError("ERROR", "Invalid fieldIndex parameter.");
-        Spark.exit();
+        setScriptError("Invalid fieldIndex parameter.");
     }
     
     if (playerField[fieldIndex].id !== "EMPTY") {
-        Spark.setScriptError("ERROR", "Invalid fieldIndex parameter - card exists at fieldIndex.");
-        Spark.exit();
+        setScriptError("Invalid fieldIndex parameter - card exists at fieldIndex.");
     }
     
     if (!Array.isArray(playedCard.abilities)) {
@@ -122,8 +130,10 @@ if (playedCard.category === CARD_CATEGORY_MINION) {
         playerId: playerId,
         category: MOVE_CATEGORY_PLAY_MINION,
         attributes: {
+            card: playedCard,
             cardId: cardId,
             fieldIndex: fieldIndex,
+            handIndex: handIndex,
         },
     };
 } else if (playedCard.category === CARD_CATEGORY_SPELL) {
@@ -131,8 +141,7 @@ if (playedCard.category === CARD_CATEGORY_MINION) {
         // For now, only spell that exists is to damage all enemy cards by 1.
         opponentField.forEach(function(card) { damageCard(card, 2) });
     } else {
-        Spark.setScriptError("ERROR", "Unrecognized spell card name.");
-        Spark.exit();
+        setScriptError("Unrecognized spell card name.");
     }
     
     const deadCards = opponentField.filter(function(card) { return card.health <= 0 });
@@ -144,25 +153,27 @@ if (playedCard.category === CARD_CATEGORY_MINION) {
     
     move = {
         playerId: playerId,
-        category: MOVE_CATEGORY_PLAY_SPELL,
+        category: MOVE_CATEGORY_PLAY_SPELL_GENERAL,
         attributes: {
+            card: playedCard,
             cardId: cardId,
+            handIndex: handIndex,
         },
     };
 } else {
     if (error) {
-        Spark.setScriptError("ERROR", "Unrecognized card category.");
-        Spark.exit();
+        setScriptError("Unrecognized card category.");
     }
 }
 
 // Remove played card from hand.
 const newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
 playerState.hand = newHand;
-playerState.handSize = newHand.length;
     
 challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
 challengeStateData.moveTakenThisTurn = 1;
     
 require("PersistChallengeStateModule");
+
+setScriptSuccess();

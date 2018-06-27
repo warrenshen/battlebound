@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("OnChainModule");
 
 const player = Spark.getPlayer();
@@ -14,8 +15,7 @@ const signedTx = Spark.getData().signedTx;
 const tokenId = Spark.getData().tokenId;
 
 if (tokenId < 0) {
-    Spark.setScriptError("ERROR", "Invalid token ID.");
-    Spark.exit();
+    setScriptError("Invalid token ID.");
 }
 
 // Get auction start.
@@ -29,25 +29,24 @@ const auction = cardData.auction;
 // Get auction end.
 
 if (auction.seller !== address) {
-    Spark.setScriptError("ERROR", "Auction cannot be canceled by non-seller.");
-    Spark.exit();
-}
-
-const error = cardDataItem.persistor().persist().error();
-if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
+    setScriptError("Auction cannot be canceled by non-seller.");
 }
     
 // Validate that price is valid which means that auction is valid.
 const currentPrice = fetchAuctionCurrentPriceByTokenId(tokenId);
 
 if (currentPrice <= 0) {
-    Spark.setScriptError("ERROR", "Token is not on auction.");
-    Spark.exit();
+    setScriptError("Token is not on auction.");
 }
 
 const txHash = submitCancelAuctionTransaction(signedTx);
+cardData.txHash = txHash;
+
+const error = cardDataItem.persistor().persist().error();
+if (error) {
+    setScriptError(error);
+}
 
 Spark.setScriptData("txHash", txHash);
-Spark.setScriptData("statusCode", 200);
+setScriptSuccess();
+

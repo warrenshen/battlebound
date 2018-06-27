@@ -1,3 +1,4 @@
+require("ScriptDataModule");
 require("DeckModule");
 
 const player = Spark.getPlayer();
@@ -8,4 +9,4 @@ const decks = result[1];
 
 Spark.setScriptData("cards", cards);
 Spark.setScriptData("decks", decks)
-Spark.setScriptData("statusCode", 200);
+setScriptSuccess();

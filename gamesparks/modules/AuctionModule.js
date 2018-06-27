@@ -19,8 +19,7 @@ function findAuctionedCardsBySeller(address) {
     const cards = [];
     
     if (cardsDataQueryResultError) {
-        Spark.setScriptError("ERROR", cardsDataQueryResultError);
-        Spark.exit();
+        setScriptError(cardsDataQueryResultError);
     } else {
         const cardsDataCursor = cardsDataQueryResult.cursor();
         while (cardsDataCursor.hasNext()) {
@@ -50,8 +49,7 @@ function removeAuctionByTokenId(tokenId) {
     
     const error = cardDataItem.persistor().persist().error();
     if (error) {
-        Spark.setScriptError("ERROR", error);
-        Spark.exit();
+        setScriptError(error);
     }
 }
 
@@ -62,8 +60,7 @@ function syncAuctionByTokenId(tokenId) {
     
     const bCardId = "B" + tokenId.toString();
     var cardDataItem = API.getItem("Card", bCardId).document();
-    if (cardDataItem === null)
-    {
+    if (cardDataItem === null) {
         cardDataItem = createBCardByBCardId(bCardId);
     }
     const cardData = cardDataItem.getData();
@@ -84,7 +81,6 @@ function syncAuctionByTokenId(tokenId) {
     
     const error = cardDataItem.persistor().persist().error();
     if (error) {
-        Spark.setScriptError("ERROR", error);
-        Spark.exit();
+        setScriptError(error);
     }
 }

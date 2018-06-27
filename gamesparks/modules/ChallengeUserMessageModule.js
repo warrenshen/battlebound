@@ -13,15 +13,15 @@ require("ChallengeMovesModule");
 
 const API = Spark.getGameDataService();
 
-const playerId = Spark.getPlayer().getPlayerId();
+const player = Spark.getPlayer();
+const playerId = player.getPlayerId();
 const challengeId = Spark.getData().challenge.challengeId;
 const challenge = Spark.getChallenge(challengeId);
 
 const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
 
 if (challengeStateDataItem === null) {
-    Spark.setScriptError("ERROR", "ChallengeState does not exist.");
-    Spark.exit();
+    setScriptError("ChallengeState does not exist.");
 }
 
 const challengeStateData = challengeStateDataItem.getData();
@@ -42,18 +42,29 @@ const fields = [
     "health",
     "armor",
     "field",
-    "handSize",
+    "hand",
     "deckSize",
 ];
 const playerFields = [
-    "hand",
+    // "hand",
 ];
+
+function obfuscateOpponentHand(hand) {
+    return hand.map(function(card) {
+        return { id: "HIDDEN" };
+    });
+}
 
 const filteredPlayerState = {};
 const filteredOpponentState = {};
 fields.forEach(function(field) {
     filteredPlayerState[field] = playerState[field];
-    filteredOpponentState[field] = opponentState[field];
+    
+    if (field === "hand") {
+        filteredOpponentState[field] = obfuscateOpponentHand(opponentState[field]);
+    } else {
+        filteredOpponentState[field] = opponentState[field];
+    }
 });
 playerFields.forEach(function(field) {
     filteredPlayerState[field] = playerState[field];
@@ -70,6 +81,9 @@ const obfuscatedMoves = lastMoves.map(function(move) {
         return {
             playerId: move.playerId,
             category: move.category,
+            attributes: {
+                card: { id: "HIDDEN" },
+            },
         };
     } else {
         return move;
@@ -77,11 +91,10 @@ const obfuscatedMoves = lastMoves.map(function(move) {
 });
 const newMoves = obfuscatedMoves.filter(function(move) {
     if (move === null) {
-        Spark.setScriptError("ERROR", "Move is null - did you remember to set move to something?");
-        Spark.exit();
+        setScriptError("Move is null - did you remember to set move to something?");
     }
     
-    return move.playerId === opponentId || move.category === MOVE_CATEGORY_DRAW_CARD;
+    return move.playerId == opponentId || move.category == MOVE_CATEGORY_DRAW_CARD;
 });
 
 Spark.setScriptData("newMoves", newMoves);

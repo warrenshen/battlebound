@@ -48,8 +48,7 @@ function recoverAddressBySignature(challenge, signature) {
         const recoveredAddress = cleanHex(result).substring(24);
         return recoveredAddress;
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - recoverAddressBySignature.");
     }
 }
 
@@ -71,8 +70,7 @@ function fetchBalanceByAddress(address) {
         const z = 'z';
         return parseInt(responseJson.result, 16);
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchBalanceByAddress.");
     }
 }
 
@@ -93,16 +91,15 @@ function fetchNonceByAddress(address) {
         const z = 'z';
         return parseInt(responseJson.result, 16);
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchNonceByAddress.");
     }
 }
 
 function fetchTemplateIntByCardInt(cardInt) {
     if (!Number.isInteger(cardInt)) {
-        Spark.setScriptError("ERROR", "Invalid cardInt parameter.");
-        Spark.exit();
+        setScriptError("Invalid cardInt parameter.");
     }
+    
     const formattedCardId = padParameter(cardInt);
     const data = "0xdf84807a" + formattedCardId;
     const json = {
@@ -126,8 +123,7 @@ function fetchTemplateIntByCardInt(cardInt) {
     if (responseCode === 200) {
         return convertHexToIntFixedLength(responseJson.result);
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchTemplateIntByCardInt.");
     }
 }
 
@@ -155,8 +151,7 @@ function fetchCardIdsByAddress(address) {
     if (responseCode === 200) {
         return convertHexToIntVariableLength(responseJson.result);
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchCardIdsByAddress.");
     }
 }
 
@@ -179,8 +174,7 @@ function fetchLatestBlockNumber() {
     if (responseCode === 200) {
         return responseJson.result;
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchLatestBlockNumber.");
     }
 }
 
@@ -248,8 +242,7 @@ function _parseLogs(event, rawLogs) {
                 logIndex: rawLog.logIndex,
             };
         } else {
-            Spark.setScriptError("ERROR", "Invalid event.");
-            Spark.exit();
+            setScriptError("Invalid event.");
         }
     });
 }
@@ -279,16 +272,15 @@ function fetchLogsByBlockRange(event, fromBlock, toBlock) {
         const z = "z";
         return logs;
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchLogsByBlockRange.");
     }
 }
         
 function fetchAuctionByCardInt(cardInt) {
     if (!Number.isInteger(cardInt)) {
-        Spark.setScriptError("ERROR", "Invalid cardInt parameter.");
-        Spark.exit();
+        setScriptError("Invalid cardInt parameter.");
     }
+    
     const formattedTokenId = padParameter(cardInt);
     const data = "0x78bd7935" + formattedTokenId;
     const json = {
@@ -324,16 +316,15 @@ function fetchAuctionByCardInt(cardInt) {
             startedAt: dataInts[4],
         };
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - fetchAuctionByCardInt.");
     }
 }
 
 function fetchAuctionCurrentPriceByTokenId(cardInt) {
     if (!Number.isInteger(cardInt)) {
-        Spark.setScriptError("ERROR", "Invalid cardInt parameter.");
-        Spark.exit();
+        setScriptError("Invalid cardInt parameter.");
     }
+    
     const formattedTokenId = padParameter(cardInt);
     const data = "0xc55d0f56" + formattedTokenId;
     const json = {
@@ -358,8 +349,7 @@ function fetchAuctionCurrentPriceByTokenId(cardInt) {
         const result = responseJson.result;
         return convertHexToIntFixedLength(result);
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("ERROR", "JSON RPC request error - fetchAuctionCurrentPriceByTokenId.");
     }
 }
 
@@ -384,14 +374,12 @@ function submitCreateAuctionTransaction(signedTx) {
     if (responseCode === 200) {
         const error = responseJson.error;
         if (error && error.code) {
-            Spark.setScriptError("ERROR", "Insufficient funds to submit transaction.");
-            Spark.exit();
+            setScriptError("Insufficient funds to submit transaction.");
         }
         
         return responseJson.result;
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - submitCreateAuctionTransaction.");
     }
 }
 
@@ -416,14 +404,12 @@ function submitBidAuctionTransaction(signedTx) {
     if (responseCode === 200) {
         const error = responseJson.error;
         if (error && error.code) {
-            Spark.setScriptError("ERROR", "Insufficient funds to submit transaction.");
-            Spark.exit();
+            setScriptError("Insufficient funds to submit transaction.");
         }
         
         return responseJson.result;
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - submitBidAuctionTransaction.");
     }
 }
 
@@ -448,13 +434,11 @@ function submitCancelAuctionTransaction(signedTx) {
     if (responseCode === 200) {
         const error = responseJson.error;
         if (error && error.code) {
-            Spark.setScriptError("ERROR", "Insufficient funds to submit transaction.");
-            Spark.exit();
+            setScriptError("Insufficient funds to submit transaction.");
         }
         
         return responseJson.result;
     } else {
-        Spark.setScriptError("ERROR", "JSON RPC request error.");
-        Spark.exit();
+        setScriptError("JSON RPC request error - submitCancelAuctionTransaction.");
     }
 }
