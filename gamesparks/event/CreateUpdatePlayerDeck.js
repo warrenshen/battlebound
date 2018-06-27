@@ -5,6 +5,8 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
+
 const API = Spark.getGameDataService();
 const playerId = Spark.getPlayer().getPlayerId();
 
@@ -13,14 +15,12 @@ const name = Spark.getData().name;
 const cardIds = Spark.getData().cardIds;
 
 if (typeof previousName !== "string" || typeof name !== "string" || !Array.isArray(cardIds)) {
-    Spark.setScriptError("ERROR", "Invalid parameter(s)");
-    Spark.exit(); 
+    setScriptError("Invalid parameter(s)");
 }
 
 const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 if (playerDecksDataItem === null) {
-    Spark.setScriptError("ERROR", "PlayerDecks instance does not exist.");
-    Spark.exit(); 
+    setScriptError("PlayerDecks instance does not exist.");
 }
 
 const playerDecksData = playerDecksDataItem.getData();
@@ -34,8 +34,7 @@ const deckByName = playerDecksData.deckByName;
 const validCardIds = bCardIds.concat(Object.keys(cardByCardId));
 cardIds.forEach(function(cardId) {
     if (validCardIds.indexOf(cardId) < 0) {
-        Spark.setScriptError("ERROR", "Invalid card ID(s)");
-        Spark.exit(); 
+        setScriptError("Invalid card ID(s)");
     }
 });
 deckByName[name] = cardIds;
@@ -53,9 +52,8 @@ Object.keys(deckByName).forEach(function(deckName) {
 
 const error = playerDecksDataItem.persistor().persist().error();
 if (error) {
-    Spark.setScriptError("ERROR", error)
-    Spark.exit();
+    setScriptError(error)
 }
 
 Spark.setScriptData("deckByName", deckByName);
-Spark.setScriptData("statusCode", 200);
+setScriptSuccess();

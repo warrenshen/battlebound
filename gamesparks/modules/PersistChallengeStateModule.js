@@ -13,6 +13,5 @@ if (challengeStateData.nonce === undefined) {
 
 const error = challengeStateDataItem.persistor().persist().error();
 if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
+    setScriptError(error);
 }

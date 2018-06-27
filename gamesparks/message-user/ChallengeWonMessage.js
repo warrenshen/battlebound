@@ -14,6 +14,8 @@ require("ChallengeUserMessageModule");
 
 cancelScheduledTimeEvents(challengeId, playerId);
 
+player.removePrivateData("activeChallengeId");
+
 if (Spark.getData().challenge.shortCode === "RankedChallenge") {
     var playerId1 = Spark.getData().challenge.challenger.id;
     var playerId2 = Spark.getData().challenge.challenged[0].id;

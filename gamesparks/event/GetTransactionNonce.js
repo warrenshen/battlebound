@@ -5,16 +5,17 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("OnChainModule");
 
 const player = Spark.getPlayer();
 const address = player.getPrivateData("address");
 
 if (!address) {
-    Spark.setScriptError("ERROR", "Player does not have an address.");
-    Spark.exit(); 
+    setScriptError("Player does not have an address.");
 }
 
 const nonce = fetchNonceByAddress(address);
 
 Spark.setScriptData("nonce", nonce);
+setScriptSuccess();

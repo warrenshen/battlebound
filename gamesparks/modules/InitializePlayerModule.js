@@ -12,8 +12,7 @@ function initializePlayer() {
     const player = Spark.getPlayer();
     
     if (player === null) {
-        Spark.setScriptError("ERROR", "Player does not exist.");
-        Spark.exit();
+        setScriptError("Player does not exist.");
     }
     
     const API = Spark.getGameDataService();
@@ -55,8 +54,7 @@ function initializePlayer() {
     
     const error = playerDecksDataItem.persistor().persist().error();
     if (error) {
-        Spark.setScriptError("ERROR", error);
-        Spark.exit();
+        setScriptError(error);
     }
     
     return true;

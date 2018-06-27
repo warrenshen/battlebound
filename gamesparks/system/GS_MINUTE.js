@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("AuctionModule");
 
 const API = Spark.getGameDataService();
@@ -12,8 +13,7 @@ const API = Spark.getGameDataService();
 const masterDataItem = API.getItem("Master", "master").document();
 
 if (masterDataItem === null) {
-    Spark.setScriptError("ERROR", "Master does not exist.");
-    Spark.exit();
+    setScriptError("Master does not exist.");
 }
 
 const master = masterDataItem.getData();
@@ -68,8 +68,7 @@ logs.forEach(function(log) {
             syncAuctionByTokenId(tokenId);
         }
     } else {
-        Spark.setScriptError("ERROR", "Invalid event.");
-        Spark.exit();
+        setScriptError("Invalid event.");
     }
 });
 
@@ -78,6 +77,5 @@ master.blockNumber = "0x" + (parseInt(toBlock, 16) + 1).toString(16);
 
 const error = masterDataItem.persistor().persist().error();
 if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
+    setScriptError(error);
 }

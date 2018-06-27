@@ -8,9 +8,10 @@
  * Player scriptData schema: {
  *   address: string, // Ethereum address.
  *   addressChallenge: string, // Challenge string used for address update.
+ *   activeChallengeId: string, // Challenge ID of active challenge player is in (helps prevent simultaneous challenges).
  *   winStreak: int, // Player's current win streak.
  * }
- *
+ * 
  * PlayerDecks schema: {
  *   bCardIds: [int (card id), ...], // Card IDs of cards on the blockchain.
  *   cardByCardId: {
@@ -25,7 +26,7 @@
  *   },
  *   activeDeck: string,
  * }
- *
+ * 
  * Card schema: {
  *   id: string,
  *   level: int,
@@ -40,7 +41,7 @@
  *     startedAt: int,
  *   },
  * }
- *
+ * 
  * ChallengeCard schema: {
  *   id: string,
  *   category: int,
@@ -64,13 +65,13 @@
  *     ...
  *   ],
  * }
- *
+ * 
  * Move schema: {
  *   playerId: string,
  *   category: string,
  *   attributes: { ... },
  * }
- *
+ * 
  * ChallengeState schema: {
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
  *   opponentIdByPlayerId: { [playerId]: opponentId },
@@ -86,9 +87,8 @@
  *       manaMax: int,
  *       health: int,
  *       armor: int,
- *       field: [Card, ...], // 6-element array (object of { id: "EMPTY" } = empty space).
- *       hand: [Card, ...],
- *       handSize: int,
+ *       field: [Card, ...], // 6-element array: object of { id: "EMPTY" } = empty space.
+ *       hand: [Card, ...] // Object of { id: "HIDDEN" } = upside-down card.
  *       deck: [Card, ...],
  *       deckSize: int,
  *       expiredStreak: int,

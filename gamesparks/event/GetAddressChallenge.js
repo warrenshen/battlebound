@@ -5,9 +5,10 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("AddressModule");
 
 const addressChallenge = resetPlayerAddressChallenge();
 
 Spark.setScriptData("addressChallenge", addressChallenge);
-Spark.setScriptData("responseCode", 200);
+setScriptSuccess();

@@ -13,6 +13,7 @@
 // - fieldId: 0 => player's field (friendly fire), 1 => opponent's field
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("ChallengeEventPrefix");
 require("CardAbilitiesModule");
 require("AttackModule");
@@ -21,7 +22,20 @@ require("ChallengeMovesModule");
 const TARGET_ID_FACE = "TARGET_ID_FACE";
 
 const cardId = Spark.getData().cardId;
-const attributes = Spark.getData().attributes;
+const attributesJson = Spark.getData().attributesJson;
+const attributesString = Spark.getData().attributesString;
+
+var attributes;
+
+if (attributesJson.targetId) {
+    attributes = attributesJson;
+} else {
+    attributes = JSON.parse(attributesString);
+    if (!attributes.targetId) {
+        setScriptError("Invalid attributesJson or attributesString parameter");
+    }
+}
+
 const fieldId = attributes.fieldId;
 const targetId = attributes.targetId;
 
@@ -34,22 +48,19 @@ const opponentState = challengeState[opponentId];
 const opponentField = opponentState.field;
 
 if (fieldId !== 0 && fieldId !== 1) {
-    Spark.setScriptError("ERROR", "Invalid fieldId parameter.");
-    Spark.exit();
+    setScriptError("Invalid fieldId parameter.");
 }
 
 // Find index of attacking card in player field.
 const attackingIndex = playerField.findIndex(function(card) { return card.id === cardId });
 if (attackingIndex < 0) {
-    Spark.setScriptError("ERROR", "Invalid cardId parameter.");
-    Spark.exit();
+    setScriptError("Invalid cardId parameter.");
 }
 
 const attackingCard = playerField[attackingIndex];
 // Check if card can actually attack - return error if not and update if so.
 if (attackingCard.canAttack <= 0) {
-    Spark.setScriptError("ERROR", "Card cannot attack anymore.");
-    Spark.exit();
+    setScriptError("Card cannot attack anymore.");
 } else {
     attackingCard.canAttack -= 1;
 }
@@ -62,17 +73,14 @@ var newOpponentField;
 // Friendly fire.
 if (fieldId === 0) {
     if (targetId === TARGET_ID_FACE) {
-        Spark.setScriptError("ERROR", "Invalid fieldId parameter - cannot attack self.");
-        Spark.exit();
+        setScriptError("Invalid fieldId parameter - cannot attack self.");
     } else {
         // Find index of defending card in player field.
         defendingIndex = playerField.findIndex(function(card) { return card.id === targetId });
         if (defendingIndex < 0) {
-            Spark.setScriptError("ERROR", "Invalid targetId parameter - card does not exist.");
-            Spark.exit();
+            setScriptError("Invalid targetId parameter - card does not exist.");
         } else if (attackingIndex === defendingIndex) {
-            Spark.setScriptError("ERROR", "Invalid targetId parameter - cannot attack self.");
-            Spark.exit();
+            setScriptError("Invalid targetId parameter - cannot attack self.");
         }
         
         defendingCard = playerField[defendingIndex];
@@ -89,8 +97,7 @@ if (fieldId === 0) {
     
     // `targetId` must be of a taunt card if any exist.
     if (tauntIds.length > 0 && tauntIds.indexOf(targetId) < 0) {
-        Spark.setScriptError("ERROR", "Invalid targetId parameter - taunt cards exist.");
-        Spark.exit();
+        setScriptError("Invalid targetId parameter - taunt cards exist.");
     }
         
     if (targetId === TARGET_ID_FACE) {
@@ -103,8 +110,7 @@ if (fieldId === 0) {
         // Find index of defending card in opponent field.
         defendingIndex = opponentField.findIndex(function(card) { return card.id === targetId });
         if (defendingIndex < 0) {
-            Spark.setScriptError("ERROR", "Invalid targetId parameter - card does not exist.");
-            Spark.exit();
+            setScriptError("Invalid targetId parameter - card does not exist.");
         }
         
         defendingCard = opponentField[defendingIndex];
@@ -132,3 +138,5 @@ challengeStateData.lastMoves = [move];
 challengeStateData.moveTakenThisTurn = 1;
 
 require("PersistChallengeStateModule");
+
+setScriptSuccess();

@@ -16,6 +16,12 @@ const challenge = Spark.getChallenge(challengeId);
 const challengerId = challenge.getChallengerId();
 const challengedId = challenge.getChallengedPlayerIds()[0];
 
+const challenger = Spark.loadPlayer(challengerId);
+const challenged = Spark.loadPlayer(challengedId);
+
+challenger.setPrivateData("activeChallengeId", challengeId);
+challenged.setPrivateData("activeChallengeId", challengeId);
+
 // Get challenger player deck for battle.
 const challengerDeck = getActiveDeckByPlayerId(challengerId);
 // Get challenged player deck for battle.
@@ -54,7 +60,6 @@ const challengerData = {
     // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: challengerHand,
-    handSize: challengerHand.length,
     deck: challengerDeckAfterDraw,
     deckSize: challengerDeckAfterDraw.length,
 };
@@ -69,7 +74,6 @@ const challengedData = {
     armor: 0,
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: challengedHand,
-    handSize: challengedHand.length,
     deck: challengedDeckAfterDraw,
     deckSize: challengedDeckAfterDraw.length,
 };

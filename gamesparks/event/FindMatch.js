@@ -5,31 +5,33 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("DeckModule");
 
 const API = Spark.getGameDataService();
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
 
+if (player.getPrivateData("activeChallengeId")) {
+    setScriptError("Player already in an active challenge.");
+}
+
 const matchShortCode = Spark.getData().matchShortCode;
 const playerDeck = Spark.getData().playerDeck;
 
 if (!matchShortCode || !playerDeck) {
-    Spark.setScriptError("ERROR", "Invalid parameter(s).");
-    Spark.exit();
+    setScriptError("Invalid parameter(s).");
 }
 
 const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 
 if (playerDecksDataItem === null) {
-    Spark.setScriptError("ERROR", "PlayerDecks instance does not exist.");
-    Spark.exit();
+    setScriptError("PlayerDecks instance does not exist.");
 }
 
 const playerDecksData = playerDecksDataItem.getData();
 if (!playerDecksData.deckByName[playerDeck]) {
-    Spark.setScriptError("ERROR", "Invalid player deck parameter.");
-    Spark.exit();
+    setScriptError("Invalid player deck parameter.");
 }
 
 // Sync player's PlayerDecks instance with blockchain.
@@ -39,8 +41,7 @@ playerDecksData.activeDeck = playerDeck;
 
 const error = playerDecksDataItem.persistor().persist().error();
 if (error) {
-    Spark.setScriptError("ERROR", error);
-    Spark.exit();
+    setScriptError(error);
 }
 
 if (matchShortCode === "CasualMatch") {
@@ -61,8 +62,7 @@ if (matchShortCode === "CasualMatch") {
     request.Execute();
     
 } else {
-    Spark.setScriptError("ERROR", "Invalid match short code.");
-    Spark.exit();
+    setScriptError("Invalid match short code.");
 }
 
-Spark.setScriptData("statusCode", 200);
+setScriptSuccess();

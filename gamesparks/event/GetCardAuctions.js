@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("DeckModule");
 
 const player = Spark.getPlayer();
@@ -19,8 +20,7 @@ const API = Spark.getGameDataService();
 const masterDataItem = API.getItem("Master", "master").document();
 
 if (masterDataItem === null) {
-    Spark.setScriptError("ERROR", "Master does not exist.");
-    Spark.exit();
+    setScriptError("Master does not exist.");
 }
 
 const master = masterDataItem.getData();
@@ -39,3 +39,4 @@ const instances = getInstancesByCards(bCards, AUCTIONABLE_CARD_FIELDS);
 const validAuctions = instances.filter(function(instance) { return instance.seller != prefixHex(address.toLowerCase()) });
     
 Spark.setScriptData("auctions", validAuctions);
+setScriptSuccess();
