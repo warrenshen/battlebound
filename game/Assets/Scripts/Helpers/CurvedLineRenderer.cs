@@ -16,7 +16,7 @@ public class CurvedLineRenderer : MonoBehaviour
 	private Vector3[] linePositions = new Vector3[0];
 	private Vector3[] linePositionsOld = new Vector3[0];
 
-    private float damping = 0.7f;
+    private float damping = 0.8f;
     public float lineWidth = 1;
 
     public LineRenderer lineRenderer;

@@ -40,6 +40,9 @@ public class Player
 	private int armor;
 	public int Armor => armor;
 
+    public PlayerAvatar avatar;
+
+
 	public Player(string id, string name)
 	{
 		this.id = id;

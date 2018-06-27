@@ -48,6 +48,7 @@ public class PlayerAvatar : MonoBehaviour {
         this.maxHealth = 30;
         this.health = this.maxHealth;
         this.weapon = null;
+        player.avatar = this;
         //to-do: load avatar from player
         //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
 
