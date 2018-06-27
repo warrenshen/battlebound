@@ -5,245 +5,247 @@ using UnityEngine;
 using TMPro;
 
 [System.Serializable]
-public class BoardCreature : MonoBehaviour
+public class BoardCreature : Targetable
 {
+    [SerializeField]
+    private string uid;     //for server unique tracking/reference?
+    public string Uid => uid;
 
-	[SerializeField]
-	private string id;
-	public string Id => id;
+    [SerializeField]
+    private int cost;           //cost retained for conditional removal cards
+    public int Cost => cost;    //e.g. remove all cards with cost 2 or less
 
-	[SerializeField]
-	private int cost;           //cost retained for conditional removal cards
-	public int Cost => cost;    //e.g. remove all cards with cost 2 or less
+    [SerializeField]
+    private int attack;
+    public int Attack => attack;
 
-	[SerializeField]
-	private int attack;
-	public int Attack => attack;
+    [SerializeField]
+    private int health;
+    public int Health => health;
 
-	[SerializeField]
-	private int health;
-	public int Health => health;
+    [SerializeField]
+    private string image;
+    public string Image => image;
 
-	[SerializeField]
-	private string image;
-	public string Image => image;
+    private int maxAttacks;
+    [SerializeField]
+    private int canAttack;
+    public int CanAttack => canAttack;
 
-	private int maxAttacks;
-	[SerializeField]
-	private int canAttack;
-	public int CanAttack => canAttack;
+    private int attacksThisTurn;
 
-	private int attacksThisTurn;
+    [SerializeField]
+    private Player owner;
+    public Player Owner => owner;
 
-	[SerializeField]
-	private Player owner;
-	public Player Owner => owner;
+    private SpriteRenderer sp;
+    private CreatureCard card;
+    public CreatureCard Card => card;
 
-	private SpriteRenderer sp;
-	private CreatureCard card;
-	public CreatureCard Card => card;
+    [SerializeField]
+    private List<string> abilities;
+    private Dictionary<string, GameObject> abilitiesFX;
 
-	[SerializeField]
-	private List<string> abilities;
-	private Dictionary<string, GameObject> abilitiesFX;
+    private bool silenced;
+    public bool Silenced => silenced;
 
-	private bool silenced;
-	public bool Silenced => silenced;
-
-	Material dissolve;
-	TextMeshPro textMesh;
+    Material dissolve;
+    TextMeshPro textMesh;
 
 
-	public void Initialize(CardObject cardObject, Player owner)
-	{
-		//data structure stuff
-		this.card = cardObject.card as CreatureCard;
-		this.id = this.card.Id;
-		this.cost = this.card.Cost;
-		this.attack = this.card.Attack;
-		this.health = this.card.Health;
-		this.image = this.card.Image;
-		this.abilities = this.card.Abilities;
+    public void Initialize(CardObject cardObject, Player owner)
+    {
+        //data structure stuff
+        this.card = cardObject.card as CreatureCard;
+        this.uid = this.card.Id;
+        this.cost = this.card.Cost;
+        this.attack = this.card.Attack;
+        this.health = this.card.Health;
+        this.image = this.card.Image;
+        this.abilities = this.card.Abilities;
 
-		this.canAttack = 0;
-		this.maxAttacks = 1;
-		this.attacksThisTurn = 0;
+        this.canAttack = 0;
+        this.maxAttacks = 1;
+        this.attacksThisTurn = 0;
 
-		this.owner = owner;
-		this.gameObject.layer = 9;
-		if (this.abilities != null)
-			this.abilitiesFX = new Dictionary<string, GameObject>();
+        this.owner = owner;
+        this.gameObject.layer = 9;
+        if (this.abilities != null)
+            this.abilitiesFX = new Dictionary<string, GameObject>();
 
-		//Render everything (labels, image, etc) method call here
-		sp = gameObject.AddComponent<SpriteRenderer>();
-		sp.sortingOrder = -1;
-		Texture2D texture = cardObject.Renderer.sprite.texture;
-		sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
-		BoxCollider coll = gameObject.AddComponent<BoxCollider>() as BoxCollider;
-		coll.size += new Vector3(0, 0, 1.2f);
-		coll.center += new Vector3(0, 0, -0.45f);
+        //Render everything (labels, image, etc) method call here
+        sp = gameObject.AddComponent<SpriteRenderer>();
+        sp.sortingOrder = -1;
+        Texture2D texture = cardObject.Renderer.sprite.texture;
+        sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
+        BoxCollider coll = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        coll.size += new Vector3(0, 0, 1.2f);
+        coll.center += new Vector3(0, 0, -0.45f);
 
-		//maybe do this manually in prefab later
-		GameObject textHolder = new GameObject("Text Label");
-		textMesh = textHolder.AddComponent<TextMeshPro>();
-		textMesh.fontSize = 6;
-		textMesh.fontStyle = FontStyles.Bold;
-		textMesh.alignment = TextAlignmentOptions.Center;
-		RectTransform textContainer = textMesh.GetComponent<RectTransform>();
-		textContainer.sizeDelta = new Vector2(3, 2);
-		textContainer.anchoredPosition = new Vector3(0, 2.2f, -0.5f);
-		textHolder.transform.SetParent(gameObject.transform, false);
+        //maybe do this manually in prefab later
+        GameObject textHolder = new GameObject("Text Label");
+        textMesh = textHolder.AddComponent<TextMeshPro>();
+        textMesh.fontSize = 6;
+        textMesh.fontStyle = FontStyles.Bold;
+        textMesh.alignment = TextAlignmentOptions.Center;
+        RectTransform textContainer = textMesh.GetComponent<RectTransform>();
+        textContainer.sizeDelta = new Vector2(3, 2);
+        textContainer.anchoredPosition = new Vector3(0, 2.2f, -0.5f);
+        textHolder.transform.SetParent(gameObject.transform, false);
 
-		//ehh
-		dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
-		sp.material = dissolve;
+        //ehh
+        dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
+        sp.material = dissolve;
 
-		//method calls
-		this.UpdateStatText();
-		this.RenderAbilities();
+        //method calls
+        this.UpdateStatText();
+        this.RenderAbilities();
 
-		//post-collider-construction visuals
-		transform.localScale = new Vector3(0, 0, 0);
-		LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
-	}
+        //post-collider-construction visuals
+        transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
+    }
 
-	public void RecoverAttack()
-	{
-		this.canAttack = this.maxAttacks;
-	}
+    public void RecoverAttack()
+    {
+        this.canAttack = this.maxAttacks;
+    }
 
-	public void Fight(BoardCreature other)
-	{
-		if (this.canAttack <= 0)
-		{
-			Debug.LogError("Fight called when canAttack is 0 or below!");
-			return;
-		}
+    public void Fight(dynamic other)
+    {
+        if (this.canAttack <= 0)
+        {
+            Debug.LogError("Fight called when canAttack is 0 or below!");
+            return;
+        }
 
-		this.canAttack -= 1;
+        this.canAttack -= 1;
+        //move/animate
+        Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
+        LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
+        //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
-		//move/animate
-		Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-		LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
-		//LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
+        FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
+        other.TakeDamage(this.attack);
 
-		//to-do this string should be chosen from some dict set by text file later
-		FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
-		FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
+        if (!other.IsAvatar)
+        {
+            FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
 
-		if (other.HasAbility("taunt"))
-		{
-			SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
-		}
-		else
-		{
-			SoundManager.Instance.PlaySound("Splatter", other.transform.position);
-		}
+            if (other.HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
+                SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
+            else
+                SoundManager.Instance.PlaySound("Splatter", other.transform.position);
 
-		other.TakeDamage(this.attack);
-		this.TakeDamage(other.Attack);
-	}
+            this.TakeDamage(other.Attack);
+        }
+    }
 
-	//taking damage
-	public bool TakeDamage(int amount)
-	{
-		if (this.HasAbility("shielded"))
-		{
-			this.abilities.Remove("shielded");
-			RenderAbilities(); //to-do: needs review in future
-			return false;
-		}
+    public void FightAvatar(PlayerAvatar avatar)
+    {
 
-		this.health -= amount;
-		if (CheckAlive())
-		{
-			this.UpdateStatText();
-		}
-		return true; //true implies did take damage, e.g. for poison
-	}
+    }
 
-	public bool CheckAlive()
-	{
-		if (this.health > 0)
-		{
-			return true;
-		}
-		else
-		{
-			//to-do, delay creature death
-			Board.Instance().RemoveCreature(this);
-			FXPoolManager.Instance.PlayEffect("CreatureDeath", this.transform.position);
-			StartCoroutine("Dissolve", 2);
-			return false;
-		}
-	}
+    //taking damage
+    public bool TakeDamage(int amount)
+    {
+        if (this.HasAbility("shielded"))
+        {
+            this.abilities.Remove("shielded");
+            RenderAbilities(); //to-do: needs review in future
+            return false;
+        }
 
-	private IEnumerator Dissolve(float duration)
-	{
-		SoundManager.Instance.PlaySound("BurnDestroy", this.transform.position);
-		float elapsedTime = 0;
-		while (elapsedTime < duration)
-		{
-			sp.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
-			elapsedTime += Time.deltaTime;
-			yield return new WaitForEndOfFrame();
-		}
-		Destroy(gameObject);
-	}
+        this.health -= amount;
+        if (CheckAlive())
+        {
+            this.UpdateStatText();
+        }
+        return true; //true implies did take damage, e.g. for poison
+    }
 
-	public void UpdateStatText()
-	{
-		textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.id);
-	}
+    public bool CheckAlive()
+    {
+        if (this.health > 0)
+        {
+            return true;
+        }
+        else
+        {
+            //to-do, delay creature death
+            Board.Instance().RemoveCreature(this);
+            FXPoolManager.Instance.PlayEffect("CreatureDeath", this.transform.position);
+            StartCoroutine("Dissolve", 2);
+            return false;
+        }
+    }
 
-	private void RenderAbilities()
-	{
-		if (abilities == null)
-			return;
+    private IEnumerator Dissolve(float duration)
+    {
+        SoundManager.Instance.PlaySound("BurnDestroy", this.transform.position);
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            sp.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(gameObject);
+    }
 
-		//doing additions
-		foreach (string ability in abilities)
-		{
-			if (abilitiesFX.ContainsKey(ability))
-				continue;
-			if (!FXPoolManager.Instance.HasEffect(ability))
-				continue;
-			abilitiesFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
-		}
-		//do removals
-		foreach (string key in abilitiesFX.Keys)
-		{
-			if (abilities.Contains(key))
-				continue;
-			//if not continue, needs removal
-			GameObject effect = abilitiesFX[key];
-			FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
-		}
-	}
+    public void UpdateStatText()
+    {
+        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.uid);
+    }
 
-	public void AddAbility(string ability)
-	{
-		if (abilities == null)
-		{
-			abilities = new List<string>();
-			abilitiesFX = new Dictionary<string, GameObject>();
-		}
-		abilities.Add(ability);
-		RenderAbilities();
-	}
+    private void RenderAbilities()
+    {
+        if (abilities == null)
+            return;
 
-	public bool HasAbility(string ability)
-	{
-		if (this.silenced)
-			return false;
-		switch (ability)
-		{
-			case "taunt":
-				return abilities != null && abilities.Contains("taunt");
-			case "shielded":
-				return abilities != null && abilities.Contains("shielded");
-			default:
-				return false;
-		}
-	}
+        //doing additions
+        foreach (string ability in abilities)
+        {
+            if (abilitiesFX.ContainsKey(ability))
+                continue;
+            if (!FXPoolManager.Instance.HasEffect(ability))
+                continue;
+            abilitiesFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
+        }
+        //do removals
+        foreach (string key in abilitiesFX.Keys)
+        {
+            if (abilities.Contains(key))
+                continue;
+            //if not continue, needs removal
+            GameObject effect = abilitiesFX[key];
+            FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
+        }
+    }
+
+    public void AddAbility(string ability)
+    {
+        if (abilities == null)
+        {
+            abilities = new List<string>();
+            abilitiesFX = new Dictionary<string, GameObject>();
+        }
+        abilities.Add(ability);
+        RenderAbilities();
+    }
+
+    public bool HasAbility(string ability)
+    {
+        if (this.silenced)
+            return false;
+        switch (ability)
+        {
+            case "taunt":
+                return abilities != null && abilities.Contains("taunt");
+            case "shielded":
+                return abilities != null && abilities.Contains("shielded");
+            default:
+                return false;
+        }
+    }
 }
