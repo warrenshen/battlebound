@@ -51,7 +51,7 @@ public class Player
         this.hasTurn = false;
         this.health = 30;
         this.deck = GetDeck();
-        this.hand = new Hand(deck, 7, this.name);
+        this.hand = new Hand(this.name);
         this.mana = 10;
         this.maxMana = 10;
     }
@@ -128,7 +128,7 @@ public class Player
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            hand.Draw(deck, 1);
+            this.DrawCard();
         }
 
         this.RenderTurnStart();
@@ -142,6 +142,33 @@ public class Player
         Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
         GameObject light = GameObject.Find("Point Light");
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
+    }
+
+    private int DrawCard()
+    {
+        if (this.deck.Cards.Count <= 0)
+        {
+            return 1; //amount fatigue
+        }
+
+        Card drawn = this.deck.Cards[0];
+        this.deck.Cards.RemoveAt(0);
+        this.AddDrawnCard(drawn); // Handles decrementing this.deckSize.
+
+        return 0;
+    }
+
+    public int DrawCards(int amount)
+    {
+        int fatigue = 0;
+
+        while (amount > 0)
+        {
+            fatigue += DrawCard();
+            amount--;
+        }
+
+        return fatigue;
     }
 
     public PlayerState GeneratePlayerState()
