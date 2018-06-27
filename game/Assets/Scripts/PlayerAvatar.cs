@@ -5,8 +5,9 @@ using System;
 using UnityEngine;
 using TMPro;
 
-public class PlayerAvatar : MonoBehaviour {
-    
+public class PlayerAvatar : Targetable
+{
+
     [SerializeField]
     private int armor;
     public int Armor => armor;
@@ -48,6 +49,7 @@ public class PlayerAvatar : MonoBehaviour {
         this.maxHealth = 30;
         this.health = this.maxHealth;
         this.weapon = null;
+        this.isAvatar = true;
         player.avatar = this;
         //to-do: load avatar from player
         //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
@@ -73,14 +75,14 @@ public class PlayerAvatar : MonoBehaviour {
         UpdateStatText();
     }
 
-    public void Fight(BoardCreature other)
+    public void MakeAttack(BoardCreature other)
     {
         if (this.canAttack <= 0)
         {
             Debug.LogError("Fight called when canAttack is 0 or below!");
             return;
         }
-        if(this.weapon == null)
+        if (this.weapon == null)
         {
             Debug.LogError("Avatar Fight() called without posession of a weapon.");
         }
@@ -146,9 +148,9 @@ public class PlayerAvatar : MonoBehaviour {
         textMesh.text = String.Format("{0}/{1}", this.health, this.maxHealth);
     }
 
-	// Update is called once per frame
-	void Update ()
+    // Update is called once per frame
+    void Update()
     {
-		
-	}
+
+    }
 }
