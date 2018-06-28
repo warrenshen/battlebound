@@ -6,6 +6,7 @@
 //
 // ====================================================================================================
 // GLOBAL
+require("ScriptDataModule");
 require("DeckModule");
  
 const API = Spark.getGameDataService();

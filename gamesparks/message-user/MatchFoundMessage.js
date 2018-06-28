@@ -5,6 +5,8 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
+
 var playerId = Spark.getPlayer().getPlayerId();
 var matchShortCode = Spark.getData().matchShortCode;
 var participants = Spark.getData().participants;
@@ -15,17 +17,16 @@ if (matchShortCode === "CasualMatch") {
 } else if (matchShortCode === "RankedMatch") {
     challengeShortCode = "RankedChallenge";
 } else {
-    ptError("ERROR", "Invalid challenge short code.");
-    Spark.exit();
+    setScriptError("Invalid challenge short code.");
 }
 
 // If player is first participant - prevents double send.
 if (playerId === participants[0].id) {
-    var request = new SparkRequests.CreateChallengeRequest();
+    const request = new SparkRequests.CreateChallengeRequest();
     
-    var endTimeDate = new Date();
+    const endTimeDate = new Date();
     endTimeDate.setDate(endTimeDate.getDate() + 1)
-    var endTimeString = endTimeDate.toISOString();
+    const endTimeString = endTimeDate.toISOString();
 
     request.accessType = "PRIVATE";
     request.challengeShortCode = challengeShortCode;

@@ -48,7 +48,8 @@
  *   name: string,
  *   description: string,
  *   level: int,
- *   manaCost: int,
+ *   cost: int,
+ *   costStart: int,
  *   health: int,
  *   healthStart: int, // The initial value of health.
  *   attack: int,

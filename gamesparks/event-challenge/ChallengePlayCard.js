@@ -56,7 +56,7 @@ if (handIndex < 0) {
 
 const playedCard = playerHand[handIndex];
 
-if (playedCard.manaCost > playerManaCurrent) {
+if (playedCard.cost > playerManaCurrent) {
     setScriptError("Card mana cost exceeds player's current mana.");
 } else {
     playerState.manaCurrent = playerState.manaCurrent - playedCard.cost;

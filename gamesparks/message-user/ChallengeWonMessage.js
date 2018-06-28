@@ -5,6 +5,7 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("ProcessRankModule");
 require("CancelScheduledTimeEventsModule");
 require("ChallengeGrantExperienceModule");

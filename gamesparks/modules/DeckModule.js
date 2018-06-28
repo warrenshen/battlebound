@@ -44,11 +44,19 @@ function getInstancesByCards(cards, cardFields) {
         category: "category",
         attack: "attack",
         health: "health",
-        manaCost: "cost",
+        cost: "cost",
         name: "name",
         description: "description",
         abilities: "abilities",
     };
+    
+    const templateRequiredFields = [
+        "category",
+        // "attack",
+        // "health",
+        "cost",
+        "name",
+    ];
     
     // Form final card objects by combining fields of both Card and Template objects.
     const results = cards.map(function(card) {
@@ -59,7 +67,12 @@ function getInstancesByCards(cards, cardFields) {
         }
         
         cardFields.map(function(field) { result[field] = card[field] });
-        Object.keys(templateFieldToInstanceField).map(function(field) { result[templateFieldToInstanceField[field]] = template[field] });
+        Object.keys(templateFieldToInstanceField).map(function(field) {
+            if (templateRequiredFields.indexOf(field) >= 0 && template[field] == null) {
+                setScriptError("Template " + template.id + " is invalid, " + field + " is missing.");
+            }
+            result[templateFieldToInstanceField[field]] = template[field];
+        });
         
         result.image = template.name.replace(" ", "_");
         return result;
@@ -106,7 +119,7 @@ function _getCardAuctionsByBCards(bCards) {
         category: "category",
         attack: "attack",
         health: "health",
-        manaCost: "cost",
+        cost: "cost",
         name: "name",
         description: "description",
         abilities: "abilities",
@@ -328,6 +341,7 @@ function getActiveDeckByPlayerId(playerId) {
     const instances = getInstancesByCards(bCards.concat(cCards), DEFAULT_CARD_FIELDS);
     instances.forEach(function(instance) {
         instance.attackStart = instance.attack;
+        instance.costStart = instance.cost;
         instance.healthStart = instance.health;
     });
     return instances;
