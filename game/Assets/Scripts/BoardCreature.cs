@@ -49,7 +49,7 @@ public class BoardCreature : Targetable
     TextMeshPro textMesh;
 
 
-    public void Initialize(CardObject cardObject, Player owner)
+    public void Initialize(CardObject cardObject)
     {
         //data structure stuff
         this.card = cardObject.Card as CreatureCard;
@@ -63,7 +63,7 @@ public class BoardCreature : Targetable
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
 
-        this.owner = owner;
+        this.owner = cardObject.Card.Owner;
         this.gameObject.layer = 9;
         if (this.abilities != null)
             this.abilitiesFX = new Dictionary<string, GameObject>();
@@ -101,9 +101,14 @@ public class BoardCreature : Targetable
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
     }
 
-    public string getCardId()
+    public override string GetCardId()
     {
         return this.card.Id;
+    }
+
+    public override string GetPlayerId()
+    {
+        return this.owner.Id;
     }
 
     public void RecoverAttack()
@@ -190,7 +195,7 @@ public class BoardCreature : Targetable
     {
         float scaleFactor = 1.6f;
         LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
-        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.getCardId());
+        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.GetCardId());
     }
 
     private void RenderAbilities()
