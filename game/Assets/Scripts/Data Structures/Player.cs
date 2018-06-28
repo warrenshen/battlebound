@@ -40,7 +40,8 @@ public class Player
     private int armor;
     public int Armor => armor;
 
-    public PlayerAvatar avatar;
+    private PlayerAvatar avatar;
+    public PlayerAvatar Avatar { get; set; }
 
 
     public Player(string id, string name)

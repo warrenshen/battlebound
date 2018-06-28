@@ -25,8 +25,8 @@ public class BattleManager : MonoBehaviour
     //private List<HistoryItem> history;
 
     [SerializeField]
-    private BoardCreature mouseDownCreature;
-    private Targetable mouseUpCreature;
+    private Targetable mouseDownTargetable;
+    private Targetable mouseUpTargetable;
     private List<Targetable> validTargets; //used to store/cache valid targets
 
     public CurvedLineRenderer attackCommand;
@@ -86,32 +86,57 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        WatchMouseActions();
+    }
+
+    private void AttackStartMade(RaycastHit hit)
+    {
+        ActionManager.Instance.SetActive(false);
+        validTargets = GetValidTargets(mouseDownTargetable);
+        //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
+        attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
+        attackCommand.SetWidth(1.33f);
+        //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
+        Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
+    }
+
+    private void WatchMouseActions()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f) && hit.collider.gameObject.layer == battleLayer) //use battle layer mask
+            if (!Physics.Raycast(ray, out hit, 100f) || hit.collider.gameObject.layer != battleLayer) //use battle layer mask
+                return;
+            mouseDownTargetable = hit.collider.GetComponent<Targetable>();
+            if (mouseDownTargetable == null)
             {
-                mouseDownCreature = hit.collider.GetComponent<BoardCreature>();
-                if (mouseDownCreature != null && mouseDownCreature.Owner.HasTurn && mouseDownCreature.CanAttack > 0)
+                Debug.LogError("Raycast hit an object in battle layer that is not of class Targetable...");
+                return;
+            }
+            if (!mouseDownTargetable.Owner.HasTurn || mouseDownTargetable.CanAttack <= 0)
+                return;
+
+            if (mouseDownTargetable.IsAvatar)
+            {
+                PlayerAvatar avatar = mouseDownTargetable.Owner.Avatar;
+                if (avatar.HasWeapon())
                 {
-                    ActionManager.Instance.SetActive(false);
-                    validTargets = GetValidTargets(mouseDownCreature);
-                    //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
-                    attackCommand.SetPointPositions(mouseDownCreature.transform.position, hit.point);
-                    attackCommand.SetWidth(1.33f);
-                    //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
-                    Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
+                    AttackStartMade(hit);
                 }
+            }
+            else  // must be BoardCreature, otherwise would have returned
+            {
+                AttackStartMade(hit);
             }
         }
         else if (Input.GetMouseButtonUp(0))
         {
             RaycastHit hit;
             bool cast = Physics.Raycast(ray, out hit, 100f);
-            if (cast && hit.collider.gameObject.layer == battleLayer && mouseDownCreature != null) //use battle layer mask
+            if (cast && hit.collider.gameObject.layer == battleLayer && mouseDownTargetable != null) //use battle layer mask
             {
-                CheckFight(mouseDownCreature, hit);
+                CheckFight(mouseDownTargetable, hit);
             }
             else if (CheckPlayCard(ray, hit))
             {
@@ -128,8 +153,8 @@ public class BattleManager : MonoBehaviour
             //reset state
             ActionManager.Instance.SetActive(true);
             attackCommand.SetWidth(0);
-            mouseDownCreature = null;
-            mouseUpCreature = null;
+            mouseDownTargetable = null;
+            mouseUpTargetable = null;
             validTargets = null;
             Cursor.SetCursor(ActionManager.Instance.cursors[0], Vector2.zero, CursorMode.Auto);
         }
@@ -139,9 +164,9 @@ public class BattleManager : MonoBehaviour
             bool cast = Physics.Raycast(ray, out hit, 100f);
             if (cast)
             {
-                attackCommand.SetPointPositions(mouseDownCreature.transform.position, hit.point);
-                if (hit.collider.gameObject.layer == battleLayer && mouseDownCreature != null &&
-                    hit.collider.gameObject != mouseDownCreature.gameObject && validTargets.Contains(hit.collider.GetComponent<Targetable>()))
+                attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
+                if (hit.collider.gameObject.layer == battleLayer && mouseDownTargetable != null &&
+                    hit.collider.gameObject != mouseDownTargetable.gameObject && validTargets.Contains(hit.collider.GetComponent<Targetable>()))
                     Cursor.SetCursor(ActionManager.Instance.cursors[5], Vector2.zero, CursorMode.Auto); //crossed swords
                 else
                     Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
@@ -151,6 +176,11 @@ public class BattleManager : MonoBehaviour
                     Debug.Log(hit.collider.name);
             }
         }
+        else
+        {
+            return;
+        }
+        //do NOT put anything here, MouseButtonDown/else uses a return!
     }
 
     private void GameStart()
@@ -229,7 +259,7 @@ public class BattleManager : MonoBehaviour
         BattleSingleton.Instance.SendChallengeSurrenderRequest();
     }
 
-    private List<Targetable> GetValidTargets(BoardCreature attacker)
+    private List<Targetable> GetValidTargets(Targetable attacker)
     {
         List<Targetable> allTargets = new List<Targetable>();
         foreach (Player player in players)
@@ -242,7 +272,7 @@ public class BattleManager : MonoBehaviour
                 if (fieldCreatures[i] != null)
                     allTargets.Add(fieldCreatures[i]);
             }
-            allTargets.Add(player.avatar);
+            allTargets.Add(player.Avatar);
         }
 
         //Debug.LogWarning(allTargets.Count + " enemies found.");
@@ -268,33 +298,22 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    private void CheckFight(BoardCreature attacker, RaycastHit hit)
+    private void CheckFight(Targetable attacker, RaycastHit hit)
     {
         if (!attackCommand.enabled)
         {
             return;
         }
 
-        mouseUpCreature = hit.collider.GetComponent<Targetable>();
-        if (mouseUpCreature == mouseDownCreature)
+        mouseUpTargetable = hit.collider.GetComponent<Targetable>();
+        if (mouseUpTargetable == mouseDownTargetable)
         {
             //show creature details
             Debug.Log("Show details.");
         }
-        else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpCreature))
+        else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpTargetable))
         {
-            if (InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                CardAttackAttributes attributes = new CardAttackAttributes(
-                    mouseUpCreature.GetPlayerId(),
-                    mouseUpCreature.GetCardId()
-                );
-                BattleSingleton.Instance.SendChallengeCardAttackRequest(
-                    mouseDownCreature.GetCardId(),
-                    attributes
-                );
-            }
-            mouseDownCreature.Fight(mouseUpCreature);
+            mouseDownTargetable.Fight(mouseUpTargetable);
         }
     }
 
@@ -343,6 +362,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (target.Card.GetType() == typeof(WeaponCard))
         {
+            target.Card.Owner.Avatar.EquipWeapon(target.Card as WeaponCard);
             this.UseCard(target.Card.Owner, target);    //to-do: change to own weapon func
             return true;
         }
