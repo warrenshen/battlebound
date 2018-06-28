@@ -235,6 +235,10 @@ public class PlayerState
         public int Cost => cost;
 
         [SerializeField]
+        private int costStart;
+        public int CostStart => costStart;
+
+        [SerializeField]
         private int health;
         public int Health => health;
 
@@ -297,6 +301,11 @@ public class PlayerState
             this.cost = cost;
         }
 
+        public void SetCostStart(int costStart)
+        {
+            this.costStart = costStart;
+        }
+
         public void SetHealth(int health)
         {
             this.health = health;
@@ -345,6 +354,7 @@ public class PlayerState
                 this.name == other.Name &&
                 this.level == other.Level &&
                 this.cost == other.Cost &&
+                this.costStart == other.CostStart &&
                 this.health == other.Health &&
                 this.healthStart == other.HealthStart &&
                 this.attack == other.Attack &&
@@ -369,13 +379,17 @@ public class PlayerState
             {
                 return string.Format("Name: {0} vs {1}", this.name, other.Name);
             }
-            //else if (this.level != other.Level)
-            //{
-            //    return string.Format("Level: {0} vs {1}", this.level, other.Level);
-            //}
+            else if (this.level != other.Level)
+            {
+                return string.Format("Level: {0} vs {1}", this.level, other.Level);
+            }
             else if (this.cost != other.Cost)
             {
                 return string.Format("Cost: {0} vs {1}", this.cost, other.Cost);
+            }
+            else if (this.costStart != other.CostStart)
+            {
+                return string.Format("CostStart: {0} vs {1}", this.costStart, other.CostStart);
             }
             else if (this.health != other.Health)
             {
@@ -412,6 +426,7 @@ public class PlayerState
                 return new CreatureCard(
                     this.id,
                     this.name,
+                    this.level,
                     this.cost,
                     this.image,
                     this.attackStart,
@@ -425,6 +440,7 @@ public class PlayerState
                 return new SpellCard(
                     this.id,
                     this.name,
+                    this.level,
                     this.cost,
                     this.image,
                     owner: owner

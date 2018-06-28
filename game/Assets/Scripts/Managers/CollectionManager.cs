@@ -276,11 +276,4 @@ public class CollectionManager : MonoBehaviour
 
         return created.transform;
     }
-
-    private void CreateDeckLocal()
-    {
-        //jank json test, for generating list of json objects
-        collection.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, new List<string>()));
-        collection.Add(new CreatureCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, new List<string>()));
-    }
 }
