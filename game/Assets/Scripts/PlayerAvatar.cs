@@ -145,6 +145,8 @@ public class PlayerAvatar : Targetable
 
     public void UpdateStatText()
     {
+        float scaleFactor = 1.6f;
+        LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
         textMesh.text = String.Format("{0}/{1}", this.health, this.maxHealth);
     }
 

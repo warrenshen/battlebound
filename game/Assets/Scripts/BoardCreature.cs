@@ -126,24 +126,17 @@ public class BoardCreature : Targetable
         //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
         FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
+        SoundManager.Instance.PlaySound("Splatter", other.transform.position);
         other.TakeDamage(this.attack);
 
         if (!other.IsAvatar)
         {
             FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
+            this.TakeDamage(other.Attack);
 
             if (other.HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
-            else
-                SoundManager.Instance.PlaySound("Splatter", other.transform.position);
-
-            this.TakeDamage(other.Attack);
         }
-    }
-
-    public void FightAvatar(PlayerAvatar avatar)
-    {
-
     }
 
     //taking damage
@@ -195,6 +188,8 @@ public class BoardCreature : Targetable
 
     public void UpdateStatText()
     {
+        float scaleFactor = 1.6f;
+        LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
         textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.getCardId());
     }
 

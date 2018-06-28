@@ -24,15 +24,15 @@ public class BattleManager : MonoBehaviour
     public int boardLayer;
     //private List<HistoryItem> history;
 
+    [SerializeField]
     private BoardCreature mouseDownCreature;
-    private BoardCreature mouseUpCreature;
-    private List<BoardCreature> validTargets; //used to store/cache valid targets
+    private Targetable mouseUpCreature;
+    private List<Targetable> validTargets; //used to store/cache valid targets
 
     public CurvedLineRenderer attackCommand;
-    [SerializeField]
-    List<BoardCreature> allTargets;
 
     public static BattleManager Instance { get; private set; }
+
 
     private void Awake()
     {
@@ -93,8 +93,9 @@ public class BattleManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100f) && hit.collider.gameObject.layer == battleLayer) //use battle layer mask
             {
                 mouseDownCreature = hit.collider.GetComponent<BoardCreature>();
-                if (mouseDownCreature.Owner.HasTurn && mouseDownCreature.CanAttack > 0)
+                if (mouseDownCreature != null && mouseDownCreature.Owner.HasTurn && mouseDownCreature.CanAttack > 0)
                 {
+                    ActionManager.Instance.SetActive(false);
                     validTargets = GetValidTargets(mouseDownCreature);
                     //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
                     attackCommand.SetPointPositions(mouseDownCreature.transform.position, hit.point);
@@ -125,6 +126,7 @@ public class BattleManager : MonoBehaviour
                 Surrender();
             }
             //reset state
+            ActionManager.Instance.SetActive(true);
             attackCommand.SetWidth(0);
             mouseDownCreature = null;
             mouseUpCreature = null;
@@ -138,10 +140,15 @@ public class BattleManager : MonoBehaviour
             if (cast)
             {
                 attackCommand.SetPointPositions(mouseDownCreature.transform.position, hit.point);
-                if (hit.collider.gameObject.layer == battleLayer && mouseDownCreature != null)
-                    Cursor.SetCursor(ActionManager.Instance.cursors[5], Vector2.zero, CursorMode.Auto);
+                if (hit.collider.gameObject.layer == battleLayer && mouseDownCreature != null &&
+                    hit.collider.gameObject != mouseDownCreature.gameObject && validTargets.Contains(hit.collider.GetComponent<Targetable>()))
+                    Cursor.SetCursor(ActionManager.Instance.cursors[5], Vector2.zero, CursorMode.Auto); //crossed swords
                 else
                     Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
+
+                //for debugging
+                if (Input.GetKeyUp("space"))
+                    Debug.Log(hit.collider.name);
             }
         }
     }
@@ -222,9 +229,9 @@ public class BattleManager : MonoBehaviour
         BattleSingleton.Instance.SendChallengeSurrenderRequest();
     }
 
-    private List<BoardCreature> GetValidTargets(BoardCreature attacker)
+    private List<Targetable> GetValidTargets(BoardCreature attacker)
     {
-        allTargets = new List<BoardCreature>();
+        List<Targetable> allTargets = new List<Targetable>();
         foreach (Player player in players)
         {
             if (player == attacker.Owner)
@@ -235,14 +242,18 @@ public class BattleManager : MonoBehaviour
                 if (fieldCreatures[i] != null)
                     allTargets.Add(fieldCreatures[i]);
             }
+            allTargets.Add(player.avatar);
         }
 
         //Debug.LogWarning(allTargets.Count + " enemies found.");
-        List<BoardCreature> priorityTargets = new List<BoardCreature>();
+        List<Targetable> priorityTargets = new List<Targetable>();
         for (int j = 0; j < allTargets.Count; j++)
         {
-            if (allTargets[j].HasAbility("taunt"))
-                priorityTargets.Add(allTargets[j]);
+            if (allTargets[j].IsAvatar)
+                continue;
+            BoardCreature creature = allTargets[j] as BoardCreature;
+            if (creature.HasAbility("taunt"))
+                priorityTargets.Add(creature);
         }
 
         if (priorityTargets != null && priorityTargets.Count > 0)
@@ -264,13 +275,13 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        mouseUpCreature = hit.collider.GetComponent<BoardCreature>();
+        mouseUpCreature = hit.collider.GetComponent<Targetable>();
         if (mouseUpCreature == mouseDownCreature)
         {
             //show creature details
             Debug.Log("Show details.");
         }
-        else if (validTargets.Count > 0 && validTargets.Contains(mouseUpCreature))
+        else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpCreature))
         {
             mouseDownCreature.Fight(mouseUpCreature);
         }
@@ -279,10 +290,9 @@ public class BattleManager : MonoBehaviour
 
     private bool CheckPlayCard(Ray ray, RaycastHit hit)
     {
-
-        //TODO: check target.card.type for spell or weapon first
         if (!ActionManager.Instance.HasDragTarget())
             return false;
+
         CardObject target = ActionManager.Instance.GetDragTarget();
         //TODO: think about using displacement distance as activation indicator vs screen height
         float minThreshold = 0.20f;

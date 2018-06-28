@@ -22,6 +22,7 @@ public class ActionManager : MonoBehaviour
     private int boardLayerMask;
     public Texture2D[] cursors;
 
+    private bool active = true;
     public static ActionManager Instance { get; private set; }
 
     [SerializeField]
@@ -47,7 +48,7 @@ public class ActionManager : MonoBehaviour
     private void Update()
     {
         if (allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
-        MouseWatchCards();
+        if (active) MouseWatchCards();
     }
 
     private void LateUpdate()
@@ -219,5 +220,10 @@ public class ActionManager : MonoBehaviour
     {
         if (CollectionManager.Instance != null)
             CollectionManager.Instance.AddToDeck(card);
+    }
+
+    public void SetActive(bool val)
+    {
+        this.active = val;
     }
 }
