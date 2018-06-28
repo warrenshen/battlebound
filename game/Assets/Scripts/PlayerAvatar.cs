@@ -42,7 +42,6 @@ public class PlayerAvatar : Targetable
 
     TextMeshPro textMesh;
 
-
     public void Initialize(Player player)
     {
         this.armor = 0;
@@ -73,6 +72,16 @@ public class PlayerAvatar : Targetable
 
         //already has cylinder collider in scene
         UpdateStatText();
+    }
+
+    public override string GetCardId()
+    {
+        return "TARGET_ID_FACE";
+    }
+
+    public override string GetPlayerId()
+    {
+        return this.player.Id;
     }
 
     public void MakeAttack(BoardCreature other)

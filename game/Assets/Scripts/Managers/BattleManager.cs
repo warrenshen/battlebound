@@ -283,6 +283,19 @@ public class BattleManager : MonoBehaviour
         }
         else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpCreature))
         {
+            Debug.Log("fighting");
+
+            if (InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                CardAttackAttributes attributes = new CardAttackAttributes(
+                    mouseUpCreature.GetPlayerId(),
+                    mouseUpCreature.GetCardId()
+                );
+                BattleSingleton.Instance.SendChallengeCardAttackRequest(
+                    mouseDownCreature.GetCardId(),
+                    attributes
+                );
+            }
             mouseDownCreature.Fight(mouseUpCreature);
         }
     }
@@ -361,6 +374,7 @@ public class BattleManager : MonoBehaviour
         //shared spawning + fx
         SpawnCardToBoard(cardObject, index, boardPlace);
     }
+
     /*
      * Play card to board after user on-device drags card from hand to field. 
      */
@@ -384,8 +398,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public IEnumerator EnemyPlayCardToBoardAnim(CardObject cardObject, int fieldIndex)
+    public IEnumerator EnemyPlayCardToBoardAnim(object[] args)
     {
+        CardObject cardObject = (CardObject)args[0];
+        int fieldIndex = (int)args[1];
+
         Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
 
         LeanTween.move(cardObject.gameObject, pivotPoint.position, 1);
@@ -401,7 +418,7 @@ public class BattleManager : MonoBehaviour
     private void SpawnCardToBoard(CardObject cardObject, int index, Transform target)
     {
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
-        BoardCreature created = CreateBoardCreature(cardObject, cardObject.Card.Owner, target.position);
+        BoardCreature created = CreateBoardCreature(cardObject, target.position);
         Board.Instance().PlaceCreature(created, index);
         UseCard(cardObject.Card.Owner, cardObject);
     }
@@ -426,12 +443,12 @@ public class BattleManager : MonoBehaviour
         SoundManager.Instance.PlaySound("Play", transform.position);
     }
 
-    public BoardCreature CreateBoardCreature(CardObject cardObject, Player owner, Vector3 pos)
+    public BoardCreature CreateBoardCreature(CardObject cardObject, Vector3 pos)
     {
         GameObject created = new GameObject(cardObject.Card.Name);
         created.transform.position = pos;
         BoardCreature creature = created.AddComponent<BoardCreature>();
-        creature.Initialize(cardObject, owner);
+        creature.Initialize(cardObject);
         return creature;
     }
 
@@ -461,8 +478,7 @@ public class BattleManager : MonoBehaviour
         {
             CardObject target = opponent.Hand.GetCardByIndex(handIndex).wrapper;
             target.InitializeCard(card);
-            PlayCardToBoard(target, fieldIndex);
-            UseCard(card.Owner, target);
+            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
         }
     }
 
@@ -476,14 +492,12 @@ public class BattleManager : MonoBehaviour
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            //PlayCardToBoard(target, fieldIndex);
         }
         else
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             CardObject target = opponent.Hand.GetCardByIndex(opponentHandIndex).wrapper;
             target.InitializeCard(card);
-            //PlayCardToBoard(target, fieldIndex);
         }
     }
 

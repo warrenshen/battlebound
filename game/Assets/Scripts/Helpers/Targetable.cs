@@ -6,4 +6,8 @@ public abstract class Targetable : MonoBehaviour
 {
     protected bool isAvatar = false;
     public bool IsAvatar => isAvatar;
+
+    public abstract string GetCardId();
+
+    public abstract string GetPlayerId();
 }

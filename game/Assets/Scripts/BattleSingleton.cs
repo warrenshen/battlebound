@@ -333,7 +333,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         request.SetEventKey("ChallengeCardAttack");
         request.SetEventAttribute("challengeInstanceId", this.challengeId);
         request.SetEventAttribute("cardId", cardId);
-        request.SetEventAttribute("attributes", JsonUtility.ToJson(attributes));
+        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
         request.Send(OnChallengeCardAttackSuccess, OnChallengeCardAttackError);
     }
 
