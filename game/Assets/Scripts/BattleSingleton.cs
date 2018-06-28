@@ -56,22 +56,33 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void ChallengeTurnTakenMessageHandler(ChallengeTurnTakenMessage message)
     {
-        // Call some function in BattleManager so Nick can react to event.
-        Debug.Log("ChallengeTurnTakenMessage received.");
         GSData scriptData = message.ScriptData;
-        ProcessChallengeScriptData(scriptData);
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            ProcessChallengeScriptData(scriptData);
+        }
     }
 
     private void ChallengeWonMessageHandler(ChallengeWonMessage message)
     {
-        // Call some function in BattleManager so Nick can react to event.
         Debug.Log("ChallengeWonMessage received.");
+        GSData scriptData = message.ScriptData;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            Debug.Log("Challenge won!");
+            // Call some function in BattleManager so Nick can react to event.
+        }
     }
 
     private void ChallengeLostMessageHandler(ChallengeLostMessage message)
     {
-        // Call some function in BattleManager so Nick can react to event.
         Debug.Log("ChallengeLostMessage received.");
+        GSData scriptData = message.ScriptData;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            Debug.Log("Challenge lost...");
+            // Call some function in BattleManager so Nick can react to event.
+        }
     }
 
     private void ChallengeTimeRunningOutMessageHandler(ScriptMessage_ChallengeTimeRunningOutMessage message)
@@ -80,16 +91,21 @@ public class BattleSingleton : Singleton<BattleSingleton>
         Debug.Log("ChallengeTimeRunningOutMessage received.");
     }
 
-    private void ProcessChallengeScriptData(GSData scriptData)
+    private bool IsMessageChallengeIdValid(GSData scriptData)
     {
         string messageChallengeId = scriptData.GetString("challengeId");
 
         if (!messageChallengeId.Equals(BattleSingleton.Instance.ChallengeId))
         {
             Debug.Log("Got message with different challenge ID than expected: " + BattleSingleton.Instance.ChallengeId + " vs " + messageChallengeId + ".");
-            return;
+            return false;
         }
 
+        return true;
+    }
+
+    private void ProcessChallengeScriptData(GSData scriptData)
+    {
         int messageNonce = (int)scriptData.GetInt("nonce");
         Debug.Log("Got message with nonce: " + messageNonce.ToString());
         if (messageNonce <= this.nonce)

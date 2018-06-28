@@ -193,13 +193,16 @@ public class Player
             challengeCard.SetName(card.Name);
             //challengeCard.SetDescription(boardCreature.Card.Description);
             //challengeCard.SetLevel(boardCreature.Card.Level);
-            challengeCard.SetManaCost(card.Cost);
+            challengeCard.SetCost(card.Cost);
 
             if (card.GetType() == typeof(CreatureCard))
             {
+                CreatureCard creatureCard = (CreatureCard)card;
                 challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
-                challengeCard.SetHealth(((CreatureCard)card).Health);
-                challengeCard.SetAttack(((CreatureCard)card).Attack);
+                challengeCard.SetHealth(creatureCard.Health);
+                challengeCard.SetHealthStart(creatureCard.Health);
+                challengeCard.SetAttack(creatureCard.Attack);
+                challengeCard.SetAttackStart(creatureCard.Attack);
             }
             else if (card.GetType() == typeof(SpellCard))
             {
@@ -228,7 +231,7 @@ public class Player
                 challengeCard.SetName(boardCreature.Card.Name);
                 //challengeCard.SetDescription(boardCreature.Card.Description);
                 //challengeCard.SetLevel(boardCreature.Card.Level);
-                challengeCard.SetManaCost(boardCreature.Card.Cost);
+                challengeCard.SetCost(boardCreature.Card.Cost);
                 challengeCard.SetHealth(boardCreature.Health);
                 challengeCard.SetHealthStart(boardCreature.Card.Health);
                 challengeCard.SetAttack(boardCreature.Attack);
