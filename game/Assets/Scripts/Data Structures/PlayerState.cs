@@ -103,11 +103,11 @@ public class PlayerState
 
         for (int i = 0; i < this.hand.Count; i += 1)
         {
-            areHandsEqual &= !this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
+            areHandsEqual &= this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
         }
         for (int i = 0; i < this.field.Length; i += 1)
         {
-            areFieldsEqual &= !this.field.ElementAt(i).Equals(other.Field.ElementAt(i));
+            areFieldsEqual &= this.field.ElementAt(i).Equals(other.Field.ElementAt(i));
         }
 
         if (!areHandsEqual || !areFieldsEqual)
@@ -115,7 +115,7 @@ public class PlayerState
             return false;
         }
 
-        return this.id == other.id &&
+        return this.id == other.Id &&
                this.hasTurn == other.HasTurn &&
                this.manaCurrent == other.ManaCurrent &&
                this.manaMax == other.ManaMax &&
@@ -131,7 +131,7 @@ public class PlayerState
     {
         if (this.id != other.id)
         {
-            return string.Format("Id: {0} vs {1}", this.id, other.id);
+            return string.Format("Id: {0} vs {1}", this.id, other.Id);
         }
         else if (this.hasTurn != other.HasTurn)
         {
@@ -158,7 +158,39 @@ public class PlayerState
             return string.Format("Deck size: {0} vs {1}", this.deckSize, other.DeckSize);
         }
 
-        return "Hand/Field diff";
+        if (this.hand.Count != other.Hand.Count)
+        {
+            return string.Format("Hand size: {0} vs {1}", this.hand.Count, other.Hand.Count);
+        }
+        else
+        {
+            for (int i = 0; i < this.hand.Count; i += 1)
+            {
+                string firstDiff = this.hand.ElementAt(i).FirstDiff(other.Hand.ElementAt(i));
+                if (firstDiff != null)
+                {
+                    return firstDiff;
+                }
+            }
+        }
+
+        if (this.field.Length != other.field.Length)
+        {
+            return string.Format("Field length: {0} vs {1}", this.field.Length, other.Field.Length);
+        }
+        else
+        {
+            for (int i = 0; i < this.hand.Count; i += 1)
+            {
+                string firstDiff = this.field.ElementAt(i).FirstDiff(other.Field.ElementAt(i));
+                if (firstDiff != null)
+                {
+                    return firstDiff;
+                }
+            }
+        }
+
+        return null;
     }
 
     public List<Card> GetCardsFromChallengeCards(Player owner)
@@ -199,8 +231,8 @@ public class PlayerState
         public int Level => level;
 
         [SerializeField]
-        private int manaCost;
-        public int ManaCost => manaCost;
+        private int cost;
+        public int Cost => cost;
 
         [SerializeField]
         private int health;
@@ -260,9 +292,9 @@ public class PlayerState
             this.level = level;
         }
 
-        public void SetManaCost(int manaCost)
+        public void SetCost(int cost)
         {
-            this.manaCost = manaCost;
+            this.cost = cost;
         }
 
         public void SetHealth(int health)
@@ -311,9 +343,8 @@ public class PlayerState
                 this.id == other.Id &&
                 this.category == other.Category &&
                 this.name == other.Name &&
-                this.name == other.Description &&
                 this.level == other.Level &&
-                this.manaCost == other.ManaCost &&
+                this.cost == other.Cost &&
                 this.health == other.Health &&
                 this.healthStart == other.HealthStart &&
                 this.attack == other.Attack &&
@@ -324,6 +355,56 @@ public class PlayerState
             );
         }
 
+        public string FirstDiff(ChallengeCard other)
+        {
+            if (this.id != other.Id)
+            {
+                return string.Format("Id: {0} vs {1}", this.id, other.Id);
+            }
+            else if (this.category != other.Category)
+            {
+                return string.Format("Category: {0} vs {1}", this.category, other.Category);
+            }
+            else if (this.name != other.Name)
+            {
+                return string.Format("Name: {0} vs {1}", this.name, other.Name);
+            }
+            //else if (this.level != other.Level)
+            //{
+            //    return string.Format("Level: {0} vs {1}", this.level, other.Level);
+            //}
+            else if (this.cost != other.Cost)
+            {
+                return string.Format("Cost: {0} vs {1}", this.cost, other.Cost);
+            }
+            else if (this.health != other.Health)
+            {
+                return string.Format("Health: {0} vs {1}", this.health, other.Health);
+            }
+            else if (this.healthStart != other.HealthStart)
+            {
+                return string.Format("HealthStart: {0} vs {1}", this.healthStart, other.HealthStart);
+            }
+            else if (this.attack != other.Attack)
+            {
+                return string.Format("Level: {0} vs {1}", this.attack, other.Attack);
+            }
+            else if (this.attackStart != other.AttackStart)
+            {
+                return string.Format("AttackStart: {0} vs {1}", this.attackStart, other.AttackStart);
+            }
+            else if (this.canAttack != other.CanAttack)
+            {
+                return string.Format("CanAttack: {0} vs {1}", this.canAttack, other.CanAttack);
+            }
+            else if (this.hasShield != other.HasShield)
+            {
+                return string.Format("HasShield: {0} vs {1}", this.hasShield, other.HasShield);
+            }
+
+            return null;
+        }
+
         public Card GetCard(Player owner)
         {
             if (this.category == Card.CARD_CATEGORY_MINION)
@@ -331,10 +412,10 @@ public class PlayerState
                 return new CreatureCard(
                     this.id,
                     this.name,
-                    this.manaCost,
+                    this.cost,
                     this.image,
-                    this.attack,
-                    this.health,
+                    this.attackStart,
+                    this.healthStart,
                     this.abilities,
                     owner
                 );
@@ -344,7 +425,7 @@ public class PlayerState
                 return new SpellCard(
                     this.id,
                     this.name,
-                    this.manaCost,
+                    this.cost,
                     this.image,
                     owner: owner
                 );
