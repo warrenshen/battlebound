@@ -384,6 +384,20 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public IEnumerator EnemyPlayCardToBoardAnim(CardObject cardObject, int fieldIndex)
+    {
+        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+
+        LeanTween.move(cardObject.gameObject, pivotPoint.position, 1);
+        LeanTween.rotate(cardObject.gameObject, pivotPoint.rotation.eulerAngles, 1);
+        yield return new WaitForSeconds(1);
+
+        //flash or something
+        yield return new WaitForSeconds(1);
+
+        PlayCardToBoard(cardObject, fieldIndex);
+    }
+
     private void SpawnCardToBoard(CardObject cardObject, int index, Transform target)
     {
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
@@ -441,7 +455,7 @@ public class BattleManager : MonoBehaviour
                 Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            PlayCardToBoard(target, fieldIndex);
+            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
         }
         else
         {

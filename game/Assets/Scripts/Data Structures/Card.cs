@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+//removed abstract so that card is serialized and attributes are visible from inspector
 [System.Serializable]
-public abstract class Card
+public class Card
 {
     public static int CARD_CATEGORY_MINION = 0;
     public static int CARD_CATEGORY_SPELL = 1;
@@ -36,6 +37,7 @@ public abstract class Card
     public CardObject wrapper;
 }
 
+[System.Serializable]
 public class CreatureCard : Card
 {
     [SerializeField]
@@ -72,6 +74,7 @@ public class CreatureCard : Card
     }
 }
 
+[System.Serializable]
 public class WeaponCard : Card
 {
     [SerializeField]
@@ -96,6 +99,7 @@ public class WeaponCard : Card
     }
 }
 
+[System.Serializable]
 public class StructureCard : Card
 {
     public StructureCard(string id, string name, int cost, string image, int attack, int durability, Player owner = null)
@@ -109,6 +113,7 @@ public class StructureCard : Card
     }
 }
 
+[System.Serializable]
 public class SpellCard : Card
 {
     private static Dictionary<string, string> spellToMethod;
