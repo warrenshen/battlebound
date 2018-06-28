@@ -28,13 +28,8 @@ public class PlayerAvatar : Targetable
     public string Avatar => avatar;
 
     private int maxAttacks;
-    [SerializeField]
-    private int canAttack;
-    public int CanAttack => canAttack;
-
-    [SerializeField]
-    private Player player;
-    public Player Player => player;
+    //int canAttack / CanAttack in Targetable class
+    //Player owner / Owner exists in Targetable class
 
     private SpriteRenderer spriteRenderer;
     private bool frozen;
@@ -49,7 +44,8 @@ public class PlayerAvatar : Targetable
         this.health = this.maxHealth;
         this.weapon = null;
         this.isAvatar = true;
-        player.avatar = this;
+        this.owner = player;
+        this.owner.Avatar = this;
         //to-do: load avatar from player
         //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
 
@@ -81,37 +77,56 @@ public class PlayerAvatar : Targetable
 
     public override string GetPlayerId()
     {
-        return this.player.Id;
+        return this.owner.Id;
     }
 
-    public void MakeAttack(BoardCreature other)
+    public bool HasWeapon()
+    {
+        return this.weapon != null;
+    }
+
+    //returns true if replaced existing weapon, false if not
+    public bool EquipWeapon(WeaponCard weapon)
+    {
+        GameObject created = new GameObject(weapon.Name);
+        BoardWeapon weaponObject = created.AddComponent<BoardWeapon>();
+        weaponObject.Initialize(weapon);
+
+        this.weapon = weaponObject;
+        return false;
+    }
+
+    public override void Fight(dynamic other)
     {
         if (this.canAttack <= 0)
         {
             Debug.LogError("Fight called when canAttack is 0 or below!");
             return;
         }
-        if (this.weapon == null)
+        if (!this.HasWeapon())
         {
-            Debug.LogError("Avatar Fight() called without posession of a weapon.");
+            Debug.LogError("Fight called when avatar has no weapon!");
+            return;
         }
+
         this.canAttack -= 1;
         //move/animate
-        Vector3 delta = (this.transform.position - other.transform.position) / 1.2f;
+        Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
         //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
-        //to-do this string should be chosen from some dict set by text file later
-        FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
         FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
+        SoundManager.Instance.PlaySound("Splatter", other.transform.position);
+        this.weapon.AttackMade(other); //diff from boardcreature fight!!
 
-        if (other.HasAbility("taunt"))
-            SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
-        else
-            SoundManager.Instance.PlaySound("Splatter", other.transform.position);
+        if (!other.IsAvatar)
+        {
+            FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
+            this.TakeDamage(other.Attack);
 
-        this.weapon.MakeAttack(other);
-        this.TakeDamage(other.Attack);
+            if (other.HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
+                SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
+        }
     }
 
     public bool TakeDamage(int amount)
@@ -157,11 +172,5 @@ public class PlayerAvatar : Targetable
         float scaleFactor = 1.6f;
         LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
         textMesh.text = String.Format("{0}/{1}", this.health, this.maxHealth);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

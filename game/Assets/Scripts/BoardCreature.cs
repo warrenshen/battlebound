@@ -24,15 +24,11 @@ public class BoardCreature : Targetable
     public string Image => image;
 
     private int maxAttacks;
-    [SerializeField]
-    private int canAttack;
-    public int CanAttack => canAttack;
+    //int canAttack / CanAttack in Targetable class
 
     private int attacksThisTurn;
 
-    [SerializeField]
-    private Player owner;
-    public Player Owner => owner;
+    //Player owner / Owner exists in Targetable class
 
     private SpriteRenderer sp;
     private CreatureCard card;
@@ -116,7 +112,7 @@ public class BoardCreature : Targetable
         this.canAttack = this.maxAttacks;
     }
 
-    public void Fight(dynamic other)
+    public override void Fight(dynamic other)
     {
         if (this.canAttack <= 0)
         {

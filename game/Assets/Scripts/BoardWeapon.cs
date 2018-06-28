@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardWeapon : MonoBehaviour {
+public class BoardWeapon : MonoBehaviour
+{
 
     [SerializeField]
     private int attack;
@@ -15,22 +16,26 @@ public class BoardWeapon : MonoBehaviour {
     public Player User => user;
 
 
-    public void Initialize(WeaponCard card) {
+    public void Initialize(WeaponCard card)
+    {
         this.attack = card.Attack;
         this.durability = card.Durability;
     }
 
-    public void MakeAttack(BoardCreature creature) {
+    public void AttackMade(BoardCreature creature)
+    {
         creature.TakeDamage(this.attack);
         bool alive = user.TakeDamage(creature.Attack);  //true if alive, false if not
+        //to-do: updated weapon durability rendering
 
         this.durability -= 1;
         if (CheckBroken())
             Destroy(gameObject);
     }
 
-    private bool CheckBroken() {
+    private bool CheckBroken()
+    {
         return this.durability <= 0;
     }
-	
+
 }
