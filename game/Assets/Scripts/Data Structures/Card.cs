@@ -19,6 +19,10 @@ public abstract class Card
     public string Name => name;
 
     [SerializeField]
+    protected int level;
+    public int Level => level;
+
+    [SerializeField]
     protected int cost;
     public int Cost
     {
@@ -52,6 +56,7 @@ public class CreatureCard : Card
     public CreatureCard(
         string id,
         string name,
+        int level,
         int cost,
         string image,
         int attack,
@@ -62,6 +67,7 @@ public class CreatureCard : Card
     {
         this.id = id;
         this.name = name;
+        this.level = level;
         this.cost = cost;
         this.image = image;
         this.attack = attack;
@@ -82,11 +88,20 @@ public class WeaponCard : Card
     protected int durability;
     public int Durability => durability;
 
-    public WeaponCard(string id, string name, int cost, string image, int attack, int durability, Player owner = null)
+    public WeaponCard(
+        string id,
+        string name,
+        int level,
+        int cost,
+        string image,
+        int attack,
+        int durability,
+        Player owner = null
+    )
     {
         this.id = id;
         this.name = name;
-        //this.category = category;
+        this.level = level;
         this.cost = cost;
         this.image = image;
         this.owner = owner;
@@ -98,11 +113,20 @@ public class WeaponCard : Card
 
 public class StructureCard : Card
 {
-    public StructureCard(string id, string name, int cost, string image, int attack, int durability, Player owner = null)
+    public StructureCard(
+        string id,
+        string name,
+        int level,
+        int cost,
+        string image,
+        int attack,
+        int durability,
+        Player owner = null
+    )
     {
         this.id = id;
         this.name = name;
-        //this.category = category;
+        this.level = level;
         this.cost = cost;
         this.image = image;
         this.owner = owner;
@@ -116,11 +140,19 @@ public class SpellCard : Card
     private bool targeted;      //affects single target or whole board?
     public bool Targeted => targeted;
 
-    public SpellCard(string id, string name, int cost, string image, bool targeted = false, Player owner = null)
+    public SpellCard(
+        string id,
+        string name,
+        int level,
+        int cost,
+        string image,
+        bool targeted = false,
+        Player owner = null
+    )
     {
         this.id = id;
         this.name = name;
-        //this.category = category;
+        this.level = level;
         this.cost = cost;
         this.image = image;
         this.targeted = targeted;

@@ -96,16 +96,16 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "shielded" }, owner: this));
-        cards.Add(new WeaponCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new WeaponCard("C4", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "taunt" }, owner: this));
-        cards.Add(new WeaponCard("C2", "Fiery War Axe", 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, "Lightning_Bolt", targeted: true, owner: this));
+        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "shielded" }, owner: this));
+        cards.Add(new WeaponCard("C2", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 3, 1, "Lightning_Bolt", targeted: true, owner: this));
+        cards.Add(new WeaponCard("C4", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 1, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "taunt" }, owner: this));
+        cards.Add(new WeaponCard("C2", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "Lightning_Bolt", targeted: true, owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 5, 1, "Lightning_Bolt", targeted: true, owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 6, 1, "Lightning_Bolt", targeted: true, owner: this));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 1, 1, "Lightning_Bolt", targeted: true, owner: this));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;
@@ -194,6 +194,7 @@ public class Player
             //challengeCard.SetDescription(boardCreature.Card.Description);
             //challengeCard.SetLevel(boardCreature.Card.Level);
             challengeCard.SetCost(card.Cost);
+            challengeCard.SetCostStart(card.Cost);
 
             if (card.GetType() == typeof(CreatureCard))
             {
@@ -232,6 +233,7 @@ public class Player
                 //challengeCard.SetDescription(boardCreature.Card.Description);
                 //challengeCard.SetLevel(boardCreature.Card.Level);
                 challengeCard.SetCost(boardCreature.Card.Cost);
+                challengeCard.SetCostStart(boardCreature.Card.Cost);
                 challengeCard.SetHealth(boardCreature.Health);
                 challengeCard.SetHealthStart(boardCreature.Card.Health);
                 challengeCard.SetAttack(boardCreature.Attack);
