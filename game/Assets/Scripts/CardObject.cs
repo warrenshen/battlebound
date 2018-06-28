@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[System.Serializable]
 public class CardObject : MonoBehaviour
 {
     private string json;
 
+    [SerializeField]
     private Card card;
     public Card Card => card;
 
