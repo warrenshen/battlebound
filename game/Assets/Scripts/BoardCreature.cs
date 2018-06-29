@@ -23,8 +23,8 @@ public class BoardCreature : Targetable
     private string image;
     public string Image => image;
 
-    private int maxAttacks;
     //int canAttack / CanAttack in Targetable class
+    //int maxAttacks in Targetable class
 
     private int attacksThisTurn;
 
@@ -107,10 +107,6 @@ public class BoardCreature : Targetable
         return this.owner.Id;
     }
 
-    public void RecoverAttack()
-    {
-        this.canAttack = this.maxAttacks;
-    }
 
     public override void Fight(dynamic other)
     {
@@ -141,7 +137,7 @@ public class BoardCreature : Targetable
     }
 
     //taking damage
-    public bool TakeDamage(int amount)
+    public override bool TakeDamage(int amount)
     {
         if (this.HasAbility("shielded"))
         {

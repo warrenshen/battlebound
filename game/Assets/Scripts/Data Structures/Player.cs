@@ -41,8 +41,17 @@ public class Player
     public int Armor => armor;
 
     private PlayerAvatar avatar;
-    public PlayerAvatar Avatar { get; set; }
-
+    public PlayerAvatar Avatar
+    {
+        get
+        {
+            return avatar;
+        }
+        set
+        {
+            avatar = value;
+        }
+    }
 
     public Player(string id, string name)
     {
@@ -127,6 +136,7 @@ public class Player
 
         //board resetting
         field.RecoverCreatures();
+        this.avatar.RecoverAttack();
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
