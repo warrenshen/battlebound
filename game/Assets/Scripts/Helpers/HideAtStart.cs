@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class HideAtStart : MonoBehaviour
 {
+    public bool hide = true;
 
     // Use this for initialization
     void Awake()
     {
-        gameObject.SetActive(false);
+        if (hide)
+            gameObject.SetActive(false);
     }
 }
