@@ -43,11 +43,31 @@ public class PlayerAvatar : Targetable
         this.armor = 0;
         this.maxHealth = 30;
         this.health = this.maxHealth;
+
         this.weapon = null;
         this.isAvatar = true;
+
         this.owner = player;
-        this.owner.Avatar = this;
-        //to-do: load avatar from player
+
+        //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
+
+        this.maxAttacks = 1;
+        this.canAttack = 1;
+
+        InitializeRender();
+    }
+
+    public void Initialize(Player player, PlayerState playerState)
+    {
+        this.armor = playerState.Armor;
+        this.maxHealth = playerState.Health;
+        this.health = this.maxHealth;
+
+        this.weapon = null;
+        this.isAvatar = true;
+
+        this.owner = player;
+
         //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
 
         this.maxAttacks = 1;
@@ -56,6 +76,11 @@ public class PlayerAvatar : Targetable
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = -5;
 
+        InitializeRender();
+    }
+
+    private void InitializeRender()
+    {
         //maybe do this manually in prefab later
         GameObject textHolder = new GameObject("Text Label");
         textMesh = textHolder.AddComponent<TextMeshPro>();
@@ -168,7 +193,7 @@ public class PlayerAvatar : Targetable
         Destroy(gameObject);
     }
 
-    public void UpdateStatText()
+    private void UpdateStatText()
     {
         float scaleFactor = 1.6f;
         LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();

@@ -50,14 +50,7 @@ public class Board
         PlayingField created = new PlayingField();
         player.SetPlayingField(created);
         this.playerIdToFields[player.Id] = created;
-        this.playerIdToAvatar[player.Id] = InitializeAvatar(player);
-    }
-
-    private PlayerAvatar InitializeAvatar(Player player)
-    {
-        PlayerAvatar avatar = GameObject.Find(String.Format("{0} Avatar", player.Name)).GetComponent<PlayerAvatar>();
-        avatar.Initialize(player);
-        return avatar;
+        this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
     public PlayingField GetFieldByPlayerId(string playerId)

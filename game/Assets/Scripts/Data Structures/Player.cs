@@ -34,21 +34,8 @@ public class Player
     private bool hasTurn;
     public bool HasTurn => hasTurn;
 
-    private int armor;
-    public int Armor => armor;
-
     private PlayerAvatar avatar;
-    public PlayerAvatar Avatar
-    {
-        get
-        {
-            return avatar;
-        }
-        set
-        {
-            avatar = value;
-        }
-    }
+    public PlayerAvatar Avatar => avatar;
 
     public Player(string id, string name)
     {
@@ -61,6 +48,9 @@ public class Player
         this.maxMana = 10;
 
         this.hand = new Hand(this);
+
+        this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
+        this.avatar.Initialize(this);
     }
 
     public Player(PlayerState playerState, string name)
@@ -69,7 +59,6 @@ public class Player
         this.name = name;
 
         this.hasTurn = playerState.HasTurn == 1 ? true : false;
-        this.armor = playerState.Armor;
         this.deckSize = playerState.DeckSize;
         this.mana = playerState.ManaCurrent;
         this.maxMana = playerState.ManaMax;
@@ -77,6 +66,9 @@ public class Player
         List<Card> cards = playerState.GetCardsFromChallengeCards(this);
         this.hand = new Hand(this);
         this.AddDrawnCards(cards, true);
+
+        this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
+        this.avatar.Initialize(this, playerState);
     }
 
     public void PlayCard(CardObject cardObject)
@@ -188,7 +180,7 @@ public class Player
         playerState.SetManaCurrent(this.mana);
         playerState.SetManaMax(this.maxMana);
         playerState.SetHealth(this.avatar.Health);
-        playerState.SetArmor(this.Armor);
+        playerState.SetArmor(this.avatar.Armor);
         playerState.SetDeckSize(this.deckSize);
 
         List<PlayerState.ChallengeCard> handCards = new List<PlayerState.ChallengeCard>();
