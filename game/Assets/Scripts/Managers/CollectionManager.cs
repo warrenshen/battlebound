@@ -254,7 +254,7 @@ public class CollectionManager : MonoBehaviour
             GameObject created = new GameObject(card.Name);
             created.transform.parent = collectionObject.transform;
             CardObject wrapper = created.AddComponent<CardObject>();
-            wrapper.InitializeCard(card);
+            wrapper.InitializeCard(null, card);
             idToCard.Add(card.Id, card);
 
             created.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;

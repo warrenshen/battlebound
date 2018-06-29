@@ -19,7 +19,7 @@ public abstract class Targetable : MonoBehaviour
     public int CanAttack => canAttack;
     protected int maxAttacks;
 
-    public abstract void Fight(dynamic other);
+    public abstract void Fight(Targetable other);
     public abstract bool TakeDamage(int amount);
 
     public void RecoverAttack()

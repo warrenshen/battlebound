@@ -35,9 +35,6 @@ public class Card
     protected string image;
     public string Image => image;
 
-    protected Player owner;
-    public Player Owner => owner;
-
     public CardObject wrapper;
 }
 
@@ -63,8 +60,7 @@ public class CreatureCard : Card
         string image,
         int attack,
         int health,
-        List<string> abilities,
-        Player owner = null
+        List<string> abilities
     )
     {
         this.id = id;
@@ -75,8 +71,6 @@ public class CreatureCard : Card
         this.attack = attack;
         this.health = health;
         this.abilities = abilities;
-
-        this.owner = owner;
     }
 }
 
@@ -98,8 +92,7 @@ public class WeaponCard : Card
         int cost,
         string image,
         int attack,
-        int durability,
-        Player owner = null
+        int durability
     )
     {
         this.id = id;
@@ -107,7 +100,6 @@ public class WeaponCard : Card
         this.level = level;
         this.cost = cost;
         this.image = image;
-        this.owner = owner;
 
         this.attack = attack;
         this.durability = durability;
@@ -124,8 +116,7 @@ public class StructureCard : Card
         int cost,
         string image,
         int attack,
-        int durability,
-        Player owner = null
+        int durability
     )
     {
         this.id = id;
@@ -133,7 +124,6 @@ public class StructureCard : Card
         this.level = level;
         this.cost = cost;
         this.image = image;
-        this.owner = owner;
     }
 }
 
@@ -151,8 +141,7 @@ public class SpellCard : Card
         int level,
         int cost,
         string image,
-        bool targeted = false,
-        Player owner = null
+        bool targeted = false
     )
     {
         this.id = id;
@@ -161,7 +150,6 @@ public class SpellCard : Card
         this.cost = cost;
         this.image = image;
         this.targeted = targeted;
-        this.owner = owner;
 
         if (spellToMethod == null)
         {

@@ -7,6 +7,7 @@ using TMPro;
 
 public class PlayerAvatar : Targetable
 {
+    public static string TARGET_ID_FACE = "TARGET_ID_FACE";
 
     [SerializeField]
     private int armor;
@@ -72,7 +73,7 @@ public class PlayerAvatar : Targetable
 
     public override string GetCardId()
     {
-        return "TARGET_ID_FACE";
+        return TARGET_ID_FACE;
     }
 
     public override string GetPlayerId()
@@ -90,13 +91,13 @@ public class PlayerAvatar : Targetable
     {
         GameObject created = new GameObject(weapon.Name);
         BoardWeapon weaponObject = created.AddComponent<BoardWeapon>();
-        weaponObject.Initialize(weapon);
+        weaponObject.Initialize(this.owner, weapon);
 
         this.weapon = weaponObject;
         return false;
     }
 
-    public override void Fight(dynamic other)
+    public override void Fight(Targetable other)
     {
         if (this.canAttack <= 0)
         {
@@ -122,9 +123,9 @@ public class PlayerAvatar : Targetable
         if (!other.IsAvatar)
         {
             FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
-            this.TakeDamage(other.Attack);
+            this.TakeDamage(((BoardCreature)other).Attack);
 
-            if (other.HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
+            if (((BoardCreature)other).HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         }
     }

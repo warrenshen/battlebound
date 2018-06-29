@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BoardWeapon : MonoBehaviour
 {
-
     [SerializeField]
     private int attack;
     public int Attack => attack;
@@ -16,11 +15,11 @@ public class BoardWeapon : MonoBehaviour
     public Player Wielder => wielder;
 
 
-    public void Initialize(WeaponCard card)
+    public void Initialize(Player player, WeaponCard card)
     {
         this.attack = card.Attack;
         this.durability = card.Durability;
-        this.wielder = card.Owner;
+        this.wielder = player;
     }
 
     public void AttackMade(Targetable target)
@@ -29,7 +28,7 @@ public class BoardWeapon : MonoBehaviour
         if (!target.IsAvatar)
         {
             BoardCreature targetCreature = target as BoardCreature;
-            bool alive = this.wielder.TakeDamage(targetCreature.Attack);  //true if alive, false if not
+            bool alive = this.wielder.Avatar.TakeDamage(targetCreature.Attack);  //true if alive, false if not
         }
         //to-do: updated weapon durability rendering
         this.durability -= 1;

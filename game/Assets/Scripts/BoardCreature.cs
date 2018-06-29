@@ -59,7 +59,7 @@ public class BoardCreature : Targetable
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
 
-        this.owner = cardObject.Card.Owner;
+        this.owner = cardObject.Owner;
         this.gameObject.layer = 9;
         if (this.abilities != null)
             this.abilitiesFX = new Dictionary<string, GameObject>();
@@ -107,8 +107,7 @@ public class BoardCreature : Targetable
         return this.owner.Id;
     }
 
-
-    public override void Fight(dynamic other)
+    public override void Fight(Targetable other)
     {
         if (this.canAttack <= 0)
         {
@@ -129,9 +128,9 @@ public class BoardCreature : Targetable
         if (!other.IsAvatar)
         {
             FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
-            this.TakeDamage(other.Attack);
+            this.TakeDamage(((BoardCreature)other).Attack);
 
-            if (other.HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
+            if (((BoardCreature)other).HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         }
     }

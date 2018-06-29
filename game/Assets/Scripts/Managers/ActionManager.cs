@@ -133,7 +133,7 @@ public class ActionManager : MonoBehaviour
         //target.transform.localPosition = target.reset.resetPosition;
         //target.transform.localRotation = target.reset.resetRotation;
         //target.transform.localScale = target.reset.resetScale;
-        target.Card.Owner.Hand.RepositionCards();
+        target.Owner.Hand.RepositionCards();
     }
 
     private void DestroyTarget()
