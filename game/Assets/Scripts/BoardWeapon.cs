@@ -12,22 +12,26 @@ public class BoardWeapon : MonoBehaviour
     private int durability;
     public int Durability => durability;
 
-    private Player user;
-    public Player User => user;
+    private Player wielder;
+    public Player Wielder => wielder;
 
 
     public void Initialize(WeaponCard card)
     {
         this.attack = card.Attack;
         this.durability = card.Durability;
+        this.wielder = card.Owner;
     }
 
-    public void AttackMade(BoardCreature creature)
+    public void AttackMade(Targetable target)
     {
-        creature.TakeDamage(this.attack);
-        bool alive = user.TakeDamage(creature.Attack);  //true if alive, false if not
+        target.TakeDamage(this.attack);
+        if (!target.IsAvatar)
+        {
+            BoardCreature targetCreature = target as BoardCreature;
+            bool alive = this.wielder.TakeDamage(targetCreature.Attack);  //true if alive, false if not
+        }
         //to-do: updated weapon durability rendering
-
         this.durability -= 1;
         if (CheckBroken())
             Destroy(gameObject);

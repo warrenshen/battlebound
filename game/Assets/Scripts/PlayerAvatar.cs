@@ -27,8 +27,8 @@ public class PlayerAvatar : Targetable
     private string avatar;
     public string Avatar => avatar;
 
-    private int maxAttacks;
     //int canAttack / CanAttack in Targetable class
+    //int maxAttacks in Targetable class
     //Player owner / Owner exists in Targetable class
 
     private SpriteRenderer spriteRenderer;
@@ -129,7 +129,7 @@ public class PlayerAvatar : Targetable
         }
     }
 
-    public bool TakeDamage(int amount)
+    public override bool TakeDamage(int amount)
     {
         //to-do check immunity
         this.health -= amount;

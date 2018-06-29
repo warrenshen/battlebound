@@ -17,6 +17,13 @@ public abstract class Targetable : MonoBehaviour
     [SerializeField]
     protected int canAttack;
     public int CanAttack => canAttack;
+    protected int maxAttacks;
 
     public abstract void Fight(dynamic other);
+    public abstract bool TakeDamage(int amount);
+
+    public void RecoverAttack()
+    {
+        this.canAttack = this.maxAttacks;
+    }
 }
