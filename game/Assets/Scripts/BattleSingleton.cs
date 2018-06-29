@@ -70,6 +70,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         if (IsMessageChallengeIdValid(scriptData))
         {
             Debug.Log("Challenge won!");
+            List<ChallengeEndState.ExperienceCard> expCards = new List<ChallengeEndState.ExperienceCard>();
             // Call some function in BattleManager so Nick can react to event.
         }
     }

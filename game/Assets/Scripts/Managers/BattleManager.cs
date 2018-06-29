@@ -58,6 +58,13 @@ public class BattleManager : MonoBehaviour
             this.opponent = new Player("Enemy", "Enemy");
         }
 
+        this.players = new List<Player>();
+        this.players.Add(this.you);
+        this.players.Add(this.opponent);
+
+        Board.Instance().AddPlayer(this.you);
+        Board.Instance().AddPlayer(this.opponent);
+
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.playerIdToPlayer[this.you.Id] = this.you;
         this.playerIdToPlayer[this.opponent.Id] = this.opponent;
@@ -72,6 +79,30 @@ public class BattleManager : MonoBehaviour
         boardLayer = LayerMask.GetMask("Board");
         ChooseRandomSetting();
         GameStart();
+    }
+
+    private void GameStart()
+    {
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            this.you.DrawCards(5);
+            this.opponent.DrawCards(5);
+
+            turnIndex = UnityEngine.Random.Range(0, players.Count);
+            turnCount = 0;
+
+            NextTurn();
+        }
+        else
+        {
+            turnIndex = this.players.FindIndex(player => player.HasTurn);
+            turnCount = 0;
+            activePlayer = players[turnIndex % players.Count];
+
+            //do some turn transition render
+            activePlayer.SetHasTurn(true);
+            activePlayer.RenderTurnStart();
+        }
     }
 
     private void ChooseRandomSetting()
@@ -181,37 +212,6 @@ public class BattleManager : MonoBehaviour
             return;
         }
         //do NOT put anything here, MouseButtonDown/else uses a return!
-    }
-
-    private void GameStart()
-    {
-        players = new List<Player>();
-        players.Add(this.you);
-        players.Add(this.opponent);
-
-        Board.Instance().AddPlayer(you);
-        Board.Instance().AddPlayer(opponent);
-
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            this.you.DrawCards(5);
-            this.opponent.DrawCards(5);
-
-            turnIndex = UnityEngine.Random.Range(0, players.Count);
-            turnCount = 0;
-
-            NextTurn();
-        }
-        else
-        {
-            turnIndex = this.players.FindIndex(player => player.HasTurn);
-            turnCount = 0;
-            activePlayer = players[turnIndex % players.Count];
-
-            //do some turn transition render
-            activePlayer.SetHasTurn(true);
-            activePlayer.RenderTurnStart();
-        }
     }
 
     private void OnEndTurnClick()
@@ -345,6 +345,7 @@ public class BattleManager : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle")))
                 {
+                    target.Owner.PlayCard(target);
                     this.PlayTargetedSpell(target, hit);
                     return true;
                 }
@@ -363,6 +364,7 @@ public class BattleManager : MonoBehaviour
         else if (target.Card.GetType() == typeof(WeaponCard))
         {
             target.Owner.Avatar.EquipWeapon(target.Card as WeaponCard);
+            target.Owner.PlayCard(target);
             this.UseCard(target.Owner, target);    //to-do: change to own weapon func
             return true;
         }
@@ -381,7 +383,6 @@ public class BattleManager : MonoBehaviour
             return false;
         }
     }
-
 
     private IEnumerator EnemyPlayCardToBoardAnim(object[] args)
     {
