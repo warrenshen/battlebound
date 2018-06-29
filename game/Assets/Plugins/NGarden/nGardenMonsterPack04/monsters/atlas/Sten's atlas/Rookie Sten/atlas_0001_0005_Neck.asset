@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 529336600, guid: 289bab7cc27a12745b5df9b71d7b06c4, type: 3}
+  m_Name: atlas_0001_0005_Neck
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 7f0a6b444ad13a1438850fe532ceb077, type: 2}
+  uvs:
+  - serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0.61035156
+    height: 0.16699219
+  - serializedVersion: 2
+    x: 0
+    y: 0.16748047
+    width: 0.61035156
+    height: 0.16699219
+  - serializedVersion: 2
+    x: 0
+    y: 0.33496094
+    width: 0.61035156
+    height: 0.16699219
+  textureGUIDs:
+  - 51e35b59c08ef1c4ab8e4cbf73c9caaa
+  - f57bed77da8849648a885b285723ad04
+  - a43dc77a312cfa448b03cc828745a8af
+  textureSizes:
+  - {x: 625, y: 342}
+  - {x: 625, y: 342}
+  - {x: 625, y: 342}
+  defaultPivotOffsets:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  textureNames:
+  - 0005_neck
+  - 0003_neck
+  - 0001_neck
+  texturePaths:
+  - Assets/allDungeon/textures/0001_0005/0005/0005_neck.png
+  - Assets/allDungeon/textures/0001_0005/0003/0003_neck.png
+  - Assets/allDungeon/textures/0001_0005/0001/0001_neck.png
+  lastBuildID: 20140605160659836
+  needsRebuilt: 0
+  dataVersion: 4
+  maxAtlasSize: 1024
+  padding: 1
+  forceSquare: 0
