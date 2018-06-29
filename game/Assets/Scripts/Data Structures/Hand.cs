@@ -37,6 +37,17 @@ public class Hand
         return null;
     }
 
+
+    public Card GetCardByIndex(int index)
+    {
+        return this.cards.ElementAt(index);
+    }
+
+    public int Size()
+    {
+        return cards.Count;
+    }
+
     public int AddDrawnCard(Card drawnCard)
     {
         this.cards.Add(drawnCard);
@@ -50,11 +61,11 @@ public class Hand
 
     }
 
-    public void RemoveAndReposition(CardObject cardObject)
+    public void RemoveByCardId(string cardId)
     {
-        //cardObjects.Remove(cardObject);
-        cards.Remove(cardObject.Card);
-        RepositionCards();
+        int removeIndex = this.cards.FindIndex(card => card.Id == cardId);
+        this.cards.RemoveAt(removeIndex);
+        this.RepositionCards();
     }
 
     private void CreateCardObjects(Card card)
@@ -78,7 +89,9 @@ public class Hand
         int size = cards.Count;
         //if no cards, return
         if (size <= 0)
+        {
             return;
+        }
 
         float cardWidth = cards[0].wrapper.transform.GetComponent<BoxCollider>().size.x + 0.24f - 0.15f * size;
         float rotation_x = 70f;
@@ -94,15 +107,5 @@ public class Hand
             LeanTween.moveLocal(cards[k].wrapper.gameObject, adjustedPos, tweenTime);
             LeanTween.rotateLocal(cards[k].wrapper.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
         }
-    }
-
-    public Card GetCardByIndex(int index)
-    {
-        return this.cards.ElementAt(index);
-    }
-
-    public int Size()
-    {
-        return cards.Count;
     }
 }

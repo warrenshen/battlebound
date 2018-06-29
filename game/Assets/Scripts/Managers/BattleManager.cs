@@ -283,8 +283,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpCreature))
         {
-            Debug.Log("fighting");
-
             if (InspectorControlPanel.Instance.DevelopmentMode)
             {
                 CardAttackAttributes attributes = new CardAttackAttributes(
@@ -363,6 +361,24 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+
+    private IEnumerator EnemyPlayCardToBoardAnim(object[] args)
+    {
+        CardObject cardObject = (CardObject)args[0];
+        int fieldIndex = (int)args[1];
+
+        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+
+        LeanTween.move(cardObject.gameObject, pivotPoint.position, 1);
+        LeanTween.rotate(cardObject.gameObject, pivotPoint.rotation.eulerAngles, 1);
+        yield return new WaitForSeconds(1);
+
+        //flash or something
+        yield return new WaitForSeconds(1);
+
+        PlayCardToBoard(cardObject, fieldIndex);
+    }
+
     /*
      * Play card to board after receiving play card move from server. 
      */
@@ -398,23 +414,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public IEnumerator EnemyPlayCardToBoardAnim(object[] args)
-    {
-        CardObject cardObject = (CardObject)args[0];
-        int fieldIndex = (int)args[1];
-
-        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
-
-        LeanTween.move(cardObject.gameObject, pivotPoint.position, 1);
-        LeanTween.rotate(cardObject.gameObject, pivotPoint.rotation.eulerAngles, 1);
-        yield return new WaitForSeconds(1);
-
-        //flash or something
-        yield return new WaitForSeconds(1);
-
-        PlayCardToBoard(cardObject, fieldIndex);
-    }
-
     private void SpawnCardToBoard(CardObject cardObject, int index, Transform target)
     {
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
@@ -439,7 +438,6 @@ public class BattleManager : MonoBehaviour
     public void UseCard(Player player, CardObject cardObject)
     {
         player.PlayCard(cardObject);    //removes card from hand, spend mana
-        GameObject.Destroy(cardObject.gameObject);
         SoundManager.Instance.PlaySound("Play", transform.position);
     }
 
