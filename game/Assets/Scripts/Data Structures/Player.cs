@@ -34,9 +34,6 @@ public class Player
     private bool hasTurn;
     public bool HasTurn => hasTurn;
 
-    private int health;
-    public int Health => health;
-
     private int armor;
     public int Armor => armor;
 
@@ -59,11 +56,11 @@ public class Player
         this.name = name;
 
         this.hasTurn = false;
-        this.health = 30;
         this.deck = GetDeck();
-        this.hand = new Hand(this.name);
         this.mana = 10;
         this.maxMana = 10;
+
+        this.hand = new Hand(this);
     }
 
     public Player(PlayerState playerState, string name)
@@ -72,22 +69,21 @@ public class Player
         this.name = name;
 
         this.hasTurn = playerState.HasTurn == 1 ? true : false;
-        this.health = playerState.Health;
         this.armor = playerState.Armor;
         this.deckSize = playerState.DeckSize;
         this.mana = playerState.ManaCurrent;
         this.maxMana = playerState.ManaMax;
 
         List<Card> cards = playerState.GetCardsFromChallengeCards(this);
-        this.hand = new Hand(this.name, cards);
+        this.hand = new Hand(this);
+        this.AddDrawnCards(cards, true);
     }
 
     public void PlayCard(CardObject cardObject)
     {
-        mana -= cardObject.Card.Cost;
+        this.mana -= cardObject.Card.Cost;
         RenderMana();
         hand.RemoveByCardId(cardObject.Card.Id);
-        GameObject.Destroy(cardObject.gameObject);
     }
 
     private void RenderMana()
@@ -107,16 +103,16 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "shielded" }, owner: this));
-        cards.Add(new CreatureCard("C2", "Direhorn Hatchling", 1, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "taunt" }, owner: this));
-        cards.Add(new SpellCard("C3", "Lightning Bolt", 3, 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new WeaponCard("C4", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new WeaponCard("C5", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2, owner: this));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new SpellCard("C7", "Lightning Bolt", 5, 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new SpellCard("C8", "Lightning Bolt", 6, 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new SpellCard("C9", "Lightning Bolt", 1, 1, "Lightning_Bolt", targeted: true, owner: this));
-        cards.Add(new WeaponCard("C10", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2, owner: this));
+        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "shielded" }));
+        cards.Add(new CreatureCard("C2", "Direhorn Hatchling", 1, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "taunt" }));
+        cards.Add(new SpellCard("C3", "Lightning Bolt", 3, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new WeaponCard("C4", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2));
+        cards.Add(new WeaponCard("C5", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new SpellCard("C7", "Lightning Bolt", 5, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new SpellCard("C8", "Lightning Bolt", 6, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new SpellCard("C9", "Lightning Bolt", 1, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new WeaponCard("C10", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;
@@ -191,14 +187,14 @@ public class Player
         playerState.SetHasTurn(this.hasTurn ? 1 : 0);
         playerState.SetManaCurrent(this.mana);
         playerState.SetManaMax(this.maxMana);
-        playerState.SetHealth(this.health);
+        playerState.SetHealth(this.avatar.Health);
         playerState.SetArmor(this.Armor);
         playerState.SetDeckSize(this.deckSize);
 
         List<PlayerState.ChallengeCard> handCards = new List<PlayerState.ChallengeCard>();
         for (int i = 0; i < this.hand.Size(); i += 1)
         {
-            Card card = this.hand.GetCardByIndex(i);
+            Card card = this.hand.GetCardObjectByIndex(i).Card;
             PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
 
             challengeCard.SetId(card.Id);
@@ -262,20 +258,35 @@ public class Player
         return playerState;
     }
 
-    public bool TakeDamage(int amount)
+    /*
+     * @param bool isInit - do not decrement deck size if true
+     */
+    public void AddDrawnCard(Card card, bool isInit = false)
     {
-        this.health -= amount;
-        return this.health > 0;
+        GameObject created = new GameObject(card.Name);
+        CardObject cardObject = created.AddComponent<CardObject>();
+        cardObject.InitializeCard(this, card);
+        created.transform.parent = GameObject.Find(
+            this.name + " Hand"
+        ).transform;
+
+        if (!isInit)
+        {
+            this.deckSize -= 1;
+        }
+        this.Hand.AddCardObject(cardObject);
+    }
+
+    public void AddDrawnCards(List<Card> cards, bool isInit = false)
+    {
+        foreach (Card card in cards)
+        {
+            AddDrawnCard(card, isInit);
+        }
     }
 
     public int GetOpponentHandIndex(int handIndex)
     {
         return this.Hand.Size() - 1 - handIndex;
-    }
-
-    public void AddDrawnCard(Card card)
-    {
-        this.deckSize -= 1;
-        this.Hand.AddDrawnCard(card);
     }
 }

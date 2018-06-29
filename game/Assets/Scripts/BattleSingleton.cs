@@ -208,11 +208,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
             }
         }
 
+        PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
+        PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
-            PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
-            PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
-
             if (!this.playerState.Equals(devicePlayerState))
             {
                 Debug.LogWarning("Server vs device player state mismatch.");
@@ -238,6 +238,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
                 Debug.Log("Server vs device opponent state match.");
                 Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
             }
+        }
+        else
+        {
+            Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
+            Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
         }
     }
 

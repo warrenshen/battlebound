@@ -431,8 +431,7 @@ public class PlayerState
                     this.image,
                     this.attackStart,
                     this.healthStart,
-                    this.abilities,
-                    owner
+                    this.abilities
                 );
             }
             else
@@ -442,8 +441,7 @@ public class PlayerState
                     this.name,
                     this.level,
                     this.cost,
-                    this.image,
-                    owner: owner
+                    this.image
                 );
             }
         }

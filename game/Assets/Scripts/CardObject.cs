@@ -8,6 +8,9 @@ public class CardObject : MonoBehaviour
 {
     private string json;
 
+    protected Player owner;
+    public Player Owner => owner;
+
     [SerializeField]
     private Card card;
     public Card Card => card;
@@ -40,8 +43,9 @@ public class CardObject : MonoBehaviour
     //	InitializeCard(parsed);
     //}
 
-    public void InitializeCard(Card card)
+    public void InitializeCard(Player player, Card card)
     {
+        this.owner = player;
         this.card = card;
         this.gameObject.layer = LayerMask.NameToLayer("Card");
         card.wrapper = this;
@@ -65,7 +69,7 @@ public class CardObject : MonoBehaviour
 
     public void EnterFocus()
     {
-        if (!card.Owner.HasTurn)
+        if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
@@ -77,7 +81,7 @@ public class CardObject : MonoBehaviour
 
     public void ExitFocus()
     {
-        if (!card.Owner.HasTurn)
+        if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
@@ -94,7 +98,7 @@ public class CardObject : MonoBehaviour
 
     public void MouseDown()
     {
-        if (!card.Owner.HasTurn)
+        if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
@@ -108,7 +112,7 @@ public class CardObject : MonoBehaviour
 
     public void MouseUp()
     {
-        if (!card.Owner.HasTurn)
+        if (!this.owner.HasTurn)
             return;
         if (!ActionManager.Instance.HasDragTarget())
             return;

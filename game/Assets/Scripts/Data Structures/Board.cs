@@ -7,6 +7,10 @@ public class Board
 {
     [SerializeField]
     private Dictionary<string, PlayingField> playerIdToFields;
+
+    [SerializeField]
+    private Dictionary<string, PlayerAvatar> playerIdToAvatar;
+
     private static Board instance;
 
     public static Board Instance()
@@ -21,8 +25,8 @@ public class Board
 
     public Board()
     {
-        //create field for each player
         this.playerIdToFields = new Dictionary<string, PlayingField>();
+        this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
     }
 
     public void PlaceCreature(BoardCreature creature, int position)
@@ -45,8 +49,15 @@ public class Board
     {
         PlayingField created = new PlayingField();
         player.SetPlayingField(created);
-        Debug.Log(player.Id);
         this.playerIdToFields[player.Id] = created;
+        this.playerIdToAvatar[player.Id] = InitializeAvatar(player);
+    }
+
+    private PlayerAvatar InitializeAvatar(Player player)
+    {
+        PlayerAvatar avatar = GameObject.Find(String.Format("{0} Avatar", player.Name)).GetComponent<PlayerAvatar>();
+        avatar.Initialize(player);
+        return avatar;
     }
 
     public PlayingField GetFieldByPlayerId(string playerId)
@@ -58,6 +69,19 @@ public class Board
     {
         PlayingField field = GetFieldByPlayerId(playerId);
         return field.GetCreatureByCardId(cardId);
+    }
+
+    public Targetable GetTargetableByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        if (cardId == PlayerAvatar.TARGET_ID_FACE)
+        {
+            return this.playerIdToAvatar[playerId];
+        }
+        else
+        {
+            PlayingField field = GetFieldByPlayerId(playerId);
+            return field.GetCreatureByCardId(cardId);
+        }
     }
 
     [System.Serializable]
