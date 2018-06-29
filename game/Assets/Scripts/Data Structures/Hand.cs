@@ -21,8 +21,8 @@ public class Hand
     {
         this.name = name;
         this.cards = cards;
+
         CreateCardObjects(this.cards);
-        RepositionCards();
     }
 
     public Card GetCardById(string cardId)
@@ -48,12 +48,10 @@ public class Hand
         return cards.Count;
     }
 
-    public int AddDrawnCard(Card drawnCard)
+    public void AddDrawnCard(Card drawnCard)
     {
         this.cards.Add(drawnCard);
-        CreateCardObjects(drawnCard);
-        RepositionCards();
-        return 1;
+        CreateCardObject(drawnCard);
     }
 
     public void Discard(int count)
@@ -68,24 +66,43 @@ public class Hand
         this.RepositionCards();
     }
 
-    private void CreateCardObjects(Card card)
+    private void CreateCardObject(Card card, bool shouldReposition = true)
     {
         GameObject created = new GameObject(card.Name);
         CardObject wrapper = created.AddComponent<CardObject>();
         wrapper.InitializeCard(card);
         created.transform.parent = GameObject.Find(name + " Hand").transform;
+
+        if (shouldReposition)
+        {
+            RepositionCards();
+        }
     }
 
     private void CreateCardObjects(List<Card> toCreate)
     {
         foreach (Card card in toCreate)
         {
-            CreateCardObjects(card);
+            CreateCardObject(card, false);
         }
+        RepositionCards();
     }
 
     public void RepositionCards()
     {
+        HashSet<string> cardIdSet = new HashSet<string>();
+        foreach (Card card in this.cards)
+        {
+            if (cardIdSet.Contains(card.Id))
+            {
+                Debug.LogError("Duplicate card IDs in hand!");
+            }
+            else
+            {
+                cardIdSet.Add(card.Id);
+            }
+        }
+
         int size = cards.Count;
         //if no cards, return
         if (size <= 0)
