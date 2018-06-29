@@ -369,9 +369,9 @@ public class BattleManager : MonoBehaviour
 
         Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
 
-        LeanTween.move(cardObject.gameObject, pivotPoint.position, 1);
-        LeanTween.rotate(cardObject.gameObject, pivotPoint.rotation.eulerAngles, 1);
-        yield return new WaitForSeconds(1);
+        LeanTween.move(cardObject.gameObject, pivotPoint.position, 0.4f).setEaseInQuad();
+        LeanTween.rotate(cardObject.gameObject, pivotPoint.rotation.eulerAngles, 0.4f).setEaseInQuad();
+        yield return new WaitForSeconds(0.4f);
 
         //flash or something
         yield return new WaitForSeconds(1);
@@ -388,7 +388,7 @@ public class BattleManager : MonoBehaviour
         Player player = cardObject.Card.Owner;
         Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, index)).transform;
         //shared spawning + fx
-        SpawnCardToBoard(cardObject, index, boardPlace);
+        StartCoroutine("SpawnCardToBoard", new object[3] { cardObject, index, boardPlace });
     }
 
     /*
@@ -402,7 +402,7 @@ public class BattleManager : MonoBehaviour
         int index = Int32.Parse(lastChar);
         Player player = cardObject.Card.Owner;
         //shared spawning + fx
-        SpawnCardToBoard(cardObject, index, hit.collider.transform);
+        StartCoroutine("SpawnCardToBoard", new object[3] { cardObject, index, hit.collider.transform });
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -414,12 +414,19 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void SpawnCardToBoard(CardObject cardObject, int index, Transform target)
+    private IEnumerator SpawnCardToBoard(object[] args)
     {
+        CardObject cardObject = args[0] as CardObject;
+        int index = (int)args[1];
+        Transform target = args[2] as Transform;
+
+        cardObject.Renderer.enabled = false;
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
+        yield return new WaitForSeconds(0.2f);
+
         BoardCreature created = CreateBoardCreature(cardObject, target.position);
         Board.Instance().PlaceCreature(created, index);
-        UseCard(cardObject.Card.Owner, cardObject);
+        UseCard(cardObject.Card.Owner, cardObject); //has to be last, destroys cardObject
     }
 
     public void PlayTargetedSpell(CardObject target, RaycastHit hit)
