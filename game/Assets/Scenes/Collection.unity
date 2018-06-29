@@ -9993,6 +9993,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb3417ac7326492bb5e1a58ea041167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chosenDeck:
+    cards: []
   deckPanel: {fileID: 1682544773196616, guid: 1c7395cdf5c8b4a32a4adca2630d06c7, type: 2}
 --- !u!20 &282840813
 Camera:
@@ -10056,6 +10058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowPan: 1
   cardOffsetFromCamera: 8.5
+  cursors: []
   target: {fileID: 0}
 --- !u!1 &290305041
 GameObject:
@@ -10189,11 +10192,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 290305046}
@@ -15372,11 +15375,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 503560549}
@@ -17023,11 +17026,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1090064396}
