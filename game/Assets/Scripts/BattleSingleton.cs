@@ -70,8 +70,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
         if (IsMessageChallengeIdValid(scriptData))
         {
             Debug.Log("Challenge won!");
-            List<ChallengeEndState.ExperienceCard> expCards = new List<ChallengeEndState.ExperienceCard>();
-            // Call some function in BattleManager so Nick can react to event.
+
+            string challengeEndStateJson = scriptData.GetString("challengeEndState");
+            ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
+            BattleManager.Instance.ReceiveChallengeEndState(challengeEndState);
         }
     }
 
@@ -82,7 +84,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
         if (IsMessageChallengeIdValid(scriptData))
         {
             Debug.Log("Challenge lost...");
-            // Call some function in BattleManager so Nick can react to event.
+
+            string challengeEndStateJson = scriptData.GetString("challengeEndState");
+            ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
+            BattleManager.Instance.ReceiveChallengeEndState(challengeEndState);
         }
     }
 
@@ -164,39 +169,60 @@ public class BattleSingleton : Singleton<BattleSingleton>
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
                 Card card = challengeMove.Attributes.Card.GetCard(owner);
 
-                BattleManager.Instance.ReceiveMovePlayMinion(
-                    challengeMove.PlayerId,
-                    challengeMove.Attributes.CardId,
-                    card,
-                    challengeMove.Attributes.HandIndex,
-                    challengeMove.Attributes.FieldIndex
-                );
+                if (card.GetType() == typeof(CreatureCard))
+                {
+                    BattleManager.Instance.ReceiveMovePlayMinion(
+                        challengeMove.PlayerId,
+                        challengeMove.Attributes.CardId,
+                        card as CreatureCard,
+                        challengeMove.Attributes.HandIndex,
+                        challengeMove.Attributes.FieldIndex
+                    );
+                }
+                else
+                {
+                    Debug.LogError("Invalid card category for play minion move");
+                }
             }
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_GENERAL)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
                 Card card = challengeMove.Attributes.Card.GetCard(owner);
 
-                BattleManager.Instance.ReceiveMovePlaySpellGeneral(
-                    challengeMove.PlayerId,
-                    challengeMove.Attributes.CardId,
-                    card,
-                    challengeMove.Attributes.HandIndex
-                );
+                if (card.GetType() == typeof(SpellCard))
+                {
+                    BattleManager.Instance.ReceiveMovePlaySpellGeneral(
+                        challengeMove.PlayerId,
+                        challengeMove.Attributes.CardId,
+                        card as SpellCard,
+                        challengeMove.Attributes.HandIndex
+                    );
+                }
+                else
+                {
+                    Debug.LogError("Invalid card category for play spell general move");
+                }
             }
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
                 Card card = challengeMove.Attributes.Card.GetCard(owner);
 
-                BattleManager.Instance.ReceiveMovePlaySpellTargeted(
-                    challengeMove.PlayerId,
-                    challengeMove.Attributes.CardId,
-                    card,
-                    challengeMove.Attributes.HandIndex,
-                    challengeMove.Attributes.FieldId,
-                    challengeMove.Attributes.TargetId
-                );
+                if (card.GetType() == typeof(SpellCard))
+                {
+                    BattleManager.Instance.ReceiveMovePlaySpellTargeted(
+                        challengeMove.PlayerId,
+                        challengeMove.Attributes.CardId,
+                        card as SpellCard,
+                        challengeMove.Attributes.HandIndex,
+                        challengeMove.Attributes.FieldId,
+                        challengeMove.Attributes.TargetId
+                    );
+                }
+                else
+                {
+                    Debug.LogError("Invalid card category for play spell targeted move");
+                }
             }
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_CARD_ATTACK)
             {
@@ -269,6 +295,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengeEndTurnError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengeEndTurn request error.");
+        OnChallengeRequestError();
     }
 
     public void SendChallengeSurrenderRequest()
@@ -322,6 +349,37 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengePlayCardError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengePlayCard request error.");
+        OnChallengeRequestError();
+    }
+
+    public void SendChallengePlaySpellTargetedRequest(
+        string cardId,
+        PlaySpellTargetedAttributes attributes
+    )
+    {
+        if (this.challengeId == null)
+        {
+            Debug.LogWarning("Cannot send SendChallengePlaySpellTargeted( request without challengeId set.");
+            return;
+        }
+
+        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        request.SetEventKey("ChallengePlaySpellTargeted");
+        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("cardId", cardId);
+        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+        request.Send(OnChallengePlaySpellTargetedSuccess, OnChallengePlaySpellTargetedError);
+    }
+
+    private void OnChallengePlaySpellTargetedSuccess(LogChallengeEventResponse response)
+    {
+        Debug.Log("ChallengePlaySpellTargeted request success.");
+    }
+
+    private void OnChallengePlaySpellTargetedError(LogChallengeEventResponse response)
+    {
+        Debug.LogError("ChallengePlaySpellTargeted request error.");
+        OnChallengeRequestError();
     }
 
     public void SendChallengeCardAttackRequest(
@@ -351,5 +409,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengeCardAttackError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengeCardAttack request error.");
+        OnChallengeRequestError();
+    }
+
+    private void OnChallengeRequestError()
+    {
+        SceneManager.LoadScene("Battle");
     }
 }

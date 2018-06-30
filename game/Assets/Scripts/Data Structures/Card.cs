@@ -130,6 +130,12 @@ public class StructureCard : Card
 [System.Serializable]
 public class SpellCard : Card
 {
+    public static readonly string NAME_LIGHTNING_BOLT = "Lightning Bolt";
+
+    public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
+    {
+        NAME_LIGHTNING_BOLT,
+    };
     private static Dictionary<string, string> spellToMethod;
 
     private bool targeted;      //affects single target or whole board?
@@ -140,8 +146,7 @@ public class SpellCard : Card
         string name,
         int level,
         int cost,
-        string image,
-        bool targeted = false
+        string image
     )
     {
         this.id = id;
@@ -149,7 +154,15 @@ public class SpellCard : Card
         this.level = level;
         this.cost = cost;
         this.image = image;
-        this.targeted = targeted;
+
+        if (TARGETED_SPELL_NAMES.Contains(this.name))
+        {
+            this.targeted = true;
+        }
+        else
+        {
+            this.targeted = false;
+        }
 
         if (spellToMethod == null)
         {

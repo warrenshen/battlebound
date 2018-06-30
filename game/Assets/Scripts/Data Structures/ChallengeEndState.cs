@@ -6,6 +6,18 @@ using System;
 [System.Serializable]
 public class ChallengeEndState
 {
+    [SerializeField]
+    private string id;
+    public string Id => id;
+
+    [SerializeField]
+    private string level;
+    public string Level => level;
+
+    [SerializeField]
+    private string levelPrevious;
+    public string LevelPrevious => levelPrevious;
+
     List<ExperienceCard> experienceCards;
 
     [System.Serializable]
@@ -60,16 +72,11 @@ public class ChallengeEndState
         public int Exp => exp;
 
         [SerializeField]
-        private int expPrevious;
-        public int ExpPrevious => expPrevious;
-
-        [SerializeField]
         private int expMax;
         public int ExpMax => expMax;
 
-        // TODO
-        //[SerializeField]
-        //private List<Buff> buffs;
-        //public List<Buff> Buffs => buffs;
+        [SerializeField]
+        private int expPrevious;
+        public int ExpPrevious => expPrevious;
     }
 }
