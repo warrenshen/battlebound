@@ -10,7 +10,7 @@
 //
 // Attributes:
 // - targetId: card ID of card to attack or TARGET_ID_FACE
-// - fieldId: 0 => player's field (friendly fire), 1 => opponent's field
+// - fieldId: player's ID => player's field (friendly fire), opponent's ID => opponent's field
 //
 // ====================================================================================================
 require("ScriptDataModule");
@@ -47,7 +47,7 @@ const playerField = playerState.field;
 const opponentState = challengeState[opponentId];
 const opponentField = opponentState.field;
 
-if (fieldId !== 0 && fieldId !== 1) {
+if (fieldId !== playerId && fieldId !== opponentId) {
     setScriptError("Invalid fieldId parameter.");
 }
 
@@ -69,11 +69,12 @@ var defendingIndex;
 var defendingCard;
 var newPlayerField;
 var newOpponentField;
+var newFields;
 
 // Friendly fire.
-if (fieldId === 0) {
+if (fieldId === playerId) {
     if (targetId === TARGET_ID_FACE) {
-        setScriptError("Invalid fieldId parameter - cannot attack self.");
+        setScriptError("Invalid targetId parameter - cannot attack self.");
     } else {
         // Find index of defending card in player field.
         defendingIndex = playerField.findIndex(function(card) { return card.id === targetId });
@@ -85,11 +86,12 @@ if (fieldId === 0) {
         
         defendingCard = playerField[defendingIndex];
         
-        attackingCard.health -= defendingCard.attack;
-        defendingCard.health -= attackingCard.attack;
+        damageCard(defendingCard, attackingCard.attack);
+        damageCard(attackingCard, defendingCard.attack);
         
-        newPlayerField = playerField.filter(function(card) { return card.health > 0 });
-        playerState.field = newPlayerField;
+        newFields = filterDeadCardsFromFields(playerField, opponentField);
+        playerState.field = newFields[0];
+        opponentState.field = newFields[1];
     }
 } else {
     const tauntCards = opponentField.filter(function(card) { return card.abilities && card.abilities.indexOf(CARD_ABILITY_TAUNT) >= 0 });
@@ -118,7 +120,7 @@ if (fieldId === 0) {
         damageCard(defendingCard, attackingCard.attack);
         damageCard(attackingCard, defendingCard.attack);
         
-        const newFields = filterDeadCardsFromFields(playerField, opponentField);
+        newFields = filterDeadCardsFromFields(playerField, opponentField);
         playerState.field = newFields[0];
         opponentState.field = newFields[1];
     }
