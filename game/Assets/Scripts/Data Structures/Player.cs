@@ -51,6 +51,8 @@ public class Player
 
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this);
+
+        Board.Instance().RegisterPlayer(this);
     }
 
     public Player(PlayerState playerState, string name)
@@ -58,17 +60,21 @@ public class Player
         this.id = playerState.Id;
         this.name = name;
 
-        this.hasTurn = playerState.HasTurn == 1 ? true : false;
+        this.hasTurn = playerState.HasTurn == 1;
         this.deckSize = playerState.DeckSize;
         this.mana = playerState.ManaCurrent;
         this.maxMana = playerState.ManaMax;
 
-        List<Card> cards = playerState.GetCardsFromChallengeCards(this);
+        List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
-        this.AddDrawnCards(cards, true);
+        this.AddDrawnCards(handCards, true);
 
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this, playerState);
+
+        Card[] fieldCards = playerState.GetCardsField();
+
+        Board.Instance().RegisterPlayer(this, fieldCards);
     }
 
     public void PlayCard(CardObject cardObject)
@@ -82,11 +88,6 @@ public class Player
     {
         TextMeshPro manaText = GameObject.Find(name + " Mana").GetComponent<TextMeshPro>();
         manaText.text = String.Format("{0}/{1}", mana.ToString(), maxMana.ToString());
-    }
-
-    public void SetPlayingField(Board.PlayingField field)
-    {
-        this.field = field;
     }
 
     private Deck GetDeck()
@@ -123,7 +124,7 @@ public class Player
         this.mana = maxMana;
 
         //board resetting
-        field.RecoverCreatures();
+        Board.Instance().RecoverCreaturesByPlayerId(this.Id);
         this.avatar.RecoverAttack();
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
@@ -171,11 +172,43 @@ public class Player
         return fatigue;
     }
 
+    /*
+     * @param bool isInit - do not decrement deck size if true
+     */
+    public void AddDrawnCard(Card card, bool isInit = false)
+    {
+        GameObject created = new GameObject(card.Name);
+        CardObject cardObject = created.AddComponent<CardObject>();
+        cardObject.InitializeCard(this, card);
+        created.transform.parent = GameObject.Find(
+            this.name + " Hand"
+        ).transform;
+
+        if (!isInit)
+        {
+            this.deckSize -= 1;
+        }
+        this.Hand.AddCardObject(cardObject);
+    }
+
+    public void AddDrawnCards(List<Card> cards, bool isInit = false)
+    {
+        foreach (Card card in cards)
+        {
+            AddDrawnCard(card, isInit);
+        }
+    }
+
+    public int GetOpponentHandIndex(int handIndex)
+    {
+        return this.Hand.Size() - 1 - handIndex;
+    }
+
     public PlayerState GeneratePlayerState()
     {
         PlayerState playerState = new PlayerState();
 
-        playerState.SetId(this.Id);
+        playerState.SetId(this.id);
         playerState.SetHasTurn(this.hasTurn ? 1 : 0);
         playerState.SetManaCurrent(this.mana);
         playerState.SetManaMax(this.maxMana);
@@ -218,7 +251,8 @@ public class Player
         PlayerState.ChallengeCard[] fieldCards = new PlayerState.ChallengeCard[6];
         for (int i = 0; i < 6; i += 1)
         {
-            BoardCreature boardCreature = this.field.GetCreatureByIndex(i);
+            Board.PlayingField playingField = Board.Instance().GetFieldByPlayerId(this.id);
+            BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
             PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
 
             if (boardCreature == null)
@@ -248,37 +282,5 @@ public class Player
         playerState.SetField(fieldCards);
 
         return playerState;
-    }
-
-    /*
-     * @param bool isInit - do not decrement deck size if true
-     */
-    public void AddDrawnCard(Card card, bool isInit = false)
-    {
-        GameObject created = new GameObject(card.Name);
-        CardObject cardObject = created.AddComponent<CardObject>();
-        cardObject.InitializeCard(this, card);
-        created.transform.parent = GameObject.Find(
-            this.name + " Hand"
-        ).transform;
-
-        if (!isInit)
-        {
-            this.deckSize -= 1;
-        }
-        this.Hand.AddCardObject(cardObject);
-    }
-
-    public void AddDrawnCards(List<Card> cards, bool isInit = false)
-    {
-        foreach (Card card in cards)
-        {
-            AddDrawnCard(card, isInit);
-        }
-    }
-
-    public int GetOpponentHandIndex(int handIndex)
-    {
-        return this.Hand.Size() - 1 - handIndex;
     }
 }
