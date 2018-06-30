@@ -25,6 +25,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         base.Awake();
 
+        if (this.isDestroyed)
+        {
+            return;
+        }
+
         this.challengeStarted = false;
 
         ChallengeIssuedMessage.Listener = ChallengeIssuedMessageHandler;
