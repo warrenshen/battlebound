@@ -30,7 +30,6 @@ public class BoardCreature : Targetable
 
     //Player owner / Owner exists in Targetable class
 
-    private SpriteRenderer sp;
     private CreatureCard card;
     public CreatureCard Card => card;
 
@@ -43,6 +42,8 @@ public class BoardCreature : Targetable
 
     Material dissolve;
     TextMeshPro textMesh;
+
+    private HyperCard.Card visual;
 
 
     public void Initialize(CardObject cardObject)
@@ -65,10 +66,11 @@ public class BoardCreature : Targetable
             this.abilitiesFX = new Dictionary<string, GameObject>();
 
         //Render everything (labels, image, etc) method call here
-        sp = gameObject.AddComponent<SpriteRenderer>();
-        sp.sortingOrder = -1;
-        Texture2D texture = cardObject.Renderer.sprite.texture;
-        sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
+        //sp = gameObject.AddComponent<SpriteRenderer>();
+        //sp.sortingOrder = -1;
+        //Texture2D texture = cardObject.Renderer.sprite.texture;
+        //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
+
         BoxCollider coll = gameObject.AddComponent<BoxCollider>() as BoxCollider;
         coll.size += new Vector3(0, 0, 1.2f);
         coll.center += new Vector3(0, 0, -0.45f);
@@ -85,16 +87,27 @@ public class BoardCreature : Targetable
         textHolder.transform.SetParent(gameObject.transform, false);
 
         //ehh
-        dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
-        sp.material = dissolve;
+        //dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
+        //sp.material = dissolve;
+        this.visual = cardObject.visual;
+        VisualizeCard();
 
         //method calls
-        this.UpdateStatText();
-        this.RenderAbilities();
+        this.Redraw();
+        this.RenderAbilities(); //this should go inside redraw
 
         //post-collider-construction visuals
         transform.localScale = new Vector3(0, 0, 0);
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
+    }
+
+    private void VisualizeCard()
+    {
+        this.visual.transform.parent = this.transform;
+        this.visual.transform.localPosition = Vector3.zero;
+        this.visual.transform.localRotation = Quaternion.identity;
+        this.visual.transform.Rotate(0, 180, 0, Space.Self);
+        this.visual.Renderer.enabled = true;
     }
 
     public override string GetCardId()
@@ -175,14 +188,20 @@ public class BoardCreature : Targetable
         float elapsedTime = 0;
         while (elapsedTime < duration)
         {
-            sp.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
+            //sp.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
         Destroy(gameObject);
     }
 
-    public void UpdateStatText()
+    public void Redraw()
+    {
+        this.visual.SetVisualOutline(canAttack > 0);
+        UpdateStatText();
+    }
+
+    private void UpdateStatText()
     {
         float scaleFactor = 1.6f;
         LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();

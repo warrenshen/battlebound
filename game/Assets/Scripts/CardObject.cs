@@ -15,9 +15,7 @@ public class CardObject : MonoBehaviour
     private Card card;
     public Card Card => card;
 
-    private SpriteRenderer spr;
-    public SpriteRenderer Renderer => spr;
-    private Collider coll;
+    private Collider collider;
     private Texture2D image;
 
     private float lastClicked;
@@ -25,23 +23,14 @@ public class CardObject : MonoBehaviour
 
     public struct Reset
     {
-        public Vector3 resetPosition;
-        public Vector3 resetScale;
-        public Quaternion resetRotation;
+        public Vector3 position;
+        public Vector3 scale;
+        public Quaternion rotation;
     }
     public Reset reset;
 
-    public void Awake()
-    {
-        spr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
-    }
+    public HyperCard.Card visual;
 
-    ////if pass-in json overload method
-    //public void InitializeCard(string json)
-    //{
-    //	Card parsed = JsonUtility.FromJson<Card>(json);
-    //	InitializeCard(parsed);
-    //}
 
     public void InitializeCard(Player player, Card card)
     {
@@ -60,11 +49,26 @@ public class CardObject : MonoBehaviour
         {
             i = card.Image;
         }
-        image = Resources.Load(i) as Texture2D;
-        spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-        spr.sortingOrder = 10;
-        coll = gameObject.AddComponent<BoxCollider>() as Collider;
-        coll.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.2f, 0.06f);
+
+        this.visual = VisualizeCard();
+        //set sprite etc here
+        //image = Resources.Load(i) as Texture2D;
+        //spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
+        //spr.sortingOrder = 10;
+        collider = gameObject.AddComponent<BoxCollider>() as Collider;
+        collider.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.5f, 0.2f);
+    }
+
+    private HyperCard.Card VisualizeCard()
+    {
+        GameObject visualPrefab = Resources.Load("Prefabs/Card_Default") as GameObject;
+        Transform created = Instantiate(visualPrefab, this.transform).transform as Transform;
+        created.localPosition = Vector3.zero;
+        created.localRotation = Quaternion.identity;
+        created.Rotate(0, 180, 0, Space.Self);
+        return created.GetComponent<HyperCard.Card>();
+
+        //set sprites and set textmeshpro labels using TmpTextObjects (?)
     }
 
     public void EnterFocus()
@@ -74,7 +78,7 @@ public class CardObject : MonoBehaviour
         if (ActionManager.Instance.HasDragTarget())
             return;
 
-        float scaling = 1.1f;
+        float scaling = 1.2f;
         LeanTween.scale(gameObject, new Vector3(scaling, scaling, scaling), 0.05f);
         //transform.localScale = new Vector3(scaling, scaling, scaling);
     }
@@ -85,7 +89,7 @@ public class CardObject : MonoBehaviour
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
-        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.05f);
+        LeanTween.scale(gameObject, Vector3.one, 0.05f);
         //transform.localScale = new Vector3(1, 1, 1);
     }
 
@@ -103,11 +107,11 @@ public class CardObject : MonoBehaviour
         if (ActionManager.Instance.HasDragTarget())
             return;
         //set defaults
-        reset.resetPosition = transform.localPosition;
-        reset.resetScale = transform.localScale;
-        reset.resetRotation = transform.localRotation;
+        reset.position = transform.localPosition;
+        reset.scale = transform.localScale;
+        reset.rotation = transform.localRotation;
 
-        ActionManager.Instance.SetDragTarget(this, Renderer);
+        ActionManager.Instance.SetDragTarget(this);
     }
 
     public void MouseUp()
@@ -131,16 +135,16 @@ public class CardObject : MonoBehaviour
 
     public void Minify(bool value)
     {
-        if (value)
-        {
-            spr.sprite = Sprite.Create(image, new Rect(0.0f, image.height / 2 - 40, image.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
-            minified = true;
-        }
-        else
-        {
-            spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-            minified = false;
-        }
+        //if (value)
+        //{
+        //    spr.sprite = Sprite.Create(image, new Rect(0.0f, image.height / 2 - 40, image.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
+        //    minified = true;
+        //}
+        //else
+        //{
+        //    spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
+        //    minified = false;
+        //}
 
     }
 }

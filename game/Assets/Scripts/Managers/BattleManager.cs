@@ -109,6 +109,7 @@ public class BattleManager : MonoBehaviour
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             turnCount = 0;
+            activePlayer = players[turnIndex % players.Count];
 
             NextTurn();
         }
@@ -253,6 +254,7 @@ public class BattleManager : MonoBehaviour
     private void NextTurn()
     {
         activePlayer.SetHasTurn(false);
+        activePlayer.Hand.RecedeCards();
 
         turnCount++;
         turnIndex++;
@@ -338,23 +340,32 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private float GetCardDisplacement(CardObject target)
+    {
+        Vector3 initial = target.reset.position;
+        Vector3 release = target.transform.localPosition;
+        Vector3 diff = initial - release;
+        return diff.sqrMagnitude;
+    }
+
+
     private bool CheckPlayCard(Ray ray, RaycastHit hit)
     {
         if (!ActionManager.Instance.HasDragTarget())
             return false;
 
         CardObject target = ActionManager.Instance.GetDragTarget();
-        //TODO: think about using displacement distance as activation indicator vs screen height
-        float minThreshold = 0.20f;
+        float minThreshold = 20;
+        //Debug.Log(String.Format("amt={0}, threshold={1}, mousepos={2}, resetpos={3}", GetCardDisplacement(target), Screen.height * minThreshold, target.transform.localPosition, target.reset.position));
         if (target.Card.Cost > target.Owner.Mana)
         {
             //can't play card due to mana
             ActionManager.Instance.ResetTarget();
             return false;
         }
-        else if (Input.mousePosition.y < Screen.height * minThreshold)
+        else if (GetCardDisplacement(target) < minThreshold)
         {
-            //didn't lift card high enough to activate
+            //didn't displace card enough to activate
             ActionManager.Instance.ResetTarget();
             return false;
         }
@@ -462,7 +473,7 @@ public class BattleManager : MonoBehaviour
         int index = (int)args[1];
         Transform target = args[2] as Transform;
 
-        cardObject.Renderer.enabled = false;
+        cardObject.visual.Renderer.enabled = false;
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
         yield return new WaitForSeconds(0.2f);
 

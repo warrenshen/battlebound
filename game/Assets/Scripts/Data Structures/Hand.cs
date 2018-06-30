@@ -58,8 +58,15 @@ public class Hand
         this.RepositionCards();
     }
 
-    public void RepositionCards()
+    public void RepositionCards(float verticalShift = 0)
     {
+        int size = this.cardObjects.Count;
+        //if no cards, return
+        if (size <= 0)
+        {
+            return;
+        }
+
         HashSet<string> cardIdSet = new HashSet<string>();
         foreach (CardObject cardObject in this.cardObjects)
         {
@@ -73,26 +80,26 @@ public class Hand
             }
         }
 
-        int size = this.cardObjects.Count;
-        //if no cards, return
-        if (size <= 0)
-        {
-            return;
-        }
-
         float cardWidth = this.cardObjects[0].transform.GetComponent<BoxCollider>().size.x + 0.24f - 0.15f * size;
         float rotation_x = 70f;
 
         for (int k = 0; k < size; k++)
         {
             int pos = -((size - 1) / 2) + k;
-            float vOffset = -0.15f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
-            this.cardObjects[k].Renderer.sortingOrder = 10 + k;
+            float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth / 1.11f, 0.2f * pos, vOffset);
+            CardObject cardObject = this.cardObjects[k];
+            //cardObject.Renderer.sortingOrder = 10 + k;
+
+            Vector3 adjustedPos = new Vector3(pos * cardWidth / 1.11f, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;
             float tweenTime = 0.1f;
-            LeanTween.moveLocal(this.cardObjects[k].gameObject, adjustedPos, tweenTime);
-            LeanTween.rotateLocal(this.cardObjects[k].gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
+            LeanTween.moveLocal(cardObject.gameObject, adjustedPos, tweenTime);
+            LeanTween.rotateLocal(cardObject.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
         }
+    }
+
+    public void RecedeCards()
+    {
+        RepositionCards(-0.8f);
     }
 }

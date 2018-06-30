@@ -149,6 +149,7 @@ public class Player
     {
         if (this.deck.Cards.Count <= 0)
         {
+            this.Hand.RepositionCards();  //needed to correct recession
             return 1; //amount fatigue
         }
 

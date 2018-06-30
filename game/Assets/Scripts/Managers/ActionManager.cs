@@ -62,12 +62,12 @@ public class ActionManager : MonoBehaviour
         }
     }
 
-    public void SetDragTarget(CardObject target, SpriteRenderer target_sp)
+    public void SetDragTarget(CardObject target)
     {
         this.target = target;
-        this.sp = target_sp;
-        selectedSortingOrder = this.sp.sortingOrder;
-        this.sp.sortingOrder = 100;
+        //this.sp = target_sp;
+        //selectedSortingOrder = this.sp.sortingOrder;
+        //this.sp.sortingOrder = 100;
         Cursor.SetCursor(cursors[1], Vector2.zero, CursorMode.Auto);
     }
 
@@ -123,16 +123,13 @@ public class ActionManager : MonoBehaviour
     {
         if (!this.target)
             return;
-        this.sp.sortingOrder = selectedSortingOrder;
-        this.target = null;
+        //this.sp.sortingOrder = selectedSortingOrder;
+        //this.target = null;
         Cursor.SetCursor(cursors[0], Vector2.zero, CursorMode.Auto);
     }
 
     public void ResetTarget()
     {
-        //target.transform.localPosition = target.reset.resetPosition;
-        //target.transform.localRotation = target.reset.resetRotation;
-        //target.transform.localScale = target.reset.resetScale;
         target.Owner.Hand.RepositionCards();
     }
 
@@ -158,7 +155,7 @@ public class ActionManager : MonoBehaviour
         Vector3 mDeltaPosition = Camera.main.WorldToScreenPoint(cardObj.transform.position);
         mDeltaPosition = Input.mousePosition - mDeltaPosition;
         var magnitude = mDeltaPosition.sqrMagnitude;
-        Vector3 resetRotation = cardObj.reset.resetRotation.eulerAngles;
+        Vector3 resetRotation = cardObj.reset.rotation.eulerAngles;
 
         mDeltaPosition.Normalize();
         var heading = Vector3.Dot(mDeltaPosition, Vector3.up); //direction

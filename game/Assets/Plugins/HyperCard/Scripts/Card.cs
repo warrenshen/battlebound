@@ -40,7 +40,7 @@ namespace HyperCard
     [Serializable]
     public class Card : MonoBehaviour
     {
-        private Renderer Renderer
+        public Renderer Renderer
         {
             get { return GetComponent<MeshRenderer>(); } // Renderer
         }
@@ -49,7 +49,7 @@ namespace HyperCard
         public bool Disabled { get; set; }
 
         #region TextMeshPro
-        
+
         [SerializeField]
         private bool _showTmpProps;
 
@@ -60,7 +60,7 @@ namespace HyperCard
             {
                 DisplayMode = TextMeshProParamDisplayMode.Field;
             }
-            
+
             public string Key;
 
             public TextMeshPro TmpObject;
@@ -72,13 +72,13 @@ namespace HyperCard
 
         public List<TextMeshProParam> TmpTextObjects = new List<TextMeshProParam>(0);
         #endregion
-        
+
         #region Custom sprites
-        
+
         [Serializable]
         public class CustomSpriteParam
         {
-            public string Key;         
+            public string Key;
             public SpriteRenderer Sprite;
             public Texture2D Value;
             public Color Color = Color.white;
@@ -100,10 +100,10 @@ namespace HyperCard
         public void CreateSprite(int index)
         {
             var prefab =
-                (GameObject) AssetDatabase.LoadAssetAtPath("Assets/HyperCard/Prefabs/Sprite.prefab",
+                (GameObject)AssetDatabase.LoadAssetAtPath("Assets/HyperCard/Prefabs/Sprite.prefab",
                     typeof(GameObject));
-            
-            var sprite = (GameObject) GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+
+            var sprite = (GameObject)GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
 
             sprite.gameObject.transform.parent = this.gameObject.transform;
             sprite.gameObject.transform.position = Vector3.zero;
@@ -125,10 +125,10 @@ namespace HyperCard
         public void RemoveSprite(int index)
         {
             var sprite = SpriteObjects.ElementAt(index);
-            
+
             DestroyImmediate(sprite.Sprite.gameObject);
         }
-        
+
         public List<CustomSpriteParam> SpriteObjects = new List<CustomSpriteParam>(0);
 
         #endregion
@@ -316,7 +316,7 @@ namespace HyperCard
 
         public void Redraw()
         {
-            if(BaseCardFaceMat == null || BaseCardBackMat == null || BaseSpriteMat == null)
+            if (BaseCardFaceMat == null || BaseCardBackMat == null || BaseSpriteMat == null)
             {
                 Debug.LogError("Hypercard : no materials.");
                 return;
@@ -351,7 +351,7 @@ namespace HyperCard
             {
                 txt.TmpObject.gameObject.hideFlags = tmpHideFlags;
             }
-            
+
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
                 x.Sprite.gameObject.hideFlags = tmpHideFlags | HideFlags.NotEditable;
@@ -398,7 +398,7 @@ namespace HyperCard
 
             faceMat.SetInt("_Stencil", Stencil);
             backMat.SetInt("_Stencil", Stencil);
-            
+
             faceMat.SetInt("_Seed", Seed);
 
             faceMat.SetTexture("_CardMask", mask);
@@ -533,7 +533,7 @@ namespace HyperCard
             // blend mix
             faceMat.SetInt("_MixTexture_Enabled", EnableMixTexture ? 1 : 0);
 
-            if(EnableMixTexture)
+            if (EnableMixTexture)
             {
                 faceMat.SetTexture("_MixTextureMask", MixTextureMask);
                 faceMat.SetTexture("_MixTexture", MixTexture);
@@ -602,7 +602,7 @@ namespace HyperCard
             // Glitter
             faceMat.SetInt("_Glitter_Enabled", EnableGlitter ? 1 : 0);
 
-            if(EnableGlitter)
+            if (EnableGlitter)
             {
                 faceMat.SetTexture("_GlitterMask", GlitterMask);
                 faceMat.SetTexture("_GlitterMap", GlitterMap);
@@ -669,7 +669,7 @@ namespace HyperCard
                 var mat = new Material(txt.TmpObject.fontSharedMaterial);
                 txt.TmpObject.overrideColorTags = BlackAndWhite;
                 mat.SetFloat("_Stencil", Stencil);
-                mat.SetInt("_StencilComp", (int) CompareFunction.Equal);
+                mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
                 mat.name = Guid.NewGuid().ToString();
                 txt.TmpObject.alpha = CardOpacity;
                 txt.TmpObject.fontMaterial = mat;
@@ -679,7 +679,7 @@ namespace HyperCard
             {
                 var spriteMat = x.Sprite.sharedMaterials;
 
-                if(spriteMat[0] == null)
+                if (spriteMat[0] == null)
                 {
                     spriteMat[0] = BaseSpriteMat;
                     x.Sprite.sharedMaterials = spriteMat;
@@ -688,7 +688,7 @@ namespace HyperCard
                 var spriteNewMat = new Material(spriteMat[0]);
 
                 spriteNewMat.SetFloat("_Stencil", Stencil);
-                spriteNewMat.SetInt("_StencilComp", (int) CompareFunction.Equal);               
+                spriteNewMat.SetInt("_StencilComp", (int)CompareFunction.Equal);
                 spriteNewMat.name = Guid.NewGuid().ToString();
                 spriteNewMat.renderQueue = x.RenderQueue;
                 spriteNewMat.SetFloat("_Zoom", x.Zoom);
@@ -710,14 +710,14 @@ namespace HyperCard
             {
                 var color = x.Color;
                 color.a *= CardOpacity;
-                
+
                 x.Sprite.color = color;
 
                 if (x.Value != null)
                 {
                     x.Sprite.sprite = Sprite.Create(x.Value, new Rect(0.0f, 0.0f, x.Value.width, x.Value.height), new Vector2(0.5f, 0.5f), 100.0f);
                 }
-                
+
                 x.Sprite.gameObject.transform.localPosition = new Vector3(x.Position.x / 10, x.Position.y / 10, 0.01f + x.Position.z);
                 x.Sprite.gameObject.transform.localScale = new Vector3(x.Scale.x / 10, x.Scale.y / 10, 1);
 
@@ -729,7 +729,7 @@ namespace HyperCard
         {
             foreach (var txt in TmpTextObjects.Where(x => x.TmpObject != null))
             {
-               txt.TmpObject.text = txt.Value;
+                txt.TmpObject.text = txt.Value;
             }
         }
 
@@ -741,13 +741,13 @@ namespace HyperCard
             }
 
             if (Disabled) return;
-            
+
             // Change opacity of custom sprites without redrawing all card
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
                 var color = x.Color;
                 color.a *= CardOpacity;
-                
+
                 x.Sprite.color = color;
             }
 
@@ -755,7 +755,7 @@ namespace HyperCard
             ComputeSpriteSheet();
 
             var mat = Renderer.sharedMaterials;
-            
+
             if (CanvasMode)
             {
                 if (CanvasTransform != null && ParentCanvasTransform != null)
@@ -773,7 +773,7 @@ namespace HyperCard
                     mat[0].SetFloat("_CanvasOffsetY", dy);
                 }
             }
-            
+
             mat[0].SetFloat("_BurningAmount", BurningAmount);
         }
 
@@ -782,7 +782,7 @@ namespace HyperCard
         private bool _fxOut;
         private float _fxInTime;
         private float _fxOutTime;
-        
+
         private float _fxOffTime;
         private float _fxOnTime;
 
@@ -793,7 +793,7 @@ namespace HyperCard
                 PeriodicalFxAlpha = 0;
                 return;
             }
-            
+
             _fxTime += Time.deltaTime;
 
             if (_fxTime > _fxOffTime && !_fxIn && !_fxOut)
@@ -837,9 +837,9 @@ namespace HyperCard
                     _fxOut = false;
                 }
             }
-            
+
             var faceMat = new Material(Renderer.sharedMaterials[0]);
-            
+
             faceMat.SetFloat("_PeriodicalFxAlpha", PeriodicalFxAlpha * PeriodicalFxColor.a);
 
             Renderer.materials = new[] { faceMat, Renderer.sharedMaterials[1] };
@@ -877,7 +877,7 @@ namespace HyperCard
 
             mat[0].SetColor("_SpriteSheetColor", SpriteSheetColor);
             mat[0].SetInt("_SpriteSheet_RmvBlackBg", SpriteSheetRemoveBlack ? 1 : 0);
-            
+
             _sheetTime += Time.deltaTime;
 
             if (!(_sheetTime > _nextSheetTime)) return;
@@ -892,6 +892,13 @@ namespace HyperCard
             _sheetTime = 0;
 
             _index += 1;
+        }
+
+        public void SetVisualOutline(bool value)
+        {
+            this.EnableOutline = value;
+            this.EnableBackOutline = value;
+            this.Redraw(); //to-do: should REALLY optimize this later, imp!
         }
     }
 }
