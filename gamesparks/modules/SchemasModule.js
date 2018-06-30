@@ -10,6 +10,8 @@
  *   addressChallenge: string, // Challenge string used for address update.
  *   activeChallengeId: string, // Challenge ID of active challenge player is in (helps prevent simultaneous challenges).
  *   winStreak: int, // Player's current win streak.
+ *   level: int, // Player's current level.
+ *   exp: int, // Player's current exp.
  * }
  * 
  * PlayerDecks schema: {

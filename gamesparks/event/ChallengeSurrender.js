@@ -13,6 +13,11 @@ const API = Spark.getGameDataService();
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
 const challengeId = Spark.getData().challengeId;
+
+if (challengeId.length <= 0) {
+    setScriptError("Invalid parameter - challengeId cannot be empty.");
+}
+
 const challenge = Spark.getChallenge(challengeId);
 
 if (challenge.getRunState() != "RUNNING") {

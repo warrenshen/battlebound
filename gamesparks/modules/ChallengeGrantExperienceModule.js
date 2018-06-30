@@ -6,6 +6,8 @@
 // and `playerId` to know which player's cards to add experience to.
 //
 // ====================================================================================================
+require("DeckModule");
+
 /**
  * @return array - array of Card-like objects with levelPrevious and expPrevious fields.
  **/ 
@@ -70,6 +72,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
         
         const resultCard = {};
         resultCard.id = cardData.id;
+        resultCard.templateId = resultCard.templateId;
         resultCard.levelPrevious = cardData.level;
         resultCard.expPrevious = cardData.exp;
         
@@ -97,5 +100,14 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
         setScriptError(error);
     }
     
-    return resultCards;
+    const CARD_FIELDS = [
+        "id",
+        "level",
+        "levelPrevious",
+        "exp",
+        "expMax",
+        "expPrevious",
+    ];
+
+    return getInstancesByCards(resultCards, CARD_FIELDS);
 }

@@ -56,7 +56,7 @@ const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
 const challengerData = {
     manaCurrent: 3,
     manaMax: 3,
-    health: 30,
+    health: 10,
     armor: 0,
     // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
@@ -71,7 +71,7 @@ const challengedDeckAfterDraw = challengedDrawCardsResponse[1];
 const challengedData = {
     manaCurrent: 3,
     manaMax: 3,
-    health: 30,
+    health: 10,
     armor: 0,
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: challengedHand,
