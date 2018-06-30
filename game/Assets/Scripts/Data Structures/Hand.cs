@@ -85,7 +85,7 @@ public class Hand
 
         for (int k = 0; k < size; k++)
         {
-            int pos = -((size - 1) / 2) + k;
+            float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
 
             CardObject cardObject = this.cardObjects[k];

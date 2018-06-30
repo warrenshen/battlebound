@@ -94,9 +94,9 @@ public class CardObject : MonoBehaviour
         //set defaults of hypercard
         SetVisualResetValues();
 
-        float scaling = 1.6f;
+        float scaling = 1.5f;
         this.visual.transform.localScale = scaling * this.visual.reset.scale;
-        this.visual.transform.Translate(Vector3.up * 3f, Space.Self);
+        this.visual.transform.Translate(Vector3.up * 2.9f, Space.Self);
         this.visual.transform.Translate(Vector3.forward * 1f, Space.Self);
     }
 
@@ -139,7 +139,7 @@ public class CardObject : MonoBehaviour
             return;
         if (!ActionManager.Instance.HasDragTarget())
             return;
-        ////resets card object position to original, handled by actionmanager
+        //// card object position reset to original, handled in actionmanager already
         if (Time.time - lastClicked < 0.5f)
             DoubleClickUp();
         lastClicked = Time.time;
