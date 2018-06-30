@@ -15,6 +15,7 @@ require("ChallengeUserMessageModule");
 
 cancelScheduledTimeEvents(challengeId, playerId);
 
+const player = Spark.getPlayer();
 player.removePrivateData("activeChallengeId");
 
 if (Spark.getData().challenge.shortCode === "RankedChallenge") {
@@ -32,7 +33,13 @@ if (Spark.getData().challenge.shortCode === "RankedChallenge") {
 
 const experienceCards = grantExperienceByPlayerAndChallenge(playerId, challengeStateData);
 
+const level = player.getPrivateData("level");
+const levelPrevious = level;
+
 const challengeEndState = {
+    playerId: playerId,
+    level: level,
+    levelPrevious: levelPrevious,
     experienceCards: experienceCards,
 };
 

@@ -56,7 +56,7 @@ if (playedCard.cost > playerManaCurrent) {
 
 var attributes;
 
-if (attributesJson.fieldIndex) {
+if (attributesJson.fieldIndex != null) {
     attributes = attributesJson;
 } else {
     attributes = JSON.parse(attributesString);
