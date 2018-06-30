@@ -193,12 +193,23 @@ public class PlayerState
         return null;
     }
 
-    public List<Card> GetCardsFromChallengeCards(Player owner)
+    public List<Card> GetCardsHand()
     {
         List<Card> cards = new List<Card>();
         foreach (ChallengeCard challengeCard in this.hand)
         {
-            cards.Add(challengeCard.GetCard(owner));
+            cards.Add(challengeCard.GetCard());
+        }
+        return cards;
+    }
+
+    public Card[] GetCardsField()
+    {
+        Card[] cards = new Card[6];
+        for (int i = 0; i < 6; i += 1)
+        {
+            ChallengeCard challengeCard = this.field[i];
+            cards[i] = challengeCard.GetCard();
         }
         return cards;
     }
@@ -419,7 +430,7 @@ public class PlayerState
             return null;
         }
 
-        public Card GetCard(Player owner)
+        public Card GetCard()
         {
             if (this.category == Card.CARD_CATEGORY_MINION)
             {

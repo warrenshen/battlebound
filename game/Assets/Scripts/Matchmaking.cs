@@ -6,8 +6,8 @@ using GameSparks.Api.Messages;
 
 public class Matchmaking : MonoBehaviour
 {
-    const string MATCH_TYPE_CASUAL = "MATCH_TYPE_CASUAL";
-    const string MATCH_TYPE_RANKED = "MATCH_TYPE_RANKED";
+    public const string MATCH_TYPE_CASUAL = "MATCH_TYPE_CASUAL";
+    public const string MATCH_TYPE_RANKED = "MATCH_TYPE_RANKED";
 
     private string matchType = MATCH_TYPE_CASUAL;
     private string deckName;

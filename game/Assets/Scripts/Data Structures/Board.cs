@@ -22,7 +22,6 @@ public class Board
         return instance;
     }
 
-
     public Board()
     {
         this.playerIdToFields = new Dictionary<string, PlayingField>();
@@ -31,10 +30,6 @@ public class Board
 
     public void PlaceCreature(BoardCreature creature, int position)
     {
-        if (!this.playerIdToFields.ContainsKey(creature.Owner.Id))
-        {
-            AddPlayer(creature.Owner);
-        }
         PlayingField selected = this.playerIdToFields[creature.Owner.Id];
         selected.Place(creature, position);
     }
@@ -45,11 +40,17 @@ public class Board
         selected.Remove(creature);
     }
 
-    public void AddPlayer(Player player)
+    public void RegisterPlayer(Player player)
     {
-        PlayingField created = new PlayingField();
-        player.SetPlayingField(created);
-        this.playerIdToFields[player.Id] = created;
+        PlayingField playingField = new PlayingField(player);
+        this.playerIdToFields[player.Id] = playingField;
+        this.playerIdToAvatar[player.Id] = player.Avatar;
+    }
+
+    public void RegisterPlayer(Player player, Card[] fieldCards)
+    {
+        PlayingField playingField = new PlayingField(player, fieldCards);
+        this.playerIdToFields[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
@@ -77,17 +78,54 @@ public class Board
         }
     }
 
+    public void RecoverCreaturesByPlayerId(string playerId)
+    {
+        GetFieldByPlayerId(playerId).RecoverCreatures();
+    }
+
     [System.Serializable]
     public class PlayingField
     {
-
         [SerializeField]
         protected BoardCreature[] creatures;
         //List<Artifact> artifacts;
 
-        public PlayingField()
+        private string playerId;
+
+        public PlayingField(Player player)
         {
+            this.playerId = player.Id;
             this.creatures = new BoardCreature[6];
+        }
+
+        public PlayingField(Player player, Card[] cards)
+        {
+            this.playerId = player.Id;
+            this.creatures = new BoardCreature[6];
+
+            SpawnCards(player, cards);
+        }
+
+        public void SpawnCards(Player player, Card[] cards)
+        {
+            for (int i = 0; i < 6; i += 1)
+            {
+                Card card = cards[i];
+
+                if (card.Id == "EMPTY")
+                {
+                    continue;
+                }
+
+                GameObject cardObjectGO = new GameObject(card.Name);
+                CardObject cardObject = cardObjectGO.AddComponent<CardObject>();
+                cardObject.InitializeCard(player, card);
+
+                Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, i)).transform;
+                BoardCreature created = BattleManager.Instance.CreateBoardCreature(cardObject, boardPlace.position);
+
+                Place(created, i);
+            }
         }
 
         public BoardCreature GetCreatureByIndex(int index)

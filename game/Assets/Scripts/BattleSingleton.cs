@@ -115,7 +115,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
         return true;
     }
 
-    private void ProcessChallengeScriptData(GSData scriptData)
+    private void ProcessChallengeScriptData(
+        GSData scriptData,
+        bool shouldEmitMoves = true
+    )
     {
         int messageNonce = (int)scriptData.GetInt("nonce");
         Debug.Log("Got message with nonce: " + messageNonce.ToString());
@@ -144,7 +147,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
             challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
         }
 
-        EmitChallengeMoves(challengeMoves);
+        if (shouldEmitMoves)
+        {
+            EmitChallengeMoves(challengeMoves);
+        }
     }
 
     public void EmitChallengeMoves(List<ChallengeMove> challengeMoves)
@@ -162,7 +168,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-                Card card = challengeMove.Attributes.Card.GetCard(owner);
+                Card card = challengeMove.Attributes.Card.GetCard();
 
                 BattleManager.Instance.ReceiveMoveDrawCard(
                     challengeMove.PlayerId,
@@ -172,7 +178,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-                Card card = challengeMove.Attributes.Card.GetCard(owner);
+                Card card = challengeMove.Attributes.Card.GetCard();
 
                 if (card.GetType() == typeof(CreatureCard))
                 {
@@ -192,7 +198,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_GENERAL)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-                Card card = challengeMove.Attributes.Card.GetCard(owner);
+                Card card = challengeMove.Attributes.Card.GetCard();
 
                 if (card.GetType() == typeof(SpellCard))
                 {
@@ -211,7 +217,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-                Card card = challengeMove.Attributes.Card.GetCard(owner);
+                Card card = challengeMove.Attributes.Card.GetCard();
 
                 if (card.GetType() == typeof(SpellCard))
                 {
@@ -238,6 +244,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
                     challengeMove.Attributes.TargetId
                 );
             }
+        }
+
+        if (!BattleManager.Instance.Initialized)
+        {
+            return;
         }
 
         PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
@@ -420,5 +431,59 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengeRequestError()
     {
         SceneManager.LoadScene("Battle");
+    }
+
+    public void SendFindMatchRequest(string matchCode, string deckName)
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("FindMatch");
+        request.SetEventAttribute("matchShortCode", "CasualMatch");
+        request.SetEventAttribute("playerDeck", deckName);
+
+        request.Send(
+            OnFindMatchSuccess,
+            OnFindMatchError
+        );
+    }
+
+    private void OnFindMatchSuccess(LogEventResponse response)
+    {
+        Debug.Log("FindMatch request success.");
+    }
+
+    private void OnFindMatchError(LogEventResponse response)
+    {
+        Debug.LogError("FindMatch request error.");
+        SendGetActiveChallengeRequest();
+    }
+
+    public void SendGetActiveChallengeRequest()
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("GetActiveChallenge");
+
+        request.Send(
+            OnGetActiveChallengeSuccess,
+            OnGetActiveChallengeError
+        );
+    }
+
+    private void OnGetActiveChallengeSuccess(LogEventResponse response)
+    {
+        Debug.Log("GetActiveChallenge request success.");
+
+        GSData scriptData = response.ScriptData;
+        this.challengeId = scriptData.GetString("challengeId");
+        Debug.Log("Setting challengeId to: " + this.challengeId);
+        ProcessChallengeScriptData(scriptData, false);
+
+        this.challengeStarted = true;
+
+        SceneManager.LoadScene("Battle");
+    }
+
+    private void OnGetActiveChallengeError(LogEventResponse response)
+    {
+        Debug.LogError("GetActiveChallenge request error.");
     }
 }

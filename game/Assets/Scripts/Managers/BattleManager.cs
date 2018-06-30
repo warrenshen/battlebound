@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
+    private bool initialized;
+    public bool Initialized => initialized;
+
     private Player you;
     private Player opponent;
 
@@ -52,16 +55,19 @@ public class BattleManager : MonoBehaviour
         {
             if (!BattleSingleton.Instance.ChallengeStarted)
             {
-                SceneManager.LoadScene("Matchmaking");
-                throw new Exception("Challenge not started - did you enter this scene from the matchmaking scene?");
+                //throw new Exception("Challenge not started - did you enter this scene from the matchmaking scene?");
+                BattleSingleton.Instance.SendFindMatchRequest(Matchmaking.MATCH_TYPE_CASUAL, "Deck1");
+                this.initialized = false;
+                return;
             }
             else
             {
                 Debug.Log("BattleManager in Connected Development Mode.");
-            }
 
-            this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
-            this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
+                this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
+                this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
+                this.initialized = true;
+            }
         }
         else
         {
@@ -69,22 +75,24 @@ public class BattleManager : MonoBehaviour
             this.opponent = new Player("Enemy", "Enemy");
         }
 
-        this.players = new List<Player>();
-        this.players.Add(this.you);
-        this.players.Add(this.opponent);
-
-        Board.Instance().AddPlayer(this.you);
-        Board.Instance().AddPlayer(this.opponent);
-
-        this.playerIdToPlayer = new Dictionary<string, Player>();
-        this.playerIdToPlayer[this.you.Id] = this.you;
-        this.playerIdToPlayer[this.opponent.Id] = this.opponent;
-
         attackCommand.SetWidth(0);
     }
 
     private void Start()
     {
+        if (InspectorControlPanel.Instance.DevelopmentMode && !this.initialized)
+        {
+            return;
+        }
+
+        this.players = new List<Player>();
+        this.players.Add(this.you);
+        this.players.Add(this.opponent);
+
+        this.playerIdToPlayer = new Dictionary<string, Player>();
+        this.playerIdToPlayer[this.you.Id] = this.you;
+        this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
         // Use this for initialization
         battleLayer = 9;
         boardLayer = LayerMask.GetMask("Board");
@@ -107,6 +115,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             turnIndex = this.players.FindIndex(player => player.HasTurn);
+            Debug.Log(turnIndex);
             turnCount = 0;
             activePlayer = players[turnIndex % players.Count];
 
