@@ -65,9 +65,7 @@ public class ActionManager : MonoBehaviour
     public void SetDragTarget(CardObject target)
     {
         this.target = target;
-        //this.sp = target_sp;
         //selectedSortingOrder = this.sp.sortingOrder;
-        //this.sp.sortingOrder = 100;
         Cursor.SetCursor(cursors[1], Vector2.zero, CursorMode.Auto);
     }
 
@@ -124,7 +122,7 @@ public class ActionManager : MonoBehaviour
         if (!this.target)
             return;
         //this.sp.sortingOrder = selectedSortingOrder;
-        //this.target = null;
+        this.target = null;
         Cursor.SetCursor(cursors[0], Vector2.zero, CursorMode.Auto);
     }
 
