@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class BattleManager : MonoBehaviour
@@ -33,6 +34,15 @@ public class BattleManager : MonoBehaviour
 
     public static BattleManager Instance { get; private set; }
 
+    public PlayerState GetPlayerState()
+    {
+        return this.you.GeneratePlayerState();
+    }
+
+    public PlayerState GetOpponentState()
+    {
+        return this.opponent.GeneratePlayerState();
+    }
 
     private void Awake()
     {
@@ -42,6 +52,7 @@ public class BattleManager : MonoBehaviour
         {
             if (!BattleSingleton.Instance.ChallengeStarted)
             {
+                SceneManager.LoadScene("Matchmaking");
                 throw new Exception("Challenge not started - did you enter this scene from the matchmaking scene?");
             }
             else
@@ -460,17 +471,17 @@ public class BattleManager : MonoBehaviour
         ((SpellCard)cardObject.Card).Activate(targetedCreature, "l_bolt");
         UseCard(cardObject.Owner, cardObject);
 
-        //if (InspectorControlPanel.Instance.DevelopmentMode)
-        //{
-        //    PlayCardAttributes attributes = new PlayCardAttributes(
-        //        targetedCreature.Owner.Id,
-        //        targetedCreature.Card.Id
-        //    );
-        //    BattleSingleton.Instance.SendChallengePlayCardRequest(
-        //        cardObject.Card.Id,
-        //        attributes
-        //    );
-        //}
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
+                targetedCreature.Owner.Id,
+                targetedCreature.Card.Id
+            );
+            BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
+                cardObject.Card.Id,
+                attributes
+            );
+        }
     }
 
     /*
@@ -507,7 +518,7 @@ public class BattleManager : MonoBehaviour
         this.activePlayer.AddDrawnCard(card);
     }
 
-    public void ReceiveMovePlayMinion(string playerId, string cardId, Card card, int handIndex, int fieldIndex)
+    public void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -529,7 +540,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMovePlaySpellGeneral(string playerId, string cardId, Card card, int handIndex)
+    public void ReceiveMovePlaySpellGeneral(string playerId, string cardId, SpellCard card, int handIndex)
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -550,7 +561,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMovePlaySpellTargeted(string playerId, string cardId, Card card, int handIndex, string fieldId, string targetId)
+    public void ReceiveMovePlaySpellTargeted(string playerId, string cardId, SpellCard card, int handIndex, string fieldId, string targetId)
     {
         BoardCreature victimCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
@@ -587,13 +598,8 @@ public class BattleManager : MonoBehaviour
         attacker.Fight(defender);
     }
 
-    public PlayerState GetPlayerState()
+    public void ReceiveChallengeEndState(ChallengeEndState challengeEndState)
     {
-        return this.you.GeneratePlayerState();
-    }
 
-    public PlayerState GetOpponentState()
-    {
-        return this.opponent.GeneratePlayerState();
     }
 }

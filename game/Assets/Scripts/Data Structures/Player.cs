@@ -97,13 +97,13 @@ public class Player
         List<Card> cards = new List<Card>();
         cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "shielded" }));
         cards.Add(new CreatureCard("C2", "Direhorn Hatchling", 1, 5, "Direhorn_Hatchling", 3, 6, new List<String>() { "taunt" }));
-        cards.Add(new SpellCard("C3", "Lightning Bolt", 3, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new SpellCard("C3", "Lightning Bolt", 3, 1, "Lightning_Bolt"));
         cards.Add(new WeaponCard("C4", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2));
         cards.Add(new WeaponCard("C5", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "Lightning_Bolt", targeted: true));
-        cards.Add(new SpellCard("C7", "Lightning Bolt", 5, 1, "Lightning_Bolt", targeted: true));
-        cards.Add(new SpellCard("C8", "Lightning Bolt", 6, 1, "Lightning_Bolt", targeted: true));
-        cards.Add(new SpellCard("C9", "Lightning Bolt", 1, 1, "Lightning_Bolt", targeted: true));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "Lightning_Bolt"));
+        cards.Add(new SpellCard("C7", "Lightning Bolt", 5, 1, "Lightning_Bolt"));
+        cards.Add(new SpellCard("C8", "Lightning Bolt", 6, 1, "Lightning_Bolt"));
+        cards.Add(new SpellCard("C9", "Lightning Bolt", 1, 1, "Lightning_Bolt"));
         cards.Add(new WeaponCard("C10", "Fiery War Axe", 1, 3, "Fiery_War_Axe", 3, 2));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
