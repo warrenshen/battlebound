@@ -342,8 +342,8 @@ public class BattleManager : MonoBehaviour
 
     private float GetCardDisplacement(CardObject target)
     {
-        Vector3 initial = target.reset.position;
-        Vector3 release = target.transform.localPosition;
+        Vector3 initial = target.visual.reset.position;
+        Vector3 release = target.visual.transform.localPosition;
         Vector3 diff = initial - release;
         return diff.sqrMagnitude;
     }

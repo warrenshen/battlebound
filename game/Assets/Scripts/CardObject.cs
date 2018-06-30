@@ -21,6 +21,8 @@ public class CardObject : MonoBehaviour
     private float lastClicked;
     public bool minified;
 
+    public HyperCard.Card visual;
+
     public struct Reset
     {
         public Vector3 position;
@@ -28,8 +30,6 @@ public class CardObject : MonoBehaviour
         public Quaternion rotation;
     }
     public Reset reset;
-
-    public HyperCard.Card visual;
 
 
     public void InitializeCard(Player player, Card card)
@@ -71,16 +71,33 @@ public class CardObject : MonoBehaviour
         //set sprites and set textmeshpro labels using TmpTextObjects (?)
     }
 
+    private void SetVisualResetValues()
+    {
+        this.visual.reset.position = this.visual.transform.localPosition;
+        this.visual.reset.scale = this.visual.transform.localScale;
+        this.visual.reset.rotation = this.visual.transform.localRotation;
+    }
+
+    private void SetThisResetValues()
+    {
+        this.reset.position = this.transform.localPosition;
+        this.reset.scale = this.transform.localScale;
+        this.reset.rotation = this.transform.localRotation;
+    }
+
     public void EnterFocus()
     {
         if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
+        //set defaults of hypercard
+        SetVisualResetValues();
 
-        float scaling = 1.2f;
-        LeanTween.scale(gameObject, new Vector3(scaling, scaling, scaling), 0.05f);
-        //transform.localScale = new Vector3(scaling, scaling, scaling);
+        float scaling = 1.6f;
+        this.visual.transform.localScale = scaling * this.visual.reset.scale;
+        this.visual.transform.Translate(Vector3.up * 3f, Space.Self);
+        this.visual.transform.Translate(Vector3.forward * 1f, Space.Self);
     }
 
     public void ExitFocus()
@@ -89,8 +106,9 @@ public class CardObject : MonoBehaviour
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
-        LeanTween.scale(gameObject, Vector3.one, 0.05f);
-        //transform.localScale = new Vector3(1, 1, 1);
+
+        this.visual.transform.localScale = this.visual.reset.scale;
+        this.visual.transform.localPosition = this.visual.reset.position;
     }
 
     //public void InFocus()
@@ -106,10 +124,11 @@ public class CardObject : MonoBehaviour
             return;
         if (ActionManager.Instance.HasDragTarget())
             return;
-        //set defaults
-        reset.position = transform.localPosition;
-        reset.scale = transform.localScale;
-        reset.rotation = transform.localRotation;
+        //set defaults of cardobject
+        SetThisResetValues();
+
+        this.visual.transform.localScale = this.visual.reset.scale;
+        this.visual.transform.localPosition = this.visual.reset.position;
 
         ActionManager.Instance.SetDragTarget(this);
     }

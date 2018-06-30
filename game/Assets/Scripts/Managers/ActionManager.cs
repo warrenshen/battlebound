@@ -150,12 +150,12 @@ public class ActionManager : MonoBehaviour
         cardObj.transform.position = Vector3.Lerp(cardObj.transform.position, endPos, Time.deltaTime * L_SPEED);
     }
 
-    private void AdjustCardTilt(CardObject cardObj)
+    private void AdjustCardTilt(CardObject cardObject)
     {
-        Vector3 mDeltaPosition = Camera.main.WorldToScreenPoint(cardObj.transform.position);
+        Vector3 mDeltaPosition = Camera.main.WorldToScreenPoint(cardObject.transform.position);
         mDeltaPosition = Input.mousePosition - mDeltaPosition;
         var magnitude = mDeltaPosition.sqrMagnitude;
-        Vector3 resetRotation = cardObj.reset.rotation.eulerAngles;
+        Vector3 resetRotation = cardObject.reset.rotation.eulerAngles;
 
         mDeltaPosition.Normalize();
         var heading = Vector3.Dot(mDeltaPosition, Vector3.up); //direction
@@ -163,7 +163,7 @@ public class ActionManager : MonoBehaviour
         //determine if significant movement
         if (magnitude < M_THRESHOLD)
         {
-            cardObj.transform.localRotation = dragTilts[4]; //no movement, movement has slowed
+            cardObject.transform.localRotation = dragTilts[4]; //no movement, movement has slowed
         }
         else
         {
@@ -172,20 +172,20 @@ public class ActionManager : MonoBehaviour
 
             if (heading >= 0.5f)
             {
-                cardObj.transform.localRotation = dragTilts[0];  // Up
+                cardObject.transform.localRotation = dragTilts[0];  // Up
             }
             else if (heading <= -0.5f)
             {
-                cardObj.transform.localRotation = dragTilts[1];  // Down
+                cardObject.transform.localRotation = dragTilts[1];  // Down
             }
             else
             {
                 heading = Vector3.Dot(mDeltaPosition, Vector3.right);
                 if (heading >= 0.5f)
                 {
-                    cardObj.transform.localRotation = dragTilts[2];  // Right
+                    cardObject.transform.localRotation = dragTilts[2];  // Right
                 }
-                else { cardObj.transform.localRotation = dragTilts[3]; }  // Left 
+                else { cardObject.transform.localRotation = dragTilts[3]; }  // Left 
             }
         }
         mDeltaPosition = Input.mousePosition;

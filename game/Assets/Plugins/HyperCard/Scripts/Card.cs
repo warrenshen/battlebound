@@ -45,6 +45,15 @@ namespace HyperCard
             get { return GetComponent<MeshRenderer>(); } // Renderer
         }
 
+        //custom
+        public struct Reset
+        {
+            public Vector3 position;
+            public Vector3 scale;
+            public Quaternion rotation;
+        }
+        public Reset reset;
+
         //
         public bool Disabled { get; set; }
 
