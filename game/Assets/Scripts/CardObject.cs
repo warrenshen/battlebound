@@ -63,9 +63,11 @@ public class CardObject : MonoBehaviour
     private void RandomCardArtwork()
     {
 
-        Texture2D fore = Resources.Load(string.Format("Foregrounds/{0:0000}", Random.Range(51, 59))) as Texture2D;
+        Texture2D fore = Resources.Load(string.Format("Foregrounds/character_{0}", Random.Range(1, 61))) as Texture2D;
         Texture2D back = Resources.Load(string.Format("Backgrounds/background_{0}", Random.Range(0, 77))) as Texture2D;
         this.visual.SetCardArtwork(fore, back);
+        this.visual.Stencil = BattleManager.Instance.stencilCount;
+        BattleManager.Instance.stencilCount += 1 % 255;
     }
 
     private HyperCard.Card VisualizeCard()
@@ -103,9 +105,9 @@ public class CardObject : MonoBehaviour
         //set defaults of hypercard
         SetVisualResetValues();
 
-        float scaling = 1.5f;
+        float scaling = 1.7f;
         this.visual.transform.localScale = scaling * this.visual.reset.scale;
-        this.visual.transform.Translate(Vector3.up * 2.9f, Space.Self);
+        this.visual.transform.Translate(Vector3.up * 2.8f, Space.Self);
         this.visual.transform.Translate(Vector3.forward * 1f, Space.Self);
     }
 

@@ -95,16 +95,16 @@ public class Hand
         for (int k = 0; k < size; k++)
         {
             float pos = -((size - 1) / 2.0f) + k;
-            float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
+            float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
 
             CardObject cardObject = this.cardObjects[k];
             RedrawOutline(cardObject);
             //cardObject.Renderer.sortingOrder = 10 + k;
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth / 1.11f, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;
+            Vector3 adjustedPos = new Vector3(pos * cardWidth, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;
             float tweenTime = 0.1f;
             LeanTween.moveLocal(cardObject.gameObject, adjustedPos, tweenTime);
-            LeanTween.rotateLocal(cardObject.gameObject, new Vector3(rotation_x, pos * 4f, 0), tweenTime);
+            LeanTween.rotateLocal(cardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), tweenTime);
         }
     }
 

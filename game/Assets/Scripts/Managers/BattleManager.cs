@@ -34,6 +34,7 @@ public class BattleManager : MonoBehaviour
     private List<Targetable> validTargets; //used to store/cache valid targets
 
     public CurvedLineRenderer attackCommand;
+    public int stencilCount;
 
     public static BattleManager Instance { get; private set; }
 
@@ -88,6 +89,7 @@ public class BattleManager : MonoBehaviour
         this.players = new List<Player>();
         this.players.Add(this.you);
         this.players.Add(this.opponent);
+        this.stencilCount = 1;
 
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.playerIdToPlayer[this.you.Id] = this.you;
