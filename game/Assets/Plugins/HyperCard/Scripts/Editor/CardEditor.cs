@@ -19,8 +19,6 @@ namespace HyperCard
     [CanEditMultipleObjects]
     public class CardEditor : Editor
     {
-        private Texture2D _mLogo;
-
         public SerializedProperty _cardFaceMat;
         public SerializedProperty _cardBackMat;
         public SerializedProperty _spriteMat;
@@ -28,7 +26,7 @@ namespace HyperCard
         public SerializedProperty _spriteObjects;
         public SerializedProperty _tmpTextObjects;
         public SerializedProperty _showTmpProps;
-        
+
         public SerializedProperty _seed;
 
         public SerializedProperty _debugBlend;
@@ -39,6 +37,10 @@ namespace HyperCard
         public SerializedProperty _cardFaceArtwork;
         public SerializedProperty _cardFaceArtworkOffset;
         public SerializedProperty _cardFaceArtworkScale;
+        public SerializedProperty _cardFaceBackgroundArtwork;
+        public SerializedProperty _cardFaceBackgroundArtworkOffset;
+        public SerializedProperty _cardFaceBackgroundArtworkScale;
+
         public SerializedProperty _enableDistortion0;
         public SerializedProperty _distortion0Mask;
         public SerializedProperty _distortion0Freq_Red;
@@ -63,7 +65,7 @@ namespace HyperCard
         public SerializedProperty _distortion1Amp;
         public SerializedProperty _distortion1Speed;
         public SerializedProperty _distortion1Direction;
-        
+
         public SerializedProperty _enablePeriodicalFx;
         public SerializedProperty _periodicalFxDiffuse;
         public SerializedProperty _periodicalFxMask;
@@ -74,7 +76,7 @@ namespace HyperCard
         public SerializedProperty _periodicalFxDelayOnMin;
         public SerializedProperty _periodicalFxDelayOnMax;
         public SerializedProperty _periodicalFxFadeDelay;
-        
+
         public SerializedProperty _enableSpriteSheet;
         public SerializedProperty _spriteSheetTex;
         public SerializedProperty _spriteSheetSize;
@@ -143,19 +145,7 @@ namespace HyperCard
         public SerializedProperty _cardBack;
         public SerializedProperty _cardBackAlpha;
 
-        public SerializedProperty _enableHolo;
-        public SerializedProperty _holoMask;
-        public SerializedProperty _holoMap;
-        public SerializedProperty _holoMapScale;
-        public SerializedProperty _holoCube;
-        public SerializedProperty _holoCubeColor;
-        public SerializedProperty _holoCubeRotation;
-        public SerializedProperty _holoPower;
-        public SerializedProperty _holoAlpha;
-        public SerializedProperty _holoCubeBBScale;
-        public SerializedProperty _holoCubeBBOffset;
-        public SerializedProperty _showHoloGuizmo;
-
+        //Holo/cubemap removed by nick 6/30/18
         public SerializedProperty _enableGlitter;
         public SerializedProperty _glitterMask;
         public SerializedProperty _glitterMap;
@@ -180,9 +170,7 @@ namespace HyperCard
 
         void OnEnable()
         {
-            _mLogo = (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/HyperCard/Textures+Artworks/Debug/HyperCard.png", typeof(Texture2D));
-
-            _target = (Card) target;
+            _target = (Card)target;
 
             try
             {
@@ -204,6 +192,10 @@ namespace HyperCard
                 _cardFaceArtwork = serializedObject.FindProperty("CardFaceArtwork");
                 _cardFaceArtworkOffset = serializedObject.FindProperty("CardFaceArtworkOffset");
                 _cardFaceArtworkScale = serializedObject.FindProperty("CardFaceArtworkScale");
+                _cardFaceBackgroundArtwork = serializedObject.FindProperty("CardFaceBackgroundArtwork");
+                _cardFaceBackgroundArtworkOffset = serializedObject.FindProperty("CardFaceBackgroundArtworkOffset");
+                _cardFaceBackgroundArtworkScale = serializedObject.FindProperty("CardFaceBackgroundArtworkScale");
+
                 _enableDistortion0 = serializedObject.FindProperty("EnableDistortion0");
                 _distortion0Mask = serializedObject.FindProperty("Distortion0Mask");
                 _distortion0Freq_Red = serializedObject.FindProperty("Distortion0Freq_Red");
@@ -238,8 +230,8 @@ namespace HyperCard
                 _periodicalFxDelayOffMax = serializedObject.FindProperty("PeriodicalFxDelayOffMax");
                 _periodicalFxDelayOnMin = serializedObject.FindProperty("PeriodicalFxDelayOnMin");
                 _periodicalFxDelayOnMax = serializedObject.FindProperty("PeriodicalFxDelayOnMax");
-                _periodicalFxFadeDelay = serializedObject.FindProperty("PeriodicalFxFadeDelay");               
-                
+                _periodicalFxFadeDelay = serializedObject.FindProperty("PeriodicalFxFadeDelay");
+
                 _enableSpriteSheet = serializedObject.FindProperty("EnableSpriteSheet");
                 _spriteSheetTex = serializedObject.FindProperty("SpriteSheetTex");
                 _spriteSheetSize = serializedObject.FindProperty("SpriteSheetSize");
@@ -309,21 +301,6 @@ namespace HyperCard
                 _mixNoiseDistSpeed = serializedObject.FindProperty("MixNoiseDistSpeed");
                 _mixNoiseDistDir = serializedObject.FindProperty("MixNoiseDistDir");
 
-                // Artwork : Holo/Cubemap FX
-                _enableHolo = serializedObject.FindProperty("EnableHolo");
-                _holoMask = serializedObject.FindProperty("HoloMask");
-                _holoMap = serializedObject.FindProperty("HoloMap");
-                _holoMapScale = serializedObject.FindProperty("HoloMapScale");
-                _holoCube = serializedObject.FindProperty("HoloCube");
-                _holoCubeColor = serializedObject.FindProperty("HoloCubeColor");
-                _holoCubeRotation = serializedObject.FindProperty("HoloCubeRotation");
-                _holoCubeBBScale = serializedObject.FindProperty("HoloCubeBoundingBoxScale");
-                _holoCubeBBOffset = serializedObject.FindProperty("HoloCubeBoundingBoxOffset");
-                _showHoloGuizmo = serializedObject.FindProperty("ShowHoloGuizmo"); 
-
-                _holoPower = serializedObject.FindProperty("HoloPower");
-                _holoAlpha = serializedObject.FindProperty("HoloAlpha");
-
                 // Card : Glitter fx
                 _enableGlitter = serializedObject.FindProperty("EnableGlitter");
                 _glitterMask = serializedObject.FindProperty("GlitterMask");
@@ -347,7 +324,7 @@ namespace HyperCard
                 _cardBack = serializedObject.FindProperty("CardBack");
                 _cardBackAlpha = serializedObject.FindProperty("CardBackAlpha");
             }
-            catch(Exception e) { Debug.Log(e); }
+            catch (Exception e) { Debug.Log(e); }
         }
 
         public override void OnInspectorGUI()
@@ -355,10 +332,6 @@ namespace HyperCard
             serializedObject.Update();
 
             GUILayout.BeginVertical();
-
-            GUILayout.Space(10f);
-
-            GUILayout.Box(_mLogo);
 
             GUILayout.Space(10f);
 
@@ -405,21 +378,21 @@ namespace HyperCard
                 GUILayout.Space(10f);
 
                 _stencil.intValue = EditorGUILayout.IntField("Stencil", Mathf.Clamp(_stencil.intValue, 0, 255));
-                
+
                 EditorGUILayout.HelpBox("To avoid depth issues and text overlapping, each card should have a different Stencil value.", MessageType.Info);
-                
+
                 GUILayout.Space(10f);
-                
+
                 _seed.intValue = EditorGUILayout.IntField(new GUIContent("Random Seed", "Used to randomize generated noise."), _seed.intValue);
 
                 if (_seed.intValue > 99999) _seed.intValue = 99999;
-              
+
                 GUILayout.Space(10f);
-                
+
                 _showTmpProps.boolValue = DrawToggle("Show child objects", _showTmpProps.boolValue);
-                                  
+
                 _canvasMode.boolValue = DrawToggle("Enable Canvas Mode", _canvasMode.boolValue, "Useful to avoid offset issues when using HyperCard with Canvas.");
-                              
+
                 if (_canvasMode.boolValue)
                 {
                     _canvasParent.objectReferenceValue = EditorGUILayout.ObjectField("Parent Canvas", _canvasParent.objectReferenceValue, typeof(RectTransform), true, GUILayout.ExpandWidth(true));
@@ -427,7 +400,7 @@ namespace HyperCard
                 }
 
                 GUILayout.Space(10f);
-                
+
                 GUI.backgroundColor = Color.white;
 
                 GUILayout.Label("<color=black><b><size=12>Misc</size></b></color>", u, GUILayout.ExpandWidth(true));
@@ -435,12 +408,12 @@ namespace HyperCard
                 _cardOpacity.floatValue = EditorGUILayout.Slider(new GUIContent("Opacity", "Opacity is not compatible with card overlapping for the moment."), _cardOpacity.floatValue, 0.0f, 1f);
 
                 GUILayout.Space(10f);
-                
+
                 GUILayout.EndVertical();
 
                 GUILayout.EndHorizontal();
             }
-            
+
             if (DrawHeader("Face Properties"))
             {
                 GUILayout.BeginHorizontal();
@@ -456,7 +429,7 @@ namespace HyperCard
                 GUILayout.Label("<color=black><b><size=12>General settings</size></b></color>", u, GUILayout.ExpandWidth(true));
 
                 GUILayout.Space(10f);
-                
+
 
                 if (DrawHeader("Frame & artwork"))
                 {
@@ -482,38 +455,44 @@ namespace HyperCard
                     _cardFaceArtworkOffset.vector2Value = EditorGUILayout.Vector2Field("Offset", _cardFaceArtworkOffset.vector2Value);
                     _cardFaceArtworkScale.vector2Value = EditorGUILayout.Vector2Field("Scale", _cardFaceArtworkScale.vector2Value);
 
+
+                    GUILayout.Space(25f);
+                    _cardFaceBackgroundArtwork.objectReferenceValue = EditorGUILayout.ObjectField("Background Artwork", _cardFaceBackgroundArtwork.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
+                    _cardFaceBackgroundArtworkOffset.vector2Value = EditorGUILayout.Vector2Field("Background Offset", _cardFaceBackgroundArtworkOffset.vector2Value);
+                    _cardFaceBackgroundArtworkScale.vector2Value = EditorGUILayout.Vector2Field("Background Scale", _cardFaceBackgroundArtworkScale.vector2Value);
+
                     GUILayout.Space(10f);
                 }
-                
+
                 if (DrawHeader("Custom texts"))
                 {
                     GUILayout.BeginHorizontal();
-    
+
                     GUILayout.Space(20f);
-    
+
                     GUILayout.BeginVertical();
-    
+
                     GUILayout.Space(10f);
-    
+
                     EditorStyles.textField.wordWrap = true;
-    
+
                     GUILayout.Label(string.Format("<color=black><b><size=12>TextMeshPro objects ({0})</size></b></color>", _tmpTextObjects.arraySize), u, GUILayout.ExpandWidth(true));
-    
+
                     GUILayout.Space(10f);
-    
+
                     GUILayout.BeginHorizontal();
-    
+
                     if (GUILayout.Button("Link new TMP item", GUILayout.Width(150), GUILayout.Height(30)))
                     {
                         _tmpTextObjects.InsertArrayElementAtIndex(_tmpTextObjects.arraySize);
                         _tmpTextObjects.serializedObject.ApplyModifiedProperties();
                     }
-    
+
                     GUILayout.EndHorizontal();
-    
+
                     GUILayout.BeginVertical();
-    
-    
+
+
                     for (var i = 0; i < _tmpTextObjects.arraySize; i++)
                     {
                         var tmpItem = _tmpTextObjects.GetArrayElementAtIndex(i);
@@ -521,73 +500,73 @@ namespace HyperCard
                         var tmpKey = tmpItem.FindPropertyRelative("Key");
                         var tmpValue = tmpItem.FindPropertyRelative("Value");
                         var displayMode = tmpItem.FindPropertyRelative("DisplayMode");
-    
+
                         GUI.backgroundColor = Color.white;
-    
+
                         GUILayout.BeginVertical(u);
-    
+
                         GUILayout.BeginHorizontal();
                         GUILayout.Label("#" + i, GUILayout.Width(20), GUILayout.Height(20));
-    
-                        var isTextArea = DrawMiniToggle("Tex", (TextMeshProParamDisplayMode) displayMode.intValue == TextMeshProParamDisplayMode.TextArea);
-    
-                        displayMode.intValue = isTextArea ? (int) TextMeshProParamDisplayMode.TextArea : (int) TextMeshProParamDisplayMode.Field;
-    
+
+                        var isTextArea = DrawMiniToggle("Tex", (TextMeshProParamDisplayMode)displayMode.intValue == TextMeshProParamDisplayMode.TextArea);
+
+                        displayMode.intValue = isTextArea ? (int)TextMeshProParamDisplayMode.TextArea : (int)TextMeshProParamDisplayMode.Field;
+
                         tmpObject.objectReferenceValue = EditorGUILayout.ObjectField(tmpObject.objectReferenceValue, typeof(TextMeshPro), true, GUILayout.ExpandWidth(false));
-    
+
                         GUI.backgroundColor = new Color(0.8f, 0f, 0f);
                         if (GUILayout.Button("x", GUILayout.Width(20), GUILayout.Height(20)))
                         {
                             _tmpTextObjects.DeleteArrayElementAtIndex(i);
                             _tmpTextObjects.serializedObject.ApplyModifiedProperties();
                         }
-    
+
                         GUI.backgroundColor = Color.white;
-    
+
                         GUILayout.EndHorizontal();
-                        
+
                         if (i <= _tmpTextObjects.arraySize - 1)
                         {
                             tmpKey.stringValue = EditorGUILayout.TextField("Key", tmpKey.stringValue);
-    
+
                             tmpValue.stringValue = isTextArea
                                 ? EditorGUILayout.TextArea(tmpValue.stringValue, GUILayout.Height(100))
                                 : EditorGUILayout.TextField(tmpValue.stringValue);
                         }
-    
+
                         GUILayout.EndVertical();
                         GUILayout.Space(10f);
                     }
-    
+
                     GUILayout.EndVertical();
-    
-    
-                    
+
+
+
                     GUILayout.Space(10f);
-    
+
                     GUILayout.EndVertical();
-    
+
                     GUILayout.EndHorizontal();
                 }
-                
+
                 if (DrawHeader("Custom sprites"))
                 {
                     GUILayout.BeginHorizontal();
-    
+
                     GUILayout.Space(20f);
-    
+
                     GUILayout.BeginVertical();
-    
+
                     GUILayout.Space(10f);
-    
+
                     EditorStyles.textField.wordWrap = true;
-    
+
                     GUILayout.Label(string.Format("<color=black><b><size=12>Custom sprites ({0})</size></b></color>", _spriteObjects.arraySize), u, GUILayout.ExpandWidth(true));
-    
+
                     GUILayout.Space(10f);
-    
+
                     GUILayout.BeginHorizontal();
-    
+
                     if (GUILayout.Button("Add a new sprite", GUILayout.Width(150), GUILayout.Height(30)))
                     {
                         _spriteObjects.InsertArrayElementAtIndex(_spriteObjects.arraySize);
@@ -595,12 +574,12 @@ namespace HyperCard
 
                         _target.CreateSprite(_spriteObjects.arraySize - 1);
                     }
-    
+
                     GUILayout.EndHorizontal();
-    
+
                     GUILayout.BeginVertical();
-    
-    
+
+
                     for (var i = 0; i < _spriteObjects.arraySize; i++)
                     {
                         var spriteItem = _spriteObjects.GetArrayElementAtIndex(i);
@@ -621,20 +600,20 @@ namespace HyperCard
                         var spriteIsAffectedByFilters = spriteItem.FindPropertyRelative("IsAffectedByFilters");
 
                         var hideSprite = spriteItem.FindPropertyRelative("IsHidden");
-    
+
                         GUI.backgroundColor = Color.white;
-    
+
                         GUILayout.BeginVertical(u);
-    
+
                         GUILayout.BeginHorizontal();
                         GUILayout.Label("#" + i, GUILayout.Width(20), GUILayout.Height(20));
-    
+
                         hideSprite.boolValue = DrawMiniToggle("Hide", hideSprite.boolValue);
 
                         EditorGUI.BeginDisabledGroup(true);
                         spriteRenderer.objectReferenceValue = EditorGUILayout.ObjectField(spriteRenderer.objectReferenceValue, typeof(SpriteRenderer), true, GUILayout.ExpandWidth(true));
                         EditorGUI.EndDisabledGroup();
-                        
+
                         GUI.backgroundColor = new Color(0.8f, 0f, 0f);
                         if (GUILayout.Button("x", GUILayout.Width(20), GUILayout.Height(20)))
                         {
@@ -642,11 +621,11 @@ namespace HyperCard
                             _spriteObjects.DeleteArrayElementAtIndex(i);
                             _spriteObjects.serializedObject.ApplyModifiedProperties();
                         }
-    
+
                         GUI.backgroundColor = Color.white;
-    
+
                         GUILayout.EndHorizontal();
-                        
+
                         if (i <= _spriteObjects.arraySize - 1)
                         {
                             spriteKey.stringValue = EditorGUILayout.TextField("Key", spriteKey.stringValue);
@@ -659,7 +638,7 @@ namespace HyperCard
 
                             showAdvancedSettings.boolValue = DrawToggle("Show advanced settings", showAdvancedSettings.boolValue);
 
-                            if(showAdvancedSettings.boolValue)
+                            if (showAdvancedSettings.boolValue)
                             {
                                 spriteRenderQueue.intValue = EditorGUILayout.IntField("RenderQueue", spriteRenderQueue.intValue);
 
@@ -685,13 +664,13 @@ namespace HyperCard
                         GUILayout.EndVertical();
                         GUILayout.Space(10f);
                     }
-    
+
                     GUILayout.EndVertical();
-    
+
                     GUILayout.Space(10f);
-    
+
                     GUILayout.EndVertical();
-    
+
                     GUILayout.EndHorizontal();
                 }
 
@@ -786,28 +765,7 @@ namespace HyperCard
                         GUILayout.Space(10f);
                     }
 
-
                     GUILayout.Space(10f);
-                }
-
-                if (DrawHeader("Artwork - Holo/Cubemap FX"))
-                {
-                    _enableHolo.boolValue = DrawToggle(_enableHolo.boolValue);
-
-                    _holoMask.objectReferenceValue = EditorGUILayout.ObjectField("Mask", _holoMask.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
-                    _holoMap.objectReferenceValue = EditorGUILayout.ObjectField("Holo map", _holoMap.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
-                    _holoMapScale.vector2Value = EditorGUILayout.Vector2Field("Map scale", _holoMapScale.vector2Value);
-                    _holoPower.floatValue = EditorGUILayout.Slider("Power", _holoPower.floatValue, 0, 5);
-
-                    GUILayout.Space(20f);
-                    _holoCube.objectReferenceValue = EditorGUILayout.ObjectField("Cubemap (local)", _holoCube.objectReferenceValue, typeof(Cubemap), false, GUILayout.ExpandWidth(false));
-                    _holoCubeColor.colorValue = EditorGUILayout.ColorField("Color", _holoCubeColor.colorValue);
-                    _holoCubeRotation.floatValue = EditorGUILayout.Slider("Rotation", _holoCubeRotation.floatValue, 0, 360);
-                    _holoAlpha.floatValue = EditorGUILayout.Slider("Alpha mult.", _holoAlpha.floatValue, 0, 5);
-                    _holoCubeBBScale.vector3Value = EditorGUILayout.Vector3Field("Bounding box scale", _holoCubeBBScale.vector3Value);
-                    _holoCubeBBOffset.vector3Value = EditorGUILayout.Vector3Field("Bounding box offset", _holoCubeBBOffset.vector3Value);
-                    _showHoloGuizmo.boolValue = DrawToggle("Debug mode", _showHoloGuizmo.boolValue);
-                    GUILayout.Space(20f);
                 }
 
                 if (DrawHeader("Artwork - Animated Overlay FX"))
@@ -850,7 +808,7 @@ namespace HyperCard
                 {
                     _enableSpriteSheet.boolValue = DrawToggle(_enableSpriteSheet.boolValue);
 
-                    _spriteSheetTex.objectReferenceValue = (Texture2D) EditorGUILayout.ObjectField("Sprites sheet", _spriteSheetTex.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
+                    _spriteSheetTex.objectReferenceValue = (Texture2D)EditorGUILayout.ObjectField("Sprites sheet", _spriteSheetTex.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
                     _spriteSheetSize.vector2Value = EditorGUILayout.Vector2Field("Sheet size", _spriteSheetSize.vector2Value);
 
                     EditorGUILayout.HelpBox("Size corresponds to the number of columns by the number of rows.", MessageType.Info);
@@ -870,7 +828,7 @@ namespace HyperCard
                 }
 
                 GUILayout.Space(10f);
-                
+
                 if (DrawHeader("Card - Outline"))
                 {
                     _enableOutline.boolValue = DrawToggle(_enableOutline.boolValue);
@@ -941,22 +899,22 @@ namespace HyperCard
                 if (DrawHeader("Card - Noise FX"))
                 {
                     _enableMix.boolValue = DrawToggle(_enableMix.boolValue);
-                    
+
                     GUILayout.Space(10f);
 
-                    _mixNoiseMask.objectReferenceValue = EditorGUILayout.ObjectField("Mask", _mixNoiseMask.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(true));    
+                    _mixNoiseMask.objectReferenceValue = EditorGUILayout.ObjectField("Mask", _mixNoiseMask.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(true));
                     _mixNoiseMaskOffset.vector2Value = EditorGUILayout.Vector2Field("Offset", _mixNoiseMaskOffset.vector2Value);
                     _mixNoiseMaskScale.vector2Value = EditorGUILayout.Vector2Field("Scale", _mixNoiseMaskScale.vector2Value);
-                    
+
                     GUILayout.Space(5f);
 
                     _mixNoiseDistFreq.floatValue = EditorGUILayout.FloatField("Distortion frequency", _mixNoiseDistFreq.floatValue);
                     _mixNoiseDistAmp.floatValue = EditorGUILayout.FloatField("Amplitude mult.", _mixNoiseDistAmp.floatValue);
                     _mixNoiseDistSpeed.vector2Value = EditorGUILayout.Vector2Field("Distortion speed", _mixNoiseDistSpeed.vector2Value);
                     _mixNoiseDistDir.vector2Value = EditorGUILayout.Vector2Field("Direction", _mixNoiseDistDir.vector2Value);
-              
+
                     GUILayout.Space(10f);
-                    
+
                     _mixNoiseStartColor.colorValue = EditorGUILayout.ColorField("Start Color", _mixNoiseStartColor.colorValue);
                     _mixNoiseEndColor.colorValue = EditorGUILayout.ColorField("End color", _mixNoiseEndColor.colorValue);
                     _mixNoiseColorExposure.floatValue = EditorGUILayout.FloatField("Exposure", _mixNoiseColorExposure.floatValue);
@@ -1011,7 +969,7 @@ namespace HyperCard
             }
 
             GUILayout.EndVertical();
- 
+
             if (GUI.changed)
             {
                 serializedObject.ApplyModifiedProperties();
@@ -1041,7 +999,7 @@ namespace HyperCard
 
         public static void ReloadAllCards()
         {
-            Card[] cards = (Card[]) FindObjectsOfType(typeof(Card));
+            Card[] cards = (Card[])FindObjectsOfType(typeof(Card));
 
             foreach (var card in cards)
             {

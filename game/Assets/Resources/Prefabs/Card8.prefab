@@ -307,8 +307,8 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: dfa8675239dfb1e4ba1b779baaf49b05, type: 2}
+  - {fileID: 2100000, guid: 4d32e97d1ed3b5849885489e80ee80ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -422,8 +422,11 @@ MonoBehaviour:
   CardFaceArtwork: {fileID: 2800000, guid: 4879912e9fe95d846ab3881112092f7b, type: 3}
   CardFaceArtworkOffset: {x: -0.06, y: -0.09}
   CardFaceArtworkScale: {x: 1.09, y: 2.15}
+  CardFaceBackgroundArtwork: {fileID: 0}
+  CardFaceBackgroundArtworkOffset: {x: 0, y: 0}
+  CardFaceBackgroundArtworkScale: {x: 1, y: 1}
   EnableDistortion0: 1
-  Distortion0Mask: {fileID: 2800000, guid: 26c3203f1e6e09143bae1c1b9ca53a01, type: 3}
+  Distortion0Mask: {fileID: 2800000, guid: cfe4d47ac16ff7941b60a245c87ebb50, type: 3}
   Distortion0Freq_Red: 20
   Distortion0Amp_Red: 0.05
   Distortion0Speed_Red: 5

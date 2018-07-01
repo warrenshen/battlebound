@@ -51,12 +51,21 @@ public class CardObject : MonoBehaviour
         }
 
         this.visual = VisualizeCard();
+        RandomCardArtwork();
         //set sprite etc here
         //image = Resources.Load(i) as Texture2D;
         //spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
         //spr.sortingOrder = 10;
         collider = gameObject.AddComponent<BoxCollider>() as Collider;
         collider.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.5f, 0.2f);
+    }
+
+    private void RandomCardArtwork()
+    {
+
+        Texture2D fore = Resources.Load(string.Format("Foregrounds/{0:0000}", Random.Range(51, 59))) as Texture2D;
+        Texture2D back = Resources.Load(string.Format("Backgrounds/background_{0}", Random.Range(0, 77))) as Texture2D;
+        this.visual.SetCardArtwork(fore, back);
     }
 
     private HyperCard.Card VisualizeCard()
