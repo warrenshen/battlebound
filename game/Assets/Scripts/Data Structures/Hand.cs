@@ -9,12 +9,16 @@ public class Hand
     [SerializeField]
     private List<CardObject> cardObjects;
 
+    private Player owner;
+    public Player Owner => Owner;
+
     private string name;
 
     public Hand(Player player)
     {
-        this.name = player.Name;
         this.cardObjects = new List<CardObject>();
+        this.name = player.Name;
+        this.owner = player;
     }
 
     public int Size()
@@ -58,6 +62,11 @@ public class Hand
         this.RepositionCards();
     }
 
+    private void RedrawOutline(CardObject cardObject)
+    {
+        cardObject.visual.SetVisualOutline(this.owner.Mana >= cardObject.Card.Cost);
+    }
+
     public void RepositionCards(float verticalShift = 0)
     {
         int size = this.cardObjects.Count;
@@ -89,6 +98,7 @@ public class Hand
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.05f, 0.05f);
 
             CardObject cardObject = this.cardObjects[k];
+            RedrawOutline(cardObject);
             //cardObject.Renderer.sortingOrder = 10 + k;
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth / 1.11f, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;

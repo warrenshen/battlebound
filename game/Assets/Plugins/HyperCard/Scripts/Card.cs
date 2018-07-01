@@ -163,6 +163,10 @@ namespace HyperCard
         public Vector2 CardFaceArtworkOffset = Vector2.zero;
         public Vector2 CardFaceArtworkScale = Vector2.one;
 
+        public Texture2D CardFaceBackgroundArtwork;
+        public Vector2 CardFaceBackgroundArtworkOffset = Vector2.zero;
+        public Vector2 CardFaceBackgroundArtworkScale = Vector2.one;
+
         // distortion fx
         public bool EnableDistortion0;
         public Texture2D Distortion0Mask;
@@ -419,9 +423,13 @@ namespace HyperCard
 
             faceMat.SetTexture("_CardFrame", CardFaceFrame);
             faceMat.SetColor("_CardFrameColor", CardFaceFrameColor);
-            faceMat.SetTexture("_CardPicture", CardFaceArtwork);
-            faceMat.SetTextureOffset("_CardPicture", CardFaceArtworkOffset);
-            faceMat.SetTextureScale("_CardPicture", CardFaceArtworkScale);
+            faceMat.SetTexture("_CardForeground", CardFaceArtwork);
+            faceMat.SetTextureOffset("_CardForeground", CardFaceArtworkOffset);
+            faceMat.SetTextureScale("_CardForeground", CardFaceArtworkScale);
+
+            faceMat.SetTexture("_CardBackground", CardFaceBackgroundArtwork);
+            faceMat.SetTextureOffset("_CardBackground", CardFaceBackgroundArtworkOffset);
+            faceMat.SetTextureScale("_CardBackground", CardFaceBackgroundArtworkScale);
 
             if (EnableDistortion0)
             {
@@ -577,36 +585,7 @@ namespace HyperCard
             // spritesheet
             faceMat.SetInt("_SpriteSheet_Enabled", EnableSpriteSheet ? 1 : 0);
 
-            // holo
-            if (EnableHolo)
-            {
-                var centerBBox = transform.position + HoloCubeBoundingBoxOffset;
-                var bMin = centerBBox - HoloCubeBoundingBoxScale / 2;
-                var bMax = centerBBox + HoloCubeBoundingBoxScale / 2;
-
-                faceMat.SetVector("_HoloBBoxMin", bMin);
-                faceMat.SetVector("_HoloBBoxMax", bMax);
-                faceMat.SetVector("_HoloEnviCubeMapPos", centerBBox);
-
-                faceMat.SetTexture("_HoloMask", HoloMask);
-                faceMat.SetTexture("_HoloMap", HoloMap);
-                faceMat.SetTexture("_HoloCube", HoloCube);
-                faceMat.SetColor("_HoloCubeColor", HoloCubeColor);
-
-                faceMat.SetFloat("_HoloCubeRotation", HoloCubeRotation);
-
-                faceMat.SetVector("_HoloMap_Scale", HoloMapScale);
-                faceMat.SetFloat("_HoloPower", HoloPower);
-                faceMat.SetFloat("_HoloAlpha", HoloAlpha);
-
-                faceMat.SetInt("_Holo_Debug", ShowHoloGuizmo ? 1 : 0);
-
-                faceMat.SetInt("_Holo_Enabled", 1);
-            }
-            else
-            {
-                faceMat.SetInt("_Holo_Enabled", 0);
-            }
+            // holo, removed by nick 6/30/18, needed the sampler for background
 
             // Glitter
             faceMat.SetInt("_Glitter_Enabled", EnableGlitter ? 1 : 0);
@@ -903,11 +882,18 @@ namespace HyperCard
             _index += 1;
         }
 
+        public void SetCardArtwork(Texture2D fore, Texture2D back)
+        {
+            this.CardFaceArtwork = fore;
+            this.CardFaceBackgroundArtwork = back;
+            this.Redraw();  //to-do: should REALLY optimize this later, imp!
+        }
+
         public void SetVisualOutline(bool value)
         {
             this.EnableOutline = value;
             this.EnableBackOutline = value;
-            this.Redraw(); //to-do: should REALLY optimize this later, imp!
+            this.Redraw();  //to-do: should REALLY optimize this later, imp!
         }
     }
 }

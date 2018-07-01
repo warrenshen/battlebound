@@ -146,6 +146,7 @@ public class BoardCreature : Targetable
             if (((BoardCreature)other).HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         }
+        this.Redraw();
     }
 
     //taking damage
@@ -161,7 +162,7 @@ public class BoardCreature : Targetable
         this.health -= amount;
         if (CheckAlive())
         {
-            this.UpdateStatText();
+            //do something
         }
         return true; //true implies did take damage, e.g. for poison
     }
@@ -206,6 +207,12 @@ public class BoardCreature : Targetable
         float scaleFactor = 1.6f;
         LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
         textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.GetCardId());
+    }
+
+    new public void RecoverAttack()
+    {
+        this.canAttack = this.maxAttacks;
+        this.Redraw();
     }
 
     private void RenderAbilities()
