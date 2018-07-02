@@ -122,7 +122,8 @@ if (fieldId === playerId) {
     }
         
     if (targetId === TARGET_ID_FACE) {
-        opponentState.health -= attackingCard.attack;
+        damageFace(opponentState, attackingCard.attack);
+
         if (opponentState.health <= 0) {
             opponentState.health = 0;
             challenge.winChallenge(Spark.getPlayer());
@@ -158,55 +159,20 @@ if (fieldId === playerId) {
         
         playerDeadCards.forEach(function(card) {
             if (card.abilities.indexOf(CARD_ABILITY_DEATH_RATTLE_DRAW_CARD) >= 0) {
-                const playerDeck = playerState.deck;
-                
-                if (playerDeck.length > 0) {
-                    const drawCardResponse = drawCard(playerDeck);
-                    const drawnCard = drawCardResponse[0];
-                    const newDeck = drawCardResponse[1];
-                    
-                    playerState.hand.push(drawCardResponse[0]);
-                    
-                    playerState.deck = newDeck;
-                    playerState.deckSize = newDeck.length;
-                    
-                    move = {
-                        playerId: playerId,
-                        category: MOVE_CATEGORY_DRAW_CARD,
-                        attributes: {
-                            card: drawnCard,
-                        },
-                    };
-                    challengeStateData.moves.push(move);
-                    challengeStateData.lastMoves.push(move);
-                }
+                move = drawCardForPlayer(playerId, playerState);
+                challengeStateData.moves.push(move);
+                challengeStateData.lastMoves.push(move);
+            } else if (card.abilities.indexOf(CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY) >= 0) {
+                damageFace(opponentState, 20);
             }
         });
-        
         opponentDeadCards.forEach(function(card) {
             if (card.abilities.indexOf(CARD_ABILITY_DEATH_RATTLE_DRAW_CARD) >= 0) {
-                const opponentDeck = opponentState.deck;
-                
-                if (opponentDeck.length > 0) {
-                    const drawCardResponse = drawCard(opponentDeck);
-                    const drawnCard = drawCardResponse[0];
-                    const newDeck = drawCardResponse[1];
-                    
-                    opponentState.hand.push(drawCardResponse[0]);
-                    
-                    opponentState.deck = newDeck;
-                    opponentState.deckSize = newDeck.length;
-                    
-                    move = {
-                        playerId: opponentId,
-                        category: MOVE_CATEGORY_DRAW_CARD,
-                        attributes: {
-                            card: drawnCard,
-                        },
-                    };
-                    challengeStateData.moves.push(move);
-                    challengeStateData.lastMoves.push(move);
-                }
+                move = drawCardForPlayer(opponentId, opponentState);
+                challengeStateData.moves.push(move);
+                challengeStateData.lastMoves.push(move);
+            } else if (card.abilities.indexOf(CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY) >= 0) {
+                damageFace(playerState, 20);
             }
         });
         // DEATHRATTLE PROCESSING END //

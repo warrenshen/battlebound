@@ -129,28 +129,9 @@ if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0
     });
 }
 if (playedCard.abilities.indexOf(CARD_ABILITY_BATTLE_CRY_DRAW_CARD) >= 0) {
-    const playerDeck = playerState.deck;
-    
-    if (playerDeck.length > 0) {
-        const drawCardResponse = drawCard(playerDeck);
-        const drawnCard = drawCardResponse[0];
-        const newDeck = drawCardResponse[1];
-        
-        playerState.hand.push(drawCardResponse[0]);
-        
-        playerState.deck = newDeck;
-        playerState.deckSize = newDeck.length;
-        
-        move = {
-            playerId: playerId,
-            category: MOVE_CATEGORY_DRAW_CARD,
-            attributes: {
-                card: drawnCard,
-            },
-        };
-        challengeStateData.moves.push(move);
-        challengeStateData.lastMoves.push(move);
-    }
+    move = drawCardForPlayer(playerId, playerState);
+    challengeStateData.moves.push(move);
+    challengeStateData.lastMoves.push(move);
 }
 
 // Iterate through cards already on field and grant played card buff(s).
