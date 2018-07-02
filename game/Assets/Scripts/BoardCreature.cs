@@ -20,6 +20,10 @@ public class BoardCreature : Targetable
     public int Health => health;
 
     [SerializeField]
+    protected int maxHealth;
+    public int MaxHealth => maxHealth;
+
+    [SerializeField]
     private string image;
     public string Image => image;
 
@@ -53,6 +57,7 @@ public class BoardCreature : Targetable
         this.cost = this.card.Cost;
         this.attack = this.card.Attack;
         this.health = this.card.Health;
+        this.maxHealth = this.card.Health;
         this.image = this.card.Image;
         this.abilities = this.card.Abilities;
 
