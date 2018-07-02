@@ -27,6 +27,10 @@ public class PlayerState
     public int Health => health;
 
     [SerializeField]
+    private int healthMax;
+    public int HealthMax => healthMax;
+
+    [SerializeField]
     private int armor;
     public int Armor => armor;
 
@@ -65,6 +69,11 @@ public class PlayerState
     public void SetHealth(int health)
     {
         this.health = health;
+    }
+
+    public void SetHealthMax(int healthMax)
+    {
+        this.healthMax = healthMax;
     }
 
     public void SetArmor(int armor)
@@ -120,6 +129,7 @@ public class PlayerState
                this.manaCurrent == other.ManaCurrent &&
                this.manaMax == other.ManaMax &&
                this.health == other.Health &&
+               this.healthMax == other.HealthMax &&
                this.armor == other.Armor &&
                this.deckSize == other.DeckSize;
     }
@@ -148,6 +158,10 @@ public class PlayerState
         else if (this.health != other.Health)
         {
             return string.Format("Health: {0} vs {1}", this.health, other.Health);
+        }
+        else if (this.healthMax != other.HealthMax)
+        {
+            return string.Format("HealthMax: {0} vs {1}", this.healthMax, other.HealthMax);
         }
         else if (this.armor != other.Armor)
         {
@@ -258,6 +272,10 @@ public class PlayerState
         public int HealthStart => healthStart;
 
         [SerializeField]
+        private int healthMax;
+        public int HealthMax => healthMax;
+
+        [SerializeField]
         private int attack;
         public int Attack => attack;
 
@@ -327,6 +345,11 @@ public class PlayerState
             this.healthStart = healthStart;
         }
 
+        public void SetHealthMax(int healthMax)
+        {
+            this.healthMax = healthMax;
+        }
+
         public void SetAttack(int attack)
         {
             this.attack = attack;
@@ -368,6 +391,7 @@ public class PlayerState
                 this.costStart == other.CostStart &&
                 this.health == other.Health &&
                 this.healthStart == other.HealthStart &&
+                this.healthMax == other.HealthMax &&
                 this.attack == other.Attack &&
                 this.attackStart == other.AttackStart &&
                 this.canAttack == other.CanAttack &&
@@ -409,6 +433,10 @@ public class PlayerState
             else if (this.healthStart != other.HealthStart)
             {
                 return string.Format("HealthStart: {0} vs {1}", this.healthStart, other.HealthStart);
+            }
+            else if (this.healthMax != other.HealthMax)
+            {
+                return string.Format("HealthMax: {0} vs {1}", this.healthMax, other.HealthMax);
             }
             else if (this.attack != other.Attack)
             {

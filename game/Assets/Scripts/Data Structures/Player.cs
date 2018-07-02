@@ -44,8 +44,8 @@ public class Player
 
         this.hasTurn = false;
         this.deck = GetDeck();
-        this.mana = 10;
-        this.maxMana = 10;
+        this.mana = 30;
+        this.maxMana = 30;
 
         this.hand = new Hand(this);
 
@@ -120,7 +120,7 @@ public class Player
     {
         this.hasTurn = true;
 
-        this.maxMana = Math.Min(maxMana + 1, 10);
+        this.maxMana = Math.Min(maxMana + 10, 100);
         this.mana = maxMana;
 
         //board resetting
@@ -214,6 +214,7 @@ public class Player
         playerState.SetManaCurrent(this.mana);
         playerState.SetManaMax(this.maxMana);
         playerState.SetHealth(this.avatar.Health);
+        playerState.SetHealthMax(this.avatar.MaxHealth);
         playerState.SetArmor(this.avatar.Armor);
         playerState.SetDeckSize(this.deckSize);
 
@@ -236,6 +237,7 @@ public class Player
                 challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
                 challengeCard.SetHealth(creatureCard.Health);
                 challengeCard.SetHealthStart(creatureCard.Health);
+                challengeCard.SetHealthMax(creatureCard.Health);
                 challengeCard.SetAttack(creatureCard.Attack);
                 challengeCard.SetAttackStart(creatureCard.Attack);
             }
@@ -271,6 +273,7 @@ public class Player
                 challengeCard.SetCostStart(boardCreature.Card.Cost);
                 challengeCard.SetHealth(boardCreature.Health);
                 challengeCard.SetHealthStart(boardCreature.Card.Health);
+                challengeCard.SetHealthMax(boardCreature.MaxHealth);
                 challengeCard.SetAttack(boardCreature.Attack);
                 challengeCard.SetAttackStart(boardCreature.Card.Attack);
                 challengeCard.SetCanAttack(boardCreature.CanAttack);
