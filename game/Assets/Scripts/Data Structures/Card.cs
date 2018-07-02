@@ -35,6 +35,11 @@ public class Card
     protected string image;
     public string Image => image;
 
+    public enum RarityType { Common, Rare, Epic, Legendary }
+    [SerializeField]
+    protected RarityType rarity;
+    public RarityType Rarity => rarity;
+
     public CardObject wrapper;
 }
 
