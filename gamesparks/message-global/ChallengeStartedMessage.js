@@ -53,10 +53,14 @@ challengeStateData.moveTakenThisTurn = 0;
 const challengerDrawCardsResponse = drawCards(challengerDeck, 3);
 const challengerHand = challengerDrawCardsResponse[0];
 const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
+
+const HEALTH_START = 100;
+
 const challengerData = {
-    manaCurrent: 3,
-    manaMax: 3,
-    health: 10,
+    manaCurrent: 30,
+    manaMax: 30,
+    health: HEALTH_START,
+    healthMax: HEALTH_START,
     armor: 0,
     // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
@@ -69,9 +73,10 @@ const challengedDrawCardsResponse = drawCards(challengedDeck, 3);
 const challengedHand = challengedDrawCardsResponse[0];
 const challengedDeckAfterDraw = challengedDrawCardsResponse[1];
 const challengedData = {
-    manaCurrent: 3,
-    manaMax: 3,
-    health: 10,
+    manaCurrent: 30,
+    manaMax: 30,
+    health: HEALTH_START,
+    healthMax: HEALTH_START,
     armor: 0,
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: challengedHand,

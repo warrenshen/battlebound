@@ -11,8 +11,20 @@ require("DeckModule");
 /**
  * @return array - array of Card-like objects with levelPrevious and expPrevious fields.
  **/ 
-function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
+function grantExperienceByPlayerAndChallenge(playerId, challengeId)
 {
+    const API = Spark.getGameDataService();
+
+    const challenge = Spark.getChallenge(challengeId);
+    
+    const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
+    
+    if (challengeStateDataItem === null) {
+        setScriptError("ChallengeState does not exist.");
+    }
+    
+    const challengeStateData = challengeStateDataItem.getData();
+    
     const moves = challengeStateData.moves;
     const playerMoves = moves.filter(function(move) { return move.playerId === playerId });
     
@@ -27,8 +39,6 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeStateData)
     
     const bExpCardIds = expCardIds.filter(function(cardId) { return cardId.indexOf("B") === 0 });
     const cExpCardIds = expCardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });
-    
-    const API = Spark.getGameDataService();
     
     const resultCards = [];
     

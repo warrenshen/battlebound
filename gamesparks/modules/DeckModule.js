@@ -74,7 +74,7 @@ function getInstancesByCards(cards, cardFields) {
             result[templateFieldToInstanceField[field]] = template[field];
         });
         
-        result.image = template.name.replace(" ", "_");
+        result.image = template.name.replace(/ /g, "_");
         return result;
     });
     
@@ -343,6 +343,7 @@ function getActiveDeckByPlayerId(playerId) {
         instance.attackStart = instance.attack;
         instance.costStart = instance.cost;
         instance.healthStart = instance.health;
+        instance.healthMax = instance.health;
     });
     return instances;
 }
