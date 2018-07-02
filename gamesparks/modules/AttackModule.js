@@ -29,6 +29,15 @@ function healCard(card, amount) {
     return card;
 }
 
+/**
+ * @return int - damage done to face
+ **/
+function damageFace(playerState, damage) {
+    const initialHealth = playerState.health;
+    playerState.health -= damage;
+    return Math.min(initialHealth, damage);
+}
+
 function healFace(playerState, amount) {
     playerState.health = Math.min(playerState.health + amount, playerState.healthMax);
 }
@@ -79,4 +88,34 @@ function filterDeadCardsFromFields(playerField, opponentField) {
         .map(function(card) { return _removeBuffsFromCard(card, deadCardIds) });
         
     return [newPlayerField, newOpponentField, playerDeadCards, opponentDeadCards];
+}
+
+/**
+ * @return object - draw card move object for drawn card
+ **/
+function drawCardForPlayer(playerId, playerState) {
+    const playerDeck = playerState.deck;
+    
+    if (playerDeck.length > 0) {
+        const drawCardResponse = drawCard(playerDeck);
+        const drawnCard = drawCardResponse[0];
+        const newDeck = drawCardResponse[1];
+        
+        playerState.hand.push(drawCardResponse[0]);
+        playerState.deck = newDeck;
+        playerState.deckSize = newDeck.length;
+        
+        return {
+            playerId: playerId,
+            category: MOVE_CATEGORY_DRAW_CARD,
+            attributes: {
+                card: drawnCard,
+            },
+        };
+    } else {
+        return {
+            playerId: playerId,
+            category: MOVE_CATEGORY_DRAW_CARD_FAILURE,
+        };
+    }
 }

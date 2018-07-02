@@ -41,18 +41,6 @@ challengeStateData.lastMoves.push(move);
 
 challengeStateData.turnCountByPlayerId[playerId] += 1;
 
-playerField.forEach(function(fieldCard) {
-    if (fieldCard.id === "EMPTY" || !fieldCard.abilities) {
-        return;
-    }
-    
-    if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TEN) >= 0) {
-        healCard(fieldCard, 10);
-    } else if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TWENTY) >= 0) {
-        healCard(fieldCard, 20);
-    }
-});
-
 // Used to determine whether to send
 // time expiring messages for opponent.
 var isChallengeOver = false;
@@ -81,6 +69,24 @@ if (isExpired && challengeStateData.moveTakenThisTurn === 0) {
 }
 
 if (!isChallengeOver) {
+    // MORE PLAYER STATE UPDATES //
+    playerField.forEach(function(fieldCard) {
+        if (fieldCard.id === "EMPTY" || !fieldCard.abilities) {
+            return;
+        }
+        
+        if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TEN) >= 0) {
+            healCard(fieldCard, 10);
+        } else if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TWENTY) >= 0) {
+            healCard(fieldCard, 20);
+        } else if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_DRAW_CARD) >= 0) {
+            // Draw a card for opponent to start its turn.
+            move = drawCardForPlayer(playerId, playerState);
+            challengeStateData.moves.push(move);
+            challengeStateData.lastMoves.push(move);
+        }
+    });
+
     // OPPONENT STATE UPDATES //
     const opponentState = challengeState[opponentId];
     
@@ -93,28 +99,9 @@ if (!isChallengeOver) {
     opponentState.manaCurrent = opponentState.manaMax;
     
     // Draw a card for opponent to start its turn.
-    const opponentDeck = opponentState.deck;
-    
-    if (opponentDeck.length > 0) {
-        const drawCardResponse = drawCard(opponentDeck);
-        const drawnCard = drawCardResponse[0];
-        const newDeck = drawCardResponse[1];
-        
-        opponentState.hand.push(drawCardResponse[0]);
-        
-        opponentState.deck = newDeck;
-        opponentState.deckSize = newDeck.length;
-        
-        move = {
-            playerId: opponentId,
-            category: MOVE_CATEGORY_DRAW_CARD,
-            attributes: {
-                card: drawnCard,
-            },
-        };
-        challengeStateData.moves.push(move);
-        challengeStateData.lastMoves.push(move);
-    }
+    move = drawCardForPlayer(opponentId, opponentState);
+    challengeStateData.moves.push(move);
+    challengeStateData.lastMoves.push(move);
     
     // Set all cards on opponent's field to be able to attack.
     opponentState.field.forEach(function(card) {
