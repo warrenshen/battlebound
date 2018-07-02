@@ -8,8 +8,10 @@
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
 require("DeckModule");
+require("CardAbilitiesModule");
 require("CancelScheduledTimeEventsModule");
 require("ChallengeMovesModule");
+require("AttackModule");
 
 // This is secure because the only thing a malicious actor
 // can do is send end turn's on time expired for themselves -
@@ -23,6 +25,7 @@ const challengeState = challengeStateData.current;
 
 // PLAYER STATE UPDATES //
 const playerState = challengeState[playerId];
+const playerField = playerState.field;
 
 playerState.hasTurn = 0;
 
@@ -37,6 +40,18 @@ challengeStateData.moves.push(move);
 challengeStateData.lastMoves.push(move);
 
 challengeStateData.turnCountByPlayerId[playerId] += 1;
+
+playerField.forEach(function(fieldCard) {
+    if (fieldCard.id === "EMPTY" || !fieldCard.abilities) {
+        return;
+    }
+    
+    if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TEN) >= 0) {
+        healCard(fieldCard, 10);
+    } else if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TWENTY) >= 0) {
+        healCard(fieldCard, 20);
+    }
+});
 
 // Used to determine whether to send
 // time expiring messages for opponent.
@@ -72,8 +87,8 @@ if (!isChallengeOver) {
     opponentState.hasTurn = 1;
         
     // Increase opponent's max mana by 1 if it's not max'ed out.
-    if (opponentState.manaMax < 10) {
-        opponentState.manaMax += 1;
+    if (opponentState.manaMax < 100) {
+        opponentState.manaMax += 10;
     }
     opponentState.manaCurrent = opponentState.manaMax;
     
@@ -84,12 +99,11 @@ if (!isChallengeOver) {
         const drawCardResponse = drawCard(opponentDeck);
         const drawnCard = drawCardResponse[0];
         const newDeck = drawCardResponse[1];
-        const handSize = opponentState.hand.push(drawCardResponse[0]);
         
-        opponentState.handSize = handSize;
+        opponentState.hand.push(drawCardResponse[0]);
+        
         opponentState.deck = newDeck;
         opponentState.deckSize = newDeck.length;
-        // TODO: somehow tell client/player whose turn is next which card was drawn.
         
         move = {
             playerId: opponentId,
@@ -126,9 +140,9 @@ if (!isChallengeOver) {
         opponentId: opponentId,
         hasTurnPlayerId: opponentId,
     };
-    var success;
-    success = scheduler.inSeconds("TimeRunningOutModule", 60, data, opponentRunningKey);
-    success = scheduler.inSeconds("TimeLimitExpiredModule", 75, data, opponentExpiredKey);
+    // var success;
+    // success = scheduler.inSeconds("TimeRunningOutModule", 60, data, opponentRunningKey);
+    // success = scheduler.inSeconds("TimeLimitExpiredModule", 75, data, opponentExpiredKey);
 }
 
 require("PersistChallengeStateModule");

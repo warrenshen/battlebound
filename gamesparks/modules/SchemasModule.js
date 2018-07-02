@@ -29,6 +29,18 @@
  *   activeDeck: string,
  * }
  * 
+ * Template schema: {
+ *   id: string,
+ *   category: int,
+ *   name: string,
+ *   image: string,
+ *   description: string,
+ *   cost: int,
+ *   health: int,
+ *   attack: int,
+ *   abilities: [int, ...],
+ * }
+ * 
  * Card schema: {
  *   id: string,
  *   level: int,
@@ -48,12 +60,14 @@
  *   id: string,
  *   category: int,
  *   name: string,
+ *   image: string,
  *   description: string,
  *   level: int,
  *   cost: int,
  *   costStart: int,
  *   health: int,
  *   healthStart: int, // The initial value of health.
+ *   healthMax: int, // The max value of health - starts at initial health.
  *   attack: int,
  *   attackStart: int, // The initial value of attack.
  *   canAttack: bool (int), // Field probably not set until card is played on field.
@@ -89,6 +103,7 @@
  *       manaCurrent: int,
  *       manaMax: int,
  *       health: int,
+ *       healthMax: int,
  *       armor: int,
  *       field: [Card, ...], // 6-element array: object of { id: "EMPTY" } = empty space.
  *       hand: [Card, ...] // Object of { id: "HIDDEN" } = upside-down card.

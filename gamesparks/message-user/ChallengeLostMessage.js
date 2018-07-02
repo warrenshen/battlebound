@@ -32,7 +32,7 @@ if (Spark.getData().challenge.shortCode === "RankedChallenge") {
     setLeaderboardsScore(newScore);
 }
 
-const experienceCards = grantExperienceByPlayerAndChallenge(playerId, challengeStateData);
+const experienceCards = grantExperienceByPlayerAndChallenge(playerId, challengeId);
 
 const level = player.getPrivateData("level");
 const levelPrevious = level;

@@ -15,6 +15,7 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
+require("DeckModule");
 require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
@@ -65,11 +66,29 @@ if (attackingCard.canAttack <= 0) {
     attackingCard.canAttack -= 1;
 }
 
+// Reset `lastMoves` attribute in ChallengeState.
+challengeStateData.lastMoves = [];
+challengeStateData.moveTakenThisTurn = 1;
+
+var move = {
+    playerId: playerId,
+    category: MOVE_CATEGORY_CARD_ATTACK,
+    attributes: {
+        cardId: cardId,
+        fieldId: fieldId,
+        targetId: targetId,
+    },
+};
+challengeStateData.moves.push(move);
+challengeStateData.lastMoves = [move];
+
 var defendingIndex;
 var defendingCard;
+var attackingDamageDone;
+var defendingDamageDone;
 var newPlayerField;
 var newOpponentField;
-var newFields;
+var filterDeadResponse;
 
 // Friendly fire.
 if (fieldId === playerId) {
@@ -86,12 +105,12 @@ if (fieldId === playerId) {
         
         defendingCard = playerField[defendingIndex];
         
-        damageCard(defendingCard, attackingCard.attack);
-        damageCard(attackingCard, defendingCard.attack);
+        attackingDamageDone = damageCard(defendingCard, attackingCard.attack);
+        defendingDamageDone = damageCard(attackingCard, defendingCard.attack);
         
-        newFields = filterDeadCardsFromFields(playerField, opponentField);
-        playerState.field = newFields[0];
-        opponentState.field = newFields[1];
+        filterDeadResponse = filterDeadCardsFromFields(playerField, opponentField);
+        playerState.field = filterDeadResponse[0];
+        opponentState.field = filterDeadResponse[1];
     }
 } else {
     const tauntCards = opponentField.filter(function(card) { return card.abilities && card.abilities.indexOf(CARD_ABILITY_TAUNT) >= 0 });
@@ -117,27 +136,82 @@ if (fieldId === playerId) {
         
         defendingCard = opponentField[defendingIndex];
         
-        damageCard(defendingCard, attackingCard.attack);
-        damageCard(attackingCard, defendingCard.attack);
+        attackingDamageDone = damageCard(defendingCard, attackingCard.attack);
+        defendingDamageDone = damageCard(attackingCard, defendingCard.attack);
+    
+        // LIFESTEAL PROCESSING BEGIN //    
+        if (attackingCard.abilities.indexOf(CARD_ABILITY_LIFE_STEAL) >= 0) {
+            healFace(playerState, attackingDamageDone);
+        }
+        if (defendingCard.abilities.indexOf(CARD_ABILITY_LIFE_STEAL) >= 0) {
+            healFace(opponentState, defendingDamageDone);
+        }
+        // LIFESTEAL PROCESSING END //
         
-        newFields = filterDeadCardsFromFields(playerField, opponentField);
-        playerState.field = newFields[0];
-        opponentState.field = newFields[1];
+        filterDeadResponse = filterDeadCardsFromFields(playerField, opponentField);
+        playerState.field = filterDeadResponse[0];
+        opponentState.field = filterDeadResponse[1];
+        
+        // DEATHRATTLE PROCESSING BEGIN //
+        playerDeadCards = filterDeadResponse[2];
+        opponentDeadCards = filterDeadResponse[3];
+        
+        playerDeadCards.forEach(function(card) {
+            if (card.abilities.indexOf(CARD_ABILITY_DEATH_RATTLE_DRAW_CARD) >= 0) {
+                const playerDeck = playerState.deck;
+                
+                if (playerDeck.length > 0) {
+                    const drawCardResponse = drawCard(playerDeck);
+                    const drawnCard = drawCardResponse[0];
+                    const newDeck = drawCardResponse[1];
+                    
+                    playerState.hand.push(drawCardResponse[0]);
+                    
+                    playerState.deck = newDeck;
+                    playerState.deckSize = newDeck.length;
+                    
+                    move = {
+                        playerId: playerId,
+                        category: MOVE_CATEGORY_DRAW_CARD,
+                        attributes: {
+                            card: drawnCard,
+                        },
+                    };
+                    challengeStateData.moves.push(move);
+                    challengeStateData.lastMoves.push(move);
+                }
+            }
+        });
+        
+        opponentDeadCards.forEach(function(card) {
+            if (card.abilities.indexOf(CARD_ABILITY_DEATH_RATTLE_DRAW_CARD) >= 0) {
+                const opponentDeck = opponentState.deck;
+                
+                if (opponentDeck.length > 0) {
+                    const drawCardResponse = drawCard(opponentDeck);
+                    const drawnCard = drawCardResponse[0];
+                    const newDeck = drawCardResponse[1];
+                    
+                    opponentState.hand.push(drawCardResponse[0]);
+                    
+                    opponentState.deck = newDeck;
+                    opponentState.deckSize = newDeck.length;
+                    
+                    move = {
+                        playerId: opponentId,
+                        category: MOVE_CATEGORY_DRAW_CARD,
+                        attributes: {
+                            card: drawnCard,
+                        },
+                    };
+                    challengeStateData.moves.push(move);
+                    challengeStateData.lastMoves.push(move);
+                }
+            }
+        });
+        // DEATHRATTLE PROCESSING END //
     }
 }
-
-const move = {
-    playerId: playerId,
-    category: MOVE_CATEGORY_CARD_ATTACK,
-    attributes: {
-        cardId: cardId,
-        fieldId: fieldId,
-        targetId: targetId,
-    },
-};
-challengeStateData.moves.push(move);
-challengeStateData.lastMoves = [move];
-challengeStateData.moveTakenThisTurn = 1;
 
 require("PersistChallengeStateModule");
 

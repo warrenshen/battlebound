@@ -5,14 +5,32 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+/**
+ * @return int - damage done to card
+ **/
 function damageCard(card, damage) {
     if (card.hasShield) {
         card.hasShield = 0;
+        return 0;
     } else {
+        const initialHealth = card.health;
         card.health -= damage;
+        return Math.min(initialHealth, damage);
+    }
+}
+
+function healCard(card, amount) {
+    if (amount % 10 !== 0) {
+        setScriptError("Invalid heal card amount.");    
     }
     
+    card.health = Math.min(card.health + amount, card.healthMax);
+    
     return card;
+}
+
+function healFace(playerState, amount) {
+    playerState.health = Math.min(playerState.health + amount, playerState.healthMax);
 }
 
 function _removeBuffsFromCard(card, deadCardIds) {
@@ -38,7 +56,12 @@ function _removeBuffsFromCard(card, deadCardIds) {
  * 
  * @param array playerField
  * @param array opponentField
- * @return array - two-element array of [array of new player field, array of new opponent field]
+ * @return array - four-element array of [
+ *   array of new player field,
+ *   array of new opponent field,
+ *   array of player dead cards,
+ *   array of opponent dead cards,
+ * ]
  **/
 function filterDeadCardsFromFields(playerField, opponentField) {
     const playerDeadCards = playerField.filter(function(card) { return card.id !== "EMPTY" && card.health <= 0 });
@@ -55,5 +78,5 @@ function filterDeadCardsFromFields(playerField, opponentField) {
         .map(function(card) { return (card.health && card.health > 0) ? card : { id: "EMPTY" } })
         .map(function(card) { return _removeBuffsFromCard(card, deadCardIds) });
         
-    return [newPlayerField, newOpponentField];
+    return [newPlayerField, newOpponentField, playerDeadCards, opponentDeadCards];
 }
