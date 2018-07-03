@@ -18,7 +18,6 @@ public class BattleManager : MonoBehaviour
     public Player ActivePlayer => activePlayer;
 
     private int turnIndex;
-    private int turnCount;
     private List<Player> players;
 
     private Dictionary<string, Player> playerIdToPlayer;
@@ -110,7 +109,6 @@ public class BattleManager : MonoBehaviour
             this.opponent.DrawCards(5);
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
-            turnCount = 0;
             activePlayer = players[turnIndex % players.Count];
 
             NextTurn();
@@ -118,11 +116,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             turnIndex = this.players.FindIndex(player => player.HasTurn);
-            Debug.Log(turnIndex);
-            turnCount = 0;
             activePlayer = players[turnIndex % players.Count];
-
-            //do some turn transition render
             activePlayer.SetHasTurn(true);
             activePlayer.RenderTurnStart();
         }
@@ -258,9 +252,7 @@ public class BattleManager : MonoBehaviour
         activePlayer.SetHasTurn(false);
         activePlayer.Hand.RecedeCards();
 
-        turnCount++;
         turnIndex++;
-
         activePlayer = players[turnIndex % players.Count];
 
         //do some turn transition render

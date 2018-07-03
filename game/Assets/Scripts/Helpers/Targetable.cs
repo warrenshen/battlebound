@@ -20,10 +20,9 @@ public abstract class Targetable : MonoBehaviour
     public abstract string GetPlayerId();
 
     public abstract void Fight(Targetable other);
-    public abstract bool TakeDamage(int amount);
+    public abstract int TakeDamage(int amount);
+    public abstract int Heal(int amount);
 
-    public void RecoverAttack()
-    {
-        this.canAttack = this.maxAttacks;
-    }
+    public abstract void OnStartTurn();
+    public abstract void OnEndTurn();
 }

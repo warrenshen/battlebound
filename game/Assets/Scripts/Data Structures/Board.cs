@@ -183,10 +183,27 @@ public class Board
 
         public void RecoverCreatures()
         {
-            for (int i = 0; i < creatures.Length; i++)
+            foreach (BoardCreature creature in creatures)
             {
-                if (creatures[i] != null)
-                    creatures[i].RecoverAttack();
+                if (creature == null)
+                {
+                    continue;
+                }
+
+                creature.OnStartTurn();
+            }
+        }
+
+        public void RunCreatureEndTurns()
+        {
+            foreach (BoardCreature creature in creatures)
+            {
+                if (creature == null)
+                {
+                    continue;
+                }
+
+                creature.OnEndTurn();
             }
         }
     }

@@ -111,6 +111,16 @@ public class Player
         return chosen;
     }
 
+    public int TakeDamage(int amount)
+    {
+        return this.avatar.TakeDamage(amount);
+    }
+
+    public int Heal(int amount)
+    {
+        return this.avatar.Heal(amount);
+    }
+
     public void SetHasTurn(bool newTurn)
     {
         this.hasTurn = newTurn;
@@ -125,7 +135,7 @@ public class Player
 
         //board resetting
         Board.Instance().RecoverCreaturesByPlayerId(this.Id);
-        this.avatar.RecoverAttack();
+        this.avatar.OnStartTurn();
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {

@@ -28,7 +28,7 @@ public class BoardWeapon : MonoBehaviour
         if (!target.IsAvatar)
         {
             BoardCreature targetCreature = target as BoardCreature;
-            bool alive = this.wielder.Avatar.TakeDamage(targetCreature.Attack);  //true if alive, false if not
+            this.wielder.TakeDamage(targetCreature.Attack);
         }
         //to-do: updated weapon durability rendering
         this.durability -= 1;

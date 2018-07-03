@@ -44,6 +44,9 @@ public class BoardCreature : Targetable
     private bool silenced;
     public bool Silenced => silenced;
 
+    private bool hasShield;
+    public bool HasShield => hasShield;
+
     Material dissolve;
 
     private HyperCard.Card visual;
@@ -71,6 +74,15 @@ public class BoardCreature : Targetable
 
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
+
+        if (this.abilities.Contains(Card.CARD_ABILITY_SHIELD))
+        {
+            this.hasShield = true;
+        }
+        else
+        {
+            this.hasShield = false;
+        }
 
         this.owner = cardObject.Owner;
         this.gameObject.layer = 9;
@@ -133,6 +145,7 @@ public class BoardCreature : Targetable
         }
 
         this.canAttack -= 1;
+
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
@@ -140,7 +153,9 @@ public class BoardCreature : Targetable
 
         FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
         SoundManager.Instance.PlaySound("Splatter", other.transform.position);
-        other.TakeDamage(this.attack);
+
+        int damageDone = other.TakeDamage(this.attack);
+        OnDamageDone(damageDone);
 
         if (!other.IsAvatar)
         {
@@ -150,28 +165,128 @@ public class BoardCreature : Targetable
             if (((BoardCreature)other).HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         }
+
         this.Redraw();
     }
 
-    //taking damage
-    public override bool TakeDamage(int amount)
+    /*
+     * @return int - amount of damage taken
+     */
+    public override int TakeDamage(int amount)
     {
-        if (this.HasAbility("shielded"))
+        if (this.hasShield)
         {
-            this.abilities.Remove("shielded");
+            this.hasShield = false;
             RenderAbilities(); //to-do: needs review in future
-            return false;
+            return 0;
         }
 
+        int healthBefore = this.health;
         this.health -= amount;
+        this.health = Math.Max(this.health, 0);
+        this.UpdateStatText();
+
         if (CheckAlive())
         {
             //do something
         }
-        return true; //true implies did take damage, e.g. for poison
+
+        return Math.Min(healthBefore, amount);
     }
 
-    public bool CheckAlive()
+    /*
+     * @return int - amount of health healed
+     */
+    public override int Heal(int amount)
+    {
+        int healthBefore = this.health;
+        this.health += amount;
+        this.health = Math.Max(this.health, this.maxHealth);
+        this.UpdateStatText();
+
+        int amountHealed = Math.Min(this.health - healthBefore, amount);
+        if (amountHealed > 0)
+        {
+            // TODO: animate.
+        }
+
+        return amountHealed;
+    }
+
+    public override void OnStartTurn()
+    {
+        this.canAttack = this.maxAttacks;
+
+        if (HasAbility(Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD))
+        {
+            if (!InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                this.Owner.DrawCards(1);
+            }
+        }
+
+        this.Redraw();
+    }
+
+    public override void OnEndTurn()
+    {
+        if (HasAbility(Card.CARD_ABILITY_END_TURN_HEAL_TEN))
+        {
+            Heal(10);
+        }
+        else if (HasAbility(Card.CARD_ABILITY_END_TURN_HEAL_TWENTY))
+        {
+            Heal(20);
+        }
+
+        if (HasAbility(Card.CARD_ABILITY_END_TURN_DRAW_CARD))
+        {
+            if (!InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                this.Owner.DrawCards(1);
+            }
+        }
+
+        this.Redraw();
+    }
+
+    private void OnDeath()
+    {
+        if (HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD))
+        {
+            if (!InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                this.Owner.DrawCards(1);
+            }
+        }
+
+        if (HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY))
+        {
+            // TODO: animate.
+            // TODO: attack opponent face.
+        }
+    }
+
+    private void OnDamageDone(int amount)
+    {
+        if (HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
+        {
+            this.Owner.Heal(amount);
+        }
+    }
+
+    private void OnKill()
+    {
+        if (HasAbility(Card.CARD_ABILITY_EACH_KILL_DRAW_CARD))
+        {
+            if (!InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                this.Owner.DrawCards(1);
+            }
+        }
+    }
+
+    private bool CheckAlive()
     {
         if (this.health > 0)
         {
@@ -217,12 +332,6 @@ public class BoardCreature : Targetable
 
         //float scaleFactor = 1.6f;
         //LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
-    }
-
-    new public void RecoverAttack()
-    {
-        this.canAttack = this.maxAttacks;
-        this.Redraw();
     }
 
     private void RenderAbilities()
