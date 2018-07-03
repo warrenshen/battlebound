@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ public class Card
     public const string CARD_ABILITY_CHARGE = "CARD_ABILITY_CHARGE";
     public const string CARD_ABILITY_TAUNT = "CARD_ABILITY_TAUNT";
     public const string CARD_ABILITY_SHIELD = "CARD_ABILITY_SHIELD";
+    // TODO
     public const string CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE = "CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE";
     public const string CARD_ABILITY_BATTLE_CRY_DRAW_CARD = "CARD_ABILITY_BATTLE_CRY_DRAW_CARD";
     public const string CARD_ABILITY_LIFE_STEAL = "CARD_ABILITY_LIFE_STEAL";
@@ -18,6 +18,7 @@ public class Card
     public const string CARD_ABILITY_END_TURN_HEAL_TWENTY = "CARD_ABILITY_END_TURN_HEAL_TWENTY";
     public const string CARD_ABILITY_END_TURN_DRAW_CARD = "CARD_ABILITY_END_TURN_DRAW_CARD";
     public const string CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY = "CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY";
+    // TODO
     public const string CARD_ABILITY_EACH_KILL_DRAW_CARD = "CARD_ABILITY_EACH_KILL_DRAW_CARD";
 
     public static int CARD_CATEGORY_MINION = 0;

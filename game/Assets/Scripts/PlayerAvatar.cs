@@ -107,6 +107,16 @@ public class PlayerAvatar : Targetable
         return this.owner.Id;
     }
 
+    public override void OnStartTurn()
+    {
+        this.canAttack = this.maxAttacks;
+    }
+
+    public override void OnEndTurn()
+    {
+
+    }
+
     public bool HasWeapon()
     {
         return this.weapon != null;
@@ -156,18 +166,39 @@ public class PlayerAvatar : Targetable
         }
     }
 
-    public override bool TakeDamage(int amount)
+    public override int TakeDamage(int amount)
     {
         //to-do check immunity
+        int healthBefore = this.health;
         this.health -= amount;
+        this.health = Math.Max(this.health, 0);
+        this.UpdateStatText();
+
         if (CheckAlive())
         {
-            this.UpdateStatText();
+            //do something
         }
-        return true;
+
+        return Math.Min(healthBefore, amount);
     }
 
-    public bool CheckAlive()
+    public override int Heal(int amount)
+    {
+        int healthBefore = this.health;
+        this.health += amount;
+        this.health = Math.Max(this.health, this.maxHealth);
+        this.UpdateStatText();
+
+        int amountHealed = Math.Min(this.health - healthBefore, amount);
+        if (amountHealed > 0)
+        {
+            // TODO: animate.
+        }
+
+        return amountHealed;
+    }
+
+    private bool CheckAlive()
     {
         if (this.health > 0)
         {
