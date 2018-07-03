@@ -479,8 +479,7 @@ public class BattleManager : MonoBehaviour
         FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
         yield return new WaitForSeconds(0.2f);
 
-        BoardCreature created = CreateBoardCreature(cardObject, target.position);
-        Board.Instance().PlaceCreature(created, index);
+        Board.Instance().CreateAndPlaceCreature(cardObject, target.position, index);
         UseCard(cardObject.Owner, cardObject); //has to be last, destroys cardObject
     }
 
@@ -497,7 +496,7 @@ public class BattleManager : MonoBehaviour
         {
             PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
                 targetedCreature.Owner.Id,
-                targetedCreature.Card.Id
+                targetedCreature.CreatureCard.Id
             );
             BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
                 cardObject.Card.Id,
@@ -519,15 +518,6 @@ public class BattleManager : MonoBehaviour
     {
         GameObject.Destroy(cardObject.gameObject);
         SoundManager.Instance.PlaySound("Play", transform.position);
-    }
-
-    public BoardCreature CreateBoardCreature(CardObject cardObject, Vector3 pos)
-    {
-        GameObject created = new GameObject(cardObject.Card.Name);
-        created.transform.position = pos;
-        BoardCreature creature = created.AddComponent<BoardCreature>();
-        creature.Initialize(cardObject);
-        return creature;
     }
 
     public void ReceiveMoveEndTurn(string playerId)

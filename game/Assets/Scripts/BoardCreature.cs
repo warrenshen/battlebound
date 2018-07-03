@@ -34,8 +34,8 @@ public class BoardCreature : Targetable
 
     //Player owner / Owner exists in Targetable class
 
-    private CreatureCard card;
-    public CreatureCard Card => card;
+    private CreatureCard creatureCard;
+    public CreatureCard CreatureCard => creatureCard;
 
     [SerializeField]
     private List<string> abilities;
@@ -53,22 +53,33 @@ public class BoardCreature : Targetable
     public void Initialize(CardObject cardObject)
     {
         //data structure stuff
-        this.card = cardObject.Card as CreatureCard;
-        this.cost = this.card.Cost;
-        this.attack = this.card.Attack;
-        this.health = this.card.Health;
-        this.maxHealth = this.card.Health;
-        this.image = this.card.Image;
-        this.abilities = this.card.Abilities;
+        this.creatureCard = cardObject.Card as CreatureCard;
+        this.cost = this.creatureCard.Cost;
+        this.attack = this.creatureCard.Attack;
+        this.health = this.creatureCard.Health;
+        this.maxHealth = this.creatureCard.Health;
+        this.image = this.creatureCard.Image;
+        this.abilities = this.creatureCard.Abilities;
 
-        this.canAttack = 0;
+        if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
+        {
+            this.canAttack = 1;
+        }
+        else
+        {
+            this.canAttack = 0;
+        }
+
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
 
         this.owner = cardObject.Owner;
         this.gameObject.layer = 9;
+
         if (this.abilities != null)
+        {
             this.abilitiesFX = new Dictionary<string, GameObject>();
+        }
 
         //Render everything (labels, image, etc) method call here
         //sp = gameObject.AddComponent<SpriteRenderer>();
@@ -117,7 +128,7 @@ public class BoardCreature : Targetable
 
     public override string GetCardId()
     {
-        return this.card.Id;
+        return this.creatureCard.Id;
     }
 
     public override string GetPlayerId()

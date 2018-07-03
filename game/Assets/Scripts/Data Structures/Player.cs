@@ -81,7 +81,7 @@ public class Player
     {
         this.mana -= cardObject.Card.Cost;
         RenderMana();
-        hand.RemoveByCardId(cardObject.Card.Id);
+        this.hand.RemoveByCardId(cardObject.Card.Id);
     }
 
     private void RenderMana()
@@ -96,9 +96,9 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { "shielded" }));
-        cards.Add(new CreatureCard("C2", "Direhorn Hatchling", 1, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { "taunt" }));
-        cards.Add(new SpellCard("C3", "Lightning Bolt", 3, 1, "HS/Lightning_Bolt"));
+        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { Card.CARD_ABILITY_SHIELD }));
+        cards.Add(new CreatureCard("C2", "Direhorn Hatchling", 1, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { Card.CARD_ABILITY_TAUNT }));
+        cards.Add(new CreatureCard("C3", "Direhorn Hatchling", 1, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { Card.CARD_ABILITY_CHARGE }));
         cards.Add(new WeaponCard("C4", "Fiery War Axe", 1, 3, "HS/Fiery_War_Axe", 3, 2));
         cards.Add(new WeaponCard("C5", "Fiery War Axe", 1, 3, "HS/Fiery_War_Axe", 3, 2));
         cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "HS/Lightning_Bolt"));
@@ -264,18 +264,18 @@ public class Player
             }
             else
             {
-                challengeCard.SetId(boardCreature.Card.Id);
+                challengeCard.SetId(boardCreature.CreatureCard.Id);
                 challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
-                challengeCard.SetName(boardCreature.Card.Name);
+                challengeCard.SetName(boardCreature.CreatureCard.Name);
                 //challengeCard.SetDescription(boardCreature.Card.Description);
                 //challengeCard.SetLevel(boardCreature.Card.Level);
-                challengeCard.SetCost(boardCreature.Card.Cost);
-                challengeCard.SetCostStart(boardCreature.Card.Cost);
+                challengeCard.SetCost(boardCreature.CreatureCard.Cost);
+                challengeCard.SetCostStart(boardCreature.CreatureCard.Cost);
                 challengeCard.SetHealth(boardCreature.Health);
-                challengeCard.SetHealthStart(boardCreature.Card.Health);
+                challengeCard.SetHealthStart(boardCreature.CreatureCard.Health);
                 challengeCard.SetHealthMax(boardCreature.MaxHealth);
                 challengeCard.SetAttack(boardCreature.Attack);
-                challengeCard.SetAttackStart(boardCreature.Card.Attack);
+                challengeCard.SetAttackStart(boardCreature.CreatureCard.Attack);
                 challengeCard.SetCanAttack(boardCreature.CanAttack);
                 //challengeCard.SetHasShield(boardCreature.HasShield);
                 // abilities
