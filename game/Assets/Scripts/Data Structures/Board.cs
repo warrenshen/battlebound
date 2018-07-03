@@ -28,10 +28,20 @@ public class Board
         this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
     }
 
-    public void PlaceCreature(BoardCreature creature, int position)
+    public void CreateAndPlaceCreature(CardObject cardObject, Vector3 position, int index)
     {
-        PlayingField selected = this.playerIdToFields[creature.Owner.Id];
-        selected.Place(creature, position);
+        GameObject boardCreatureGO = new GameObject(cardObject.Card.Name);
+        boardCreatureGO.transform.position = position;
+        BoardCreature boardCreature = boardCreatureGO.AddComponent<BoardCreature>();
+        boardCreature.Initialize(cardObject);
+
+        PlaceCreature(boardCreature, index);
+    }
+
+    public void PlaceCreature(BoardCreature boardCreature, int index)
+    {
+        PlayingField playingField = this.playerIdToFields[boardCreature.Owner.Id];
+        playingField.Place(boardCreature, index);
     }
 
     public void RemoveCreature(BoardCreature creature)
@@ -122,9 +132,11 @@ public class Board
                 cardObject.InitializeCard(player, card);
 
                 Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, i)).transform;
-                BoardCreature created = BattleManager.Instance.CreateBoardCreature(cardObject, boardPlace.position);
-
-                Place(created, i);
+                Board.Instance().CreateAndPlaceCreature(
+                    cardObject,
+                    boardPlace.position,
+                    i
+                );
             }
         }
 
@@ -165,7 +177,7 @@ public class Board
         {
             return Array.Find(
                 this.creatures,
-                creature => creature != null && creature.Card.Id == cardId
+                creature => creature != null && creature.CreatureCard.Id == cardId
             );
         }
 
