@@ -184,13 +184,13 @@ public class BoardCreature : Targetable
         int healthBefore = this.health;
         this.health -= amount;
         this.health = Math.Max(this.health, 0);
-        this.UpdateStatText();
 
         if (CheckAlive())
         {
             //do something
         }
 
+        this.Redraw();
         return Math.Min(healthBefore, amount);
     }
 
@@ -201,8 +201,7 @@ public class BoardCreature : Targetable
     {
         int healthBefore = this.health;
         this.health += amount;
-        this.health = Math.Max(this.health, this.maxHealth);
-        this.UpdateStatText();
+        this.health = Math.Min(this.health, this.maxHealth);
 
         int amountHealed = Math.Min(this.health - healthBefore, amount);
         if (amountHealed > 0)
@@ -210,21 +209,13 @@ public class BoardCreature : Targetable
             // TODO: animate.
         }
 
+        this.Redraw();
         return amountHealed;
     }
 
     public override void OnStartTurn()
     {
         this.canAttack = this.maxAttacks;
-
-        if (HasAbility(Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD))
-        {
-            if (!InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                this.Owner.DrawCards(1);
-            }
-        }
-
         this.Redraw();
     }
 
@@ -250,6 +241,19 @@ public class BoardCreature : Targetable
         this.Redraw();
     }
 
+    public void OnPlay()
+    {
+        if (HasAbility(Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD))
+        {
+            if (!InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                this.Owner.DrawCards(1);
+            }
+        }
+
+        this.Redraw();
+    }
+
     private void OnDeath()
     {
         if (HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD))
@@ -265,6 +269,8 @@ public class BoardCreature : Targetable
             // TODO: animate.
             // TODO: attack opponent face.
         }
+
+        this.Redraw();
     }
 
     private void OnDamageDone(int amount)
@@ -273,6 +279,8 @@ public class BoardCreature : Targetable
         {
             this.Owner.Heal(amount);
         }
+
+        this.Redraw();
     }
 
     private void OnKill()
@@ -284,6 +292,8 @@ public class BoardCreature : Targetable
                 this.Owner.DrawCards(1);
             }
         }
+
+        this.Redraw();
     }
 
     private bool CheckAlive()
@@ -317,8 +327,8 @@ public class BoardCreature : Targetable
 
     public void Redraw()
     {
-        this.visual.SetVisualOutline(canAttack > 0);
         UpdateStatText();
+        this.visual.SetVisualOutline(this.Owner.HasTurn && this.canAttack > 0);
         this.visual.Redraw();
     }
 
@@ -373,15 +383,10 @@ public class BoardCreature : Targetable
     public bool HasAbility(string ability)
     {
         if (this.silenced)
-            return false;
-        switch (ability)
         {
-            case "taunt":
-                return abilities != null && abilities.Contains("taunt");
-            case "shielded":
-                return abilities != null && abilities.Contains("shielded");
-            default:
-                return false;
+            return false;
         }
+
+        return this.abilities.Contains(ability);
     }
 }
