@@ -161,9 +161,11 @@ public class PlayerAvatar : Targetable
             FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
             this.TakeDamage(((BoardCreature)other).Attack);
 
-            if (((BoardCreature)other).HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
+            if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later                
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         }
+
+        this.UpdateStatText();
     }
 
     public override int TakeDamage(int amount)
@@ -172,13 +174,13 @@ public class PlayerAvatar : Targetable
         int healthBefore = this.health;
         this.health -= amount;
         this.health = Math.Max(this.health, 0);
-        this.UpdateStatText();
 
         if (CheckAlive())
         {
             //do something
         }
 
+        this.UpdateStatText();
         return Math.Min(healthBefore, amount);
     }
 
@@ -187,7 +189,6 @@ public class PlayerAvatar : Targetable
         int healthBefore = this.health;
         this.health += amount;
         this.health = Math.Max(this.health, this.maxHealth);
-        this.UpdateStatText();
 
         int amountHealed = Math.Min(this.health - healthBefore, amount);
         if (amountHealed > 0)
@@ -195,6 +196,7 @@ public class PlayerAvatar : Targetable
             // TODO: animate.
         }
 
+        this.UpdateStatText();
         return amountHealed;
     }
 

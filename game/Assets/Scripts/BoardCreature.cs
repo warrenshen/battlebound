@@ -37,6 +37,9 @@ public class BoardCreature : Targetable
     private CreatureCard creatureCard;
     public CreatureCard CreatureCard => creatureCard;
 
+    private List<string> buffs;
+    public List<string> Buffs => buffs;
+
     [SerializeField]
     private List<string> abilities;
     private Dictionary<string, GameObject> abilitiesFX;
@@ -115,6 +118,8 @@ public class BoardCreature : Targetable
         //post-collider-construction visuals
         transform.localScale = new Vector3(0, 0, 0);
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
+
+        this.buffs = new List<string>();
     }
 
     private void RepurposeCardVisual()
@@ -162,7 +167,7 @@ public class BoardCreature : Targetable
             FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
             this.TakeDamage(((BoardCreature)other).Attack);
 
-            if (((BoardCreature)other).HasAbility("taunt"))  //to-do this string should be chosen from some dict set by text file later
+            if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
                 SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
         }
 
@@ -216,6 +221,13 @@ public class BoardCreature : Targetable
     public override void OnStartTurn()
     {
         this.canAttack = this.maxAttacks;
+
+        if (HasBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER))
+        {
+            this.health = 0;
+        }
+
+        CheckAlive();
         this.Redraw();
     }
 
@@ -294,6 +306,13 @@ public class BoardCreature : Targetable
         }
 
         this.Redraw();
+    }
+
+    public void AddAttack(int amount)
+    {
+        this.attack += amount;
+        // TODO: animate.
+        Redraw();
     }
 
     private bool CheckAlive()
@@ -388,5 +407,21 @@ public class BoardCreature : Targetable
         }
 
         return this.abilities.Contains(ability);
+    }
+
+    public void AddBuff(string buff)
+    {
+        if (Array.IndexOf(Card.VALID_BUFFS, buff) < 0)
+        {
+            Debug.LogError("Invalid buff.");
+            return;
+        }
+
+        this.buffs.Add(buff);
+    }
+
+    public bool HasBuff(string buff)
+    {
+        return this.buffs.Contains(buff);
     }
 }
