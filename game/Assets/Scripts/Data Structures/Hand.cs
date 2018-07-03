@@ -9,16 +9,14 @@ public class Hand
     [SerializeField]
     private List<CardObject> cardObjects;
 
-    private Player owner;
-    public Player Owner => Owner;
-
+    private string playerId;
     private string name;
 
     public Hand(Player player)
     {
         this.cardObjects = new List<CardObject>();
+        this.playerId = player.Id;
         this.name = player.Name;
-        this.owner = player;
     }
 
     public int Size()
@@ -64,7 +62,8 @@ public class Hand
 
     private void RedrawOutline(CardObject cardObject)
     {
-        cardObject.visual.SetVisualOutline(this.owner.Mana >= cardObject.Card.Cost);
+        Player player = BattleManager.Instance.getPlayerById(this.playerId);
+        cardObject.visual.SetVisualOutline(player.Mana >= cardObject.Card.Cost);
     }
 
     public void RepositionCards(float verticalShift = 0)

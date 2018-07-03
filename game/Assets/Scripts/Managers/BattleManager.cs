@@ -47,6 +47,11 @@ public class BattleManager : MonoBehaviour
         return this.opponent.GeneratePlayerState();
     }
 
+    public Player getPlayerById(string playerId)
+    {
+        return this.playerIdToPlayer[playerId];
+    }
+
     private void Awake()
     {
         Instance = this;
