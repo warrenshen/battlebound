@@ -284,10 +284,15 @@ public class BattleManager : MonoBehaviour
         for (int j = 0; j < allTargets.Count; j++)
         {
             if (allTargets[j].IsAvatar)
+            {
                 continue;
+            }
+
             BoardCreature creature = allTargets[j] as BoardCreature;
-            if (creature.HasAbility("taunt"))
+            if (creature.HasAbility(Card.CARD_ABILITY_TAUNT))
+            {
                 priorityTargets.Add(creature);
+            }
         }
 
         if (priorityTargets != null && priorityTargets.Count > 0)
@@ -479,7 +484,8 @@ public class BattleManager : MonoBehaviour
     public void PlayTargetedSpell(CardObject cardObject, RaycastHit hit)
     {
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
-        ((SpellCard)cardObject.Card).Activate(targetedCreature, "l_bolt");
+        SpellCard spellCard = cardObject.Card as SpellCard;
+        spellCard.Activate(targetedCreature);
         UseCard(cardObject.Owner, cardObject);
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
@@ -500,7 +506,7 @@ public class BattleManager : MonoBehaviour
      */
     public void PlayTargetedSpell(CardObject target, BoardCreature victimCreature)
     {
-        ((SpellCard)target.Card).Activate(victimCreature, "l_bolt");
+        ((SpellCard)target.Card).Activate(victimCreature);
         UseCard(target.Owner, target);
     }
 

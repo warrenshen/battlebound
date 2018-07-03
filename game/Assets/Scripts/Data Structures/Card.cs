@@ -21,6 +21,12 @@ public class Card
     // TODO
     public const string CARD_ABILITY_EACH_KILL_DRAW_CARD = "CARD_ABILITY_EACH_KILL_DRAW_CARD";
 
+    public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
+
+    public static readonly string[] VALID_BUFFS = {
+        BUFF_CATEGORY_UNSTABLE_POWER,
+    };
+
     public static int CARD_CATEGORY_MINION = 0;
     public static int CARD_CATEGORY_SPELL = 1;
     public static int CARD_CATEGORY_STRUCTURE = 2;
@@ -149,11 +155,19 @@ public class StructureCard : Card
 [System.Serializable]
 public class SpellCard : Card
 {
-    public static readonly string NAME_LIGHTNING_BOLT = "Lightning Bolt";
+    public const string SPELL_NAME_LIGHTNING_BOLT = "Lightning Bolt";
+    public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
+
+    public static readonly List<string> VALID_SPELLS = new List<string>
+    {
+        SPELL_NAME_LIGHTNING_BOLT,
+        SPELL_NAME_UNSTABLE_POWER,
+    };
 
     public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
     {
-        NAME_LIGHTNING_BOLT,
+        SPELL_NAME_LIGHTNING_BOLT,
+        SPELL_NAME_UNSTABLE_POWER,
     };
     private static Dictionary<string, string> spellToMethod;
 
@@ -168,6 +182,11 @@ public class SpellCard : Card
         int cost
     )
     {
+        if (!VALID_SPELLS.Contains(name))
+        {
+            Debug.LogError("Invalid spell name.");
+        }
+
         this.id = id;
         this.name = name;
         this.image = image;
@@ -192,12 +211,13 @@ public class SpellCard : Card
     private void InitSpellDict()
     {
         spellToMethod = new Dictionary<string, string>();
-        spellToMethod["l_bolt"] = "LightningBolt";
+        spellToMethod[SPELL_NAME_LIGHTNING_BOLT] = "LightningBolt";
+        spellToMethod[SPELL_NAME_UNSTABLE_POWER] = "UnstablePower";
     }
 
-    public void Activate(BoardCreature creature, string shortName)
+    public void Activate(BoardCreature creature)
     {
-        string methodName = spellToMethod[shortName];
+        string methodName = spellToMethod[this.name];
         MethodInfo method = typeof(SpellCard).GetMethod(methodName);
         method.Invoke(this, new object[] { creature });
     }
@@ -208,5 +228,11 @@ public class SpellCard : Card
         target.TakeDamage(3);
         //play effect
         FXPoolManager.Instance.PlayEffect("LightningBolt", target.transform.position);
+    }
+
+    public void UnstablePower(BoardCreature target)
+    {
+        target.AddAttack(30);
+        target.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
     }
 }
