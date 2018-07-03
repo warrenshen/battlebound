@@ -195,14 +195,14 @@ public class BattleSingleton : Singleton<BattleSingleton>
                     Debug.LogError("Invalid card category for play minion move");
                 }
             }
-            else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_GENERAL)
+            else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
             {
                 Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
                 Card card = challengeMove.Attributes.Card.GetCard();
 
                 if (card.GetType() == typeof(SpellCard))
                 {
-                    BattleManager.Instance.ReceiveMovePlaySpellGeneral(
+                    BattleManager.Instance.ReceiveMovePlaySpellUntargeted(
                         challengeMove.PlayerId,
                         challengeMove.Attributes.CardId,
                         card as SpellCard,

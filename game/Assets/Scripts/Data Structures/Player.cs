@@ -90,27 +90,6 @@ public class Player
         manaText.text = String.Format("{0}/{1}", mana.ToString(), maxMana.ToString());
     }
 
-    private Deck GetDeck()
-    {
-        string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
-
-        //do manually for now
-        List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Direhorn Hatchling", 2, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { Card.CARD_ABILITY_SHIELD }));
-        cards.Add(new CreatureCard("C2", "Direhorn Hatchling", 1, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { Card.CARD_ABILITY_TAUNT }));
-        cards.Add(new CreatureCard("C3", "Direhorn Hatchling", 1, 5, "HS/Direhorn_Hatchling", 3, 6, new List<String>() { Card.CARD_ABILITY_CHARGE }));
-        cards.Add(new WeaponCard("C4", "Fiery War Axe", 1, 3, "HS/Fiery_War_Axe", 3, 2));
-        cards.Add(new WeaponCard("C5", "Fiery War Axe", 1, 3, "HS/Fiery_War_Axe", 3, 2));
-        cards.Add(new SpellCard("C6", "Lightning Bolt", 4, 1, "HS/Lightning_Bolt"));
-        cards.Add(new SpellCard("C7", "Lightning Bolt", 5, 1, "HS/Lightning_Bolt"));
-        cards.Add(new SpellCard("C8", "Lightning Bolt", 6, 1, "HS/Lightning_Bolt"));
-        cards.Add(new SpellCard("C9", "Lightning Bolt", 1, 1, "HS/Lightning_Bolt"));
-        cards.Add(new WeaponCard("C10", "Fiery War Axe", 1, 3, "HS/Fiery_War_Axe", 3, 2));
-
-        Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
-        return chosen;
-    }
-
     public int TakeDamage(int amount)
     {
         return this.avatar.TakeDamage(amount);
@@ -121,9 +100,16 @@ public class Player
         return this.avatar.Heal(amount);
     }
 
-    public void SetHasTurn(bool newTurn)
+    private void SetHasTurn(bool newTurn)
     {
         this.hasTurn = newTurn;
+    }
+
+    public void EndTurn()
+    {
+        SetHasTurn(false);
+        this.hand.RecedeCards();
+        Board.Instance().OnPlayerEndTurn(this.id);
     }
 
     public void NewTurn()
@@ -134,7 +120,7 @@ public class Player
         this.mana = maxMana;
 
         //board resetting
-        Board.Instance().RecoverCreaturesByPlayerId(this.Id);
+        Board.Instance().OnPlayerStartTurn(this.id);
         this.avatar.OnStartTurn();
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
@@ -296,5 +282,24 @@ public class Player
         playerState.SetField(fieldCards);
 
         return playerState;
+    }
+
+    private Deck GetDeck()
+    {
+        string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
+
+        //do manually for now
+        List<Card> cards = new List<Card>();
+        cards.Add(new CreatureCard("C1", "Blessed Newborn", "HS/Direhorn_Hatchling", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }));
+        cards.Add(new CreatureCard("C2", "Aqua Piglet", "HS/Direhorn_Hatchling", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }));
+        cards.Add(new CreatureCard("C3", "Direhorn Hatchling", "HS/Direhorn_Hatchling", 1, 5, 3, 6, new List<String>() { Card.CARD_ABILITY_CHARGE }));
+        cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
+        cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
+        cards.Add(new SpellCard("C6", "Lightning Bolt", "HS/Lightning_Bolt", 4, 1));
+        cards.Add(new SpellCard("C7", "Lightning Bolt", "HS/Lightning_Bolt", 5, 1));
+        cards.Add(new SpellCard("C8", "Lightning Bolt", "HS/Lightning_Bolt", 6, 1));
+
+        Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
+        return chosen;
     }
 }

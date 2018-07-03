@@ -10,7 +10,7 @@ public class Card
     public const string CARD_ABILITY_TAUNT = "CARD_ABILITY_TAUNT";
     public const string CARD_ABILITY_SHIELD = "CARD_ABILITY_SHIELD";
     // TODO
-    public const string CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE = "CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE";
+    public const string CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN = "CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE";
     public const string CARD_ABILITY_BATTLE_CRY_DRAW_CARD = "CARD_ABILITY_BATTLE_CRY_DRAW_CARD";
     public const string CARD_ABILITY_LIFE_STEAL = "CARD_ABILITY_LIFE_STEAL";
     public const string CARD_ABILITY_DEATH_RATTLE_DRAW_CARD = "CARD_ABILITY_DEATH_RATTLE_DRAW_CARD";
@@ -74,9 +74,9 @@ public class CreatureCard : Card
     public CreatureCard(
         string id,
         string name,
+        string image,
         int level,
         int cost,
-        string image,
         int attack,
         int health,
         List<string> abilities
@@ -107,18 +107,18 @@ public class WeaponCard : Card
     public WeaponCard(
         string id,
         string name,
+        string image,
         int level,
         int cost,
-        string image,
         int attack,
         int durability
     )
     {
         this.id = id;
         this.name = name;
+        this.image = image;
         this.level = level;
         this.cost = cost;
-        this.image = image;
 
         this.attack = attack;
         this.durability = durability;
@@ -131,18 +131,18 @@ public class StructureCard : Card
     public StructureCard(
         string id,
         string name,
+        string image,
         int level,
         int cost,
-        string image,
         int attack,
         int durability
     )
     {
         this.id = id;
         this.name = name;
+        this.image = image;
         this.level = level;
         this.cost = cost;
-        this.image = image;
     }
 }
 
@@ -163,16 +163,16 @@ public class SpellCard : Card
     public SpellCard(
         string id,
         string name,
+        string image,
         int level,
-        int cost,
-        string image
+        int cost
     )
     {
         this.id = id;
         this.name = name;
+        this.image = image;
         this.level = level;
         this.cost = cost;
-        this.image = image;
 
         if (TARGETED_SPELL_NAMES.Contains(this.name))
         {

@@ -42,6 +42,7 @@ public class Board
     {
         PlayingField playingField = this.playerIdToFields[boardCreature.Owner.Id];
         playingField.Place(boardCreature, index);
+        boardCreature.OnPlay();
     }
 
     public void RemoveCreature(BoardCreature creature)
@@ -88,9 +89,14 @@ public class Board
         }
     }
 
-    public void RecoverCreaturesByPlayerId(string playerId)
+    public void OnPlayerStartTurn(string playerId)
     {
-        GetFieldByPlayerId(playerId).RecoverCreatures();
+        GetFieldByPlayerId(playerId).RunCreatureStartTurns();
+    }
+
+    public void OnPlayerEndTurn(string playerId)
+    {
+        GetFieldByPlayerId(playerId).RunCreatureEndTurns();
     }
 
     [System.Serializable]
@@ -181,7 +187,7 @@ public class Board
             );
         }
 
-        public void RecoverCreatures()
+        public void RunCreatureStartTurns()
         {
             foreach (BoardCreature creature in creatures)
             {

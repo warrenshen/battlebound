@@ -117,7 +117,6 @@ public class BattleManager : MonoBehaviour
         {
             turnIndex = this.players.FindIndex(player => player.HasTurn);
             activePlayer = players[turnIndex % players.Count];
-            activePlayer.SetHasTurn(true);
             activePlayer.RenderTurnStart();
         }
     }
@@ -249,8 +248,7 @@ public class BattleManager : MonoBehaviour
 
     private void NextTurn()
     {
-        activePlayer.SetHasTurn(false);
-        activePlayer.Hand.RecedeCards();
+        activePlayer.EndTurn();
 
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
@@ -544,28 +542,14 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMovePlaySpellGeneral(string playerId, string cardId, SpellCard card, int handIndex)
-    {
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            CardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (target == null)
-            {
-                Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
-                return;
-            }
-            opponent.PlayCard(target);
-        }
-        else
-        {
-            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            CardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.InitializeCard(opponent, card);
-            opponent.PlayCard(target);
-        }
-    }
-
-    public void ReceiveMovePlaySpellTargeted(string playerId, string cardId, SpellCard card, int handIndex, string fieldId, string targetId)
+    public void ReceiveMovePlaySpellTargeted(
+        string playerId,
+        string cardId,
+        SpellCard card,
+        int handIndex,
+        string fieldId,
+        string targetId
+    )
     {
         BoardCreature victimCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
@@ -587,6 +571,32 @@ public class BattleManager : MonoBehaviour
             target.InitializeCard(opponent, card);
             opponent.PlayCard(target);
             PlayTargetedSpell(target, victimCreature);
+        }
+    }
+
+    public void ReceiveMovePlaySpellUntargeted(
+        string playerId,
+        string cardId,
+        SpellCard card,
+        int handIndex
+    )
+    {
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            CardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
+            if (target == null)
+            {
+                Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
+                return;
+            }
+            opponent.PlayCard(target);
+        }
+        else
+        {
+            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
+            CardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            target.InitializeCard(opponent, card);
+            opponent.PlayCard(target);
         }
     }
 

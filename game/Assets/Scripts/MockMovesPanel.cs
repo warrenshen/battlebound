@@ -12,10 +12,10 @@ public class MockMovesPanel : MonoBehaviour
     private Button playCardButton;
 
     [SerializeField]
-    private Button playSpellGeneralButton;
+    private Button playSpellTargetedButton;
 
     [SerializeField]
-    private Button playSpellTargetedButton;
+    private Button playSpellUntargetedButton;
 
     [SerializeField]
     private Button cardAttackButton;
@@ -41,8 +41,8 @@ public class MockMovesPanel : MonoBehaviour
     {
         this.endTurnButton.onClick.AddListener(OnEndTurnButtonClick);
         this.playCardButton.onClick.AddListener(OnPlayCardButtonClick);
-        this.playSpellGeneralButton.onClick.AddListener(OnPlaySpellGeneralButtonClick);
         this.playSpellTargetedButton.onClick.AddListener(OnPlaySpellTargetedButtonClick);
+        this.playSpellUntargetedButton.onClick.AddListener(OnPlaySpellUntargetedButtonClick);
         this.cardAttackButton.onClick.AddListener(OnCardAttackButtonClick);
         this.submitMoveButton.onClick.AddListener(OnSubmitMoveButtonClick);
     }
@@ -74,14 +74,6 @@ public class MockMovesPanel : MonoBehaviour
         ActivateField(this.fieldIndexInputField);
     }
 
-    private void OnPlaySpellGeneralButtonClick()
-    {
-        this.moveCategory = ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_GENERAL;
-        DeactivateAllFields();
-        ActivateField(this.cardIdInputField);
-        ActivateField(this.fieldIdInputField);
-    }
-
     private void OnPlaySpellTargetedButtonClick()
     {
         this.moveCategory = ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED;
@@ -89,6 +81,14 @@ public class MockMovesPanel : MonoBehaviour
         ActivateField(this.cardIdInputField);
         ActivateField(this.fieldIdInputField);
         ActivateField(this.targetIdInputField);
+    }
+
+    private void OnPlaySpellUntargetedButtonClick()
+    {
+        this.moveCategory = ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED;
+        DeactivateAllFields();
+        ActivateField(this.cardIdInputField);
+        ActivateField(this.fieldIdInputField);
     }
 
     private void OnCardAttackButtonClick()
@@ -124,7 +124,7 @@ public class MockMovesPanel : MonoBehaviour
             attributes.SetFieldId(this.fieldIdInputField.text);
             attributes.SetTargetId(this.targetIdInputField.text);
         }
-        else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_GENERAL)
+        else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
         {
             attributes.SetCardId(this.cardIdInputField.text);
             attributes.SetFieldId(this.fieldIdInputField.text);
