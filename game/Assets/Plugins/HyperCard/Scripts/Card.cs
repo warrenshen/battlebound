@@ -283,20 +283,6 @@ namespace HyperCard
         public Vector2 MixNoiseMaskScale = Vector2.one;
         public float MixNoiseColorExposure = 1;
 
-        // holographic
-        public bool EnableHolo = false;
-        public Texture2D HoloMask;
-        public Texture2D HoloMap;
-        public Vector2 HoloMapScale = Vector2.one;
-        public Cubemap HoloCube;
-        public Color HoloCubeColor = Color.white;
-        public float HoloCubeRotation;
-        public Vector3 HoloCubeBoundingBoxScale = Vector3.one;
-        public Vector3 HoloCubeBoundingBoxOffset = Vector3.zero;
-        public float HoloPower;
-        public float HoloAlpha;
-        public bool ShowHoloGuizmo;
-
         // glitter fx
         public bool EnableGlitter = false;
         public Texture2D GlitterMask;
@@ -612,18 +598,6 @@ namespace HyperCard
             backMat.name = Guid.NewGuid().ToString();
 
             Renderer.materials = new[] { faceMat, backMat };
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (!EnableHolo || !ShowHoloGuizmo) return;
-
-            var centerBBox = transform.position + HoloCubeBoundingBoxOffset;
-
-            Gizmos.color = new Color(0, 0, 1, 0.25f);
-            Gizmos.DrawCube(centerBBox, HoloCubeBoundingBoxScale);
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireCube(centerBBox, HoloCubeBoundingBoxScale);
         }
 
         private void Start()

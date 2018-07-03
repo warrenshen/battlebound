@@ -70,12 +70,62 @@ public class TCGEditorPanel : EditorWindow
         //to-do: validation that all fields are filled, saving using create new class, serialize to text file
         //then move on to deletion and editing from editor...
 
-        if (GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), "Save/Export to Card List"))
+        bool valid = ValidateEntries();
+        if (GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), "Save/Export to Card List") && valid)
         {
-            this.mainTexture = null;
-            this.backgroundTexture = null;
+            GenerateCard();
         }
         GUILayout.EndVertical();
+    }
+
+    private void GenerateCard()
+    {
+        Card generated;
+        switch (this.selectedCardType)
+        {
+
+        }
+    }
+
+    private void ValidationErrorBox(string message)
+    {
+        EditorGUI.DrawRect(new Rect(5, position.height - 60, position.width - 10, 30), new Color(1, 0.5f, 0.33f));
+        EditorGUI.LabelField(new Rect(10, position.height - 60 + lineMargin, position.width - 20, 30), message);
+    }
+
+    private bool ValidateEntries()
+    {
+        if (this.mainTexture == null)
+        {
+            ValidationErrorBox("Missing main artwork.");
+            return false;
+        }
+        else if (this.backgroundTexture == null)
+        {
+            ValidationErrorBox("Missing background artwork.");
+            return false;
+        }
+        else if (this.data.name == null || this.data.name.Length <= 0)
+        {
+            ValidationErrorBox("Missing name.");
+            return false;
+        }
+        else if (this.data.health == 0)
+        {
+            ValidationErrorBox("Health cannot be zero.");
+            return false;
+        }
+        else if (this.selectedCardType == CardType.Creature && this.summonPrefab == null)
+        {
+            ValidationErrorBox("Creature cards must have a summon prefab.");
+            return false;
+        }
+        else if (this.effectPrefab == null)
+        {
+            ValidationErrorBox("Missing effect prefab.");
+            return false;
+        }
+        return true;
     }
 
     private void CardArtworkSection()
@@ -124,7 +174,7 @@ public class TCGEditorPanel : EditorWindow
         this.data.name = EditorGUI.TextField(new Rect(50, standardDetailsYPos, 120, lineHeight), this.data.name);
 
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos + lineHeight + lineMargin, 40, lineHeight), "Cost");
-        this.data.name = EditorGUI.TextField(new Rect(50, standardDetailsYPos + lineHeight + lineMargin, 120, lineHeight), this.data.name);
+        this.data.cost = EditorGUI.IntField(new Rect(50, standardDetailsYPos + lineHeight + lineMargin, 120, lineHeight), this.data.cost);
 
         this.data.rarity = (Card.RarityType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos + lineHeight * 3 + lineMargin * 2, position.width - 10, 20), this.data.rarity);
     }

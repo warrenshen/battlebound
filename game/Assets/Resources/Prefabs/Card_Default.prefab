@@ -181,9 +181,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1108527505075166}
-  m_LocalRotation: {x: -0.07395487, y: 0.9759401, z: -0.15625525, w: 0.13287574}
-  m_LocalPosition: {x: 0.14, y: -16.54, z: -1.15}
-  m_LocalScale: {x: 3.3300023, y: 2.7000005, z: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -5.7738175, y: -9.281469, z: 8.795}
+  m_LocalScale: {x: 3.4632843, y: 2.9924068, z: 1}
   m_Children:
   - {fileID: 224863642606757850}
   - {fileID: 224699072527756228}
@@ -195,7 +195,7 @@ Transform:
   - {fileID: 4685644383137564}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 16.579, y: 162.85901, z: -11.183001}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!4 &4685644383137564
 Transform:
   m_ObjectHideFlags: 1
@@ -755,20 +755,20 @@ MonoBehaviour:
   EnableBackOutline: 0
   OutlineNoiseFreq: 5
   OutlineNoiseSpeed: 1
-  OutlineNoiseMult: 0.2
-  OutlineNoiseDistance: 0.169
-  OutlineNoiseOffset: 0.261
-  OutlineNoiseThreshold: 0.325
+  OutlineNoiseMult: 1
+  OutlineNoiseDistance: 0.123
+  OutlineNoiseOffset: 0.189
+  OutlineNoiseThreshold: 0.062
   OutlineNoiseVerticalAjust: 0.23
-  OutlineTrimOffset: 0.137
+  OutlineTrimOffset: 0.15
   OutlinePosOffset: {x: 0, y: -0}
-  OutlineColor: {r: 1, g: 0.37441987, b: 0, a: 1}
-  OutlineEndColor: {r: 0, g: 1, b: 0.10735226, a: 1}
-  OutlineEndColorDistance: 0.168
+  OutlineColor: {r: 1, g: 0.7857587, b: 0, a: 1}
+  OutlineEndColor: {r: 1, g: 0.25464603, b: 0, a: 1}
+  OutlineEndColorDistance: 1
   OutlineAlphaMult: 20
   OutlineWidth: 1
   OutlineHeight: 1
-  OutlineSmooth: 0.056
+  OutlineSmooth: 0.05
   OutlineSmoothSpeed: 1
   BurnNoiseFreq: 0
   BurningAmount: 0

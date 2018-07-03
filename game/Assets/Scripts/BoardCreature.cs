@@ -45,7 +45,6 @@ public class BoardCreature : Targetable
     public bool Silenced => silenced;
 
     Material dissolve;
-    TextMeshPro textMesh;
 
     private HyperCard.Card visual;
 
@@ -91,22 +90,11 @@ public class BoardCreature : Targetable
         coll.size += new Vector3(0, 0, 1.2f);
         coll.center += new Vector3(0, 0, -0.45f);
 
-        //maybe do this manually in prefab later
-        GameObject textHolder = new GameObject("Text Label");
-        textMesh = textHolder.AddComponent<TextMeshPro>();
-        textMesh.fontSize = 6;
-        textMesh.fontStyle = FontStyles.Bold;
-        textMesh.alignment = TextAlignmentOptions.Center;
-        RectTransform textContainer = textMesh.GetComponent<RectTransform>();
-        textContainer.sizeDelta = new Vector2(3, 2);
-        textContainer.anchoredPosition = new Vector3(0, 2.2f, -0.5f);
-        textHolder.transform.SetParent(gameObject.transform, false);
-
         //ehh
         //dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
         //sp.material = dissolve;
         this.visual = cardObject.visual;
-        VisualizeCard();
+        RepurposeCardVisual();
 
         //method calls
         this.Redraw();
@@ -117,7 +105,7 @@ public class BoardCreature : Targetable
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
     }
 
-    private void VisualizeCard()
+    private void RepurposeCardVisual()
     {
         this.visual.transform.parent = this.transform;
         this.visual.transform.localPosition = Vector3.zero;
@@ -216,13 +204,19 @@ public class BoardCreature : Targetable
     {
         this.visual.SetVisualOutline(canAttack > 0);
         UpdateStatText();
+        this.visual.Redraw();
     }
 
     private void UpdateStatText()
     {
-        float scaleFactor = 1.6f;
-        LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
-        textMesh.text = String.Format("{0} / {1} [{2}]", this.attack, this.health, this.GetCardId());
+        //0 = title, 1 = description, 2 = price, 3 = attack, 4 = health
+        this.visual.TmpTextObjects[0].Value = this.name;
+        this.visual.TmpTextObjects[2].Value = this.cost.ToString();
+        this.visual.TmpTextObjects[3].Value = this.attack.ToString();
+        this.visual.TmpTextObjects[4].Value = this.health.ToString();
+
+        //float scaleFactor = 1.6f;
+        //LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
     }
 
     new public void RecoverAttack()

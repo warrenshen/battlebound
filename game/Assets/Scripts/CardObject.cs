@@ -77,9 +77,24 @@ public class CardObject : MonoBehaviour
         created.localPosition = Vector3.zero;
         created.localRotation = Quaternion.identity;
         created.Rotate(0, 180, 0, Space.Self);
-        return created.GetComponent<HyperCard.Card>();
 
+        HyperCard.Card visual = created.GetComponent<HyperCard.Card>();
         //set sprites and set textmeshpro labels using TmpTextObjects (?)
+        visual.TmpTextObjects[0].Value = this.Card.Name;
+        visual.TmpTextObjects[2].Value = this.Card.Cost.ToString();
+
+        CreatureCard creatureCard = this.Card as CreatureCard;
+        if (creatureCard != null)
+        {
+            visual.TmpTextObjects[3].Value = creatureCard.Attack.ToString();
+            visual.TmpTextObjects[4].Value = creatureCard.Health.ToString();
+        }
+        else
+        {
+            visual.TmpTextObjects[3].TmpObject.enabled = false;
+            visual.TmpTextObjects[4].TmpObject.enabled = false;
+        }
+        return visual;
     }
 
     private void SetVisualResetValues()
