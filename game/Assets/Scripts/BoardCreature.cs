@@ -128,6 +128,8 @@ public class BoardCreature : Targetable
         this.visual.transform.localPosition = Vector3.zero;
         this.visual.transform.localRotation = Quaternion.identity;
         this.visual.transform.Rotate(0, 180, 0, Space.Self);
+        this.visual.transform.localScale *= 1.25f;
+
         this.visual.Renderer.enabled = true;
     }
 

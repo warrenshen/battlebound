@@ -120,10 +120,15 @@ public class CardObject : MonoBehaviour
         //set defaults of hypercard
         SetVisualResetValues();
 
-        float scaling = 1.7f;
+        //Quaternion quart = Quaternion.identity;
+        //quart.eulerAngles = new Vector3(0, 180, 0);
+        //this.visual.transform.localRotation = quart;
+
+        float scaling = 1.8f;
         this.visual.transform.localScale = scaling * this.visual.reset.scale;
-        this.visual.transform.Translate(Vector3.up * 2.8f, Space.Self);
-        this.visual.transform.Translate(Vector3.forward * 1f, Space.Self);
+
+        this.visual.transform.Translate(Vector3.up * 3.2f, Space.Self);
+        this.visual.transform.Translate(Vector3.forward * 1, Space.Self);
     }
 
     public void ExitFocus()
@@ -153,7 +158,8 @@ public class CardObject : MonoBehaviour
         //set defaults of cardobject
         SetThisResetValues();
 
-        this.visual.transform.localScale = this.visual.reset.scale;
+        LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
+        //this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
 
         ActionManager.Instance.SetDragTarget(this);

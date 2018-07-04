@@ -234,7 +234,7 @@ Shader "HyperCard/Card (Face)"
             } 
 
          Cull Back
-         Lighting Off
+         Lighting On //changed by nick
          Fog { Mode Off }
          Blend SrcAlpha OneMinusSrcAlpha
 
@@ -313,21 +313,6 @@ Shader "HyperCard/Card (Face)"
          uniform float _SpriteSheetIndex;
          uniform float _SpriteSheetCols;
          uniform float _SpriteSheetRows;
-
-         /*
-         uniform int _Holo_Enabled;
-         uniform sampler2D _HoloMask; 
-         uniform sampler2D _HoloMap;
-         uniform float2 _HoloMap_Scale;
-         uniform samplerCUBE _HoloCube; 
-         uniform float4 _HoloCubeColor;
-         uniform float _HoloCubeRotation;
-         uniform float _HoloPower;
-         uniform float _HoloAlpha;
-         uniform float3 _HoloBBoxMin;
-            uniform float3 _HoloBBoxMax;
-            uniform float3 _HoloEnviCubeMapPos;
-         uniform int _Holo_Debug;*/
 
          uniform int _Glitter_Enabled;
          uniform sampler2D _GlitterMask; 
@@ -753,4 +738,5 @@ Shader "HyperCard/Card (Face)"
          ENDCG
      }
  }
+ Fallback "VertexLit" //added by nick, adds vertex based shadows
 }

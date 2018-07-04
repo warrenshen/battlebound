@@ -92,6 +92,7 @@ public class PlayerAvatar : Targetable
         textContainer.sizeDelta = new Vector2(2, 1);
         textContainer.anchoredPosition = new Vector3(0, 1.85f, -0.5f);
         textHolder.transform.SetParent(gameObject.transform, false);
+        textHolder.layer = textHolder.transform.parent.gameObject.layer;
 
         //already has cylinder collider in scene
         UpdateStatText();
