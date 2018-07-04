@@ -161,8 +161,8 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
     private void OnSubmitBidAuctionTransactionSuccess(LogEventResponse response)
     {
-        Debug.Log("Got txHash: " + txHash);
         this.txHash = response.ScriptData.GetString("txHash");
+        Debug.Log("Got txHash: " + txHash);
     }
 
     private void OnSubmitBidAuctionTransactionError(LogEventResponse response)
