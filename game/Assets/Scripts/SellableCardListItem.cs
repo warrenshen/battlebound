@@ -4,23 +4,24 @@ using UnityEngine.UI;
 
 public class SellableCardListItem : MonoBehaviour
 {
-	[SerializeField]
+    [SerializeField]
     private Image cardImage;
     [SerializeField]
     private Button createAuctionButton;
-    
-	private CardRaw card;
 
-	public void Awake()
+    private CardRaw card;
+
+    public void Awake()
     {
-		this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
+        this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
     }
-    
-	public void InitializeCard(CardRaw card)
-    {
-		this.card = card;
 
-		Texture2D texture = Resources.Load(card.Image) as Texture2D;
+    public void InitializeCard(CardRaw card)
+    {
+        this.card = card;
+
+        //Texture2D texture = Resources.Load("HS/" + card.Image) as Texture2D;
+        Texture2D texture = Resources.Load("HS/Armorsmith") as Texture2D;
         this.cardImage.sprite = Sprite.Create(
             texture,
             new Rect(0.0f, 0.0f, texture.width, texture.height),
@@ -29,8 +30,8 @@ public class SellableCardListItem : MonoBehaviour
         );
     }
 
-	public void OnCreateAuctionButtonClick()
+    public void OnCreateAuctionButtonClick()
     {
-		CreateAuctionModalPanel.Instance.ShowModalForCard(this.card);
+        CreateAuctionModalPanel.Instance.ShowModalForCard(this.card);
     }
 }

@@ -2,46 +2,55 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Nethereum.Web3.Accounts;
 
 public class CancelableListItem : MonoBehaviour
 {
-	[SerializeField]
-	private Image cardImage;
-	[SerializeField]
-	private Button cancelAuctionButton;
+    [SerializeField]
+    private Image cardImage;
+    [SerializeField]
+    private Button cancelAuctionButton;
 
-	private CardAuction cardAuction;
-    
-	public void Awake()
-	{
-		this.cancelAuctionButton.onClick.AddListener(OnCancelAuctionButtonClick);
-	}
+    private CardAuction cardAuction;
 
-	public void InitializeCardAuction(CardAuction cardAuction)
+    public void Awake()
+    {
+        this.cancelAuctionButton.onClick.AddListener(OnCancelAuctionButtonClick);
+    }
+
+    public void InitializeCardAuction(CardAuction cardAuction)
     {
         this.cardAuction = cardAuction;
 
-		Texture2D texture = Resources.Load(cardAuction.Image) as Texture2D;
-		this.cardImage.sprite = Sprite.Create(
-			texture,
-			new Rect(0.0f, 0.0f, texture.width, texture.height),
-			new Vector2(0.5f, 0.5f),
-			100.0f
-		);
+        Texture2D texture = Resources.Load(cardAuction.Image) as Texture2D;
+        this.cardImage.sprite = Sprite.Create(
+            texture,
+            new Rect(0.0f, 0.0f, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100.0f
+        );
     }
 
-	public void OnCancelAuctionButtonClick()
+    public void OnCancelAuctionButtonClick()
     {
-		GenericModalPanel.Instance.Show(
-            "Confirm cancel?",
-			new UnityAction(ConfirmCancelAuction),
+        GenericModalPanel.Instance.Show(
+            "Confirm you would like to cancel this auction? You'll authorize a transaction next.",
+            new UnityAction(AuthorizeCancelAuction),
             new UnityAction(CancelBidAuction)
         );
     }
 
-	private void ConfirmCancelAuction()
+    private void AuthorizeCancelAuction()
     {
-		CryptoSingleton.Instance.CancelAuction(
+        PrivateKeyModal.Instance.ShowModalWithCallback(
+            new UnityAction<Account>(SubmitCancelAuction)
+        );
+    }
+
+    private void SubmitCancelAuction(Account account)
+    {
+        CryptoSingleton.Instance.CancelAuction(
+            account,
             Int32.Parse(cardAuction.Id.Substring(1))
         );
     }
