@@ -110,8 +110,8 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.you.DrawCards(5);
-            this.opponent.DrawCards(5);
+            this.you.DrawCards(5, animate: false);
+            this.opponent.DrawCards(5, animate: false);
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -433,6 +433,34 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         PlayCardToBoard(cardObject, fieldIndex);
+    }
+
+    public void AnimateDrawCard(Player player, CardObject cardObject)
+    {
+        StartCoroutine("DrawCardAnimation", new object[2] { player, cardObject });
+    }
+
+    private IEnumerator DrawCardAnimation(object[] args)
+    {
+        Player player = args[0] as Player;
+        CardObject cardObject = args[1] as CardObject;
+
+        GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
+        cardObject.transform.position = deckObject.transform.position;
+        cardObject.transform.rotation = deckObject.transform.rotation;
+        //done initializing to match deck orientation
+
+        string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
+        GameObject fixedPoint = GameObject.Find(fixedPointName);
+
+        float tweenTime = 0.3f;
+        LeanTween.rotate(cardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
+        LeanTween.move(cardObject.gameObject, fixedPoint.transform.position, tweenTime).setEaseInQuad();
+        yield return new WaitForSeconds(tweenTime);
+
+
+        yield return new WaitForSeconds(tweenTime * 1.5f);
+        player.Hand.RepositionCards();
     }
 
     /*

@@ -67,7 +67,7 @@ public class Player
 
         List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
-        this.AddDrawnCards(handCards, true);
+        this.AddDrawnCards(handCards, true, animate: false);
 
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this, playerState);
@@ -141,42 +141,51 @@ public class Player
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
     }
 
-    private int DrawCard()
+    private int DrawCard(bool animate = true)
     {
         if (this.deck.Cards.Count <= 0)
         {
-            this.Hand.RepositionCards();  //needed to correct recession
+            this.Hand.RepositionCards();  //keep, needed to correct recession
             return 1; //amount fatigue
         }
 
         Card drawn = this.deck.Cards[0];
         this.deck.Cards.RemoveAt(0);
-        this.AddDrawnCard(drawn); // Handles decrementing this.deckSize.
+        this.AddDrawnCard(drawn, animate: animate); // Handles decrementing this.deckSize.
 
         return 0;
     }
 
-    public int DrawCards(int amount)
+    public int DrawCards(int amount, bool animate = true)
     {
         int fatigue = 0;
 
         while (amount > 0)
         {
-            fatigue += DrawCard();
+            fatigue += DrawCard(animate);
             amount--;
         }
-
         return fatigue;
     }
 
     /*
      * @param bool isInit - do not decrement deck size if true
      */
-    public void AddDrawnCard(Card card, bool isInit = false)
+    public void AddDrawnCard(Card card, bool isInit = false, bool animate = true)
     {
         GameObject created = new GameObject(card.Name);
+
         CardObject cardObject = created.AddComponent<CardObject>();
         cardObject.InitializeCard(this, card);
+        if (animate)
+        {
+            BattleManager.Instance.AnimateDrawCard(this, cardObject);
+        }
+        else
+        {
+            hand.RepositionCards();
+        }
+
         created.transform.parent = GameObject.Find(
             this.name + " Hand"
         ).transform;
@@ -188,11 +197,11 @@ public class Player
         this.Hand.AddCardObject(cardObject);
     }
 
-    public void AddDrawnCards(List<Card> cards, bool isInit = false)
+    public void AddDrawnCards(List<Card> cards, bool isInit = false, bool animate = true)
     {
         foreach (Card card in cards)
         {
-            AddDrawnCard(card, isInit);
+            AddDrawnCard(card, isInit, animate: animate);
         }
     }
 

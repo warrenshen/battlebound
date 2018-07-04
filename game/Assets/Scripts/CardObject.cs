@@ -127,7 +127,7 @@ public class CardObject : MonoBehaviour
         float scaling = 1.8f;
         this.visual.transform.localScale = scaling * this.visual.reset.scale;
 
-        this.visual.transform.Translate(Vector3.up * 3.2f, Space.Self);
+        this.visual.transform.Translate(Vector3.up * 3.5f, Space.Self);
         this.visual.transform.Translate(Vector3.forward * 1, Space.Self);
     }
 

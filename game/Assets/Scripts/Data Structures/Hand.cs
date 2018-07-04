@@ -45,7 +45,6 @@ public class Hand
     public void AddCardObject(CardObject cardObject)
     {
         this.cardObjects.Add(cardObject);
-        this.RepositionCards();
     }
 
     public void Discard(int count)
@@ -101,7 +100,7 @@ public class Hand
             //cardObject.Renderer.sortingOrder = 10 + k;
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;
-            float tweenTime = 0.1f;
+            float tweenTime = 0.2f;
             LeanTween.moveLocal(cardObject.gameObject, adjustedPos, tweenTime);
             LeanTween.rotateLocal(cardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), tweenTime);
         }
