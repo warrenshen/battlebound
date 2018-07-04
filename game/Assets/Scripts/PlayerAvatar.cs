@@ -42,7 +42,7 @@ public class PlayerAvatar : Targetable
     public void Initialize(Player player)
     {
         this.armor = 0;
-        this.maxHealth = 30;
+        this.maxHealth = 100;
         this.health = this.maxHealth;
 
         this.weapon = null;
@@ -188,7 +188,7 @@ public class PlayerAvatar : Targetable
     {
         int healthBefore = this.health;
         this.health += amount;
-        this.health = Math.Max(this.health, this.maxHealth);
+        this.health = Math.Min(this.health, this.maxHealth);
 
         int amountHealed = Math.Min(this.health - healthBefore, amount);
         if (amountHealed > 0)

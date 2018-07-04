@@ -298,8 +298,7 @@ public class Player
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         cards.Add(new SpellCard("C6", "Unstable Power", "HS/Lightning_Bolt", 4, 30));
-        cards.Add(new SpellCard("C7", "Lightning Bolt", "HS/Lightning_Bolt", 5, 1));
-        cards.Add(new SpellCard("C8", "Lightning Bolt", "HS/Lightning_Bolt", 6, 1));
+        cards.Add(new CreatureCard("C7", "Cursed Imp", "HS/Direhorn_Hatchling", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;

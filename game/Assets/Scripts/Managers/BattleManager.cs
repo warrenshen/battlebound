@@ -338,6 +338,7 @@ public class BattleManager : MonoBehaviour
                     attributes
                 );
             }
+
             mouseDownTargetable.Fight(mouseUpTargetable);
         }
     }
