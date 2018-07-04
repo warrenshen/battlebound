@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Nethereum.HdWallet;
 using Nethereum.Web3.Accounts;
 
 public class PrivateKeyModal : MonoBehaviour
@@ -47,9 +46,9 @@ public class PrivateKeyModal : MonoBehaviour
     {
         string password = this.passwordInputField.text;
 
-        if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_KEY_MNEMONIC))
+        if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {
-            Debug.LogError("Player prefs mnemonic does not exist.");
+            Debug.LogError("Player prefs encrypted key store does not exist.");
             return;
         }
         else if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
@@ -58,12 +57,7 @@ public class PrivateKeyModal : MonoBehaviour
             return;
         }
 
-        // Mnemonic string in player prefs is comma-separated.
-        string mnemonicString = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_KEY_MNEMONIC);
-        mnemonicString = mnemonicString.Replace(",", "");
-
-        Wallet wallet = new Wallet(mnemonicString, password);
-        Account account = wallet.GetAccount(0);
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
 
         string publicAddress = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS);
         if (publicAddress != account.Address)

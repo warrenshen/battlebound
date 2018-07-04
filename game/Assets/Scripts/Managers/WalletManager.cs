@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Nethereum.HdWallet;
 using Nethereum.Web3.Accounts;
 
 public class WalletManager : MonoBehaviour
@@ -193,12 +192,7 @@ public class WalletManager : MonoBehaviour
     {
         string passwordRepeat = this.passwordRepeatInputField.text;
 
-        // Mnemonic string in player prefs is comma-separated.
-        string mnemonicString = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_KEY_MNEMONIC);
-        mnemonicString = mnemonicString.Replace(",", "");
-
-        Wallet wallet = new Wallet(mnemonicString, passwordRepeat);
-        Account account = wallet.GetAccount(0);
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(passwordRepeat);
 
         if (account.Address != PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
         {
@@ -235,11 +229,7 @@ public class WalletManager : MonoBehaviour
             return;
         }
 
-        string mnemonicString = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_KEY_MNEMONIC);
-        mnemonicString = mnemonicString.Replace(",", "");
-
-        Wallet wallet = new Wallet(mnemonicString, password);
-        Account account = wallet.GetAccount(0);
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
 
         CryptoSingleton.Instance.UpdatePlayerAddress(
             account,

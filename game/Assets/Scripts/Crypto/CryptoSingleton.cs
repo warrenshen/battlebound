@@ -10,6 +10,7 @@ using GameSparks.Api.Responses;
 using NBitcoin;
 using Nethereum.HdWallet;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.KeyStore;
 using Nethereum.Signer;
 using Nethereum.Util;
 using Nethereum.Web3.Accounts;
@@ -17,8 +18,8 @@ using Nethereum.Web3.Accounts;
 
 public class CryptoSingleton : Singleton<CryptoSingleton>
 {
-    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS";
-    public const string PLAYER_PREFS_KEY_MNEMONIC = "PLAYER_PREFS_KEY_MNEMONIC";
+    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
+    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
 
     private int nonce;
     private string txHash;
@@ -349,9 +350,9 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
      */
     public string InitializePrivateKey(string password)
     {
-        //if (PlayerPrefs.HasKey(PLAYER_PREFS_KEY_MNEMONIC))
+        //if (PlayerPrefs.HasKey(PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         //{
-        //    Debug.LogError("Private key mnemonic already exists.");
+        //    Debug.LogError("Encrypted key store already exists.");
         //    return null;
         //}
 
@@ -359,13 +360,37 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         string mnemonicString = string.Join(", ", wallet.Words);
 
         Account account = wallet.GetAccount(0);
+        string publicAddress = account.Address;
 
-        PlayerPrefs.SetString(PLAYER_PREFS_KEY_MNEMONIC, mnemonicString);
-        PlayerPrefs.SetString(PLAYER_PREFS_PUBLIC_ADDRESS, account.Address);
-        Debug.Log("Set player prefs mnemonic to: " + mnemonicString);
-        Debug.Log("Set player prefs public address to: " + account.Address);
+        KeyStorePbkdf2Service keyStorePbkdf2Service = new KeyStorePbkdf2Service();
+        string keyStoreJson = keyStorePbkdf2Service.EncryptAndGenerateKeyStoreAsJson(
+            password,
+            account.PrivateKey.HexToByteArray(),
+            publicAddress
+        );
+
+        PlayerPrefs.SetString(PLAYER_PREFS_ENCRYPTED_KEY_STORE, keyStoreJson);
+        PlayerPrefs.SetString(PLAYER_PREFS_PUBLIC_ADDRESS, publicAddress);
+
+        Debug.Log("Set player prefs public address to: " + publicAddress);
 
         return mnemonicString;
+    }
+
+    public Account GetAccountWithPassword(string password)
+    {
+        string keyStoreJson = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE);
+        if (string.IsNullOrEmpty(keyStoreJson))
+        {
+            Debug.LogError("Player prefs key store does not exist.");
+            return null;
+        }
+
+        KeyStorePbkdf2Service keyStorePbkdf2Service = new KeyStorePbkdf2Service();
+        var keyStore = keyStorePbkdf2Service.DeserializeKeyStoreFromJson(keyStoreJson);
+        string privateKeyDecrypted = keyStorePbkdf2Service.DecryptKeyStore(password, keyStore).ToHex();
+
+        return new Account(privateKeyDecrypted.HexToByteArray());
     }
 
     private IEnumerator FetchTransactionNonce()
