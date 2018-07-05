@@ -45,6 +45,7 @@ public class Hand
     public void AddCardObject(CardObject cardObject)
     {
         this.cardObjects.Add(cardObject);
+        SoundManager.Instance.PlaySound("PlayCardSFX", cardObject.transform.position);
     }
 
     public void Discard(int count)

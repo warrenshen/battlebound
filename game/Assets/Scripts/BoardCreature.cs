@@ -107,9 +107,6 @@ public class BoardCreature : Targetable
         newCollider.size *= BOARD_GROW_FACTOR;
         newCollider.center = oldCollider.center;
 
-        //ehh
-        //dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
-        //sp.material = dissolve;
         this.visual = cardObject.visual;
         this.RepurposeCardVisual();
         this.SummonCreature();
@@ -143,6 +140,8 @@ public class BoardCreature : Targetable
 
     private void SummonCreature()
     {
+        SoundManager.Instance.PlaySound("SummonSFX", transform.position);
+
         GameObject created = Instantiate(Resources.Load(this.summonPrefabPath)) as GameObject;
         created.transform.parent = this.transform;
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
@@ -175,30 +174,39 @@ public class BoardCreature : Targetable
             Debug.LogError("Fight called when canAttack is 0 or below!");
             return;
         }
-
         this.canAttack -= 1;
 
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
-        //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
-        FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
-        SoundManager.Instance.PlaySound("Splatter", other.transform.position);
+        FXPoolManager.Instance.PlayEffect("SlashVFX", other.transform.position);
+        StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, 0.25f });
+        StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, 0.4f });
 
         int damageDone = other.TakeDamage(this.attack);
         OnDamageDone(damageDone);
 
         if (!other.IsAvatar)
         {
-            FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
+            FXPoolManager.Instance.PlayEffect("SlashVFX", this.transform.position);
             this.TakeDamage(((BoardCreature)other).Attack);
 
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
-                SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
+                StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, 0.5f });
         }
 
         this.Redraw();
+    }
+
+    IEnumerator PlaySoundWithDelay(object[] args)
+    {
+        string spellName = (string)args[0];
+        Vector3 location = (Vector3)args[1];
+        float delay = (float)args[2];
+
+        yield return new WaitForSeconds(delay);
+        SoundManager.Instance.PlaySound(spellName, location);
     }
 
     /*
@@ -352,7 +360,7 @@ public class BoardCreature : Targetable
         {
             //to-do, delay creature death
             Board.Instance().RemoveCreature(this);
-            FXPoolManager.Instance.PlayEffect("CreatureDeath", this.transform.position);
+            FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
             StartCoroutine("Dissolve", 2);
             return false;
         }
@@ -360,11 +368,12 @@ public class BoardCreature : Targetable
 
     private IEnumerator Dissolve(float duration)
     {
-        SoundManager.Instance.PlaySound("BurnDestroy", this.transform.position);
+        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
         float elapsedTime = 0;
+        LeanTween.scale(this.summonAnimation.gameObject, Vector3.zero, duration / 3).setEaseInOutCubic();
         while (elapsedTime < duration)
         {
-            //sp.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
+            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }

@@ -458,7 +458,7 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(tweenTime);
 
 
-        yield return new WaitForSeconds(tweenTime * 1.5f);
+        yield return new WaitForSeconds(tweenTime);
         player.Hand.RepositionCards();
     }
 
@@ -504,7 +504,7 @@ public class BattleManager : MonoBehaviour
         Transform target = args[2] as Transform;
 
         cardObject.visual.Renderer.enabled = false;
-        FXPoolManager.Instance.PlayEffect("Spawn", target.position + new Vector3(0f, 0f, -0.1f));
+        FXPoolManager.Instance.PlayEffect("SpawnVFX", target.position + new Vector3(0f, 0f, -0.1f));
         yield return new WaitForSeconds(0.2f);
 
         Board.Instance().CreateAndPlaceCreature(cardObject, target.position, index);
@@ -546,7 +546,7 @@ public class BattleManager : MonoBehaviour
     public void UseCard(Player player, CardObject cardObject)
     {
         GameObject.Destroy(cardObject.gameObject);
-        SoundManager.Instance.PlaySound("Play", transform.position);
+        SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
     }
 
     public void ReceiveMoveEndTurn(string playerId)
