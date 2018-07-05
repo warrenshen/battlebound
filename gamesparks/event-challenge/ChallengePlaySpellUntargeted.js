@@ -1,6 +1,6 @@
 // ====================================================================================================
 //
-// Cloud Code for ChallengePlaySpellTargeted, write your code here to customize the GameSparks platform.
+// Cloud Code for ChallengePlaySpellUntargeted, write your code here to customize the GameSparks platform.
 //
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
@@ -12,8 +12,6 @@ require("AttackModule");
 require("ChallengeMovesModule");
 
 const cardId = Spark.getData().cardId;
-const attributesJson = Spark.getData().attributesJson;
-const attributesString = Spark.getData().attributesString;
 
 const challengeState = challengeStateData.current;
 
@@ -46,17 +44,6 @@ if (playedCard.cost > playerManaCurrent) {
     }
 }
 
-var attributes;
-
-if (attributesJson.targetId) {
-    attributes = attributesJson;
-} else {
-    attributes = JSON.parse(attributesString);
-    if (!attributes.targetId) {
-        setScriptError("Invalid attributesJson or attributesString parameter");
-    }
-}
-
 if (playedCard.category !== CARD_CATEGORY_SPELL) {
     setScriptError("Invalid card category - must be spell category.");
 }
@@ -67,7 +54,7 @@ challengeStateData.moveTakenThisTurn = 1;
 
 var move = {
     playerId: playerId,
-    category: MOVE_CATEGORY_PLAY_SPELL_TARGETED,
+    category: MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
     attributes: {
         card: playedCard,
         cardId: cardId,
@@ -77,35 +64,28 @@ var move = {
 challengeStateData.moves.push(move);
 challengeStateData.lastMoves = [move];
 
-const targetId = attributes.targetId;
-const fieldId = attributes.fieldId;
-
-if (playedCard.name === "Lightning Bolt") {
-    // if (fieldId !== playerId && fieldId !== opponentId) {
-    if (fieldId !== opponentId) {
-        setScriptError("Invalid fieldId parameter.");
+if (playedCard.name === "Blizzard") {
+    // For now, only spell that exists is to damage all enemy cards by 1.
+    opponentField.forEach(function(card) { damageCard(card, 2) });
+} else if (playedCard.name === "Greedy Fingers") {
+    for (var i = 0; i < 2; i += 1) {
+        move = drawCardForPlayer(playerId, playerState);
+        challengeStateData.moves.push(move);
+        challengeStateData.lastMoves = [move];
     }
-    
-    // Find index of defending card in player field.
-    defendingIndex = opponentField.findIndex(function(card) { return card.id === targetId });
-    if (defendingIndex < 0) {
-        setScriptError("Invalid targetId parameter - card does not exist.");
+} else if (playedCard.name === "Grave-digging") {
+    const moves = challengeState.moves;
+    for (var i = 0; i < moves.length; i += 1) {
+        var currentMove = moves[i];
+        if (
+            currentMove.playerId === playerId &&
+            currentMove.card &&
+            currentMove.card.playerId === playerId &&
+            currentMove.card.health <= 0
+        ) {
+            
+        }
     }
-    
-    defendingCard = opponentField[defendingIndex];
-    damageCard(defendingCard, 1);
-} else if (playedCard.name === "Unstable Power") {
-    if (fieldId !== playerId) {
-        setScriptError("Invalid fieldId parameter.");
-    }
-    // Give a creature +30, it dies at start of next turn.
-    card.attack += 30;
-    card.buffs.push({
-        category: BUFF_CATEGORY_UNSTABLE_POWER,
-        granterId: playedCard.id,
-        attack: 30,
-        abilities: [],
-    });
 } else {
     setScriptError("Unrecognized spell card name.");
 }
@@ -117,7 +97,7 @@ opponentState.field = filterDeadResponse[1];
 // Remove played card from hand.
 const newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
 playerState.hand = newHand;
-
+    
 require("PersistChallengeStateModule");
 
 setScriptSuccess();

@@ -15,7 +15,6 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
-require("DeckModule");
 require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
@@ -43,6 +42,10 @@ const targetId = attributes.targetId;
 const challengeState = challengeStateData.current;
 
 const playerState = challengeState[playerId];
+if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
+    setScriptError("Player state is not in normal mode.");
+}
+
 const playerField = playerState.field;
 
 const opponentState = challengeState[opponentId];

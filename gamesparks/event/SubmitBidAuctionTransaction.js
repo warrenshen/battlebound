@@ -9,7 +9,7 @@ require("ScriptDataModule");
 require("OnChainModule");
 
 const player = Spark.getPlayer();
-const address = player.address;
+const address = player.getPrivateData("address");
 
 const signedTx = Spark.getData().signedTx;
 const tokenId = Spark.getData().tokenId;
@@ -29,7 +29,7 @@ const cardData = cardDataItem.getData();
 const auction = cardData.auction;
 // Get auction end.
 
-if (auction.seller === address) {
+if (cardData.seller === address) {
     setScriptError("Auction cannot be bid on by seller.");
 }
     

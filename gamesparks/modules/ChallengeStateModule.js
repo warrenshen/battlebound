@@ -7,22 +7,13 @@
 // ====================================================================================================
 require("ChallengeMovesModule");
 
-function getChallengeStateForPlayer(playerId, challengeId) {
-    const API = Spark.getGameDataService();
-
-    const challenge = Spark.getChallenge(challengeId);
-    
-    const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
-    
-    if (challengeStateDataItem === null) {
-        setScriptError("ChallengeState does not exist.");
-    }
-    
-    const challengeStateData = challengeStateDataItem.getData();
-    const challengeState = challengeStateData.current;
-    
+/**
+ * @param playerId - player ID to return challenge state for
+ **/ 
+function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     
+    const challengeState = challengeStateData.current;
     const playerState = challengeState[playerId];
     const opponentState = challengeState[opponentId];
     
@@ -38,13 +29,15 @@ function getChallengeStateForPlayer(playerId, challengeId) {
         "field",
         "hand",
         "deckSize",
+        "cardCount",
+        "mode",
+        "mulliganCards",
     ];
     const playerFields = [
-        // "hand",
     ];
     
-    function obfuscateOpponentHand(hand) {
-        return hand.map(function(card) {
+    function obfuscateOpponentCards(cards) {
+        return cards.map(function(card) {
             return { id: "HIDDEN" };
         });
     }
@@ -54,8 +47,8 @@ function getChallengeStateForPlayer(playerId, challengeId) {
     fields.forEach(function(field) {
         filteredPlayerState[field] = playerState[field];
         
-        if (field === "hand") {
-            filteredOpponentState[field] = obfuscateOpponentHand(opponentState[field]);
+        if (field === "hand" || field === "mulliganCards") {
+            filteredOpponentState[field] = obfuscateOpponentCards(opponentState[field]);
         } else {
             filteredOpponentState[field] = opponentState[field];
         }
@@ -91,12 +84,38 @@ function getChallengeStateForPlayer(playerId, challengeId) {
         return move.playerId == opponentId || move.category == MOVE_CATEGORY_DRAW_CARD;
     });
     
-    Spark.setScriptData("newMoves", newMoves);
+    return {
+        challengeId: challengeId,
+        nonce: challengeStateData.nonce,
+        playerState: filteredPlayerState,
+        opponentState: filteredOpponentState,
+        newMoves: newMoves,
+    };
+}
+
+/**
+ * @param playerId - player ID to return challenge state for
+ **/ 
+function getChallengeStateForPlayer(playerId, challengeId) {
+    const API = Spark.getGameDataService();
+
+    const challenge = Spark.getChallenge(challengeId);
     
-    Spark.setScriptData("challengeId", challengeId);
-    Spark.setScriptData("nonce", challengeStateData.nonce);
-    Spark.setScriptData("playerState", filteredPlayerState);
-    Spark.setScriptData("opponentState", filteredOpponentState);
+    const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
+    
+    if (challengeStateDataItem === null) {
+        setScriptError("ChallengeState does not exist.");
+    }
+    
+    const challengeStateData = challengeStateDataItem.getData();
+
+    const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
+    
+    Spark.setScriptData("challengeId", response.challengeId);
+    Spark.setScriptData("nonce", response.nonce);
+    Spark.setScriptData("playerState", response.playerState);
+    Spark.setScriptData("opponentState", response.opponentState);
+    Spark.setScriptData("newMoves", response.newMoves);
     
     return challenge;
 }

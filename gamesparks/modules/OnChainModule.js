@@ -32,7 +32,7 @@ function recoverAddressBySignature(challenge, signature) {
         params: [
             {
                 "data": data,
-                "to": CONTRACT_ADDRESS
+                "to": RECOVER_CONTRACT_ADDRESS
             },
             "latest"
         ]

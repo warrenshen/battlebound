@@ -19,7 +19,6 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
-require("DeckModule");
 require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
@@ -31,6 +30,10 @@ const attributesString = Spark.getData().attributesString;
 const challengeState = challengeStateData.current;
 
 const playerState = challengeState[playerId];
+if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
+    setScriptError("Player state is not in normal mode.");
+}
+
 const playerManaCurrent = playerState.manaCurrent;
 const playerHand = playerState.hand;
 const playerField = playerState.field;
@@ -113,14 +116,16 @@ var move = {
         handIndex: handIndex,
     },
 };
+challengeStateData.moves.push(move);
 challengeStateData.lastMoves.push(move);
 
-if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
+if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN) >= 0) {
     // Iterate through cards already on field and grant them buff(s).
     playerField.forEach(function(card) {
         if (card.category === CARD_CATEGORY_MINION) {
-            card.attack += 1;
+            card.attack += 10;
             card.buffs.push({
+                category: BUFF_CATEGORY_INCREMENT_ATTACK,
                 granterId: playedCard.id,
                 attack: 1,
                 abilities: [],

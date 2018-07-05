@@ -29,14 +29,14 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId)
     const playerMoves = moves.filter(function(move) { return move.playerId === playerId });
     
     const expMoveCategories = [
-        MOVE_CATEGORY_PLAY_SPELL_GENERAL,
         MOVE_CATEGORY_PLAY_SPELL_TARGETED,
+        MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
         MOVE_CATEGORY_CARD_ATTACK,
     ];
     
     const expMoves = playerMoves.filter(function(move) { return expMoveCategories.indexOf(move.category) >= 0 });
     const expCardIds = expMoves.map(function(move) { return move.attributes.cardId });
-    
+    // TODO: card IDs are broken.
     const bExpCardIds = expCardIds.filter(function(cardId) { return cardId.indexOf("B") === 0 });
     const cExpCardIds = expCardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });
     

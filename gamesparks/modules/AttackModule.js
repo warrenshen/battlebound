@@ -90,6 +90,45 @@ function filterDeadCardsFromFields(playerField, opponentField) {
     return [newPlayerField, newOpponentField, playerDeadCards, opponentDeadCards];
 }
 
+
+/**
+ * @param deck - a non-empty array of Card objects
+ * @return - a two element array: drawn Card object + array of remaining Card objects
+ **/
+function drawCard(deck) {
+    if (!Array.isArray(deck) || deck.length === 0) {
+        setScriptError("Invalid deck parameter.");
+    }
+    const deckSize = deck.length;
+    const randomIndex = Math.floor(Math.random() * deckSize);
+    return [deck[randomIndex], deck.slice(0, randomIndex).concat(deck.slice(randomIndex + 1))];
+}
+
+/**
+ * @param deck - a non-empty array of Card objects
+ * @param count - number of cards to draw
+ * @return - a two element array: array of drawn Card objects + array of remaining Card objects
+ **/
+function drawCards(deck, count) {
+    if (!Array.isArray(deck) || deck.length === 0) {
+        setScriptError("Invalid deck parameter.");
+    } else if (count < 0) {
+        setScriptError("Invalid count parameter.");
+    }
+    
+    var response;
+    var drawnCards = [];
+    
+    while (count > 0 && deck.length > 0) {
+        response = drawCard(deck);
+        drawnCards.push(response[0]);
+        deck = response[1];
+        count -= 1;
+    }
+    
+    return [drawnCards, deck];
+}
+
 /**
  * @return object - draw card move object for drawn card
  **/
@@ -101,21 +140,39 @@ function drawCardForPlayer(playerId, playerState) {
         const drawnCard = drawCardResponse[0];
         const newDeck = drawCardResponse[1];
         
-        playerState.hand.push(drawCardResponse[0]);
         playerState.deck = newDeck;
         playerState.deckSize = newDeck.length;
         
-        return {
-            playerId: playerId,
-            category: MOVE_CATEGORY_DRAW_CARD,
-            attributes: {
-                card: drawnCard,
-            },
-        };
+        return addCardToPlayerHand(playerId, playerState, drawnCard);
     } else {
         return {
             playerId: playerId,
             category: MOVE_CATEGORY_DRAW_CARD_FAILURE,
         };
     }
+}
+
+/**
+ * @param ChallengeCard card - must have `id` field set
+ * @return object - draw card move object for drawn card
+ **/
+function addCardToPlayerHand(playerId, playerState, card) {
+    playerState.hand.push(card);
+        
+    return {
+        playerId: playerId,
+        category: MOVE_CATEGORY_DRAW_CARD,
+        attributes: {
+            card: card,
+        },
+    };
+}
+
+/**
+ * @param ChallengeCard card - must have `id` field set
+ * @return object - draw card move object for drawn card
+ **/
+function addCardToPlayerDeck(playerId, playerState, card) {
+    playerState.deck.push(card);
+    playerState.deckSize = playerState.deck.length;
 }

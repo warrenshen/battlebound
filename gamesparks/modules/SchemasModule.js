@@ -57,7 +57,8 @@
  * }
  * 
  * ChallengeCard schema: {
- *   id: string,
+ *   id: string, // Challenge-unique card ID: "{card ID}-{player ID}-{auto-incrementing ID}".
+ *   baseId: string, // // Card ID in owner player.
  *   category: int,
  *   name: string,
  *   image: string,
@@ -83,11 +84,6 @@
  *   ],
  * }
  * 
- * Move schema: {
- *   playerId: string,
- *   category: string,
- *   attributes: { ... },
- * }
  * 
  * ChallengeState schema: {
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
@@ -110,10 +106,31 @@
  *       deck: [Card, ...],
  *       deckSize: int,
  *       expiredStreak: int,
+ *       cardCount: int, // "Auto-increment" int for any draw or spawn-without-draw card actions.
+ *       mulliganCards: [Card, ...],
+ *       mode: int, // Enum: mulligan, battle, etc.
  *     },
  *     [playerIdTwo]: ...,
  *   },
  *   moves: [Move, ...], // An array of moves by both players in chronological order.
  *   lastMoves: [Move, ...], // An array of the move(s) in last request of player whose turn it is.
+ *   cardIdToCard: {
+ *     [cardId]: ChallengeCard,
+ *     ...
+ *   },
+ * }
+ * 
+ * Move schema: {
+ *   playerId: string,
+ *   category: string,
+ *   attributes: {
+ *     cardId: string, // Card ID of card (attacker, played card, etc).
+ *     card: ChallengeCard object, // Card associated with `cardId`.
+ *     fieldId: string, // Player ID of target's field.
+ *     targetId: string, // Card ID of target.
+ *     handIndex: int, // Hand index card played from.
+ *     fieldIndex: int, // Field index card played at.
+ *     newStates: [ChallengeCard, ...],
+ *   },
  * }
  **/
