@@ -287,7 +287,7 @@ public class BattleManager : MonoBehaviour
         {
             if (player == attacker.Owner)
                 continue;
-            BoardCreature[] fieldCreatures = Board.Instance().GetFieldByPlayerId(player.Id).GetCreatures();
+            BoardCreature[] fieldCreatures = Board.Instance.GetFieldByPlayerId(player.Id).GetCreatures();
             for (int i = 0; i < fieldCreatures.Length; i++)
             {
                 if (fieldCreatures[i] != null)
@@ -480,11 +480,7 @@ public class BattleManager : MonoBehaviour
      */
     public void PlayCardToBoard(CardObject cardObject, int index)
     {
-        //to-do: animation here
-        Player player = cardObject.Owner;
-        Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, index)).transform;
-        //shared spawning + fx
-        StartCoroutine("SpawnCardToBoard", new object[3] { cardObject, index, boardPlace });
+        SpawnCardToBoard(cardObject, index);
     }
 
     /*
@@ -497,8 +493,8 @@ public class BattleManager : MonoBehaviour
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
         Player player = cardObject.Owner;
-        //shared spawning + fx
-        StartCoroutine("SpawnCardToBoard", new object[3] { cardObject, index, hit.collider.transform });
+        SpawnCardToBoard(cardObject, index);
+
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -510,18 +506,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnCardToBoard(object[] args)
+    private void SpawnCardToBoard(CardObject cardObject, int fieldIndex)
     {
-        CardObject cardObject = args[0] as CardObject;
-        int index = (int)args[1];
-        Transform target = args[2] as Transform;
-
         cardObject.visual.Renderer.enabled = false;
-        FXPoolManager.Instance.PlayEffect("SpawnVFX", target.position + new Vector3(0f, 0f, -0.1f));
-        yield return new WaitForSeconds(0.2f);
-
-        Board.Instance().CreateAndPlaceCreature(cardObject, target.position, index);
-        UseCard(cardObject.Owner, cardObject); //has to be last, destroys cardObject
+        SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
+        Board.Instance.CreateAndPlaceCreature(cardObject, fieldIndex);
     }
 
     /*
@@ -603,7 +592,7 @@ public class BattleManager : MonoBehaviour
         string targetId
     )
     {
-        BoardCreature victimCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+        BoardCreature victimCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -659,8 +648,8 @@ public class BattleManager : MonoBehaviour
         string targetId
     )
     {
-        Targetable attacker = Board.Instance().GetTargetableByPlayerIdAndCardId(playerId, cardId);
-        Targetable defender = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
+        Targetable attacker = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
+        Targetable defender = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
         attacker.Fight(defender);
     }
 
