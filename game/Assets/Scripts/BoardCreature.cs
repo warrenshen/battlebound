@@ -132,7 +132,7 @@ public class BoardCreature : Targetable
         this.visual.transform.parent = this.transform;
         this.visual.transform.localPosition = Vector3.zero;
         this.visual.transform.localRotation = Quaternion.identity;
-        this.visual.transform.Rotate(-15, 180, 0, Space.Self);
+        this.visual.transform.Rotate(0, 180, 0, Space.Self);
         this.visual.transform.localScale *= BOARD_GROW_FACTOR;
 
         //this.visual.TmpTextObjects[0].TmpObject.enabled = false;
@@ -146,6 +146,7 @@ public class BoardCreature : Targetable
         GameObject created = Instantiate(Resources.Load(this.summonPrefabPath)) as GameObject;
         created.transform.parent = this.transform;
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
+        created.transform.Rotate(-15, 0, 0, Space.Self);
 
         this.summonAnimation = created.transform.GetChild(0).GetComponent<Animation>();
         this.summonAnimStates = new List<AnimationState>();
