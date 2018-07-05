@@ -40,6 +40,14 @@ public class Card
     public string Name => name;
 
     [SerializeField]
+    protected string description;
+    public string Description => description;
+
+    [SerializeField]
+    protected string image;
+    public string Image => image;
+
+    [SerializeField]
     protected int level;
     public int Level => level;
 
@@ -52,10 +60,6 @@ public class Card
     }
 
     protected string primaryEffectName;
-
-    [SerializeField]
-    protected string image;
-    public string Image => image;
 
     public enum RarityType { Common, Rare, Epic, Legendary }
     [SerializeField]
@@ -85,6 +89,7 @@ public class CreatureCard : Card
     public CreatureCard(
         string id,
         string name,
+        string description,
         string image,
         int level,
         int cost,
@@ -96,9 +101,10 @@ public class CreatureCard : Card
     {
         this.id = id;
         this.name = name;
+        this.description = description;
+        this.image = image;
         this.level = level;
         this.cost = cost;
-        this.image = image;
         this.attack = attack;
         this.health = health;
         this.abilities = abilities;
@@ -120,6 +126,7 @@ public class WeaponCard : Card
     public WeaponCard(
         string id,
         string name,
+        string description,
         string image,
         int level,
         int cost,
@@ -129,6 +136,7 @@ public class WeaponCard : Card
     {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.image = image;
         this.level = level;
         this.cost = cost;
@@ -144,6 +152,7 @@ public class StructureCard : Card
     public StructureCard(
         string id,
         string name,
+        string description,
         string image,
         int level,
         int cost,
@@ -153,6 +162,7 @@ public class StructureCard : Card
     {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.image = image;
         this.level = level;
         this.cost = cost;
@@ -184,6 +194,7 @@ public class SpellCard : Card
     public SpellCard(
         string id,
         string name,
+        string description,
         string image,
         int level,
         int cost
@@ -196,6 +207,7 @@ public class SpellCard : Card
 
         this.id = id;
         this.name = name;
+        this.description = description;
         this.image = image;
         this.level = level;
         this.cost = cost;

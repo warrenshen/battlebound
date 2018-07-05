@@ -80,10 +80,11 @@ public class CardObject : MouseWatchable
 
         HyperCard.Card visual = created.GetComponent<HyperCard.Card>();
         //set sprites and set textmeshpro labels using TmpTextObjects (?)
-        visual.TmpTextObjects[0].Value = this.Card.Name;
-        visual.TmpTextObjects[2].Value = this.Card.Cost.ToString();
+        visual.TmpTextObjects[0].Value = this.card.Name;
+        visual.TmpTextObjects[1].Value = this.card.Description;
+        visual.TmpTextObjects[2].Value = this.card.Cost.ToString();
 
-        CreatureCard creatureCard = this.Card as CreatureCard;
+        CreatureCard creatureCard = this.card as CreatureCard;
         if (creatureCard != null)
         {
             visual.TmpTextObjects[3].Value = creatureCard.Attack.ToString();

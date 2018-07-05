@@ -465,6 +465,7 @@ public class PlayerState
                 return new CreatureCard(
                     this.id,
                     this.name,
+                    this.description,
                     this.image,
                     this.level,
                     this.cost,
@@ -478,6 +479,7 @@ public class PlayerState
                 return new SpellCard(
                     this.id,
                     this.name,
+                    this.description,
                     this.image,
                     this.level,
                     this.cost
