@@ -182,7 +182,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1108527505075166}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.12, y: -14.87, z: 1.17}
+  m_LocalPosition: {x: -1.967999, y: -17.903214, z: 10.272003}
   m_LocalScale: {x: 3.4632843, y: 2.9924068, z: 1}
   m_Children:
   - {fileID: 224863642606757850}
@@ -250,7 +250,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -285,7 +285,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -320,8 +320,8 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: dfa8675239dfb1e4ba1b779baaf49b05, type: 2}
+  - {fileID: 2100000, guid: 4d32e97d1ed3b5849885489e80ee80ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -356,7 +356,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -391,7 +391,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -426,7 +426,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -510,8 +510,7 @@ MonoBehaviour:
   m_text: 30
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
-  m_sharedMaterial: {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0,
-    type: 2}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -647,7 +646,7 @@ MonoBehaviour:
   - Key: Sprite0
     Sprite: {fileID: 212744819730959222}
     Value: {fileID: 2800000, guid: 33d882b04cc5fe94a9cf39945b7a149c, type: 3}
-    Color: {r: 0.1586206, g: 1, b: 0, a: 1}
+    Color: {r: 0.0126776695, g: 1, b: 0, a: 1}
     IsHidden: 0
     Position: {x: 2.8, y: 5.23, z: 0}
     Scale: {x: 0.6, y: 0.6}
@@ -659,11 +658,11 @@ MonoBehaviour:
     DistortionAmp: 0.1
     DistortionSpeed: 2
     DistortionDir: {x: 0.2, y: 0.2}
-    IsAffectedByFilters: 1
+    IsAffectedByFilters: 0
   - Key: Sprite1
     Sprite: {fileID: 212926091360082360}
     Value: {fileID: 2800000, guid: 3d3a41881f0f4c547bdfd4673244173d, type: 3}
-    Color: {r: 1, g: 1, b: 1, a: 0.772}
+    Color: {r: 1, g: 0.90511477, b: 0, a: 1}
     IsHidden: 0
     Position: {x: 2.88, y: -5, z: 0}
     Scale: {x: 0.6, y: 0.8}
@@ -675,11 +674,11 @@ MonoBehaviour:
     DistortionAmp: 0.3
     DistortionSpeed: 2
     DistortionDir: {x: 0, y: 0.2}
-    IsAffectedByFilters: 1
+    IsAffectedByFilters: 0
   - Key: Sprite2
     Sprite: {fileID: 212673676693050634}
     Value: {fileID: 2800000, guid: 3d3a41881f0f4c547bdfd4673244173d, type: 3}
-    Color: {r: 0.6911765, g: 0.050821807, b: 0.050821807, a: 0.74509805}
+    Color: {r: 0.9019608, g: 0.18315656, b: 0.05098037, a: 1}
     IsHidden: 0
     Position: {x: -2.82, y: -5, z: 0}
     Scale: {x: 0.6, y: 0.8}
@@ -691,7 +690,7 @@ MonoBehaviour:
     DistortionAmp: 0.3
     DistortionSpeed: 2
     DistortionDir: {x: 0, y: 0.2}
-    IsAffectedByFilters: 1
+    IsAffectedByFilters: 0
   BaseCardFaceMat: {fileID: 2100000, guid: dfa8675239dfb1e4ba1b779baaf49b05, type: 2}
   BaseCardBackMat: {fileID: 2100000, guid: 4d32e97d1ed3b5849885489e80ee80ff, type: 2}
   BaseSpriteMat: {fileID: 2100000, guid: 107d3af58c3c6874f84d8d30c3558846, type: 2}
@@ -845,8 +844,7 @@ MonoBehaviour:
   m_text: <b>Deathrattle :</b> freeze a random opponent.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
-  m_sharedMaterial: {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0,
-    type: 2}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials:
   - {fileID: 0}
   m_fontMaterial: {fileID: 0}
@@ -968,8 +966,7 @@ MonoBehaviour:
   m_text: 50
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
-  m_sharedMaterial: {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0,
-    type: 2}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1102,8 +1099,7 @@ MonoBehaviour:
   m_text: 60
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
-  m_sharedMaterial: {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0,
-    type: 2}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1248,8 +1244,7 @@ MonoBehaviour:
   m_text: Emberprancer
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84200279ecafe4ac49ed61d8f5906af0, type: 2}
-  m_sharedMaterial: {fileID: 21407668414098918, guid: 84200279ecafe4ac49ed61d8f5906af0,
-    type: 2}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1291,7 +1286,7 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -1322,7 +1317,7 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
@@ -1376,7 +1371,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6911765, g: 0.050821807, b: 0.050821807, a: 0.74509805}
+  m_Color: {r: 0.9019608, g: 0.18315656, b: 0.05098037, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1421,7 +1416,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.1586206, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.0126776695, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1466,7 +1461,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.772}
+  m_Color: {r: 1, g: 0.90511477, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
