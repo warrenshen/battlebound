@@ -2,32 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ObjectUI : MonoBehaviour {
-	protected bool selected;
-	protected Vector3 originalSize;
+public abstract class ObjectUI : MouseWatchable
+{
+    protected bool selected;
+    protected Vector3 originalSize;
     protected float scalingFactor;
 
-	// Use this for initialization
-	protected void Initialize () {
-        scalingFactor = 1.03f;
-		originalSize = transform.localScale;
-	}
-	
-	protected void OnMouseEnter()
+    // Use this for initialization
+    protected void Initialize()
+    {
+        scalingFactor = 1.05f;
+        originalSize = transform.localScale;
+    }
+
+    public override void EnterHover()
     {
         transform.localScale = originalSize * scalingFactor;
     }
 
-	protected void OnMouseExit()
+    public override void ExitHover()
     {
         transform.localScale = originalSize;
     }
 
-    public void Select() {
+    public void Select()
+    {
         selected = true;
     }
 
-    public void Deselect() {
+    public void Deselect()
+    {
         selected = false;
     }
 }

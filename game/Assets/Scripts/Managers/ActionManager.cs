@@ -18,7 +18,7 @@ public class ActionManager : MonoBehaviour
     private SpriteRenderer sp;
     private int selectedSortingOrder;
 
-    private int cardLayerMask;
+    private int cardAndUILayerMask;
     private int boardLayerMask;
     public Texture2D[] cursors;
 
@@ -28,7 +28,7 @@ public class ActionManager : MonoBehaviour
     [SerializeField]
     private CardObject target;
 
-    private CardObject lastHitCard;
+    private MouseWatchable lastHitWatchable;
 
 
     private void Awake()
@@ -40,19 +40,25 @@ public class ActionManager : MonoBehaviour
     {
         if (Application.loadedLevelName == "Battle")
             boardLayerMask = LayerMask.GetMask("Board");
-        cardLayerMask = LayerMask.GetMask("Card");
+        cardAndUILayerMask = LayerMask.GetMask("Card", "UI");
         InitializeDragTilts();
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if (!active)
+            return;
+
         if (allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
-        if (active) MouseWatchCards();
+        MouseWatch();
     }
 
     private void LateUpdate()
     {
+        if (!active)
+            return;
+
         if (target)
         {
             RepositionCard(target);
@@ -69,41 +75,42 @@ public class ActionManager : MonoBehaviour
         Cursor.SetCursor(cursors[1], Vector2.zero, CursorMode.Auto);
     }
 
-    private void MouseWatchCards()
+    private void MouseWatch()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (!Physics.Raycast(ray, out hit, 100f, cardLayerMask))
+        if (!Physics.Raycast(ray, out hit, 100f, cardAndUILayerMask))
         {
-            ResetLastHitCard();
+            ResetLastHitWatchable();
             return;
         }
-        CardObject hitCard = hit.collider.GetComponent<CardObject>();
-        if (hitCard == null)
+        MouseWatchable hitWatchable = hit.collider.GetComponent<MouseWatchable>();
+        if (hitWatchable == null)
             return;
         if (Input.GetMouseButtonDown(0))
         {
-            hitCard.MouseDown();
+            hitWatchable.MouseDown();
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            hitCard.MouseUp();
+            hitWatchable.MouseUp();
         }
-        else if (hitCard != lastHitCard)
+        else if (hitWatchable != lastHitWatchable)
         {
-            ResetLastHitCard();
-            hitCard.EnterFocus();
+            ResetLastHitWatchable();
+            hitWatchable.EnterHover();
+            Debug.Log("enter hover");
         }
-        lastHitCard = hitCard;
+        lastHitWatchable = hitWatchable;
     }
 
-    private void ResetLastHitCard()
+    private void ResetLastHitWatchable()
     {
-        if (lastHitCard)
+        if (lastHitWatchable)
         {
-            lastHitCard.ExitFocus();
-            lastHitCard = null;
+            lastHitWatchable.ExitHover();
+            lastHitWatchable = null;
         }
     }
 

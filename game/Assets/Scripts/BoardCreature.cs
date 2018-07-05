@@ -153,7 +153,6 @@ public class BoardCreature : Targetable
         {
             this.summonAnimStates.Add(state);
         }
-        Debug.Log(summonAnimStates[0].name);
         this.summonAnimation.Play(summonAnimStates[0].name);
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-public class CardObject : MonoBehaviour
+public class CardObject : MouseWatchable
 {
     private string json;
 
@@ -111,7 +111,7 @@ public class CardObject : MonoBehaviour
         this.reset.rotation = this.transform.localRotation;
     }
 
-    public void EnterFocus()
+    public override void EnterHover()
     {
         if (!this.owner.HasTurn)
             return;
@@ -131,7 +131,7 @@ public class CardObject : MonoBehaviour
         this.visual.transform.Translate(Vector3.forward * 1, Space.Self);
     }
 
-    public void ExitFocus()
+    public override void ExitHover()
     {
         if (!this.owner.HasTurn)
             return;
@@ -149,7 +149,7 @@ public class CardObject : MonoBehaviour
     //    if (Input.GetMouseButtonUp(1)) Debug.Log("Pressed right click.");
     //}
 
-    public void MouseDown()
+    public override void MouseDown()
     {
         if (!this.owner.HasTurn)
             return;
@@ -165,7 +165,7 @@ public class CardObject : MonoBehaviour
         ActionManager.Instance.SetDragTarget(this);
     }
 
-    public void MouseUp()
+    public override void MouseUp()
     {
         if (!this.owner.HasTurn)
             return;

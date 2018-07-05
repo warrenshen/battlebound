@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 [System.Serializable]
 public class BattleManager : MonoBehaviour
@@ -207,7 +208,7 @@ public class BattleManager : MonoBehaviour
             mouseDownTargetable = null;
             mouseUpTargetable = null;
             validTargets = null;
-            Cursor.SetCursor(ActionManager.Instance.cursors[0], Vector2.zero, CursorMode.Auto);
+            SetPassiveCursor();
         }
         else if (attackCommand.lineRenderer.startWidth > 0 && Input.GetMouseButton(0))
         {
@@ -234,6 +235,14 @@ public class BattleManager : MonoBehaviour
         //do NOT put anything here, MouseButtonDown/else uses a return!
     }
 
+    public void SetPassiveCursor()
+    {
+        if (activePlayer == you)
+            Cursor.SetCursor(ActionManager.Instance.cursors[0], Vector2.zero, CursorMode.Auto);
+        else
+            Cursor.SetCursor(ActionManager.Instance.cursors[2], Vector2.zero, CursorMode.Auto);
+    }
+
     private void OnEndTurnClick()
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
@@ -258,6 +267,10 @@ public class BattleManager : MonoBehaviour
         activePlayer = players[turnIndex % players.Count];
 
         //do some turn transition render
+        GameObject.Find("Turn Indicator").GetComponent<TextMeshPro>().text = string.Format("{0} Turn", activePlayer.Name);
+        SetPassiveCursor();
+        //to-do: action manager set active = false, but that makes singleplayer broken
+
         activePlayer.NewTurn();
     }
 

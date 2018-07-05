@@ -31,7 +31,7 @@ public class CardCutout : ObjectUI
         gameObject.transform.Rotate(new Vector3(0f, 0f, 90f), Space.Self);
     }
 
-    public void OnMouseDown()
+    public override void MouseDown()
     {
         CollectionManager.Instance.RemoveFromDeck(wrapper, this);
         Destroy(gameObject);

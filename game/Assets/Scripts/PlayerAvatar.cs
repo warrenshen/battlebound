@@ -42,7 +42,7 @@ public class PlayerAvatar : Targetable
     public void Initialize(Player player)
     {
         this.armor = 0;
-        this.maxHealth = 100;
+        this.maxHealth = 300;
         this.health = this.maxHealth;
 
         this.weapon = null;
@@ -90,7 +90,7 @@ public class PlayerAvatar : Targetable
         textMesh.alignment = TextAlignmentOptions.Center;
         RectTransform textContainer = textMesh.GetComponent<RectTransform>();
         textContainer.sizeDelta = new Vector2(2, 1);
-        textContainer.anchoredPosition = new Vector3(0, 1.85f, -0.5f);
+        textContainer.anchoredPosition = new Vector3(0, 2, -0.5f);
         textHolder.transform.SetParent(gameObject.transform, false);
         textHolder.layer = textHolder.transform.parent.gameObject.layer;
 
