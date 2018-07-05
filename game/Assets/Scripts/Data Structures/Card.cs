@@ -51,6 +51,8 @@ public class Card
         set { cost = value; }
     }
 
+    protected string primaryEffectName;
+
     [SerializeField]
     protected string image;
     public string Image => image;
@@ -77,6 +79,9 @@ public class CreatureCard : Card
     private List<string> abilities;
     public List<string> Abilities => abilities;
 
+    protected string summonPrefabPath;
+    public string SummonPrefabPath => summonPrefabPath;
+
     public CreatureCard(
         string id,
         string name,
@@ -85,7 +90,8 @@ public class CreatureCard : Card
         int cost,
         int attack,
         int health,
-        List<string> abilities
+        List<string> abilities,
+        string summonPrefabPath = "PyromaniacApprentice"
     )
     {
         this.id = id;
@@ -96,6 +102,7 @@ public class CreatureCard : Card
         this.attack = attack;
         this.health = health;
         this.abilities = abilities;
+        this.summonPrefabPath = string.Format("Prefabs/Summons/{0}", summonPrefabPath);
     }
 }
 

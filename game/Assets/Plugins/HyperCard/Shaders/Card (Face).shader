@@ -588,13 +588,9 @@ Shader "HyperCard/Card (Face)"
              if(_BurningAmount > 0)
              {
                  float burn_map = snoise(burn_uv * _BurnNoiseFreq + _Seed) * 0.5 + 0.5;          
-             
                  float smo = saturate((_BurningAmount * (1 + _BurningOutline) - burn_map) / _BurningOutline);
-
                  float smb = smo - smoothstep(0.0, smo, IN.texcoord.x) * (1 - smoothstep(1 - smo, 1.0, IN.texcoord.x)) * smoothstep(0.0, smo, IN.texcoord.y) * (1 - smoothstep(1 - smo, 1.0, IN.texcoord.y));
-
                  float burnBorder = lerp(0, 1, 1 - smb);
-
                  float alphaBurn = min(alpha_col.a, burnBorder);         
      
                  finalColor = float4(lerp(col.rgb, col.rgb * (lerp(_BurnColor, _BurnEndColor, smo) * _BurnExposure * burnBorder), smo), alphaBurn);
@@ -606,13 +602,11 @@ Shader "HyperCard/Card (Face)"
              }
 
              // Materialization
-
              if (_BlackAndWhite == 1) 
              {
                  half c = (finalColor.r + finalColor.g + finalColor.b) / 3;
                  finalColor = fixed4(c,c,c, alpha_col.a);
              };
-
              finalColor.a *= _CardOpacity;
 
              return finalColor;
@@ -713,18 +707,15 @@ Shader "HyperCard/Card (Face)"
 
                  if (ss_col.a < 0.1) discard;
 
-                                     
                  if (_BlackAndWhite == 1) {
                      ss_col = (ss_col.r + ss_col.g + ss_col.b) / 3;
                  };
-
 
                  ss_col *= _SpriteSheetColor;
 
                  float2 card_mask =  tex2D(_CardMask, (IN.texcoord / _SpriteSheetScale) + _SpriteSheetOffset);
 
                  ss_col.a *= card_mask.g;
-
                  ss_col.a *= _CardOpacity;
 
                  if (ss_col.a < 0.1) discard;

@@ -53,6 +53,11 @@ public class BoardCreature : Targetable
     Material dissolve;
 
     private HyperCard.Card visual;
+    private const float BOARD_GROW_FACTOR = 1.25f;
+
+    private string summonPrefabPath;
+    private Animation summonAnimation;
+    private List<AnimationState> summonAnimStates;
 
 
     public void Initialize(CardObject cardObject)
@@ -65,6 +70,7 @@ public class BoardCreature : Targetable
         this.maxHealth = this.creatureCard.Health;
         this.image = this.creatureCard.Image;
         this.abilities = this.creatureCard.Abilities;
+        this.summonPrefabPath = this.creatureCard.SummonPrefabPath;
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
         {
@@ -95,21 +101,18 @@ public class BoardCreature : Targetable
             this.abilitiesFX = new Dictionary<string, GameObject>();
         }
 
-        //Render everything (labels, image, etc) method call here
-        //sp = gameObject.AddComponent<SpriteRenderer>();
-        //sp.sortingOrder = -1;
-        //Texture2D texture = cardObject.Renderer.sprite.texture;
-        //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
-
-        BoxCollider coll = gameObject.AddComponent<BoxCollider>() as BoxCollider;
-        coll.size += new Vector3(0, 0, 1.2f);
-        coll.center += new Vector3(0, 0, -0.45f);
+        BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        BoxCollider oldCollider = cardObject.GetComponent<BoxCollider>() as BoxCollider;
+        newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
+        newCollider.size *= BOARD_GROW_FACTOR;
+        newCollider.center = oldCollider.center;
 
         //ehh
         //dissolve = Resources.Load("Dissolve", typeof(Material)) as Material;
         //sp.material = dissolve;
         this.visual = cardObject.visual;
-        RepurposeCardVisual();
+        this.RepurposeCardVisual();
+        this.SummonCreature();
 
         //method calls
         this.Redraw();
@@ -124,13 +127,34 @@ public class BoardCreature : Targetable
 
     private void RepurposeCardVisual()
     {
+        this.visual.gameObject.SetLayer(9);
+
         this.visual.transform.parent = this.transform;
         this.visual.transform.localPosition = Vector3.zero;
         this.visual.transform.localRotation = Quaternion.identity;
-        this.visual.transform.Rotate(0, 180, 0, Space.Self);
-        this.visual.transform.localScale *= 1.25f;
+        this.visual.transform.Rotate(-15, 180, 0, Space.Self);
+        this.visual.transform.localScale *= BOARD_GROW_FACTOR;
 
+        //this.visual.TmpTextObjects[0].TmpObject.enabled = false;
+        //this.visual.TmpTextObjects[1].TmpObject.enabled = false;
+        this.visual.SetBlackAndWhite(true);
         this.visual.Renderer.enabled = true;
+    }
+
+    private void SummonCreature()
+    {
+        GameObject created = Instantiate(Resources.Load(this.summonPrefabPath)) as GameObject;
+        created.transform.parent = this.transform;
+        created.transform.localPosition = new Vector3(0, 0, -0.3f);
+
+        this.summonAnimation = created.transform.GetChild(0).GetComponent<Animation>();
+        this.summonAnimStates = new List<AnimationState>();
+        foreach (AnimationState state in this.summonAnimation)
+        {
+            this.summonAnimStates.Add(state);
+        }
+        Debug.Log(summonAnimStates[0].name);
+        this.summonAnimation.Play(summonAnimStates[0].name);
     }
 
     public override string GetCardId()

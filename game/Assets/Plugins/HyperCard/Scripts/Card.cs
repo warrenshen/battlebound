@@ -869,5 +869,11 @@ namespace HyperCard
             this.EnableBackOutline = value;
             this.Redraw();  //to-do: should REALLY optimize this later, imp!
         }
+
+        public void SetBlackAndWhite(bool value)
+        {
+            this.BlackAndWhite = value;
+            this.Redraw(); //to-do: should REALLY optimize this later, imp!
+        }
     }
 }

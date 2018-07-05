@@ -85,25 +85,24 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        if (InspectorControlPanel.Instance.DevelopmentMode && !this.initialized)
+        if (!InspectorControlPanel.Instance.DevelopmentMode || this.initialized)
         {
-            return;
+            this.players = new List<Player>();
+            this.players.Add(this.you);
+            this.players.Add(this.opponent);
+            this.stencilCount = 1;
+
+            this.playerIdToPlayer = new Dictionary<string, Player>();
+            this.playerIdToPlayer[this.you.Id] = this.you;
+            this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
+            // Use this for initialization
+            battleLayer = 9;
+            boardLayer = LayerMask.GetMask("Board");
+
+            ChooseRandomSetting();
+            GameStart();
         }
-
-        this.players = new List<Player>();
-        this.players.Add(this.you);
-        this.players.Add(this.opponent);
-        this.stencilCount = 1;
-
-        this.playerIdToPlayer = new Dictionary<string, Player>();
-        this.playerIdToPlayer[this.you.Id] = this.you;
-        this.playerIdToPlayer[this.opponent.Id] = this.opponent;
-
-        // Use this for initialization
-        battleLayer = 9;
-        boardLayer = LayerMask.GetMask("Board");
-        ChooseRandomSetting();
-        GameStart();
     }
 
     private void GameStart()
