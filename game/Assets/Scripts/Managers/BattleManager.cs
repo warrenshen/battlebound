@@ -110,8 +110,8 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.you.DrawCards(5, animate: false);
-            this.opponent.DrawCards(5, animate: false);
+            this.you.DrawCards(3, animate: false);
+            this.opponent.DrawCards(3, animate: false);
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -465,7 +465,7 @@ public class BattleManager : MonoBehaviour
         string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
         GameObject fixedPoint = GameObject.Find(fixedPointName);
 
-        float tweenTime = 0.3f;
+        float tweenTime = 0.5f;
         LeanTween.rotate(cardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, fixedPoint.transform.position, tweenTime).setEaseInQuad();
         yield return new WaitForSeconds(tweenTime);

@@ -299,15 +299,16 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Blessed Newborn", "HS/Direhorn_Hatchling", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }, "BlessedNewborn"));
-        cards.Add(new CreatureCard("C2", "Aqua Piglet", "HS/Direhorn_Hatchling", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }, "PigletAllColor"));
-        cards.Add(new CreatureCard("C3", "Temple Guardian", "HS/Direhorn_Hatchling", 1, 60, 40, 70, new List<String>() { Card.CARD_ABILITY_TAUNT, Card.CARD_ABILITY_SHIELD }, "TempleGuardian"));
-        cards.Add(new CreatureCard("C4", "Firebug Catelyn", "HS/Direhorn_Hatchling", 1, 10, 10, 10, new List<String>() { }, "FirebugCatelyn"));
-        cards.Add(new CreatureCard("C5", "Pyre Dancer", "HS/Direhorn_Hatchling", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
+        cards.Add(new CreatureCard("C1", "Blessed Newborn", "", "HS/Direhorn_Hatchling", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }, "BlessedNewborn"));
+        cards.Add(new CreatureCard("C2", "Aqua Piglet", "At the end of each turn, recover 10 health", "HS/Direhorn_Hatchling", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }, "PigletAllColor"));
+        cards.Add(new CreatureCard("C3", "Temple Guardian", "Charge; Shield", "HS/Direhorn_Hatchling", 1, 60, 40, 70, new List<String>() { Card.CARD_ABILITY_TAUNT, Card.CARD_ABILITY_SHIELD }, "TempleGuardian"));
+        cards.Add(new CreatureCard("C4", "Firebug Catelyn", "", "HS/Direhorn_Hatchling", 1, 10, 10, 10, new List<String>() { }, "FirebugCatelyn"));
+        cards.Add(new CreatureCard("C5", "Pyre Dancer", "", "HS/Direhorn_Hatchling", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
-        cards.Add(new SpellCard("C6", "Unstable Power", "HS/Lightning_Bolt", 4, 30));
-        cards.Add(new CreatureCard("C7", "Cursed Imp", "HS/Direhorn_Hatchling", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
+        cards.Add(new SpellCard("C6", "Unstable Power", "Give a creature +30/+0, it dies at start of next turn", "HS/Lightning_Bolt", 4, 30));
+        cards.Add(new CreatureCard("C7", "Cursed Imp", "Lifesteal", "HS/Direhorn_Hatchling", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
+        cards.Add(new CreatureCard("C8", "Aqua Squealer", "Charge; At the end of each turn, recover 20 health", "HS/Direhorn_Hatchling", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_CHARGE, Card.CARD_ABILITY_END_TURN_HEAL_TWENTY }));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;
