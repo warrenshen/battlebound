@@ -13,24 +13,25 @@ public class SoundManager : MonoBehaviour
     {
         Instance = this;
         this.soundIndices = new Dictionary<string, int>();
-    }
 
-    // Use this for initialization
-    void Start()
-    {
-        foreach (Transform source in transform)
+        foreach (Transform source in this.transform)
         {
             soundIndices.Add(source.name, 0);
         }
     }
 
-    public void PlaySound(string name, Vector3 pos)
+    public void PlaySound(string name, Vector3 position)
     {
-        GameObject parent = GameObject.Find(name);
-        Transform chosen = parent.transform.GetChild(soundIndices[name]);
-        chosen.position = pos;
+        GameObject root = GameObject.Find(name);
+        if (root == null)
+        {
+            Debug.LogWarning("Could not play sound because no sound root found in pool.");
+            return;
+        }
+
+        Transform chosen = root.transform.GetChild(soundIndices[name]);
+        chosen.position = position;
         chosen.GetComponent<AudioSource>().Play();
-        //chosen.gameObject.SetActive(true);
-        soundIndices[name] = (soundIndices[name] + 1) % parent.transform.childCount;
+        soundIndices[name] = (soundIndices[name] + 1) % root.transform.childCount;
     }
 }

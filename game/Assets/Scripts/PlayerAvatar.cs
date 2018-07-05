@@ -153,17 +153,17 @@ public class PlayerAvatar : Targetable
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
         //LeanTween.move(other.gameObject, other.transform.position + delta, 1).setEasePunch();
 
-        FXPoolManager.Instance.PlayEffect("Slash", other.transform.position);
-        SoundManager.Instance.PlaySound("Splatter", other.transform.position);
+        FXPoolManager.Instance.PlayEffect("SlashVFX", other.transform.position);
+        SoundManager.Instance.PlaySound("SlashSFX", other.transform.position);
         this.weapon.AttackMade(other); //diff from boardcreature fight!!
 
         if (!other.IsAvatar)
         {
-            FXPoolManager.Instance.PlayEffect("Slash", this.transform.position);
+            FXPoolManager.Instance.PlayEffect("SlashVFX", this.transform.position);
             this.TakeDamage(((BoardCreature)other).Attack);
 
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later                
-                SoundManager.Instance.PlaySound("HitTaunt", other.transform.position);
+                SoundManager.Instance.PlaySound("HitTauntSFX", other.transform.position);
         }
 
         this.UpdateStatText();
@@ -217,7 +217,7 @@ public class PlayerAvatar : Targetable
 
     private IEnumerator Dissolve(float duration)
     {
-        SoundManager.Instance.PlaySound("BurnDestroy", this.transform.position);
+        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
         float elapsedTime = 0;
         while (elapsedTime < duration)
         {

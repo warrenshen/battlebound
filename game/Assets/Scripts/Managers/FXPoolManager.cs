@@ -15,8 +15,8 @@ public class FXPoolManager : MonoBehaviour
         this.effectIndices = new Dictionary<string, int>();
         this.shortToFull = new Dictionary<string, string>();
         //init conversion
-        this.shortToFull[Card.CARD_ABILITY_SHIELD] = "DivineShield";
-        this.shortToFull[Card.CARD_ABILITY_TAUNT] = "Taunt";
+        this.shortToFull[Card.CARD_ABILITY_SHIELD] = "DivineShieldVFX";
+        this.shortToFull[Card.CARD_ABILITY_TAUNT] = "TauntVFX";
     }
 
     // Use this for initialization

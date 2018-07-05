@@ -72,7 +72,7 @@ public class CardObject : MonoBehaviour
 
     private HyperCard.Card VisualizeCard()
     {
-        GameObject visualPrefab = Resources.Load("Prefabs/Card_Default") as GameObject;
+        GameObject visualPrefab = Resources.Load("Prefabs/Card") as GameObject;
         Transform created = Instantiate(visualPrefab, this.transform).transform as Transform;
         created.localPosition = Vector3.zero;
         created.localRotation = Quaternion.identity;
