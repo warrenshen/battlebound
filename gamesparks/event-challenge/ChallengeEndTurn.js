@@ -7,7 +7,6 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
-require("DeckModule");
 require("CardAbilitiesModule");
 require("CancelScheduledTimeEventsModule");
 require("ChallengeMovesModule");
@@ -25,6 +24,10 @@ const challengeState = challengeStateData.current;
 
 // PLAYER STATE UPDATES //
 const playerState = challengeState[playerId];
+if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
+    setScriptError("Player state is not in normal mode.");
+}
+
 const playerField = playerState.field;
 
 playerState.hasTurn = 0;
@@ -89,6 +92,7 @@ if (!isChallengeOver) {
 
     // OPPONENT STATE UPDATES //
     const opponentState = challengeState[opponentId];
+    const opponentField = opponentState.field;
     
     opponentState.hasTurn = 1;
         
@@ -103,13 +107,40 @@ if (!isChallengeOver) {
     challengeStateData.moves.push(move);
     challengeStateData.lastMoves.push(move);
     
-    // Set all cards on opponent's field to be able to attack.
-    opponentState.field.forEach(function(card) {
-        if (card.id !== "EMPTY") {
-            // TODO: maybe should not set to 1 for all cards.
-            card.canAttack = 1;
+    // Perform start of turn events for cards on field.
+    for (var i = 0; i < opponentField.length; i += 1) {
+        const fieldCard = opponentField[i];
+        
+        if (fieldCard.id === "EMPTY") {
+            continue;
         }
-    })
+        
+        // TODO: maybe should not set to 1 for all cards.
+        fieldCard.canAttack = 1;
+        
+        // if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_HEAL_TWENTY) >= 0) {
+        //     healCard(fieldCard, 20);
+        // } else if (fieldCard.abilities.indexOf(CARD_ABILITY_END_TURN_DRAW_CARD) >= 0) {
+        //     // Draw a card for opponent to start its turn.
+        //     move = drawCardForPlayer(playerId, playerState);
+        //     challengeStateData.moves.push(move);
+        //     challengeStateData.lastMoves.push(move);
+        // }
+        
+        if (fieldCard.health <= 0 || !fieldCard.buffs) {
+            continue;
+        }
+        
+        fieldCard.buffs.forEach(function(buff) {
+            if (buff.category === BUFF_CATEGORY_UNSTABLE_POWER) {
+                fieldCard.health = 0;
+            }
+        });
+    }
+    
+    const filterDeadResponse = filterDeadCardsFromFields(playerField, opponentField);
+    playerState.field = filterDeadResponse[0];
+    opponentState.field = filterDeadResponse[1];
     
     // Player with next turn should start with no move taken.
     challengeStateData.moveTakenThisTurn = 0;

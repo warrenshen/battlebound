@@ -8,6 +8,8 @@
 // GLOBAL
 require("ScriptDataModule");
 require("DeckModule");
+require("AttackModule");
+require("ChallengeMovesModule");
  
 const API = Spark.getGameDataService();
 
@@ -32,6 +34,15 @@ const challengeStateDataItem = API.createItem("ChallengeState", challengeId);
 const challengeStateData = challengeStateDataItem.getData();
 const challengeState = challengeStateData.current = {};
 challengeStateData.moves = [];
+challengeStateData.cardIdToCard = {};
+
+// Any card that can show up in game needs to go into `challengeStateData.cardIdToCard`.
+challengerDeck.forEach(function(card) {
+    challengeStateData.cardIdToCard[card.id] = card;
+});
+challengedDeck.forEach(function(card) {
+    challengeStateData.cardIdToCard[card.id] = card;
+});
 
 const opponentIdByPlayerId = {};
 opponentIdByPlayerId[challengerId] = challengedId;
@@ -51,7 +62,7 @@ challengeStateData.expiredStreakByPlayerId = expiredStreakByPlayerId;
 challengeStateData.moveTakenThisTurn = 0;
 
 const challengerDrawCardsResponse = drawCards(challengerDeck, 3);
-const challengerHand = challengerDrawCardsResponse[0];
+const challengerMulligan = challengerDrawCardsResponse[0];
 const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
 
 const HEALTH_START = 100;
@@ -64,13 +75,19 @@ const challengerData = {
     armor: 0,
     // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
-    hand: challengerHand,
+    hand: [],
     deck: challengerDeckAfterDraw,
     deckSize: challengerDeckAfterDraw.length,
+    cardCount: challengerDeck.length,
+    mode: PLAYER_STATE_MODE_MULLIGAN,
+    mulliganCards: challengerMulligan,
 };
+// challengerHand.forEach(function(drawnCard) {
+//     addCardToPlayer(challengerId, challengerData, drawnCard);    
+// });
 
 const challengedDrawCardsResponse = drawCards(challengedDeck, 3);
-const challengedHand = challengedDrawCardsResponse[0];
+const challengedMulligan = challengedDrawCardsResponse[0];
 const challengedDeckAfterDraw = challengedDrawCardsResponse[1];
 const challengedData = {
     manaCurrent: 30,
@@ -79,10 +96,16 @@ const challengedData = {
     healthMax: HEALTH_START,
     armor: 0,
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
-    hand: challengedHand,
+    hand: [],
     deck: challengedDeckAfterDraw,
     deckSize: challengedDeckAfterDraw.length,
+    cardCount: challengedDeck.length,
+    mode: PLAYER_STATE_MODE_MULLIGAN,
+    mulliganCards: challengedMulligan,
 };
+// challengedHand.forEach(function(drawnCard) {
+//     addCardToPlayer(challengedId, challengedData, drawnCard);    
+// });
 
 if (Spark.getData().challenge.nextPlayer === challengerId) {
     challengerData.hasTurn = 1;

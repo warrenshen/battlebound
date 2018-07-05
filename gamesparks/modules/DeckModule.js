@@ -339,7 +339,10 @@ function getActiveDeckByPlayerId(playerId) {
     });
     
     const instances = getInstancesByCards(bCards.concat(cCards), DEFAULT_CARD_FIELDS);
-    instances.forEach(function(instance) {
+    instances.forEach(function(instance, index) {
+        const baseId = instance.id;
+        instance.baseId = baseId;
+        instance.id = baseId + "-" + playerId + "-" + index;
         instance.attackStart = instance.attack;
         instance.costStart = instance.cost;
         instance.healthStart = instance.health;
@@ -374,42 +377,4 @@ function getBCardsByPlayer(player) {
     });
     
     return sortedInstances;
-}
-
-/**
- * @param deck - a non-empty array of Card objects
- * @return - a two element array: drawn Card object + array of remaining Card objects
- **/
-function drawCard(deck) {
-    if (!Array.isArray(deck) || deck.length === 0) {
-        setScriptError("Invalid deck parameter.");
-    }
-    const deckSize = deck.length;
-    const randomIndex = Math.floor(Math.random() * deckSize);
-    return [deck[randomIndex], deck.slice(0, randomIndex).concat(deck.slice(randomIndex + 1))];
-}
-
-/**
- * @param deck - a non-empty array of Card objects
- * @param count - number of cards to draw
- * @return - a two element array: array of drawn Card objects + array of remaining Card objects
- **/
-function drawCards(deck, count) {
-    if (!Array.isArray(deck) || deck.length === 0) {
-        setScriptError("Invalid deck parameter.");
-    } else if (count < 0) {
-        setScriptError("Invalid count parameter.");
-    }
-    
-    var response;
-    var drawnCards = [];
-    
-    while (count > 0 && deck.length > 0) {
-        response = drawCard(deck);
-        drawnCards.push(response[0]);
-        deck = response[1];
-        count -= 1;
-    }
-    
-    return [drawnCards, deck];
 }
