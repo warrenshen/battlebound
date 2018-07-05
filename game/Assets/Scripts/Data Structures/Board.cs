@@ -1,73 +1,97 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [System.Serializable]
-public class Board
+public class Board : MonoBehaviour
 {
     [SerializeField]
-    private Dictionary<string, PlayingField> playerIdToFields;
+    private Dictionary<string, PlayingField> playerIdToField;
 
     [SerializeField]
     private Dictionary<string, PlayerAvatar> playerIdToAvatar;
 
-    private static Board instance;
+    [SerializeField]
+    private Dictionary<string, Dictionary<int, Transform>> playerIdToIndexToBoardPlace;
 
-    public static Board Instance()
-    {
-        if (instance == null)
-        {
-            instance = new Board();
-        }
-        return instance;
-    }
+    public static Board Instance { get; private set; }
 
-    public Board()
+    private void Awake()
     {
-        this.playerIdToFields = new Dictionary<string, PlayingField>();
+        Instance = this;
+
+        this.playerIdToField = new Dictionary<string, PlayingField>();
         this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
-    }
-
-    public void CreateAndPlaceCreature(CardObject cardObject, Vector3 position, int index)
-    {
-        GameObject boardCreatureGO = new GameObject(cardObject.Card.Name);
-        boardCreatureGO.transform.position = position;
-        BoardCreature boardCreature = boardCreatureGO.AddComponent<BoardCreature>();
-        boardCreature.Initialize(cardObject);
-
-        PlaceCreature(boardCreature, index);
-    }
-
-    public void PlaceCreature(BoardCreature boardCreature, int index)
-    {
-        PlayingField playingField = this.playerIdToFields[boardCreature.Owner.Id];
-        playingField.Place(boardCreature, index);
-        boardCreature.OnPlay();
-    }
-
-    public void RemoveCreature(BoardCreature creature)
-    {
-        PlayingField selected = this.playerIdToFields[creature.Owner.Id];
-        selected.Remove(creature);
+        this.playerIdToIndexToBoardPlace = new Dictionary<string, Dictionary<int, Transform>>();
     }
 
     public void RegisterPlayer(Player player)
     {
         PlayingField playingField = new PlayingField(player);
-        this.playerIdToFields[player.Id] = playingField;
+        this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
+        this.playerIdToIndexToBoardPlace[player.Id] = new Dictionary<int, Transform>();
+
+        for (int i = 0; i < 6; i += 1)
+        {
+            Transform boardPlace = GameObject.Find(
+                String.Format("{0} {1}", player.Name, i)
+            ).transform;
+            this.playerIdToIndexToBoardPlace[player.Id][i] = boardPlace;
+        }
+    }
+
+    public void CreateAndPlaceCreature(CardObject cardObject, int index)
+    {
+        PlayingField playingField = this.playerIdToField[cardObject.Owner.Id];
+
+        StartCoroutine(
+            "CreateAndPlaceCreatureHelper",
+            new object[2] { cardObject, index }
+        );
+    }
+
+    private IEnumerator CreateAndPlaceCreatureHelper(object[] args)
+    {
+        CardObject cardObject = args[0] as CardObject;
+        int index = (int)args[1];
+
+        Transform boardPlace = this.playerIdToIndexToBoardPlace[cardObject.Owner.Id][index];
+
+        FXPoolManager.Instance.PlayEffect("SpawnVFX", boardPlace.position + new Vector3(0f, 0f, -0.1f));
+
+        yield return new WaitForSeconds(0.2f);
+
+        GameObject boardCreatureGO = new GameObject(cardObject.Card.Name);
+        boardCreatureGO.transform.position = boardPlace.position;
+        BoardCreature boardCreature = boardCreatureGO.AddComponent<BoardCreature>();
+        boardCreature.Initialize(cardObject);
+
+        Destroy(cardObject.gameObject);
+
+        boardCreature.OnPlay();
+
+        PlayingField playingField = this.playerIdToField[boardCreature.Owner.Id];
+        playingField.Place(boardCreature, index);
+    }
+
+    public void RemoveCreature(BoardCreature creature)
+    {
+        PlayingField selected = this.playerIdToField[creature.Owner.Id];
+        selected.Remove(creature);
     }
 
     public void RegisterPlayer(Player player, Card[] fieldCards)
     {
         PlayingField playingField = new PlayingField(player, fieldCards);
-        this.playerIdToFields[player.Id] = playingField;
+        this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
     public PlayingField GetFieldByPlayerId(string playerId)
     {
-        return this.playerIdToFields[playerId];
+        return this.playerIdToField[playerId];
     }
 
     public BoardCreature GetCreatureByPlayerIdAndCardId(string playerId, string cardId)
@@ -103,7 +127,10 @@ public class Board
     public class PlayingField
     {
         [SerializeField]
-        protected BoardCreature[] creatures;
+        private BoardCreature[] creatures;
+
+        [SerializeField]
+        private Dictionary<int, Transform> indexToBoardPlace;
         //List<Artifact> artifacts;
 
         private string playerId;
@@ -122,7 +149,7 @@ public class Board
             SpawnCards(player, cards);
         }
 
-        public void SpawnCards(Player player, Card[] cards)
+        private void SpawnCards(Player player, Card[] cards)
         {
             for (int i = 0; i < 6; i += 1)
             {
@@ -137,18 +164,8 @@ public class Board
                 CardObject cardObject = cardObjectGO.AddComponent<CardObject>();
                 cardObject.InitializeCard(player, card);
 
-                Transform boardPlace = GameObject.Find(String.Format("{0} {1}", player.Name, i)).transform;
-                Board.Instance().CreateAndPlaceCreature(
-                    cardObject,
-                    boardPlace.position,
-                    i
-                );
+                Board.Instance.CreateAndPlaceCreature(cardObject, i);
             }
-        }
-
-        public BoardCreature GetCreatureByIndex(int index)
-        {
-            return this.creatures[index];
         }
 
         public bool Place(BoardCreature creature, int index)
@@ -163,6 +180,11 @@ public class Board
                 creatures[index] = creature;
                 return true;
             }
+        }
+
+        public BoardCreature GetCreatureByIndex(int index)
+        {
+            return this.creatures[index];
         }
 
         public void Remove(BoardCreature creature)

@@ -52,7 +52,7 @@ public class Player
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this);
 
-        Board.Instance().RegisterPlayer(this);
+        Board.Instance.RegisterPlayer(this);
     }
 
     public Player(PlayerState playerState, string name)
@@ -74,7 +74,7 @@ public class Player
 
         Card[] fieldCards = playerState.GetCardsField();
 
-        Board.Instance().RegisterPlayer(this, fieldCards);
+        Board.Instance.RegisterPlayer(this, fieldCards);
     }
 
     public void PlayCard(CardObject cardObject)
@@ -109,7 +109,7 @@ public class Player
     {
         SetHasTurn(false);
         this.hand.RecedeCards();
-        Board.Instance().OnPlayerEndTurn(this.id);
+        Board.Instance.OnPlayerEndTurn(this.id);
     }
 
     public void NewTurn()
@@ -120,7 +120,7 @@ public class Player
         this.mana = maxMana;
 
         //board resetting
-        Board.Instance().OnPlayerStartTurn(this.id);
+        Board.Instance.OnPlayerStartTurn(this.id);
         this.avatar.OnStartTurn();
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
@@ -259,7 +259,7 @@ public class Player
         PlayerState.ChallengeCard[] fieldCards = new PlayerState.ChallengeCard[6];
         for (int i = 0; i < 6; i += 1)
         {
-            Board.PlayingField playingField = Board.Instance().GetFieldByPlayerId(this.id);
+            Board.PlayingField playingField = Board.Instance.GetFieldByPlayerId(this.id);
             BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
             PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
 

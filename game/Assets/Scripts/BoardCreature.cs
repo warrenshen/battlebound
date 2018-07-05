@@ -358,7 +358,7 @@ public class BoardCreature : Targetable
         else
         {
             //to-do, delay creature death
-            Board.Instance().RemoveCreature(this);
+            Board.Instance.RemoveCreature(this);
             FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
             StartCoroutine("Dissolve", 2);
             return false;
