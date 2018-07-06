@@ -110,13 +110,15 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.you.DrawCards(3, animate: false);
-            this.opponent.DrawCards(3, animate: false);
+            //this.you.DrawCards(3, animate: false);
+            //this.opponent.DrawCards(3, animate: false);
+
+            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
-
-            NextTurn();
+            activePlayer.RenderTurnStart();
         }
         else
         {
@@ -553,7 +555,7 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
-
+        this.you.ShowMulligan(deckCardIndices, this.opponent);
     }
 
     public void ReceiveMoveEndTurn(string playerId)
