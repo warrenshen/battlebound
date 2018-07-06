@@ -276,14 +276,8 @@ function syncPlayerDecksByPlayer(player) {
  **/
 function getCardsAndDecksByPlayer(player) {
     // The term instance = card + template combined.
-    const API = Spark.getGameDataService();
-    const playerId = player.getPlayerId();
+    const decksData = getPlayerDecksByPlayer(player);
     
-    const isChanged = syncPlayerDecksByPlayer(player);
-    
-    const decksDataItem = API.getItem("PlayerDecks", playerId).document();
-    
-    const decksData = decksDataItem.getData();
     const deckByName = decksData.deckByName;
     const cardByCardId = decksData.cardByCardId;
     
@@ -308,6 +302,20 @@ function getCardsAndDecksByPlayer(player) {
     });
     
     return [sortedInstances, deckByName];
+}
+
+function getPlayerDecksByPlayer(player) {
+    const isChanged = syncPlayerDecksByPlayer(player);
+    
+    const API = Spark.getGameDataService();
+    const playerId = player.getPlayerId();
+    
+    const decksDataItem = API.getItem("PlayerDecks", playerId).document();
+    if (decksDataItem == null) {
+        setScriptErro("PlayerDecks instance does not exist for player.");
+    }
+    
+    return decksDataItem.getData();
 }
 
 /**
