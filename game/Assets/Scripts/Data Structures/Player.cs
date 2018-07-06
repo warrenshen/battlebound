@@ -7,6 +7,10 @@ using TMPro;
 [System.Serializable]
 public class Player
 {
+    public const int PLAYER_STATE_MODE_NORMAL = 0;
+    public const int PLAYER_STATE_MODE_MULLIGAN = 1;
+    public const int PLAYER_STATE_MODE_MULLIGAN_WAITING = 2;
+
     private string id;
     public string Id => id;
 
@@ -36,6 +40,12 @@ public class Player
 
     private PlayerAvatar avatar;
     public PlayerAvatar Avatar => avatar;
+
+    private int mode;
+    public int Mode => mode;
+
+    private List<Card> mulliganCards;
+    public List<Card> MulliganCards => mulliganCards;
 
     public Player(string id, string name)
     {
@@ -75,6 +85,11 @@ public class Player
         Card[] fieldCards = playerState.GetCardsField();
 
         Board.Instance.RegisterPlayer(this, fieldCards);
+    }
+
+    public void SetMode(int mode)
+    {
+        this.mode = mode;
     }
 
     public void PlayCard(CardObject cardObject)
@@ -168,6 +183,119 @@ public class Player
         return fatigue;
     }
 
+    private Card PopCardFromDeck()
+    {
+        Card card = this.deck.Cards[0];
+        this.deck.Cards.RemoveAt(0);
+        return card;
+    }
+
+    public List<Card> PopCardsFromDeck(int amount)
+    {
+        List<Card> cards = new List<Card>();
+
+        while (amount > 0)
+        {
+            cards.Add(PopCardFromDeck());
+            amount--;
+        }
+
+        return cards;
+    }
+
+    public void BeginMulligan(List<Card> mulliganCards)
+    {
+        this.mode = PLAYER_STATE_MODE_MULLIGAN;
+        this.mulliganCards = mulliganCards;
+        Debug.Log(this.mulliganCards.Count);
+    }
+
+    /*
+     * @param List<string> cardIds - card IDs of cards to keep
+     */
+    public void PlayMulligan(List<string> cardIds, int opponentState)
+    {
+        if (opponentState == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            this.mode = PLAYER_STATE_MODE_NORMAL;
+        }
+        else
+        {
+            this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+        }
+
+        foreach (Card mulliganCard in this.mulliganCards)
+        {
+            if (cardIds.Contains(mulliganCard.Id))
+            {
+                AddDrawnCard(mulliganCard, animate: false);
+            }
+            else
+            {
+                if (!InspectorControlPanel.Instance.DevelopmentMode)
+                {
+                    ReturnCardToDeck(mulliganCard);
+                }
+            }
+        }
+
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
+        }
+
+        EndMulligan();
+    }
+
+    public void EndMulligan()
+    {
+        this.mulliganCards = new List<Card>();
+    }
+
+    public void ShowMulligan(List<int> deckCardIndices, Player opponent)
+    {
+        if (opponent.Mode != PLAYER_STATE_MODE_MULLIGAN)
+        {
+            Debug.LogError("Opponent not in mulligan mode but received show mulligan.");
+            return;
+        }
+        else if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            opponent.SetMode(PLAYER_STATE_MODE_NORMAL);
+            this.mode = PLAYER_STATE_MODE_NORMAL;
+        }
+        else if (this.mode == PLAYER_STATE_MODE_MULLIGAN)
+        {
+            opponent.SetMode(PLAYER_STATE_MODE_MULLIGAN_WAITING);
+        }
+        else
+        {
+            Debug.LogError("Player not in mulligan mode but received show mulligan.");
+            return;
+        }
+
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            // Throw away cards.
+        }
+        else
+        {
+            // TODO: animate throw away cards.
+            for (int i = 0; i < opponent.MulliganCards.Count; i += 1)
+            {
+                if (deckCardIndices.Contains(i))
+                {
+                    opponent.DrawCard(animate: false);
+                }
+                else
+                {
+                    opponent.AddDrawnCard(opponent.MulliganCards[i], animate: false);
+                }
+            }
+            opponent.EndMulligan();
+        }
+    }
+
     /*
      * @param bool isInit - do not decrement deck size if true
      */
@@ -177,14 +305,6 @@ public class Player
 
         CardObject cardObject = created.AddComponent<CardObject>();
         cardObject.InitializeCard(this, card);
-        if (animate)
-        {
-            BattleManager.Instance.AnimateDrawCard(this, cardObject);
-        }
-        else
-        {
-            hand.RepositionCards();
-        }
 
         created.transform.parent = GameObject.Find(
             this.name + " Hand"
@@ -194,7 +314,17 @@ public class Player
         {
             this.deckSize -= 1;
         }
+
         this.Hand.AddCardObject(cardObject);
+
+        if (animate)
+        {
+            BattleManager.Instance.AnimateDrawCard(this, cardObject);
+        }
+        else
+        {
+            hand.RepositionCards();
+        }
     }
 
     public void AddDrawnCards(List<Card> cards, bool isInit = false, bool animate = true)
@@ -202,6 +332,18 @@ public class Player
         foreach (Card card in cards)
         {
             AddDrawnCard(card, isInit, animate: animate);
+        }
+    }
+
+    public void ReturnCardToDeck(Card card)
+    {
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            this.deck.AddCard(card);
+        }
+        else
+        {
+            Debug.LogError("This method should not be used in connected mode.");
         }
     }
 
