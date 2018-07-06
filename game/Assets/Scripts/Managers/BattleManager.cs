@@ -551,6 +551,11 @@ public class BattleManager : MonoBehaviour
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
     }
 
+    public void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
+    {
+
+    }
+
     public void ReceiveMoveEndTurn(string playerId)
     {
         NextTurn();

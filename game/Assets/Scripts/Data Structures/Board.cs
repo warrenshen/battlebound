@@ -44,8 +44,6 @@ public class Board : MonoBehaviour
 
     public void CreateAndPlaceCreature(CardObject cardObject, int index)
     {
-        PlayingField playingField = this.playerIdToField[cardObject.Owner.Id];
-
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
             new object[2] { cardObject, index }
