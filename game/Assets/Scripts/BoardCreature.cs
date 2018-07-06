@@ -113,7 +113,6 @@ public class BoardCreature : Targetable
 
         //method calls
         this.Redraw();
-        this.RenderAbilities(); //this should go inside redraw
 
         //post-collider-construction visuals
         transform.localScale = new Vector3(0, 0, 0);
@@ -216,21 +215,23 @@ public class BoardCreature : Targetable
         if (this.hasShield)
         {
             this.hasShield = false;
-            RenderAbilities(); //to-do: needs review in future
+            Redraw();
             return 0;
         }
-
-        int healthBefore = this.health;
-        this.health -= amount;
-        this.health = Math.Max(this.health, 0);
-
-        if (CheckAlive())
+        else
         {
-            //do something
-        }
+            int healthBefore = this.health;
+            this.health -= amount;
+            this.health = Math.Max(this.health, 0);
 
-        this.Redraw();
-        return Math.Min(healthBefore, amount);
+            if (CheckAlive())
+            {
+                //do something
+            }
+
+            Redraw();
+            return Math.Min(healthBefore, amount);
+        }
     }
 
     /*
@@ -384,6 +385,7 @@ public class BoardCreature : Targetable
         UpdateStatText();
         this.visual.SetVisualOutline(this.Owner.HasTurn && this.canAttack > 0);
         this.visual.Redraw();
+        RenderAbilitiesAndBuffs();
     }
 
     private void UpdateStatText()
@@ -398,25 +400,44 @@ public class BoardCreature : Targetable
         //LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
     }
 
-    private void RenderAbilities()
+    private void RenderAbilitiesAndBuffs()
     {
-        if (abilities == null)
-            return;
+        //if (abilities == null)
+        //return;
+
+        if (this.hasShield && !this.abilitiesFX.ContainsKey(Card.CARD_ABILITY_SHIELD))
+        {
+            this.abilitiesFX[Card.CARD_ABILITY_SHIELD] = FXPoolManager.Instance.AssignEffect(Card.CARD_ABILITY_SHIELD, this.transform).gameObject;
+        }
+        else if (!this.hasShield && this.abilitiesFX.ContainsKey(Card.CARD_ABILITY_SHIELD))
+        {
+            GameObject effect = abilitiesFX[Card.CARD_ABILITY_SHIELD];
+            FXPoolManager.Instance.UnassignEffect(Card.CARD_ABILITY_SHIELD, effect, this.transform);
+        }
 
         //doing additions
         foreach (string ability in abilities)
         {
             if (abilitiesFX.ContainsKey(ability))
+            {
                 continue;
+            }
             if (!FXPoolManager.Instance.HasEffect(ability))
+            {
                 continue;
+            }
+
             abilitiesFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
         }
+
         //do removals
         foreach (string key in abilitiesFX.Keys)
         {
             if (abilities.Contains(key))
+            {
                 continue;
+            }
+
             //if not continue, needs removal
             GameObject effect = abilitiesFX[key];
             FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
@@ -427,11 +448,11 @@ public class BoardCreature : Targetable
     {
         if (abilities == null)
         {
-            abilities = new List<string>();
-            abilitiesFX = new Dictionary<string, GameObject>();
+            this.abilities = new List<string>();
+            this.abilitiesFX = new Dictionary<string, GameObject>();
         }
         abilities.Add(ability);
-        RenderAbilities();
+        RenderAbilitiesAndBuffs();
     }
 
     public bool HasAbility(string ability)
