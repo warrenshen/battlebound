@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MockMovesPanel : MonoBehaviour
 {
+    [SerializeField]
+    private Button playMulliganButton;
+
     [SerializeField]
     private Button endTurnButton;
 
@@ -33,12 +37,16 @@ public class MockMovesPanel : MonoBehaviour
     private InputField fieldIndexInputField;
 
     [SerializeField]
+    private InputField deckCardIndicesInputField;
+
+    [SerializeField]
     private Button submitMoveButton;
 
     private string moveCategory;
 
     private void Awake()
     {
+        this.playMulliganButton.onClick.AddListener(OnPlayMulliganButtonClick);
         this.endTurnButton.onClick.AddListener(OnEndTurnButtonClick);
         this.playCardButton.onClick.AddListener(OnPlayCardButtonClick);
         this.playSpellTargetedButton.onClick.AddListener(OnPlaySpellTargetedButtonClick);
@@ -53,11 +61,19 @@ public class MockMovesPanel : MonoBehaviour
         fieldIdInputField.transform.parent.gameObject.SetActive(false);
         targetIdInputField.transform.parent.gameObject.SetActive(false);
         fieldIndexInputField.transform.parent.gameObject.SetActive(false);
+        deckCardIndicesInputField.transform.parent.gameObject.SetActive(false);
     }
 
     private void ActivateField(InputField inputField)
     {
         inputField.transform.parent.gameObject.SetActive(true);
+    }
+
+    private void OnPlayMulliganButtonClick()
+    {
+        this.moveCategory = ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN;
+        DeactivateAllFields();
+        ActivateField(this.deckCardIndicesInputField);
     }
 
     private void OnEndTurnButtonClick()
@@ -109,7 +125,12 @@ public class MockMovesPanel : MonoBehaviour
         challengeMove.SetCategory(this.moveCategory);
         challengeMove.SetPlayerId(BattleManager.Instance.ActivePlayer.Id);
 
-        if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_END_TURN)
+        if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
+        {
+            List<int> deckCardIndices = new List<int>(this.deckCardIndicesInputField.text.Split(',').Select(int.Parse));
+            attributes.SetDeckCardIndices(deckCardIndices);
+        }
+        else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_END_TURN)
         {
 
         }

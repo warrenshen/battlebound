@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class ChallengeMove
 {
+    public static string MOVE_CATEGORY_PLAY_MULLIGAN = "MOVE_CATEGORY_PLAY_MULLIGAN";
     public static string MOVE_CATEGORY_SURRENDER_BY_CHOICE = "MOVE_CATEGORY_SURRENDER_BY_CHOICE";
     public static string MOVE_CATEGORY_SURRENDER_BY_EXPIRE = "MOVE_CATEGORY_SURRENDER_BY_EXPIRE";
     public static string MOVE_CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
@@ -48,6 +50,10 @@ public class ChallengeMove
         public int FieldIndex => fieldIndex;
 
         [SerializeField]
+        private List<int> deckCardIndices;
+        public List<int> DeckCardIndices => deckCardIndices;
+
+        [SerializeField]
         private PlayerState.ChallengeCard card;
         public PlayerState.ChallengeCard Card => card;
 
@@ -74,6 +80,11 @@ public class ChallengeMove
         public void SetFieldIndex(int fieldIndex)
         {
             this.fieldIndex = fieldIndex;
+        }
+
+        public void SetDeckCardIndices(List<int> deckCardIndices)
+        {
+            this.deckCardIndices = deckCardIndices;
         }
 
         public void SetCard(PlayerState.ChallengeCard card)

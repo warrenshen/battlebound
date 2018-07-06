@@ -38,6 +38,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         ChallengeWonMessage.Listener = ChallengeWonMessageHandler;
         ChallengeLostMessage.Listener = ChallengeLostMessageHandler;
         ScriptMessage_ChallengeTimeRunningOutMessage.Listener = ChallengeTimeRunningOutMessageHandler;
+        ScriptMessage_ChallengePlayMulliganMessage.Listener = ChallengePlayMulliganMessageHandler;
     }
 
     private void ChallengeIssuedMessageHandler(ChallengeIssuedMessage message)
@@ -57,6 +58,16 @@ public class BattleSingleton : Singleton<BattleSingleton>
         this.challengeStarted = true;
 
         SceneManager.LoadScene("Battle");
+    }
+
+    private void ChallengePlayMulliganMessageHandler(ScriptMessage_ChallengePlayMulliganMessage message)
+    {
+        Debug.Log("ChallengePlayMulliganMessage received.");
+
+        GSData scriptData = message.Data;
+        this.challengeId = scriptData.GetString("challengeId");
+
+        ProcessChallengeScriptData(scriptData);
     }
 
     private void ChallengeTurnTakenMessageHandler(ChallengeTurnTakenMessage message)
@@ -159,7 +170,14 @@ public class BattleSingleton : Singleton<BattleSingleton>
         {
             Debug.Log(JsonUtility.ToJson(challengeMove));
 
-            if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
+            if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
+            {
+                BattleManager.Instance.ReceiveMovePlayMulligan(
+                    challengeMove.PlayerId,
+                    challengeMove.Attributes.DeckCardIndices
+                );
+            }
+            else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
             {
                 BattleManager.Instance.ReceiveMoveEndTurn(
                     challengeMove.PlayerId
@@ -312,6 +330,31 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         Debug.LogError("ChallengeEndTurn request error.");
         OnChallengeRequestError();
+    }
+
+    public void SendChallengePlayMulliganRequest(List<string> cardIds)
+    {
+        if (this.challengeId == null)
+        {
+            Debug.LogWarning("Cannot send ChallengeSurrender request without challengeId set.");
+            return;
+        }
+
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("ChallengePlayMulligan");
+        request.SetEventAttribute("challengeId", this.challengeId);
+        request.SetEventAttribute("cardIds", JsonUtility.ToJson(cardIds));
+        request.Send(OnChallengePlayMulliganSuccess, OnChallengePlayMulliganError);
+    }
+
+    private void OnChallengePlayMulliganSuccess(LogEventResponse response)
+    {
+        Debug.Log("ChallengePlayMulligan request success.");
+    }
+
+    private void OnChallengePlayMulliganError(LogEventResponse response)
+    {
+        Debug.Log("ChallengePlayMulligan request error.");
     }
 
     public void SendChallengeSurrenderRequest()
