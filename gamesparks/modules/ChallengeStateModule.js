@@ -97,17 +97,12 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
  * @param playerId - player ID to return challenge state for
  **/ 
 function getChallengeStateForPlayer(playerId, challengeId) {
-    const API = Spark.getGameDataService();
-
     const challenge = Spark.getChallenge(challengeId);
-    
-    const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
-    
-    if (challengeStateDataItem === null) {
-        setScriptError("ChallengeState does not exist.");
+    if (challenge == null) {
+        setScriptError("Challenge does not exist.");
     }
-    
-    const challengeStateData = challengeStateDataItem.getData();
+
+    const challengeStateData = challenge.getPrivateData("data");
 
     const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
     

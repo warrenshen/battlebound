@@ -11,8 +11,6 @@ require("AttackModule");
 require("ChallengeMovesModule");
 require("ChallengeStateModule");
 
-const API = Spark.getGameDataService();
-
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
 const challengeId = Spark.getData().challengeId;
@@ -27,13 +25,7 @@ if (challenge.getRunState() != "RUNNING") {
     setScriptError("Challenge is not running.");
 }
 
-const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
-
-if (challengeStateDataItem === null) {
-    setScriptError("ChallengeState does not exist.");
-}
-
-const challengeStateData = challengeStateDataItem.getData();
+const challengeStateData = challenge.getPrivateData("data");
 const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 
 const cardIds = Spark.getData().cardIds;

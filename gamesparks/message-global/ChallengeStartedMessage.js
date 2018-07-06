@@ -10,8 +10,6 @@ require("ScriptDataModule");
 require("DeckModule");
 require("AttackModule");
 require("ChallengeMovesModule");
- 
-const API = Spark.getGameDataService();
 
 const challengeId = Spark.getData().challenge.challengeId;
 const challenge = Spark.getChallenge(challengeId);
@@ -30,8 +28,7 @@ const challengerDeck = getActiveDeckByPlayerId(challengerId);
 // Get challenged player deck for battle.
 const challengedDeck = getActiveDeckByPlayerId(challengedId);
 
-const challengeStateDataItem = API.createItem("ChallengeState", challengeId);
-const challengeStateData = challengeStateDataItem.getData();
+const challengeStateData = {};
 const challengeState = challengeStateData.current = {};
 challengeStateData.moves = [];
 challengeStateData.cardIdToCard = {};

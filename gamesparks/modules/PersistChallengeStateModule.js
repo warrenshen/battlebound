@@ -11,7 +11,4 @@ if (challengeStateData.nonce === undefined) {
     challengeStateData.nonce += 1;
 }
 
-const error = challengeStateDataItem.persistor().persist().error();
-if (error) {
-    setScriptError(error);
-}
+challenge.setPrivateData("data", challengeStateData);

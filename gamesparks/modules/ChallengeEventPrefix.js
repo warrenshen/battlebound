@@ -12,18 +12,10 @@
 // Note that "challenge events" and "global/user messages" are NOT the same. This is for the former.
 //
 // ====================================================================================================
-const API = Spark.getGameDataService();
-
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
 const challengeId = Spark.getData().challengeInstanceId;
 const challenge = Spark.getChallenge(challengeId);
 
-const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
-
-if (challengeStateDataItem === null) {
-    setScriptError("Challenge state does not exist.");
-}
-
-const challengeStateData = challengeStateDataItem.getData();
+const challengeStateData = challenge.getPrivateData("data");
 const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
