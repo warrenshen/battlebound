@@ -56,6 +56,9 @@ cardIds.forEach(function(cardId) {
     }
 });
 
+// Reset `lastMoves` attribute in ChallengeState.
+challengeStateData.lastMoves = [];
+
 // Indices of cards going back into deck.
 const deckCardIndices = [];
 mulliganCards.forEach(function(mulliganCard, index) {
@@ -68,11 +71,23 @@ mulliganCards.forEach(function(mulliganCard, index) {
     }
 });
 
+var move = {
+    playerId: playerId,
+    category: MOVE_CATEGORY_PLAY_MULLIGAN,
+    attributes: {
+        deckCardIndices: deckCardIndices,
+    },
+};
+challengeStateData.moves.push(move);
+challengeStateData.lastMoves.push(move);
+
 // Draw cards into hand to replaces ones put back in deck.
 mulliganCards.forEach(function(mulliganCard, index) {
     const isDeck = cardIds.indexOf(mulliganCard.id) < 0;
     if (isDeck) {
-        drawCardForPlayer(playerId, playerState);
+        const move = drawCardForPlayer(playerId, playerState);
+        challengeStateData.moves.push(move);
+        challengeStateData.lastMoves.push(move);
     }
 });
 
@@ -85,20 +100,6 @@ if (opponentState.mode === PLAYER_STATE_MODE_MULLIGAN_WAITING) {
     playerState.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
 }
 playerState.mulliganCards = [];
-
-// Reset `lastMoves` attribute in ChallengeState.
-challengeStateData.lastMoves = [];
-
-const move = {
-    playerId: playerId,
-    category: MOVE_CATEGORY_PLAY_MULLIGAN,
-    attributes: {
-        deckCardIndices: deckCardIndices,
-    },
-};
-
-challengeStateData.moves.push(move);
-challengeStateData.lastMoves.push(move);
 
 require("PersistChallengeStateModule");
 
