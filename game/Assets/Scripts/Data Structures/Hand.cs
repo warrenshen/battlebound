@@ -63,7 +63,8 @@ public class Hand
     private void RedrawOutline(CardObject cardObject)
     {
         Player player = BattleManager.Instance.getPlayerById(this.playerId);
-        cardObject.visual.SetVisualOutline(player.Mana >= cardObject.Card.Cost);
+        cardObject.visual.SetOutline(player.Mana >= cardObject.Card.Cost);
+        cardObject.visual.Redraw();
     }
 
     public void RepositionCards(float verticalShift = 0)

@@ -95,6 +95,7 @@ public class CardObject : MouseWatchable
             visual.TmpTextObjects[3].TmpObject.enabled = false;
             visual.TmpTextObjects[4].TmpObject.enabled = false;
         }
+        visual.Redraw();
         return visual;
     }
 
@@ -114,6 +115,13 @@ public class CardObject : MouseWatchable
 
     public override void EnterHover()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            SetVisualResetValues();
+            this.visual.transform.localScale = 1.15F * this.visual.reset.scale;
+            return;
+        }
+
         if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
@@ -134,6 +142,13 @@ public class CardObject : MouseWatchable
 
     public override void ExitHover()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BattleManager.Instance.SetPassiveCursor();
+            this.visual.transform.localScale = this.visual.reset.scale;
+            return;
+        }
+
         if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
@@ -168,6 +183,12 @@ public class CardObject : MouseWatchable
 
     public override void MouseUp()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BattleManager.Instance.ToggleMulliganCard(this);
+            return;
+        }
+
         if (!this.owner.HasTurn)
             return;
         if (!ActionManager.Instance.HasDragTarget())

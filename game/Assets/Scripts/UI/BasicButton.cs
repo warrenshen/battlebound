@@ -17,7 +17,7 @@ public class BasicButton : ObjectUI
     public override void EnterHover()
     {
         base.EnterHover();
-        Cursor.SetCursor(ActionManager.Instance.cursors[1], Vector2.zero, CursorMode.Auto);
+        ActionManager.Instance.SetCursor(1);
     }
 
     public override void ExitHover()

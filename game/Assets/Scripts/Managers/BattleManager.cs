@@ -110,11 +110,8 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            //this.you.DrawCards(3, animate: false);
-            //this.opponent.DrawCards(3, animate: false);
-
             this.you.BeginMulligan(this.you.PopCardsFromDeck(3), true);
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3), false);
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3), true);
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -151,7 +148,7 @@ public class BattleManager : MonoBehaviour
         attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
         attackCommand.SetWidth(1.66f);
         //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
-        Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
+        ActionManager.Instance.SetCursor(4);
     }
 
     private void WatchMouseActions()
@@ -213,9 +210,9 @@ public class BattleManager : MonoBehaviour
                 attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
                 if (hit.collider.gameObject.layer == battleLayer && mouseDownTargetable != null &&
                     hit.collider.gameObject != mouseDownTargetable.gameObject && validTargets.Contains(hit.collider.GetComponent<Targetable>()))
-                    Cursor.SetCursor(ActionManager.Instance.cursors[5], Vector2.zero, CursorMode.Auto); //crossed swords
+                    ActionManager.Instance.SetCursor(5);
                 else
-                    Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
+                    ActionManager.Instance.SetCursor(4);
 
                 //for debugging
                 if (Input.GetKeyUp("space"))
@@ -232,13 +229,16 @@ public class BattleManager : MonoBehaviour
     public void SetPassiveCursor()
     {
         if (activePlayer == you)
-            Cursor.SetCursor(ActionManager.Instance.cursors[0], Vector2.zero, CursorMode.Auto);
+            ActionManager.Instance.SetCursor(0);
         else
-            Cursor.SetCursor(ActionManager.Instance.cursors[2], Vector2.zero, CursorMode.Auto);
+            ActionManager.Instance.SetCursor(2);
     }
 
     private void OnEndTurnClick()
     {
+        if (this.you.Mode != Player.PLAYER_STATE_MODE_NORMAL)   //dont allow end turn button click in mulligan or non-normal state
+            return;
+
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
             NextTurn();
@@ -476,26 +476,53 @@ public class BattleManager : MonoBehaviour
         cardObject.transform.rotation = deckObject.transform.rotation;
         //done initializing to match deck orientation
 
-        string targetPointName = String.Format("Mulligan Card Holder {0}", position);
+        string targetPointName = String.Format("{0} Mulligan Holder {1}", player.Name, position);
         GameObject targetPoint = GameObject.Find(targetPointName);
 
         float tweenTime = 0.3F;
         LeanTween.rotate(cardObject.gameObject, Camera.main.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, tweenTime).setEaseInQuad();
+        cardObject.visual.Redraw();
     }
 
-    public void HideMulliganOverlay()
+    public void HideMulliganOverlay(Player player)
     {
-        StartCoroutine("AnimateHideMulliganOverlay");
+        StartCoroutine("AnimateHideMulliganOverlay", player);
     }
 
-    private IEnumerator AnimateHideMulliganOverlay()
+    private IEnumerator AnimateHideMulliganOverlay(Player player)
     {
         float tweenTime = 0.3F;
-        GameObject overlay = GameObject.Find("Mulligan Overlay");
+        GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
         LeanTween.scale(overlay, Vector3.zero, tweenTime);
         yield return new WaitForSeconds(tweenTime);
         overlay.SetActive(false);
+    }
+
+    public void ToggleMulliganCard(CardObject cardObject)
+    {
+        if (cardObject.Owner.KeptMulliganCards.Contains(cardObject.Card))
+        {
+            cardObject.Owner.KeptMulliganCards.Remove(cardObject.Card);
+            cardObject.Owner.RemovedMulliganCards.Add(cardObject.Card);
+
+            //apply symbol/icon
+            cardObject.visual.SetGrayscale(true);
+            cardObject.visual.SetOutline(false);
+        }
+        else
+        {
+            cardObject.Owner.RemovedMulliganCards.Remove(cardObject.Card);
+            cardObject.Owner.KeptMulliganCards.Add(cardObject.Card);
+            //visuals
+            cardObject.visual.SetGrayscale(false);
+            cardObject.visual.SetOutline(true);
+        }
+    }
+
+    public void FinishedMulligan()
+    {
+        this.you.PlayMulligan(this.opponent.Mode);
     }
 
     /*

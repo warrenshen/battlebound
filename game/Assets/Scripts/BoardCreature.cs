@@ -383,7 +383,7 @@ public class BoardCreature : Targetable
     public void Redraw()
     {
         UpdateStatText();
-        this.visual.SetVisualOutline(this.Owner.HasTurn && this.canAttack > 0);
+        this.visual.SetOutline(this.Owner.HasTurn && this.canAttack > 0);
         this.visual.Redraw();
         RenderAbilitiesAndBuffs();
     }

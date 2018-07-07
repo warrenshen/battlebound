@@ -863,7 +863,7 @@ namespace HyperCard
             this.Redraw();  //to-do: should REALLY optimize this later, imp!
         }
 
-        public void SetVisualOutline(bool value)
+        public void SetOutline(bool value)
         {
             this.EnableOutline = value;
             this.EnableBackOutline = value;
@@ -874,6 +874,10 @@ namespace HyperCard
         {
             this.BlackAndWhite = value;
             this.Redraw(); //to-do: should REALLY optimize this later, imp!
+        }
+        public void SetGrayscale(bool value)
+        {
+            SetBlackAndWhite(value);
         }
     }
 }

@@ -22,7 +22,7 @@ public class ActionManager : MonoBehaviour
     private int boardLayerMask;
     public Texture2D[] cursors;
 
-    private bool active = true;
+    public bool active = true;
     public static ActionManager Instance { get; private set; }
 
     [SerializeField]
@@ -72,7 +72,7 @@ public class ActionManager : MonoBehaviour
     {
         this.target = target;
         //selectedSortingOrder = this.sp.sortingOrder;
-        Cursor.SetCursor(cursors[1], Vector2.zero, CursorMode.Auto);
+        this.SetCursor(4);
     }
 
     private void MouseWatch()
@@ -129,7 +129,7 @@ public class ActionManager : MonoBehaviour
             return;
         //this.sp.sortingOrder = selectedSortingOrder;
         this.target = null;
-        Cursor.SetCursor(cursors[0], Vector2.zero, CursorMode.Auto);
+        this.SetCursor(0);
     }
 
     public void ResetTarget()
@@ -221,6 +221,11 @@ public class ActionManager : MonoBehaviour
     {
         if (CollectionManager.Instance != null)
             CollectionManager.Instance.AddToDeck(card);
+    }
+
+    public void SetCursor(int cursor)
+    {
+        Cursor.SetCursor(ActionManager.Instance.cursors[cursor], Vector2.zero, CursorMode.Auto);
     }
 
     public void SetActive(bool val)

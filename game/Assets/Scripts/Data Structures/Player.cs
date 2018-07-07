@@ -44,8 +44,10 @@ public class Player
     private int mode;
     public int Mode => mode;
 
-    private List<Card> mulliganCards;
-    public List<Card> MulliganCards => mulliganCards;
+    private List<Card> keptMulliganCards;
+    public List<Card> KeptMulliganCards => keptMulliganCards;
+    private List<Card> removedMulliganCards;
+    public List<Card> RemovedMulliganCards => removedMulliganCards;
 
     public Player(string id, string name)
     {
@@ -206,7 +208,8 @@ public class Player
     public void BeginMulligan(List<Card> mulliganCards, bool show)
     {
         this.mode = PLAYER_STATE_MODE_MULLIGAN;
-        this.mulliganCards = mulliganCards;
+        this.keptMulliganCards = mulliganCards;
+        this.removedMulliganCards = new List<Card>();
 
         if (!show)
             return;
@@ -214,14 +217,11 @@ public class Player
         for (int i = 0; i < mulliganCards.Count; i++)
         {
             CardObject cardObject = AddDrawnCard(mulliganCards[i], reposition: false);
-            BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i);
+            BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i); //covers for the omitted reposition
         }
     }
 
-    /*
-     * @param List<string> cardIds - card IDs of cards to keep
-     */
-    public void PlayMulligan(List<string> cardIds, int opponentState)
+    public void PlayMulligan(int opponentState)
     {
         if (opponentState == PLAYER_STATE_MODE_MULLIGAN_WAITING)
         {
@@ -232,18 +232,18 @@ public class Player
             this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
         }
 
-        foreach (Card keptCard in this.mulliganCards)
+        List<string> cardIds = new List<string>();
+        foreach (Card keptCard in this.keptMulliganCards)
         {
-            if (cardIds.Contains(keptCard.Id))
+            //card just needs to be repositioned to hand
+            cardIds.Add(keptCard.Id);
+        }
+        foreach (Card removedCard in this.removedMulliganCards)
+        {
+            if (!InspectorControlPanel.Instance.DevelopmentMode)
             {
-                AddDrawnCard(keptCard, animate: false);
-            }
-            else
-            {
-                if (!InspectorControlPanel.Instance.DevelopmentMode)
-                {
-                    ReturnCardToDeck(keptCard);
-                }
+                ReturnCardToDeck(removedCard);
+                this.DrawCard();
             }
         }
 
@@ -257,11 +257,15 @@ public class Player
 
     public void EndMulligan()
     {
-        this.mulliganCards = new List<Card>();
-        BattleManager.Instance.HideMulliganOverlay();
+        this.keptMulliganCards = new List<Card>();
+        this.removedMulliganCards = new List<Card>();
+        BattleManager.Instance.HideMulliganOverlay(this);
+        this.hand.RepositionCards();
+
+        //to-do: need to set player state to normal when both are done w/ mulligan. @Warren
     }
 
-    public void ShowMulligan(List<int> deckCardIndices, Player opponent)
+    public void ShowMulligan(List<int> replacedCardIndices, Player opponent)
     {
         if (opponent.Mode != PLAYER_STATE_MODE_MULLIGAN)
         {
@@ -290,15 +294,15 @@ public class Player
         else
         {
             // TODO: animate throw away cards.
-            for (int i = 0; i < opponent.MulliganCards.Count; i += 1)
+            for (int i = 0; i < opponent.KeptMulliganCards.Count + opponent.RemovedMulliganCards.Count; i += 1)
             {
-                if (deckCardIndices.Contains(i))
+                if (replacedCardIndices.Contains(i))
                 {
-                    opponent.DrawCard(animate: false);
+                    opponent.DrawCard(animate: true);
                 }
                 else
                 {
-                    opponent.AddDrawnCard(opponent.MulliganCards[i], animate: false);
+                    //just reposition
                 }
             }
             opponent.EndMulligan();
@@ -353,6 +357,8 @@ public class Player
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
             this.deck.AddCard(card);
+            this.Hand.RemoveByCardId(card.Id);
+            BattleManager.Instance.UseCard(this, card.wrapper); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
         }
         else
         {
