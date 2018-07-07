@@ -203,11 +203,19 @@ public class Player
         return cards;
     }
 
-    public void BeginMulligan(List<Card> mulliganCards)
+    public void BeginMulligan(List<Card> mulliganCards, bool show)
     {
         this.mode = PLAYER_STATE_MODE_MULLIGAN;
         this.mulliganCards = mulliganCards;
-        Debug.Log(this.mulliganCards.Count);
+
+        if (!show)
+            return;
+
+        for (int i = 0; i < mulliganCards.Count; i++)
+        {
+            CardObject cardObject = AddDrawnCard(mulliganCards[i], reposition: false);
+            BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i);
+        }
     }
 
     /*
@@ -224,17 +232,17 @@ public class Player
             this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
         }
 
-        foreach (Card mulliganCard in this.mulliganCards)
+        foreach (Card keptCard in this.mulliganCards)
         {
-            if (cardIds.Contains(mulliganCard.Id))
+            if (cardIds.Contains(keptCard.Id))
             {
-                AddDrawnCard(mulliganCard, animate: false);
+                AddDrawnCard(keptCard, animate: false);
             }
             else
             {
                 if (!InspectorControlPanel.Instance.DevelopmentMode)
                 {
-                    ReturnCardToDeck(mulliganCard);
+                    ReturnCardToDeck(keptCard);
                 }
             }
         }
@@ -250,6 +258,7 @@ public class Player
     public void EndMulligan()
     {
         this.mulliganCards = new List<Card>();
+        BattleManager.Instance.HideMulliganOverlay();
     }
 
     public void ShowMulligan(List<int> deckCardIndices, Player opponent)
@@ -299,7 +308,7 @@ public class Player
     /*
      * @param bool isInit - do not decrement deck size if true
      */
-    public void AddDrawnCard(Card card, bool isInit = false, bool animate = true)
+    public CardObject AddDrawnCard(Card card, bool isInit = false, bool animate = true, bool reposition = true)
     {
         GameObject created = new GameObject(card.Name);
 
@@ -317,14 +326,18 @@ public class Player
 
         this.Hand.AddCardObject(cardObject);
 
-        if (animate)
+        if (reposition)
         {
-            BattleManager.Instance.AnimateDrawCard(this, cardObject);
+            if (animate)
+            {
+                BattleManager.Instance.AnimateDrawCard(this, cardObject);
+            }
+            else
+            {
+                hand.RepositionCards();
+            }
         }
-        else
-        {
-            hand.RepositionCards();
-        }
+        return cardObject;
     }
 
     public void AddDrawnCards(List<Card> cards, bool isInit = false, bool animate = true)

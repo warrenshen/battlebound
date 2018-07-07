@@ -113,8 +113,8 @@ public class BattleManager : MonoBehaviour
             //this.you.DrawCards(3, animate: false);
             //this.opponent.DrawCards(3, animate: false);
 
-            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
+            this.you.BeginMulligan(this.you.PopCardsFromDeck(3), true);
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3), false);
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -149,7 +149,7 @@ public class BattleManager : MonoBehaviour
         validTargets = GetValidTargets(mouseDownTargetable);
         //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
         attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
-        attackCommand.SetWidth(1.33f);
+        attackCommand.SetWidth(1.66f);
         //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
         Cursor.SetCursor(ActionManager.Instance.cursors[4], Vector2.zero, CursorMode.Auto);
     }
@@ -195,14 +195,6 @@ public class BattleManager : MonoBehaviour
             else if (CheckPlayCard(ray, hit))
             {
                 //do something?
-            }
-            else if (cast && hit.collider.name == "End Turn")
-            {
-                OnEndTurnClick();
-            }
-            else if (cast && hit.collider.name == "Surrender")
-            {
-                Surrender();
             }
             //reset state
             ActionManager.Instance.SetActive(true);
@@ -467,7 +459,7 @@ public class BattleManager : MonoBehaviour
         string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
         GameObject fixedPoint = GameObject.Find(fixedPointName);
 
-        float tweenTime = 0.5f;
+        float tweenTime = 0.25F;
         LeanTween.rotate(cardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, fixedPoint.transform.position, tweenTime).setEaseInQuad();
         yield return new WaitForSeconds(tweenTime);
@@ -475,6 +467,35 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(tweenTime);
         player.Hand.RepositionCards();
+    }
+
+    public void AnimateDrawCardForMulligan(Player player, CardObject cardObject, int position)
+    {
+        GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
+        cardObject.transform.position = deckObject.transform.position;
+        cardObject.transform.rotation = deckObject.transform.rotation;
+        //done initializing to match deck orientation
+
+        string targetPointName = String.Format("Mulligan Card Holder {0}", position);
+        GameObject targetPoint = GameObject.Find(targetPointName);
+
+        float tweenTime = 0.3F;
+        LeanTween.rotate(cardObject.gameObject, Camera.main.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
+        LeanTween.move(cardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, tweenTime).setEaseInQuad();
+    }
+
+    public void HideMulliganOverlay()
+    {
+        StartCoroutine("AnimateHideMulliganOverlay");
+    }
+
+    private IEnumerator AnimateHideMulliganOverlay()
+    {
+        float tweenTime = 0.3F;
+        GameObject overlay = GameObject.Find("Mulligan Overlay");
+        LeanTween.scale(overlay, Vector3.zero, tweenTime);
+        yield return new WaitForSeconds(tweenTime);
+        overlay.SetActive(false);
     }
 
     /*

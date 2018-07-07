@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BasicButton : ObjectUI
 {
+    public GameObject target;
+    public string functionName;
 
     // Use this for initialization
     void Start()
@@ -22,5 +24,12 @@ public class BasicButton : ObjectUI
     {
         base.ExitHover();
         BattleManager.Instance.SetPassiveCursor();
+    }
+
+    public override void MouseUp()
+    {
+        base.MouseUp();
+        if (target != null)
+            target.SendMessage(functionName);
     }
 }

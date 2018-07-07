@@ -100,7 +100,6 @@ public class ActionManager : MonoBehaviour
         {
             ResetLastHitWatchable();
             hitWatchable.EnterHover();
-            Debug.Log("enter hover");
         }
         lastHitWatchable = hitWatchable;
     }
