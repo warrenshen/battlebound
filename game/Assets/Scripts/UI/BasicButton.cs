@@ -7,6 +7,7 @@ public class BasicButton : ObjectUI
     public GameObject target;
     public string functionName;
 
+
     // Use this for initialization
     void Start()
     {

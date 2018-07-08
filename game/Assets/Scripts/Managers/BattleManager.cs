@@ -112,6 +112,7 @@ public class BattleManager : MonoBehaviour
         {
             this.you.BeginMulligan(this.you.PopCardsFromDeck(3), true);
             this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3), true);
+            SetBoardCenterText("Choose cards to mulligan..");
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -261,11 +262,16 @@ public class BattleManager : MonoBehaviour
         activePlayer = players[turnIndex % players.Count];
 
         //do some turn transition render
-        GameObject.Find("Turn Indicator").GetComponent<TextMeshPro>().text = string.Format("{0} Turn", activePlayer.Name);
+        SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
         SetPassiveCursor();
         //to-do: action manager set active = false, but that makes singleplayer broken
 
         activePlayer.NewTurn();
+    }
+
+    public void SetBoardCenterText(string message)
+    {
+        GameObject.Find("Board Message").GetComponent<TextMeshPro>().text = message;
     }
 
     private void Surrender()

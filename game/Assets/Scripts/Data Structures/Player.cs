@@ -99,6 +99,7 @@ public class Player
         this.mana -= cardObject.Card.Cost;
         RenderMana();
         this.hand.RemoveByCardId(cardObject.Card.Id);
+        this.hand.RepositionCards();
     }
 
     private void RenderMana()
@@ -236,6 +237,7 @@ public class Player
         else
         {
             this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+            BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
         }
 
         List<string> cardIds = new List<string>();
@@ -468,7 +470,7 @@ public class Player
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         cards.Add(new SpellCard("C6", "Unstable Power", "Give a creature +30/+0, it dies at start of next turn", "Front/character_23", "Back/background_72", 4, 30));
-        cards.Add(new CreatureCard("C7", "Cursed Imp", "Lifesteal", "Front/character_19", "Back/background_67", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
+        cards.Add(new CreatureCard("C7", "Cursed Imp", "Lifesteal", "Front/character_38", "Back/background_67", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
         cards.Add(new CreatureCard("C8", "Waterborne Razorback", "Charge; At the end of each turn, recover 20 health", "Front/0377", "Back/background_23", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_CHARGE, Card.CARD_ABILITY_END_TURN_HEAL_TWENTY }, "WaterborneRazorback"));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
