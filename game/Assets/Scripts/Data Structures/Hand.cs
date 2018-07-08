@@ -57,7 +57,7 @@ public class Hand
     {
         int removeIndex = this.cardObjects.FindIndex(cardObject => cardObject.Card.Id == cardId);
         this.cardObjects.RemoveAt(removeIndex);
-        this.RepositionCards();
+        //this.RepositionCards();
     }
 
     private void RedrawOutline(CardObject cardObject)
@@ -102,7 +102,7 @@ public class Hand
             //cardObject.Renderer.sortingOrder = 10 + k;
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;
-            float tweenTime = 0.2f;
+            float tweenTime = 0.5f;
             LeanTween.moveLocal(cardObject.gameObject, adjustedPos, tweenTime);
             LeanTween.rotateLocal(cardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), tweenTime);
         }

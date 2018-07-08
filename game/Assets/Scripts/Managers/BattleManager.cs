@@ -459,7 +459,7 @@ public class BattleManager : MonoBehaviour
         string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
         GameObject fixedPoint = GameObject.Find(fixedPointName);
 
-        float tweenTime = 0.3F;
+        float tweenTime = 0.5F;
         LeanTween.rotate(cardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, fixedPoint.transform.position, tweenTime).setEaseInQuad();
         yield return new WaitForSeconds(tweenTime);
@@ -476,7 +476,7 @@ public class BattleManager : MonoBehaviour
         cardObject.transform.position = targetPoint.transform.position;
         cardObject.transform.localScale = Vector3.zero;
 
-        float tweenTime = 0.3F;
+        float tweenTime = 0.5F;
         LeanTween.scale(cardObject.gameObject, cardObject.reset.scale, tweenTime);
         LeanTween.rotate(cardObject.gameObject, Camera.main.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, tweenTime).setEaseInQuad();
@@ -490,7 +490,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator AnimateHideMulliganOverlay(Player player)
     {
-        float tweenTime = 0.3F;
+        float tweenTime = 0.5F;
         GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
         LeanTween.scale(overlay, Vector3.zero, tweenTime);
         yield return new WaitForSeconds(tweenTime);

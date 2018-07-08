@@ -205,6 +205,12 @@ public class Player
         return cards;
     }
 
+    private void ReplaceCardByMulligan(Card card)
+    {
+        this.ReturnCardToDeck(card);
+        this.DrawCard();
+    }
+
     public void BeginMulligan(List<Card> mulliganCards, bool show)
     {
         this.mode = PLAYER_STATE_MODE_MULLIGAN;
@@ -214,10 +220,10 @@ public class Player
         if (!show)
             return;
 
-        for (int i = 0; i < mulliganCards.Count; i++)
+        for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
-            CardObject cardObject = AddDrawnCard(mulliganCards[i], reposition: false);
-            BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i); //covers for the omitted reposition
+            CardObject cardObject = AddDrawnCard(this.keptMulliganCards[i], reposition: false);  //doesn't use standard RepositionCards()
+            BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i); //special animation to replace the omitted reposition
         }
     }
 
@@ -242,8 +248,7 @@ public class Player
         {
             if (!InspectorControlPanel.Instance.DevelopmentMode)
             {
-                ReturnCardToDeck(removedCard);
-                this.DrawCard();
+                this.ReplaceCardByMulligan(removedCard);
             }
         }
 
@@ -260,9 +265,8 @@ public class Player
         this.keptMulliganCards = new List<Card>();
         this.removedMulliganCards = new List<Card>();
         BattleManager.Instance.HideMulliganOverlay(this);
-        this.hand.RepositionCards();
 
-        //to-do: need to set player state to normal when both are done w/ mulligan. @Warren
+        //to-do: need to set player mode to normal when both are done w/ mulligan. @Warren
     }
 
     public void ShowMulligan(List<int> replacedCardIndices, Player opponent)
@@ -289,20 +293,16 @@ public class Player
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
-            // Throw away cards.
+            // Throw away cards. @Warren?
         }
         else
         {
             // TODO: animate throw away cards.
-            for (int i = 0; i < opponent.KeptMulliganCards.Count + opponent.RemovedMulliganCards.Count; i += 1)
+            for (int i = 0; i < opponent.keptMulliganCards.Count; i += 1)
             {
                 if (replacedCardIndices.Contains(i))
                 {
-                    opponent.DrawCard(animate: true);
-                }
-                else
-                {
-                    //just reposition
+                    opponent.ReplaceCardByMulligan(opponent.keptMulliganCards[i]);
                 }
             }
             opponent.EndMulligan();
