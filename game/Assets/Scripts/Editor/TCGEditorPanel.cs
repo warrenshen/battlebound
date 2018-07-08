@@ -13,6 +13,9 @@ public class TCGEditorPanel : EditorWindow
     private int lineHeight = 20;
     private int lineMargin = 5;
 
+    private int imageHeight = 350;
+    private int imageWidth = 240;
+
     private enum CardType { Creature, Weapon, Structure, Spell }
     private CardType selectedCardType;
 
@@ -43,15 +46,35 @@ public class TCGEditorPanel : EditorWindow
     }
     private CardData data;
 
-    private static Material spriteMat;
+    private Material frameMat;
+    private Material frontMat;
+    private Material backMat;
+    private Texture cardFrame;
+
+    private float frontHorizontalScale = 1.0F;
+    private float frontVerticalScale = 1.0F;
+    private float frontHorizontalOffset = 0.0F;
+    private float frontVerticalOffset = 0.0F;
+
+    private float backHorizontalScale = 1.0F;
+    private float backVerticalScale = 1.0F;
+    private float backHorizontalOffset = 0.0F;
+    private float backVerticalOffset = 0.0F;
+
 
     [MenuItem("Custom/TCG Editor")]
     static void Init()
     {
         // Get existing open window or if none, make a new one:
         TCGEditorPanel window = EditorWindow.GetWindow(typeof(TCGEditorPanel)) as TCGEditorPanel;
-        window.minSize = new Vector2(300, 700);
+        window.minSize = new Vector2(400, 700);
         window.backgroundTexture = EditorGUIUtility.whiteTexture;
+        window.cardFrame = Resources.Load("FrameForEditor") as Texture;
+
+        window.frameMat = new Material(Shader.Find("Sprites/Default"));
+        window.frontMat = new Material(Shader.Find("Sprites/Default"));
+        window.backMat = new Material(Shader.Find("Sprites/Default"));
+
         window.Show();
     }
 
@@ -131,27 +154,50 @@ public class TCGEditorPanel : EditorWindow
     private void CardArtworkSection()
     {
         this.mainTexture = EditorGUI.ObjectField(new Rect(5, 20, boxSize, boxSize), this.mainTexture, typeof(Texture), false) as Texture;
-        this.backgroundTexture = EditorGUI.ObjectField(new Rect(5 + boxSize, 20, boxSize, boxSize), this.backgroundTexture, typeof(Texture), false) as Texture;
-        spriteMat = new Material(Shader.Find("Sprites/Default"));
+        this.backgroundTexture = EditorGUI.ObjectField(new Rect(5, 20 + boxSize, boxSize, boxSize), this.backgroundTexture, typeof(Texture), false) as Texture;
 
+        // front scale/tiling
+        this.frontHorizontalScale = EditorGUI.Slider(new Rect(boxSize + 10, 45, 160, 18), this.frontHorizontalScale, 0.33F, 3);
+        this.frontVerticalScale = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 45, 160, 18), this.frontVerticalScale, 0.33F, 3);
+        // front offset
+        this.frontHorizontalOffset = EditorGUI.Slider(new Rect(boxSize + 10, 67, 160, 18), this.frontHorizontalOffset, -3, 3);
+        this.frontVerticalOffset = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 67, 160, 18), this.frontVerticalOffset, -3, 3);
+
+
+        EditorGUI.PrefixLabel(new Rect(boxSize + 10, 25 + boxSize, 400, 20),
+                              new GUIContent("Back: scale, offset"));
+        // back scale/tiling
+        this.backHorizontalScale = EditorGUI.Slider(new Rect(boxSize + 10, 45 + boxSize, 160, 18), this.backHorizontalScale, 0.33F, 3);
+        this.backVerticalScale = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 45 + boxSize, 160, 18), this.backVerticalScale, 0.33F, 3);
+        // back offset
+        this.backHorizontalOffset = EditorGUI.Slider(new Rect(boxSize + 10, 67 + boxSize, 160, 18), this.backHorizontalOffset, -3, 3);
+        this.backVerticalOffset = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 67 + boxSize, 160, 18), this.backVerticalOffset, -3, 3);
+
+        //
         if (this.mainTexture != null || this.backgroundTexture != null)
         {
             //background needs to be rendered first to be on bottom
             if (this.backgroundTexture != null)
             {
-                EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 340, 240, 300), this.backgroundTexture, spriteMat);
+                float verticalSize = this.imageHeight * 1 / backVerticalScale;
+                EditorGUI.DrawPreviewTexture(new Rect(25 - this.backHorizontalOffset / this.backHorizontalScale * imageWidth, position.height - 370 + this.backVerticalOffset * imageHeight + (imageHeight - verticalSize) * backVerticalScale,
+                                                      this.imageWidth * 1 / this.backHorizontalScale, verticalSize),
+                                                      this.backgroundTexture, backMat);
             }
             else
             {
-                EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 340, 240, 300), EditorGUIUtility.whiteTexture, spriteMat);
+                EditorGUI.DrawPreviewTexture(new Rect(25, position.height - 370, 240, 350), EditorGUIUtility.whiteTexture, backMat);
             }
             if (this.mainTexture != null)
             {
-                EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 340, 240, 300), this.mainTexture, spriteMat);
+                float verticalSize = this.imageHeight * 1 / frontVerticalScale;
+                EditorGUI.DrawPreviewTexture(new Rect(25 - this.frontHorizontalOffset / this.frontHorizontalScale * imageWidth, position.height - 370 + this.frontVerticalOffset * imageHeight + (imageHeight - verticalSize) * frontVerticalScale,
+                                                      this.imageWidth * 1 / this.frontHorizontalScale, verticalSize),
+                                                      this.mainTexture, frontMat);
             }
 
             //clear button
-            if (GUI.Button(new Rect(boxSize * 2 + 10, lineHeight, 120, 20), "Clear textures"))
+            if (GUI.Button(new Rect(boxSize + 10, lineHeight, 120, 20), "Clear textures"))
             {
                 this.mainTexture = null;
                 this.backgroundTexture = EditorGUIUtility.whiteTexture;
@@ -159,17 +205,18 @@ public class TCGEditorPanel : EditorWindow
         }
         else
         {
-            EditorGUI.PrefixLabel(new Rect(3, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
+            EditorGUI.PrefixLabel(new Rect(23, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
         }
+        EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 400, 280, 390), this.cardFrame, frameMat);
     }
 
     private void CardDefaultSection()
     {
         //start card attributes
-        int enumSelectorYPos = 120;
+        int enumSelectorYPos = 200;
         this.selectedCardType = (CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), selectedCardType);
 
-        int standardDetailsYPos = 140;
+        int standardDetailsYPos = 220;
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos, 40, lineHeight), "Name");
         this.data.name = EditorGUI.TextField(new Rect(50, standardDetailsYPos, 120, lineHeight), this.data.name);
 
@@ -183,8 +230,8 @@ public class TCGEditorPanel : EditorWindow
     {
         // === begin card specific fields ===
         int cardSpecificXPos = 185;
-        int cardSpecificYPos = 140;
-        int belowRarity = 220;
+        int cardSpecificYPos = 220;
+        int belowRarity = 300;
         switch (selectedCardType)
         {
             case CardType.Creature:
