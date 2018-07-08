@@ -459,7 +459,7 @@ public class BattleManager : MonoBehaviour
         string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
         GameObject fixedPoint = GameObject.Find(fixedPointName);
 
-        float tweenTime = 0.25F;
+        float tweenTime = 0.3F;
         LeanTween.rotate(cardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, fixedPoint.transform.position, tweenTime).setEaseInQuad();
         yield return new WaitForSeconds(tweenTime);
@@ -471,15 +471,13 @@ public class BattleManager : MonoBehaviour
 
     public void AnimateDrawCardForMulligan(Player player, CardObject cardObject, int position)
     {
-        GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
-        cardObject.transform.position = deckObject.transform.position;
-        cardObject.transform.rotation = deckObject.transform.rotation;
-        //done initializing to match deck orientation
-
         string targetPointName = String.Format("{0} Mulligan Holder {1}", player.Name, position);
         GameObject targetPoint = GameObject.Find(targetPointName);
+        cardObject.transform.position = targetPoint.transform.position;
+        cardObject.transform.localScale = Vector3.zero;
 
         float tweenTime = 0.3F;
+        LeanTween.scale(cardObject.gameObject, cardObject.reset.scale, tweenTime);
         LeanTween.rotate(cardObject.gameObject, Camera.main.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
         LeanTween.move(cardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, tweenTime).setEaseInQuad();
         cardObject.visual.Redraw();

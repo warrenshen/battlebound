@@ -269,7 +269,7 @@ public class CollectionManager : MonoBehaviour
         created.transform.position = source.position;
 
         SpriteRenderer sprenderer = created.AddComponent<SpriteRenderer>() as SpriteRenderer;
-        Texture2D image = Resources.Load(card.Image) as Texture2D;
+        Texture2D image = Resources.Load(card.ImageFront) as Texture2D;     //to-do, fix all this shit
         sprenderer.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
         sprenderer.sortingOrder = -100;
         sprenderer.material.shader = Shader.Find("Custom/Grayscale");

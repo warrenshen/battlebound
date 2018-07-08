@@ -39,25 +39,24 @@ public class CardObject : MouseWatchable
         this.gameObject.layer = LayerMask.NameToLayer("Card");
         card.wrapper = this;
         //make render changes according to card class here
-        string i;
-        if (card.Id == "HIDDEN")
-        {
-            Debug.Log("Card is hidden - setting to Direhorn Hatchling.");
-            i = "Direhorn_Hatchling";
-        }
-        else
-        {
-            i = card.Image;
-        }
 
         this.visual = VisualizeCard();
-        RandomCardArtwork();
+        LoadCardArtwork();
+        SetThisResetValues();
         //set sprite etc here
-        //image = Resources.Load(i) as Texture2D;
-        //spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-        //spr.sortingOrder = 10;
         collider = gameObject.AddComponent<BoxCollider>() as Collider;
         collider.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.5f, 0.2f);
+    }
+
+
+    private void LoadCardArtwork()
+    {
+
+        Texture2D fore = Resources.Load(this.card.ImageFront) as Texture2D;
+        Texture2D back = Resources.Load(this.card.ImageBack) as Texture2D;
+        this.visual.SetCardArtwork(fore, back);
+        this.visual.Stencil = BattleManager.Instance.stencilCount;
+        BattleManager.Instance.stencilCount += 1 % 255;
     }
 
     private void RandomCardArtwork()

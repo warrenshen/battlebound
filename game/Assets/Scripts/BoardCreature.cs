@@ -23,9 +23,7 @@ public class BoardCreature : Targetable
     protected int maxHealth;
     public int MaxHealth => maxHealth;
 
-    [SerializeField]
-    private string image;
-    public string Image => image;
+    //removed "image" field because this reuses cardObject initialized visuals
 
     //int canAttack / CanAttack in Targetable class
     //int maxAttacks in Targetable class
@@ -68,7 +66,6 @@ public class BoardCreature : Targetable
         this.attack = this.creatureCard.Attack;
         this.health = this.creatureCard.Health;
         this.maxHealth = this.creatureCard.Health;
-        this.image = this.creatureCard.Image;
         this.abilities = this.creatureCard.Abilities;
         this.summonPrefabPath = this.creatureCard.SummonPrefabPath;
 
@@ -360,7 +357,6 @@ public class BoardCreature : Targetable
         {
             //to-do, delay creature death
             Board.Instance.RemoveCreature(this);
-            FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
             StartCoroutine("Dissolve", 2);
             return false;
         }
@@ -368,7 +364,9 @@ public class BoardCreature : Targetable
 
     private IEnumerator Dissolve(float duration)
     {
+        FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
         SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
+
         float elapsedTime = 0;
         LeanTween.scale(this.summonAnimation.gameObject, Vector3.zero, duration / 3).setEaseInOutCubic();
         while (elapsedTime < duration)

@@ -44,8 +44,12 @@ public class Card
     public string Description => description;
 
     [SerializeField]
-    protected string image;
-    public string Image => image;
+    protected string imageFront;
+    public string ImageFront => imageFront;
+
+    [SerializeField]
+    protected string imageBack;
+    public string ImageBack => imageBack;
 
     [SerializeField]
     protected int level;
@@ -90,7 +94,8 @@ public class CreatureCard : Card
         string id,
         string name,
         string description,
-        string image,
+        string imageFront,
+        string imageBack,
         int level,
         int cost,
         int attack,
@@ -102,7 +107,8 @@ public class CreatureCard : Card
         this.id = id;
         this.name = name;
         this.description = description;
-        this.image = image;
+        this.imageFront = imageFront;
+        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
         this.attack = attack;
@@ -127,7 +133,8 @@ public class WeaponCard : Card
         string id,
         string name,
         string description,
-        string image,
+        string imageFront,
+        string imageBack,
         int level,
         int cost,
         int attack,
@@ -137,7 +144,8 @@ public class WeaponCard : Card
         this.id = id;
         this.name = name;
         this.description = description;
-        this.image = image;
+        this.imageFront = imageFront;
+        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
 
@@ -153,7 +161,8 @@ public class StructureCard : Card
         string id,
         string name,
         string description,
-        string image,
+        string imageFront,
+        string imageBack,
         int level,
         int cost,
         int attack,
@@ -163,7 +172,8 @@ public class StructureCard : Card
         this.id = id;
         this.name = name;
         this.description = description;
-        this.image = image;
+        this.imageFront = imageFront;
+        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
     }
@@ -195,7 +205,8 @@ public class SpellCard : Card
         string id,
         string name,
         string description,
-        string image,
+        string imageFront,
+        string imageBack,
         int level,
         int cost
     )
@@ -208,7 +219,8 @@ public class SpellCard : Card
         this.id = id;
         this.name = name;
         this.description = description;
-        this.image = image;
+        this.imageFront = imageFront;
+        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
 

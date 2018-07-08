@@ -466,7 +466,8 @@ public class PlayerState
                     this.id,
                     this.name,
                     this.description,
-                    this.image,
+                    this.image, //to-do @Warren, change this to support front and back
+                    this.image, //this too
                     this.level,
                     this.cost,
                     this.attackStart,
@@ -480,7 +481,8 @@ public class PlayerState
                     this.id,
                     this.name,
                     this.description,
-                    this.image,
+                    this.image, //to-do @Warren, change this to support front and back
+                    this.image, //this too
                     this.level,
                     this.cost
                 );
