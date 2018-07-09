@@ -118,14 +118,9 @@ public class Player
         return this.avatar.Heal(amount);
     }
 
-    private void SetHasTurn(bool newTurn)
-    {
-        this.hasTurn = newTurn;
-    }
-
     public void EndTurn()
     {
-        SetHasTurn(false);
+        this.hasTurn = false;
         this.hand.RecedeCards();
         Board.Instance.OnPlayerEndTurn(this.id);
     }
@@ -146,7 +141,13 @@ public class Player
             this.DrawCard();
         }
 
-        this.RenderTurnStart();
+        RenderTurnStart();
+    }
+
+    public void MulliganNewTurn()
+    {
+        this.hasTurn = true;
+        RenderTurnStart();
     }
 
     public void RenderTurnStart()
@@ -230,14 +231,10 @@ public class Player
 
     public void PlayMulligan(int opponentState)
     {
-        if (opponentState == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
-            this.mode = PLAYER_STATE_MODE_NORMAL;
-        }
-        else
-        {
-            this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
-            BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
+            Debug.LogError("Player not in mulligan mode but received play mulligan.");
+            return;
         }
 
         List<string> cardIds = new List<string>();
@@ -259,16 +256,18 @@ public class Player
             BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
         }
 
+        if (opponentState == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            this.mode = PLAYER_STATE_MODE_NORMAL;
+            BattleManager.Instance.SetBoardCenterText("");
+        }
+        else
+        {
+            this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+            BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
+        }
+
         EndMulligan();
-    }
-
-    public void EndMulligan()
-    {
-        this.keptMulliganCards = new List<Card>();
-        this.removedMulliganCards = new List<Card>();
-        BattleManager.Instance.HideMulliganOverlay(this);
-
-        //to-do: need to set player mode to normal when both are done w/ mulligan. @Warren
     }
 
     public void ShowMulligan(List<int> replacedCardIndices, Player opponent)
@@ -278,20 +277,6 @@ public class Player
             Debug.LogError("Opponent not in mulligan mode but received show mulligan.");
             return;
         }
-        else if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
-        {
-            opponent.SetMode(PLAYER_STATE_MODE_NORMAL);
-            this.mode = PLAYER_STATE_MODE_NORMAL;
-        }
-        else if (this.mode == PLAYER_STATE_MODE_MULLIGAN)
-        {
-            opponent.SetMode(PLAYER_STATE_MODE_MULLIGAN_WAITING);
-        }
-        else
-        {
-            Debug.LogError("Player not in mulligan mode but received show mulligan.");
-            return;
-        }
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -299,7 +284,6 @@ public class Player
         }
         else
         {
-            // TODO: animate throw away cards.
             for (int i = 0; i < opponent.keptMulliganCards.Count; i += 1)
             {
                 if (replacedCardIndices.Contains(i))
@@ -307,8 +291,27 @@ public class Player
                     opponent.ReplaceCardByMulligan(opponent.keptMulliganCards[i]);
                 }
             }
-            opponent.EndMulligan();
         }
+
+        if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            opponent.SetMode(PLAYER_STATE_MODE_NORMAL);
+            this.mode = PLAYER_STATE_MODE_NORMAL;
+        }
+        else
+        {
+            opponent.SetMode(PLAYER_STATE_MODE_MULLIGAN_WAITING);
+        }
+
+        opponent.EndMulligan();
+    }
+
+    private void EndMulligan()
+    {
+        this.keptMulliganCards = new List<Card>();
+        this.removedMulliganCards = new List<Card>();
+        this.hand.RepositionCards();
+        BattleManager.Instance.HideMulliganOverlay(this);
     }
 
     /*
@@ -340,7 +343,7 @@ public class Player
             }
             else
             {
-                hand.RepositionCards();
+                this.hand.RepositionCards();
             }
         }
         return cardObject;

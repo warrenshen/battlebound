@@ -229,16 +229,22 @@ public class BattleManager : MonoBehaviour
 
     public void SetPassiveCursor()
     {
-        if (activePlayer == you)
+        if (this.activePlayer == this.you)
+        {
             ActionManager.Instance.SetCursor(0);
+        }
         else
+        {
             ActionManager.Instance.SetCursor(2);
+        }
     }
 
     private void OnEndTurnClick()
     {
         if (this.you.Mode != Player.PLAYER_STATE_MODE_NORMAL)   //dont allow end turn button click in mulligan or non-normal state
+        {
             return;
+        }
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -501,6 +507,14 @@ public class BattleManager : MonoBehaviour
         LeanTween.scale(overlay, Vector3.zero, tweenTime);
         yield return new WaitForSeconds(tweenTime);
         overlay.SetActive(false);
+
+        if (player.Mode == Player.PLAYER_STATE_MODE_NORMAL)
+        {
+            //do some turn transition render
+            SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
+            SetPassiveCursor();
+            this.activePlayer.MulliganNewTurn();
+        }
     }
 
     public void ToggleMulliganCard(CardObject cardObject)
