@@ -127,8 +127,15 @@ public class MockMovesPanel : MonoBehaviour
 
         if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
         {
-            List<int> deckCardIndices = new List<int>(this.deckCardIndicesInputField.text.Split(',').Select(int.Parse));
-            attributes.SetDeckCardIndices(deckCardIndices);
+            if (!string.IsNullOrEmpty(this.deckCardIndicesInputField.text))
+            {
+                List<int> deckCardIndices = new List<int>(this.deckCardIndicesInputField.text.Split(',').Select(int.Parse));
+                attributes.SetDeckCardIndices(deckCardIndices);
+            }
+            else
+            {
+                attributes.SetDeckCardIndices(new List<int>());
+            }
         }
         else if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_END_TURN)
         {
