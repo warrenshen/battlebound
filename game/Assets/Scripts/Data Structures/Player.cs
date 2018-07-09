@@ -272,7 +272,7 @@ public class Player
 
     public void ShowMulligan(List<int> replacedCardIndices, Player opponent)
     {
-        if (opponent.Mode != PLAYER_STATE_MODE_MULLIGAN)
+        if (opponent.Mode != PLAYER_STATE_MODE_MULLIGAN && InspectorControlPanel.Instance.DevelopmentMode)
         {
             Debug.LogError("Opponent not in mulligan mode but received show mulligan.");
             return;

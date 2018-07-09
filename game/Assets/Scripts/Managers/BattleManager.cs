@@ -515,6 +515,11 @@ public class BattleManager : MonoBehaviour
             SetPassiveCursor();
             this.activePlayer.MulliganNewTurn();
         }
+        // If not in connected mode, automatically perform mulligan for opponent.
+        else if (!InspectorControlPanel.Instance.DevelopmentMode && player.Id == this.you.Id)
+        {
+            this.you.ShowMulligan(new List<int>(), this.opponent);
+        }
     }
 
     public void ToggleMulliganCard(CardObject cardObject)
