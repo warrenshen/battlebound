@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using TMPro;
 
 #if UNITY_EDITOR
@@ -879,5 +880,17 @@ namespace HyperCard
         {
             SetBlackAndWhite(value);
         }
+
+        public void SetFrontTiling(Vector2 scale, Vector2 offset)
+        {
+            this.CardFaceArtworkScale = scale;
+            this.CardFaceArtworkOffset = offset;
+        }
+        public void SetBackTiling(Vector2 scale, Vector2 offset)
+        {
+            this.CardFaceBackgroundArtworkScale = scale;
+            this.CardFaceBackgroundArtworkOffset = offset;
+        }
+
     }
 }

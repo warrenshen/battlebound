@@ -6,6 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class Card
 {
+    public enum RarityType { Common, Rare, Epic, Legendary }
+
     public const string CARD_ABILITY_CHARGE = "CARD_ABILITY_CHARGE";
     public const string CARD_ABILITY_TAUNT = "CARD_ABILITY_TAUNT";
     public const string CARD_ABILITY_SHIELD = "CARD_ABILITY_SHIELD";
@@ -54,26 +56,7 @@ public class Card
     protected string primaryEffectName;
 
     public CardObject wrapper;
-
-
-    //should be handled in cardobject, thru load template function, not passed around as member vars..
-    [SerializeField]
-    protected string description;
-    public string Description => description;
-
-    [SerializeField]
-    protected string imageFront;
-    public string ImageFront => imageFront;
-
-    [SerializeField]
-    protected string imageBack;
-    public string ImageBack => imageBack;
-
-
-    public enum RarityType { Common, Rare, Epic, Legendary }
-    [SerializeField]
-    protected RarityType rarity;
-    public RarityType Rarity => rarity;
+    //Rarity, Description, FrontImage, BackImage all moved into CardObject, obtain via codex loading cached to BattleManager
 }
 
 [System.Serializable]
@@ -90,34 +73,25 @@ public class CreatureCard : Card
     private List<string> abilities;
     public List<string> Abilities => abilities;
 
-    protected string summonPrefabPath;
-    public string SummonPrefabPath => summonPrefabPath;
+    //protected string summonPrefabPath;  obtain from codex loading
 
     public CreatureCard(
         string id,
         string name,
-        string description,
-        string imageFront,
-        string imageBack,
         int level,
         int cost,
         int attack,
         int health,
-        List<string> abilities,
-        string summonPrefabPath = "PyromaniacApprentice"
+        List<string> abilities
     )
     {
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.imageFront = imageFront;
-        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
         this.attack = attack;
         this.health = health;
         this.abilities = abilities;
-        this.summonPrefabPath = string.Format("Summons/{0}", summonPrefabPath);
     }
 }
 
@@ -135,9 +109,6 @@ public class WeaponCard : Card
     public WeaponCard(
         string id,
         string name,
-        string description,
-        string imageFront,
-        string imageBack,
         int level,
         int cost,
         int attack,
@@ -146,9 +117,6 @@ public class WeaponCard : Card
     {
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.imageFront = imageFront;
-        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
 
@@ -163,9 +131,6 @@ public class StructureCard : Card
     public StructureCard(
         string id,
         string name,
-        string description,
-        string imageFront,
-        string imageBack,
         int level,
         int cost,
         int attack,
@@ -174,9 +139,6 @@ public class StructureCard : Card
     {
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.imageFront = imageFront;
-        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
     }
@@ -207,9 +169,6 @@ public class SpellCard : Card
     public SpellCard(
         string id,
         string name,
-        string description,
-        string imageFront,
-        string imageBack,
         int level,
         int cost
     )
@@ -221,9 +180,6 @@ public class SpellCard : Card
 
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.imageFront = imageFront;
-        this.imageBack = imageBack;
         this.level = level;
         this.cost = cost;
 

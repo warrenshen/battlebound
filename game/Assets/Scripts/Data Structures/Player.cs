@@ -465,16 +465,16 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Blessed Newborn", "Battlecry: Draw a card", "Front/0359", "Back/background_8", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }, "BlessedNewborn"));
-        cards.Add(new CreatureCard("C2", "Marshwater Squealer", "At the end of each turn, recover 10 health", "Front/0031", "Back/background_2", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }, "PigletAllColor"));
-        cards.Add(new CreatureCard("C3", "Temple Guardian", "Charge; Shield", "Front/0361", "Back/background_7", 1, 60, 40, 70, new List<String>() { Card.CARD_ABILITY_TAUNT, Card.CARD_ABILITY_SHIELD }, "TempleGuardian"));
-        cards.Add(new CreatureCard("C4", "Firebug Catelyn", "", "Front/0260", "Back/background_59", 1, 10, 10, 10, new List<String>() { }, "FirebugCatelyn"));
-        cards.Add(new CreatureCard("C5", "Pyre Dancer", "", "Front/character_59", "Back/background_70", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
+        cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }));
+        cards.Add(new CreatureCard("C2", "Marshwater Squealer", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }));
+        cards.Add(new CreatureCard("C3", "Temple Guardian", 1, 60, 40, 70, new List<String>() { Card.CARD_ABILITY_TAUNT, Card.CARD_ABILITY_SHIELD }));
+        cards.Add(new CreatureCard("C4", "Firebug Catelyn", 1, 10, 10, 10, new List<String>() { }));
+        cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
-        cards.Add(new SpellCard("C6", "Unstable Power", "Give a creature +30/+0, it dies at start of next turn", "Front/character_23", "Back/background_72", 4, 30));
-        cards.Add(new CreatureCard("C7", "Cursed Imp", "Lifesteal", "Front/character_38", "Back/background_67", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
-        cards.Add(new CreatureCard("C8", "Waterborne Razorback", "Charge; At the end of each turn, recover 20 health", "Front/0377", "Back/background_23", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_CHARGE, Card.CARD_ABILITY_END_TURN_HEAL_TWENTY }, "WaterborneRazorback"));
+        cards.Add(new SpellCard("C6", "Unstable Power", 4, 30));
+        cards.Add(new CreatureCard("C7", "Cursed Imp", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
+        cards.Add(new CreatureCard("C8", "Waterborne Razorback", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_CHARGE, Card.CARD_ABILITY_END_TURN_HEAL_TWENTY }));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;

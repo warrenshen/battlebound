@@ -465,9 +465,6 @@ public class PlayerState
                 return new CreatureCard(
                     this.id,
                     this.name,
-                    this.description,
-                    this.image, //to-do @Warren, change this to support front and back
-                    this.image, //this too
                     this.level,
                     this.cost,
                     this.attackStart,
@@ -480,10 +477,7 @@ public class PlayerState
                 return new SpellCard(
                     this.id,
                     this.name,
-                    this.description,
-                    this.image, //to-do @Warren, change this to support front and back
-                    this.image, //this too
-                    this.level,
+                    this.level,     //@Warren, does this change mess anything up for you?
                     this.cost
                 );
             }

@@ -22,6 +22,8 @@ public class CardObject : MouseWatchable
     public bool minified;
 
     public HyperCard.Card visual;
+    private CardTemplate templateData;
+    public CardTemplate TemplateData => templateData;
 
     public struct Reset
     {
@@ -38,6 +40,7 @@ public class CardObject : MouseWatchable
         this.card = card;
         this.gameObject.layer = LayerMask.NameToLayer("Card");
         card.wrapper = this;
+        this.templateData = BattleManager.Instance.cardTemplates[card.Name];
         //make render changes according to card class here
 
         this.visual = VisualizeCard();
@@ -52,9 +55,13 @@ public class CardObject : MouseWatchable
     private void LoadCardArtwork()
     {
 
-        Texture2D fore = Resources.Load(this.card.ImageFront) as Texture2D;
-        Texture2D back = Resources.Load(this.card.ImageBack) as Texture2D;
-        this.visual.SetCardArtwork(fore, back);
+        Texture2D front = Resources.Load(this.templateData.frontImage) as Texture2D;
+        Texture2D back = Resources.Load(this.templateData.backImage) as Texture2D;
+
+        this.visual.SetFrontTiling(this.templateData.frontScale, this.templateData.frontOffset);
+        this.visual.SetBackTiling(this.templateData.backScale, this.templateData.backOffset);
+        this.visual.SetCardArtwork(front, back);
+
         this.visual.Stencil = BattleManager.Instance.stencilCount;
         BattleManager.Instance.stencilCount += 1 % 255;
     }
@@ -80,7 +87,7 @@ public class CardObject : MouseWatchable
         HyperCard.Card visual = created.GetComponent<HyperCard.Card>();
         //set sprites and set textmeshpro labels using TmpTextObjects (?)
         visual.TmpTextObjects[0].Value = this.card.Name;
-        visual.TmpTextObjects[1].Value = this.card.Description;
+        visual.TmpTextObjects[1].Value = this.templateData.description;
         visual.TmpTextObjects[2].Value = this.card.Cost.ToString();
 
         CreatureCard creatureCard = this.card as CreatureCard;

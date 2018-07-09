@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 using TMPro;
 
 [System.Serializable]
@@ -36,22 +39,10 @@ public class BattleManager : MonoBehaviour
     public CurvedLineRenderer attackCommand;
     public int stencilCount;
 
+    public Dictionary<string, CardTemplate> cardTemplates;
     public static BattleManager Instance { get; private set; }
 
-    public PlayerState GetPlayerState()
-    {
-        return this.you.GeneratePlayerState();
-    }
 
-    public PlayerState GetOpponentState()
-    {
-        return this.opponent.GeneratePlayerState();
-    }
-
-    public Player getPlayerById(string playerId)
-    {
-        return this.playerIdToPlayer[playerId];
-    }
 
     private void Awake()
     {
@@ -81,6 +72,8 @@ public class BattleManager : MonoBehaviour
             this.opponent = new Player("Enemy", "Enemy");
         }
 
+        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
+        this.cardTemplates = CodexHelper.ParseFile(codexPath);
         attackCommand.SetWidth(0);
     }
 
@@ -126,6 +119,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        WatchMouseActions();
+    }
+
     private void ChooseRandomSetting()
     {
         Transform pool = GameObject.Find("Setting Pool").transform as Transform;
@@ -136,9 +134,19 @@ public class BattleManager : MonoBehaviour
         pool.GetChild(UnityEngine.Random.Range(0, pool.childCount)).gameObject.SetActive(true);
     }
 
-    private void Update()
+    public PlayerState GetPlayerState()
     {
-        WatchMouseActions();
+        return this.you.GeneratePlayerState();
+    }
+
+    public PlayerState GetOpponentState()
+    {
+        return this.opponent.GeneratePlayerState();
+    }
+
+    public Player getPlayerById(string playerId)
+    {
+        return this.playerIdToPlayer[playerId];
     }
 
     private void AttackStartMade(RaycastHit hit)
