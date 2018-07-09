@@ -196,9 +196,14 @@ public class CardObject : MouseWatchable
         }
 
         if (!this.owner.HasTurn)
+        {
             return;
+        }
         if (!ActionManager.Instance.HasDragTarget())
+        {
             return;
+        }
+
         //// card object position reset to original, handled in actionmanager already
         if (Time.time - lastClicked < 0.5f)
             DoubleClickUp();

@@ -40,9 +40,27 @@ public class BattleManager : MonoBehaviour
     public int stencilCount;
 
     public Dictionary<string, CardTemplate> cardTemplates;
+    private int mode;
+
+    private const int BATTLE_STATE_NORMAL_MODE = 0;
+    private const int BATTLE_STATE_MULLIGAN_MODE = 1;
+
     public static BattleManager Instance { get; private set; }
 
+    public PlayerState GetPlayerState()
+    {
+        return this.you.GeneratePlayerState();
+    }
 
+    public PlayerState GetOpponentState()
+    {
+        return this.opponent.GeneratePlayerState();
+    }
+
+    public Player GetPlayerById(string playerId)
+    {
+        return this.playerIdToPlayer[playerId];
+    }
 
     private void Awake()
     {
@@ -63,6 +81,13 @@ public class BattleManager : MonoBehaviour
 
                 this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
                 this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
+
+                this.playerIdToPlayer = new Dictionary<string, Player>();
+                this.playerIdToPlayer[this.you.Id] = this.you;
+                this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
+                this.you.Initialize(BattleSingleton.Instance.PlayerState);
+                this.opponent.Initialize(BattleSingleton.Instance.OpponentState);
                 this.initialized = true;
             }
         }
@@ -70,11 +95,23 @@ public class BattleManager : MonoBehaviour
         {
             this.you = new Player("Player", "Player");
             this.opponent = new Player("Enemy", "Enemy");
+
+            this.playerIdToPlayer = new Dictionary<string, Player>();
+            this.playerIdToPlayer[this.you.Id] = this.you;
+            this.playerIdToPlayer[this.opponent.Id] = this.opponent;
         }
 
         string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
         this.cardTemplates = CodexHelper.ParseFile(codexPath);
         attackCommand.SetWidth(0);
+    }
+
+    private void Update()
+    {
+        if (this.mode != BATTLE_STATE_MULLIGAN_MODE)
+        {
+            WatchMouseActions();
+        }
     }
 
     private void Start()
@@ -85,10 +122,6 @@ public class BattleManager : MonoBehaviour
             this.players.Add(this.you);
             this.players.Add(this.opponent);
             this.stencilCount = 1;
-
-            this.playerIdToPlayer = new Dictionary<string, Player>();
-            this.playerIdToPlayer[this.you.Id] = this.you;
-            this.playerIdToPlayer[this.opponent.Id] = this.opponent;
 
             // Use this for initialization
             battleLayer = 9;
@@ -105,6 +138,7 @@ public class BattleManager : MonoBehaviour
         {
             this.you.BeginMulligan(this.you.PopCardsFromDeck(3), true);
             this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3), true);
+            this.mode = BATTLE_STATE_MULLIGAN_MODE;
             SetBoardCenterText("Choose cards to mulligan..");
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
@@ -116,12 +150,12 @@ public class BattleManager : MonoBehaviour
             turnIndex = this.players.FindIndex(player => player.HasTurn);
             activePlayer = players[turnIndex % players.Count];
             activePlayer.RenderTurnStart();
-        }
-    }
 
-    private void Update()
-    {
-        WatchMouseActions();
+            this.you.BeginMulligan(BattleSingleton.Instance.GetMulliganCards(this.you.Id), true);
+            this.opponent.BeginMulligan(BattleSingleton.Instance.GetMulliganCards(this.opponent.Id), true);
+            this.mode = BATTLE_STATE_MULLIGAN_MODE;
+            SetBoardCenterText("Choose cards to mulligan..");
+        }
     }
 
     private void ChooseRandomSetting()
@@ -132,21 +166,6 @@ public class BattleManager : MonoBehaviour
             child.gameObject.SetActive(false);
         }
         pool.GetChild(UnityEngine.Random.Range(0, pool.childCount)).gameObject.SetActive(true);
-    }
-
-    public PlayerState GetPlayerState()
-    {
-        return this.you.GeneratePlayerState();
-    }
-
-    public PlayerState GetOpponentState()
-    {
-        return this.opponent.GeneratePlayerState();
-    }
-
-    public Player getPlayerById(string playerId)
-    {
-        return this.playerIdToPlayer[playerId];
     }
 
     private void AttackStartMade(RaycastHit hit)
@@ -167,15 +186,21 @@ public class BattleManager : MonoBehaviour
         {
             RaycastHit hit;
             if (!Physics.Raycast(ray, out hit, 100f) || hit.collider.gameObject.layer != battleLayer) //use battle layer mask
+            {
                 return;
+            }
+
             mouseDownTargetable = hit.collider.GetComponent<Targetable>();
             if (mouseDownTargetable == null)
             {
                 Debug.LogError("Raycast hit an object in battle layer that is not of class Targetable...");
                 return;
             }
+
             if (!mouseDownTargetable.Owner.HasTurn || mouseDownTargetable.CanAttack <= 0)
+            {
                 return;
+            }
 
             if (mouseDownTargetable.IsAvatar)
             {
@@ -381,10 +406,13 @@ public class BattleManager : MonoBehaviour
     private bool CheckPlayCard(Ray ray, RaycastHit hit)
     {
         if (!ActionManager.Instance.HasDragTarget())
+        {
             return false;
+        }
 
         CardObject target = ActionManager.Instance.GetDragTarget();
         float minThreshold = 20;
+
         //Debug.Log(String.Format("amt={0}, threshold={1}, mousepos={2}, resetpos={3}", GetCardDisplacement(target), Screen.height * minThreshold, target.transform.localPosition, target.reset.position));
         if (target.Card.Cost > target.Owner.Mana)
         {
@@ -516,17 +544,19 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(tweenTime);
         overlay.SetActive(false);
 
-        if (player.Mode == Player.PLAYER_STATE_MODE_NORMAL)
+        if (!player.IsModeMulligan())
         {
             //do some turn transition render
             SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
             SetPassiveCursor();
             this.activePlayer.MulliganNewTurn();
+            this.mode = BATTLE_STATE_NORMAL_MODE;
         }
-        // If not in connected mode, automatically perform mulligan for opponent.
+        //If not in connected mode, automatically perform mulligan for opponent.
         else if (!InspectorControlPanel.Instance.DevelopmentMode && player.Id == this.you.Id)
         {
-            this.you.ShowMulligan(new List<int>(), this.opponent);
+            this.opponent.PlayMulliganByIndices(new List<int>(), this.you.Mode);
+            this.you.AdvanceMulliganState();
         }
     }
 
@@ -554,6 +584,7 @@ public class BattleManager : MonoBehaviour
     public void FinishedMulligan()
     {
         this.you.PlayMulligan(this.opponent.Mode);
+        this.opponent.AdvanceMulliganState();
     }
 
     /*
@@ -634,7 +665,14 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
-        this.you.ShowMulligan(deckCardIndices, this.opponent);
+        if (playerId != this.opponent.Id)
+        {
+            Debug.LogError("Play mulligan move received from server that is not from opponent.");
+            return;
+        }
+
+        this.opponent.PlayMulliganByIndices(deckCardIndices, this.you.Mode);
+        this.you.AdvanceMulliganState();
     }
 
     public void ReceiveMoveEndTurn(string playerId)
@@ -644,7 +682,8 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveMoveDrawCard(string playerId, Card card)
     {
-        this.activePlayer.AddDrawnCard(card);
+        Player player = GetPlayerById(playerId);
+        player.AddDrawnCard(card);
     }
 
     public void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)

@@ -46,6 +46,14 @@ public class PlayerState
     private ChallengeCard[] field;
     public ChallengeCard[] Field => field;
 
+    [SerializeField]
+    private int mode;
+    public int Mode => mode;
+
+    [SerializeField]
+    private List<ChallengeCard> mulliganCards;
+    public List<ChallengeCard> MulliganCards => mulliganCards;
+
     public void SetId(string id)
     {
         this.id = id;
@@ -96,6 +104,16 @@ public class PlayerState
         this.field = field;
     }
 
+    public void SetMode(int mode)
+    {
+        this.mode = mode;
+    }
+
+    public void SetMulliganCards(List<ChallengeCard> mulliganCards)
+    {
+        this.mulliganCards = mulliganCards;
+    }
+
     public bool Equals(PlayerState other)
     {
         if (this.field.Length != other.Field.Length)
@@ -124,6 +142,7 @@ public class PlayerState
             return false;
         }
 
+        // TODO: mulliganCards
         return this.id == other.Id &&
                this.hasTurn == other.HasTurn &&
                this.manaCurrent == other.ManaCurrent &&
@@ -131,7 +150,8 @@ public class PlayerState
                this.health == other.Health &&
                this.healthMax == other.HealthMax &&
                this.armor == other.Armor &&
-               this.deckSize == other.DeckSize;
+               this.deckSize == other.DeckSize &&
+               this.mode == other.Mode;
     }
 
     /*
@@ -170,6 +190,10 @@ public class PlayerState
         else if (this.deckSize != other.DeckSize)
         {
             return string.Format("Deck size: {0} vs {1}", this.deckSize, other.DeckSize);
+        }
+        else if (this.mode != other.Mode)
+        {
+            return string.Format("Mode: {0} vs {1}", this.mode, other.Mode);
         }
 
         if (this.hand.Count != other.Hand.Count)
@@ -224,6 +248,16 @@ public class PlayerState
         {
             ChallengeCard challengeCard = this.field[i];
             cards[i] = challengeCard.GetCard();
+        }
+        return cards;
+    }
+
+    public List<Card> GetCardsMulligan()
+    {
+        List<Card> cards = new List<Card>();
+        foreach (ChallengeCard challengeCard in this.mulliganCards)
+        {
+            cards.Add(challengeCard.GetCard());
         }
         return cards;
     }
@@ -294,6 +328,10 @@ public class PlayerState
         [SerializeField]
         private List<string> abilities;
         public List<string> Abilities => abilities;
+
+        [SerializeField]
+        private int mode;
+        public int Mode => mode;
 
         // TODO
         //[SerializeField]
@@ -453,6 +491,10 @@ public class PlayerState
             else if (this.hasShield != other.HasShield)
             {
                 return string.Format("HasShield: {0} vs {1}", this.hasShield, other.HasShield);
+            }
+            else if (this.mode != other.Mode)
+            {
+                return string.Format("Mode: {0} vs {1}", this.mode, other.Mode);
             }
 
             return null;

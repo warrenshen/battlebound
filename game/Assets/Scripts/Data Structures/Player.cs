@@ -74,15 +74,19 @@ public class Player
 
         this.hasTurn = playerState.HasTurn == 1;
         this.deckSize = playerState.DeckSize;
+
         this.mana = playerState.ManaCurrent;
         this.maxMana = playerState.ManaMax;
 
+        this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
+        this.avatar.Initialize(this, playerState);
+    }
+
+    public void Initialize(PlayerState playerState)
+    {
         List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
         this.AddDrawnCards(handCards, true, animate: false);
-
-        this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
-        this.avatar.Initialize(this, playerState);
 
         Card[] fieldCards = playerState.GetCardsField();
 
@@ -209,31 +213,62 @@ public class Player
 
     private void ReplaceCardByMulligan(Card card)
     {
-        this.ReturnCardToDeck(card);
-        this.DrawCard();
+        this.hand.RemoveByCardId(card.Id);
+        BattleManager.Instance.UseCard(this, card.wrapper); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        ReturnCardToDeck(card);
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            this.DrawCard();
+        }
+    }
+
+    private void ReplaceCardByMulligan(Card card, int index)
+    {
+        this.hand.RemoveByIndex(index);
+        BattleManager.Instance.UseCard(this, card.wrapper); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        ReturnCardToDeck(card);
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            this.DrawCard();
+        }
     }
 
     public void BeginMulligan(List<Card> mulliganCards, bool show)
     {
         this.mode = PLAYER_STATE_MODE_MULLIGAN;
+
         this.keptMulliganCards = mulliganCards;
         this.removedMulliganCards = new List<Card>();
 
         if (!show)
+        {
             return;
+        }
 
         for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
-            CardObject cardObject = AddDrawnCard(this.keptMulliganCards[i], reposition: false);  //doesn't use standard RepositionCards()
+            CardObject cardObject = AddDrawnCard(this.keptMulliganCards[i], isInit: true, reposition: false);  //doesn't use standard RepositionCards()
             BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i); //special animation to replace the omitted reposition
         }
     }
 
-    public void PlayMulligan(int opponentState)
+    public bool IsModeMulligan()
+    {
+        return this.mode == PLAYER_STATE_MODE_MULLIGAN || this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING;
+    }
+
+    public void PlayMulligan(int opponentMode)
     {
         if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
             Debug.LogError("Player not in mulligan mode but received play mulligan.");
+            return;
+        }
+        else if (opponentMode == PLAYER_STATE_MODE_NORMAL)
+        {
+            Debug.LogError("Opponent in normal mode but received play mulligan.");
             return;
         }
 
@@ -243,12 +278,10 @@ public class Player
             //card just needs to be repositioned to hand
             cardIds.Add(keptCard.Id);
         }
+
         foreach (Card removedCard in this.removedMulliganCards)
         {
-            if (!InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                this.ReplaceCardByMulligan(removedCard);
-            }
+            ReplaceCardByMulligan(removedCard);
         }
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
@@ -256,12 +289,11 @@ public class Player
             BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
         }
 
-        if (opponentState == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        if (opponentMode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
         {
             this.mode = PLAYER_STATE_MODE_NORMAL;
-            BattleManager.Instance.SetBoardCenterText("");
         }
-        else
+        else if (opponentMode == PLAYER_STATE_MODE_MULLIGAN)
         {
             this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
             BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
@@ -270,40 +302,61 @@ public class Player
         EndMulligan();
     }
 
-    public void ShowMulligan(List<int> replacedCardIndices, Player opponent)
+    /*
+     * Function called on opponent player.
+     */
+    public void PlayMulliganByIndices(List<int> replacedCardIndices, int opponentMode)
     {
-        if (opponent.Mode != PLAYER_STATE_MODE_MULLIGAN && InspectorControlPanel.Instance.DevelopmentMode)
+        if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
-            Debug.LogError("Opponent not in mulligan mode but received show mulligan.");
+            Debug.LogError("Player not in mulligan mode but received play mulligan.");
+            return;
+        }
+        else if (opponentMode == PLAYER_STATE_MODE_NORMAL)
+        {
+            Debug.LogError("Opponent in normal mode but received play mulligan.");
             return;
         }
 
-        if (InspectorControlPanel.Instance.DevelopmentMode)
+        // It is very important that we iterate downwards,
+        // since the ReplaceCardByMulligan call removes cards from hand by index.
+        for (int i = this.keptMulliganCards.Count - 1; i >= 0; i -= 1)
         {
-            // Throw away cards. @Warren?
-        }
-        else
-        {
-            for (int i = 0; i < opponent.keptMulliganCards.Count; i += 1)
+            if (replacedCardIndices.Contains(i))
             {
-                if (replacedCardIndices.Contains(i))
-                {
-                    opponent.ReplaceCardByMulligan(opponent.keptMulliganCards[i]);
-                }
+                ReplaceCardByMulligan(this.keptMulliganCards[i], i);
             }
         }
 
-        if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        if (opponentMode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
         {
-            opponent.SetMode(PLAYER_STATE_MODE_NORMAL);
             this.mode = PLAYER_STATE_MODE_NORMAL;
         }
-        else
+        else if (opponentMode == PLAYER_STATE_MODE_MULLIGAN)
         {
-            opponent.SetMode(PLAYER_STATE_MODE_MULLIGAN_WAITING);
+            this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
         }
 
-        opponent.EndMulligan();
+        EndMulligan();
+    }
+
+    /*
+     * If player is in mulligan waiting state, advance to normal state.
+     * If player is in mulligan state, do nothing.
+     * If player is in normal state, log an error.
+     * 
+     * This function should be called after this player's opponent plays its mulligan.
+     */
+    public void AdvanceMulliganState()
+    {
+        if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            this.mode = PLAYER_STATE_MODE_NORMAL;
+        }
+        else if (this.mode == PLAYER_STATE_MODE_NORMAL)
+        {
+            Debug.LogError("Advance mulligan state called when player in normal state.");
+        }
     }
 
     private void EndMulligan()
@@ -362,13 +415,9 @@ public class Player
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
             this.deck.AddCard(card);
-            this.Hand.RemoveByCardId(card.Id);
-            BattleManager.Instance.UseCard(this, card.wrapper); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
         }
-        else
-        {
-            Debug.LogError("This method should not be used in connected mode.");
-        }
+
+        this.deckSize += 1;
     }
 
     public int GetOpponentHandIndex(int handIndex)
@@ -388,37 +437,41 @@ public class Player
         playerState.SetHealthMax(this.avatar.MaxHealth);
         playerState.SetArmor(this.avatar.Armor);
         playerState.SetDeckSize(this.deckSize);
+        playerState.SetMode(this.mode);
 
         List<PlayerState.ChallengeCard> handCards = new List<PlayerState.ChallengeCard>();
-        for (int i = 0; i < this.hand.Size(); i += 1)
+        if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
-            Card card = this.hand.GetCardObjectByIndex(i).Card;
-            PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
-
-            challengeCard.SetId(card.Id);
-            challengeCard.SetName(card.Name);
-            //challengeCard.SetDescription(boardCreature.Card.Description);
-            //challengeCard.SetLevel(boardCreature.Card.Level);
-            challengeCard.SetCost(card.Cost);
-            challengeCard.SetCostStart(card.Cost);
-
-            if (card.GetType() == typeof(CreatureCard))
+            for (int i = 0; i < this.hand.Size(); i += 1)
             {
-                CreatureCard creatureCard = (CreatureCard)card;
-                challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
-                challengeCard.SetHealth(creatureCard.Health);
-                challengeCard.SetHealthStart(creatureCard.Health);
-                challengeCard.SetHealthMax(creatureCard.Health);
-                challengeCard.SetAttack(creatureCard.Attack);
-                challengeCard.SetAttackStart(creatureCard.Attack);
-            }
-            else if (card.GetType() == typeof(SpellCard))
-            {
-                challengeCard.SetCategory(Card.CARD_CATEGORY_SPELL);
-            }
-            // abilities
+                Card card = this.hand.GetCardObjectByIndex(i).Card;
+                PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
 
-            handCards.Add(challengeCard);
+                challengeCard.SetId(card.Id);
+                challengeCard.SetName(card.Name);
+                //challengeCard.SetDescription(boardCreature.Card.Description);
+                //challengeCard.SetLevel(boardCreature.Card.Level);
+                challengeCard.SetCost(card.Cost);
+                challengeCard.SetCostStart(card.Cost);
+
+                if (card.GetType() == typeof(CreatureCard))
+                {
+                    CreatureCard creatureCard = (CreatureCard)card;
+                    challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
+                    challengeCard.SetHealth(creatureCard.Health);
+                    challengeCard.SetHealthStart(creatureCard.Health);
+                    challengeCard.SetHealthMax(creatureCard.Health);
+                    challengeCard.SetAttack(creatureCard.Attack);
+                    challengeCard.SetAttackStart(creatureCard.Attack);
+                }
+                else if (card.GetType() == typeof(SpellCard))
+                {
+                    challengeCard.SetCategory(Card.CARD_CATEGORY_SPELL);
+                }
+                // abilities
+
+                handCards.Add(challengeCard);
+            }
         }
         playerState.SetHand(handCards);
 
