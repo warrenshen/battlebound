@@ -117,7 +117,7 @@ public class CreatureCard : Card
         this.attack = attack;
         this.health = health;
         this.abilities = abilities;
-        this.summonPrefabPath = string.Format("Prefabs/Summons/{0}", summonPrefabPath);
+        this.summonPrefabPath = string.Format("Summons/{0}", summonPrefabPath);
     }
 }
 

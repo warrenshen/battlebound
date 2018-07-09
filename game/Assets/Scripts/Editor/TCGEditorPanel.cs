@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System.IO;
+
+using UnityEngine;
+using UnityEditor;
 
 public class TCGEditorPanel : EditorWindow
 {
@@ -15,10 +16,8 @@ public class TCGEditorPanel : EditorWindow
     private int lineHeight = 20;
     private int lineMargin = 5;
 
-    private int imageHeight = 350;
-    private int imageWidth = 240;
-
-    private CardTemplate data;
+    private static int imageHeight = 350;
+    private static int imageWidth = 240;
 
     private Material frameMat;
     private Material frontMat;
@@ -35,6 +34,13 @@ public class TCGEditorPanel : EditorWindow
     private float backHorizontalOffset = 0.0F;
     private float backVerticalOffset = 0.0F;
 
+    private int shownTab;
+    private string codexPath;
+
+    private CardTemplate createTemplate;
+    private CardTemplate editTemplate;
+    private Dictionary<string, CardTemplate> templates;
+
 
     [MenuItem("Custom/TCG Editor")]
     static void Init()
@@ -48,32 +54,104 @@ public class TCGEditorPanel : EditorWindow
         window.frameMat = new Material(Shader.Find("Sprites/Default"));
         window.frontMat = new Material(Shader.Find("Sprites/Default"));
         window.backMat = new Material(Shader.Find("Sprites/Default"));
-        window.data = new CardTemplate();
+
+        window.codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
 
         window.Show();
     }
 
     void OnGUI()
     {
+        if (this.createTemplate == null)
+        {
+            this.createTemplate = new CardTemplate();
+        }
+
         GUILayout.BeginVertical();
 
-        GUILayout.Label("Card Creator", EditorStyles.boldLabel);
+        this.shownTab = GUILayout.Toolbar(this.shownTab, new string[2] { "Create", "Edit" });
 
-        CardArtworkSection();
-        CardDefaultSection();
-        CardByTypeSection();
+        switch (this.shownTab)
+        {
+            case 0:
+                RenderCreateMode();
+                break;
+            case 1:
+                RenderEditMode();
+                break;
+            default:
+                break;
+        }
+        GUILayout.EndVertical();
+    }
+
+    private void RenderCreateMode()
+    {
+        RenderTemplateEditor(this.createTemplate, 0, false);
+    }
+
+    private void RenderEditMode()
+    {
+        if (GUILayout.Button("Choose Card Template to Edit"))
+        {
+            // create the menu and add items to it
+            GenericMenu menu = new GenericMenu();
+            this.templates = CodexHelper.ParseFile(this.codexPath);
+
+            // forward slashes nest menu items under submenus
+            foreach (string templateName in templates.Keys)
+            {
+                AddMenuItem(menu, templateName);
+            }
+
+            menu.ShowAsContext();
+        }
+
+        if (this.editTemplate != null)
+        {
+            RenderTemplateEditor(this.editTemplate, 25, true);
+        }
+    }
+
+    void AddMenuItem(GenericMenu menu, string itemName)
+    {
+        // the menu item is marked as selected if it matches the current value of m_Color
+        menu.AddItem(new GUIContent(itemName), true, ItemSelected, itemName);
+    }
+
+    private void ItemSelected(object chosenName)
+    {
+        string chosen = chosenName as string;
+        CardTemplate chosenTemplate = templates[chosen];
+
+        this.editTemplate = chosenTemplate;
+        Debug.Log(JsonUtility.ToJson(chosenTemplate));
+    }
+
+    private void RenderTemplateEditor(CardTemplate template, int verticalOffset, bool editMode)
+    {
+        CardArtworkSelect(template, verticalOffset, editMode);
+        CardDefaultSection(template, verticalOffset);
+        CardByTypeSection(template, verticalOffset, editMode);
 
         //to-do: monster cards need attributes list
 
         //to-do: validation that all fields are filled, saving using create new class, serialize to text file
         //then move on to deletion and editing from editor...
 
-        bool valid = ValidateEntries();
-        if (GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), "Save/Export to Card List") && valid)
+        bool valid = ValidateEntries(template);
+        string buttonMessage = "Save/Export to card to Codex";
+        if (editMode)
         {
-            GenerateCard();
+            buttonMessage = "Edit existing card in Codex";
         }
-        GUILayout.EndVertical();
+
+        GUIStyle style = new GUIStyle(GUI.skin.button);
+
+        if (valid && GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), buttonMessage, style))
+        {
+            GenerateCard(template, editMode);
+        }
     }
 
     private string LocalToResources(string path)
@@ -107,55 +185,51 @@ public class TCGEditorPanel : EditorWindow
         return path;
     }
 
-    private void GenerateCard()
+    private void GenerateCard(CardTemplate template, bool editMode)
     {
         //to-do: paths must be only one and exactly one depth under Resources for now, too lazy for regex
-        this.data.frontImage = LocalToResources(AssetDatabase.GetAssetPath(this.mainTexture));
-        this.data.backImage = LocalToResources(AssetDatabase.GetAssetPath(this.backgroundTexture));
+        template.frontImage = LocalToResources(AssetDatabase.GetAssetPath(this.mainTexture));
+        template.backImage = LocalToResources(AssetDatabase.GetAssetPath(this.backgroundTexture));
 
-        this.data.summonPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.summonPrefab));
-        this.data.effectPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.effectPrefab));
+        template.summonPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.summonPrefab));
+        template.effectPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.effectPrefab));
 
-        this.data.frontScale = new Vector2(this.frontHorizontalScale, this.frontVerticalScale);
-        this.data.frontOffset = new Vector2(this.frontHorizontalOffset, this.frontVerticalOffset);
-
-        this.data.backScale = new Vector2(this.backHorizontalScale, this.backVerticalScale);
-        this.data.backOffset = new Vector2(this.backHorizontalOffset, this.backVerticalOffset);
-
-        string json = JsonUtility.ToJson(this.data);
         ////to-do: special attributes?
-        AppendToCodexFile(json);
+        if (!editMode)
+        {
+            AppendToCodex(template);
+        }
+        else
+        {
+            EditTemplateInCodex(template);
+        }
+        //this.createTemplate = new CardTemplate();
     }
 
-    public static void AppendToCodexFile(string json)
+    private void AppendToCodex(CardTemplate template)
     {
-        string path = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
         // This text is added only once to the file.
-        if (!File.Exists(path))
-        {
-            // Create a file to write to.
-            using (StreamWriter sw = File.CreateText(path))
-            {
-                sw.WriteLine("//Start of codex");
-            }
-        }
+        CodexHelper.AppendElement(this.codexPath, template);
+    }
 
-        // This text is always added, making the file longer over time
-        // if it is not deleted.
-        using (StreamWriter sw = File.AppendText(path))
-        {
-            sw.WriteLine(json);
-        }
-        Debug.Log(json);
+    private void EditTemplateInCodex(CardTemplate template)
+    {
+        CodexHelper.EditElement(this.codexPath, template);
+    }
+
+
+    private void StatusBox(Color color, string message)
+    {
+        EditorGUI.DrawRect(new Rect(5, position.height - 60, position.width - 10, 30), color);
+        EditorGUI.LabelField(new Rect(10, position.height - 60 + lineMargin, position.width - 20, 30), message);
     }
 
     private void ValidationErrorBox(string message)
     {
-        EditorGUI.DrawRect(new Rect(5, position.height - 60, position.width - 10, 30), new Color(1, 0.5f, 0.33f));
-        EditorGUI.LabelField(new Rect(10, position.height - 60 + lineMargin, position.width - 20, 30), message);
+        StatusBox(new Color(1, 0.33f, 0.33f), message);
     }
 
-    private bool ValidateEntries()
+    private bool ValidateEntries(CardTemplate template)
     {
         if (this.mainTexture == null)
         {
@@ -167,17 +241,17 @@ public class TCGEditorPanel : EditorWindow
             ValidationErrorBox("Missing background artwork.");
             return false;
         }
-        else if (this.data.name == null || this.data.name.Length <= 0)
+        else if (template.name == null || template.name.Length <= 0)
         {
             ValidationErrorBox("Missing name.");
             return false;
         }
-        else if (this.data.health == 0)
+        else if (template.health == 0)
         {
             ValidationErrorBox("Health cannot be zero.");
             return false;
         }
-        else if (this.data.cardType == CardRaw.CardType.Creature && this.summonPrefab == null)
+        else if (template.cardType == CardRaw.CardType.Creature && this.summonPrefab == null)
         {
             ValidationErrorBox("Creature cards must have a summon prefab.");
             return false;
@@ -190,27 +264,34 @@ public class TCGEditorPanel : EditorWindow
         return true;
     }
 
-    private void CardArtworkSection()
+    private void CardArtworkSelect(CardTemplate template, int verticalOffset, bool editMode)
     {
-        this.mainTexture = EditorGUI.ObjectField(new Rect(5, 20, boxSize, boxSize), this.mainTexture, typeof(Texture), false) as Texture;
-        this.backgroundTexture = EditorGUI.ObjectField(new Rect(5, 20 + boxSize, boxSize, boxSize), this.backgroundTexture, typeof(Texture), false) as Texture;
+        if (editMode)
+        {
+            this.mainTexture = Resources.Load(template.frontImage) as Texture;
+            this.backgroundTexture = Resources.Load(template.backImage) as Texture;
+        }
+
+        int top = 25 + verticalOffset;
+        this.mainTexture = EditorGUI.ObjectField(new Rect(5, top, boxSize, boxSize), this.mainTexture, typeof(Texture), false) as Texture;
+        this.backgroundTexture = EditorGUI.ObjectField(new Rect(5, top + boxSize, boxSize, boxSize), this.backgroundTexture, typeof(Texture), false) as Texture;
 
         // front scale/tiling
-        this.frontHorizontalScale = EditorGUI.Slider(new Rect(boxSize + 10, 45, 160, 18), this.frontHorizontalScale, 0.33F, 3);
-        this.frontVerticalScale = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 45, 160, 18), this.frontVerticalScale, 0.33F, 3);
+        template.frontScale.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 25, 160, 18), template.frontScale.x, 0.33F, 3);
+        template.frontScale.y = EditorGUI.Slider(new Rect(boxSize + 160 + 15, top + 25, 160, 18), template.frontScale.y, 0.33F, 3);
         // front offset
-        this.frontHorizontalOffset = EditorGUI.Slider(new Rect(boxSize + 10, 67, 160, 18), this.frontHorizontalOffset, -3, 3);
-        this.frontVerticalOffset = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 67, 160, 18), this.frontVerticalOffset, -3, 3);
+        template.frontOffset.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 47, 160, 18), template.frontOffset.x, -3, 3);
+        template.frontOffset.y = EditorGUI.Slider(new Rect(boxSize + 160 + 15, top + 47, 160, 18), template.frontOffset.y, -3, 3);
 
 
-        EditorGUI.PrefixLabel(new Rect(boxSize + 10, 25 + boxSize, 400, 20),
+        EditorGUI.PrefixLabel(new Rect(boxSize + 10, top + lineMargin + boxSize, 400, 20),
                               new GUIContent("Back: scale, offset"));
         // back scale/tiling
-        this.backHorizontalScale = EditorGUI.Slider(new Rect(boxSize + 10, 45 + boxSize, 160, 18), this.backHorizontalScale, 0.33F, 3);
-        this.backVerticalScale = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 45 + boxSize, 160, 18), this.backVerticalScale, 0.33F, 3);
+        template.backScale.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 25 + boxSize, 160, 18), template.backScale.x, 0.33F, 3);
+        template.backScale.y = EditorGUI.Slider(new Rect(boxSize + 160 + 15, top + 25 + boxSize, 160, 18), template.backScale.y, 0.33F, 3);
         // back offset
-        this.backHorizontalOffset = EditorGUI.Slider(new Rect(boxSize + 10, 67 + boxSize, 160, 18), this.backHorizontalOffset, -3, 3);
-        this.backVerticalOffset = EditorGUI.Slider(new Rect(boxSize + 160 + 15, 67 + boxSize, 160, 18), this.backVerticalOffset, -3, 3);
+        template.backOffset.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 47 + boxSize, 160, 18), template.backOffset.x, -3, 3);
+        template.backOffset.y = EditorGUI.Slider(new Rect(boxSize + 160 + 15, top + 47 + boxSize, 160, 18), template.backOffset.y, -3, 3);
 
         //
         if (this.mainTexture != null || this.backgroundTexture != null)
@@ -218,9 +299,9 @@ public class TCGEditorPanel : EditorWindow
             //background needs to be rendered first to be on bottom
             if (this.backgroundTexture != null)
             {
-                float verticalSize = this.imageHeight * 1 / backVerticalScale;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - this.backHorizontalOffset / this.backHorizontalScale * imageWidth, position.height - 370 + this.backVerticalOffset * imageHeight + (imageHeight - verticalSize) * backVerticalScale,
-                                                      this.imageWidth * 1 / this.backHorizontalScale, verticalSize),
+                float verticalSize = TCGEditorPanel.imageHeight * 1 / template.backScale.y;
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 370 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
+                                                      TCGEditorPanel.imageWidth * 1 / template.backScale.x, verticalSize),
                                                       this.backgroundTexture, backMat);
             }
             else
@@ -229,14 +310,14 @@ public class TCGEditorPanel : EditorWindow
             }
             if (this.mainTexture != null)
             {
-                float verticalSize = this.imageHeight * 1 / frontVerticalScale;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - this.frontHorizontalOffset / this.frontHorizontalScale * imageWidth, position.height - 370 + this.frontVerticalOffset * imageHeight + (imageHeight - verticalSize) * frontVerticalScale,
-                                                      this.imageWidth * 1 / this.frontHorizontalScale, verticalSize),
+                float verticalSize = TCGEditorPanel.imageHeight * 1 / template.frontScale.y;
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 370 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
+                                                      TCGEditorPanel.imageWidth * 1 / template.frontScale.x, verticalSize),
                                                       this.mainTexture, frontMat);
             }
 
             //clear button
-            if (GUI.Button(new Rect(boxSize + 10, lineHeight, 120, 20), "Clear textures"))
+            if (GUI.Button(new Rect(boxSize + 10, top, 120, 20), "Clear textures"))
             {
                 this.mainTexture = null;
                 this.backgroundTexture = EditorGUIUtility.whiteTexture;
@@ -246,42 +327,48 @@ public class TCGEditorPanel : EditorWindow
         {
             EditorGUI.PrefixLabel(new Rect(23, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
         }
-        EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 400, 280, 390), this.cardFrame, frameMat);
+        EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 400, 280, 390), this.cardFrame, frameMat);  //hardcoded for card frame
     }
 
-    private void CardDefaultSection()
+    private void CardDefaultSection(CardTemplate template, int verticalOffset)
     {
         //start card attributes
-        int enumSelectorYPos = 200;
-        this.data.cardType = (CardRaw.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), this.data.cardType);
+        int enumSelectorYPos = 200 + verticalOffset;
+        template.cardType = (CardRaw.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), template.cardType);
 
-        int standardDetailsYPos = 220;
+        int standardDetailsYPos = 220 + verticalOffset;
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos, 40, lineHeight), "Name");
-        this.data.name = EditorGUI.TextField(new Rect(50, standardDetailsYPos, 120, lineHeight), this.data.name);
+        template.name = EditorGUI.TextField(new Rect(50, standardDetailsYPos, 120, lineHeight), template.name);
 
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos + lineHeight + lineMargin, 40, lineHeight), "Cost");
-        this.data.cost = EditorGUI.IntField(new Rect(50, standardDetailsYPos + lineHeight + lineMargin, 120, lineHeight), this.data.cost);
+        template.cost = EditorGUI.IntField(new Rect(50, standardDetailsYPos + lineHeight + lineMargin, 120, lineHeight), template.cost);
 
-        this.data.rarity = (Card.RarityType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos + lineHeight * 3 + lineMargin * 2, position.width - 10, 20), this.data.rarity);
+        template.rarity = (Card.RarityType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos + lineHeight * 3 + lineMargin * 2, position.width - 10, 20), template.rarity);
 
-        EditorGUI.LabelField(new Rect(5, 285, position.width - 10, lineHeight), "Description (use html tags)");
-        this.data.description = EditorGUI.TextArea(new Rect(5, 300, position.width - 10, lineHeight * 3), this.data.description);
+        EditorGUI.LabelField(new Rect(5, standardDetailsYPos + 65, position.width - 10, lineHeight), "Description (use html tags)");
+        template.description = EditorGUI.TextArea(new Rect(5, standardDetailsYPos + 80, position.width - 10, lineHeight * 3), template.description);
     }
 
-    private void CardByTypeSection()
+    private void CardByTypeSection(CardTemplate template, int verticalOffset, bool editMode)
     {
+        if (editMode)
+        {
+            this.summonPrefab = Resources.Load(template.summonPrefab) as GameObject;
+            this.effectPrefab = Resources.Load(template.effectPrefab) as GameObject;
+        }
+
         // === begin card specific fields ===
         int cardSpecificXPos = 185;
-        int cardSpecificYPos = 220;
-        int belowRarity = 365;
-        switch (this.data.cardType)
+        int cardSpecificYPos = 220 + +verticalOffset;
+        int belowRarity = 365 + +verticalOffset;
+        switch (template.cardType)
         {
             case CardRaw.CardType.Creature:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 40, lineHeight), "Attack");
-                this.data.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), this.data.attack);
+                template.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.attack);
 
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos + lineHeight + lineMargin, 40, lineHeight), "Health");
-                this.data.health = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos + lineHeight + lineMargin, 50, lineHeight), this.data.health);
+                template.health = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos + lineHeight + lineMargin, 50, lineHeight), template.health);
 
                 //prefab preview logic
                 EditorGUI.LabelField(new Rect(5, belowRarity, position.width / 2 - 10, lineHeight), "Creature/Summon Prefab");
@@ -293,13 +380,13 @@ public class TCGEditorPanel : EditorWindow
                 break;
             case CardRaw.CardType.Weapon:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 50, lineHeight), "Durability");
-                this.data.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), this.data.durability);
+                template.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.durability);
                 break;
             case CardRaw.CardType.Structure:
                 //to-do: lots
                 break;
             case CardRaw.CardType.Spell:
-                this.data.targeted = EditorGUI.ToggleLeft(new Rect(cardSpecificXPos, cardSpecificYPos, 80, 20), "Targeted?", this.data.targeted);
+                template.targeted = EditorGUI.ToggleLeft(new Rect(cardSpecificXPos, cardSpecificYPos, 80, 20), "Targeted?", template.targeted);
 
                 EditorGUI.LabelField(new Rect(5, belowRarity, position.width / 2 - 10, lineHeight), "Spell Effect Prefab");
                 this.effectPrefab = EditorGUI.ObjectField(new Rect(5, belowRarity + lineHeight, position.width - 10, 16), this.effectPrefab, typeof(GameObject), false) as GameObject;
