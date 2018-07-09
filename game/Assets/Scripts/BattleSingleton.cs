@@ -138,7 +138,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
-        Debug.Log("Updating nonce and player states.");
         this.nonce = messageNonce;
 
         string playerJson = scriptData.GetGSData("playerState").JSON;
@@ -161,6 +160,18 @@ public class BattleSingleton : Singleton<BattleSingleton>
         if (shouldEmitMoves)
         {
             EmitChallengeMoves(challengeMoves);
+        }
+    }
+
+    public List<Card> GetMulliganCards(string playerId)
+    {
+        if (this.playerState.Id == playerId)
+        {
+            return this.playerState.GetCardsMulligan();
+        }
+        else
+        {
+            return this.opponentState.GetCardsMulligan();
         }
     }
 
@@ -343,7 +354,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("ChallengePlayMulligan");
         request.SetEventAttribute("challengeId", this.challengeId);
-        request.SetEventAttribute("cardIds", JsonUtility.ToJson(cardIds));
+        request.SetEventAttribute("cardIds", cardIds);
         request.Send(OnChallengePlayMulliganSuccess, OnChallengePlayMulliganError);
     }
 

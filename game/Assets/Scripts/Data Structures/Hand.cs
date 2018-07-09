@@ -53,16 +53,20 @@ public class Hand
 
     }
 
+    public void RemoveByIndex(int index)
+    {
+        this.cardObjects.RemoveAt(index);
+    }
+
     public void RemoveByCardId(string cardId)
     {
         int removeIndex = this.cardObjects.FindIndex(cardObject => cardObject.Card.Id == cardId);
         this.cardObjects.RemoveAt(removeIndex);
-        //this.RepositionCards();
     }
 
     private void RedrawOutline(CardObject cardObject)
     {
-        Player player = BattleManager.Instance.getPlayerById(this.playerId);
+        Player player = BattleManager.Instance.GetPlayerById(this.playerId);
         cardObject.visual.SetOutline(player.Mana >= cardObject.Card.Cost);
         cardObject.visual.Redraw();
     }
