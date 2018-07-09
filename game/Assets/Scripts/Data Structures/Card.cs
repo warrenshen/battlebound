@@ -40,18 +40,6 @@ public class Card
     public string Name => name;
 
     [SerializeField]
-    protected string description;
-    public string Description => description;
-
-    [SerializeField]
-    protected string imageFront;
-    public string ImageFront => imageFront;
-
-    [SerializeField]
-    protected string imageBack;
-    public string ImageBack => imageBack;
-
-    [SerializeField]
     protected int level;
     public int Level => level;
 
@@ -65,12 +53,27 @@ public class Card
 
     protected string primaryEffectName;
 
+    public CardObject wrapper;
+
+
+    //should be handled in cardobject, thru load template function, not passed around as member vars..
+    [SerializeField]
+    protected string description;
+    public string Description => description;
+
+    [SerializeField]
+    protected string imageFront;
+    public string ImageFront => imageFront;
+
+    [SerializeField]
+    protected string imageBack;
+    public string ImageBack => imageBack;
+
+
     public enum RarityType { Common, Rare, Epic, Legendary }
     [SerializeField]
     protected RarityType rarity;
     public RarityType Rarity => rarity;
-
-    public CardObject wrapper;
 }
 
 [System.Serializable]

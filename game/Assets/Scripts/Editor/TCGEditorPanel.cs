@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
+using System.IO;
 
 public class TCGEditorPanel : EditorWindow
 {
@@ -16,35 +18,7 @@ public class TCGEditorPanel : EditorWindow
     private int imageHeight = 350;
     private int imageWidth = 240;
 
-    private enum CardType { Creature, Weapon, Structure, Spell }
-    private CardType selectedCardType;
-
-    private struct CardData
-    {
-        public string name;
-        public int cost;
-        public Card.RarityType rarity;
-        public string mainImagePath;            //doesn't need field
-        public string backgroundImagePath;      //doesn't need field
-        public string prefabPath;               //doesn't need field
-
-        //creature
-        public int attack;
-        public int health;
-        public string summonPrefabPath;
-        public string attackEffectPath;
-
-        //weapon
-        public int durability;
-        //to-do: special attributes?
-
-        //spell
-        public bool targeted;
-        public string spellEffectPath;
-        //to-do: effect id
-
-    }
-    private CardData data;
+    private CardTemplate data;
 
     private Material frameMat;
     private Material frontMat;
@@ -67,13 +41,14 @@ public class TCGEditorPanel : EditorWindow
     {
         // Get existing open window or if none, make a new one:
         TCGEditorPanel window = EditorWindow.GetWindow(typeof(TCGEditorPanel)) as TCGEditorPanel;
-        window.minSize = new Vector2(400, 700);
+        window.minSize = new Vector2(400, 900);
         window.backgroundTexture = EditorGUIUtility.whiteTexture;
         window.cardFrame = Resources.Load("FrameForEditor") as Texture;
 
         window.frameMat = new Material(Shader.Find("Sprites/Default"));
         window.frontMat = new Material(Shader.Find("Sprites/Default"));
         window.backMat = new Material(Shader.Find("Sprites/Default"));
+        window.data = new CardTemplate();
 
         window.Show();
     }
@@ -101,13 +76,77 @@ public class TCGEditorPanel : EditorWindow
         GUILayout.EndVertical();
     }
 
+    private string LocalToResources(string path)
+    {
+        if (!path.Contains("Resources"))
+        {
+            Debug.LogError(string.Format("Bad path recieved by TCGEditor: {}, asset not in 'Resources' directory.", path));
+            return null;
+        }
+
+        string[] projectPath = path.Split(Path.DirectorySeparatorChar);
+
+        int startIndex = 0;
+        for (int i = 0; i < projectPath.Length; i++)
+        {
+            if (projectPath[i] == "Resources")
+            {
+                startIndex = i + 1;
+            }
+        }
+
+        string normalized = "";
+        for (int i = startIndex; i < projectPath.Length - 1; i++)
+        {
+            normalized = normalized + projectPath[i] + Path.DirectorySeparatorChar;
+        }
+
+        path = string.Format("{0}{1}", normalized,
+                             Path.GetFileNameWithoutExtension(path));
+        Debug.Log(path);
+        return path;
+    }
+
     private void GenerateCard()
     {
-        Card generated;
-        switch (this.selectedCardType)
-        {
+        //to-do: paths must be only one and exactly one depth under Resources for now, too lazy for regex
+        this.data.frontImage = LocalToResources(AssetDatabase.GetAssetPath(this.mainTexture));
+        this.data.backImage = LocalToResources(AssetDatabase.GetAssetPath(this.backgroundTexture));
 
+        this.data.summonPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.summonPrefab));
+        this.data.effectPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.effectPrefab));
+
+        this.data.frontScale = new Vector2(this.frontHorizontalScale, this.frontVerticalScale);
+        this.data.frontOffset = new Vector2(this.frontHorizontalOffset, this.frontVerticalOffset);
+
+        this.data.backScale = new Vector2(this.backHorizontalScale, this.backVerticalScale);
+        this.data.backOffset = new Vector2(this.backHorizontalOffset, this.backVerticalOffset);
+
+        string json = JsonUtility.ToJson(this.data);
+        ////to-do: special attributes?
+        AppendToCodexFile(json);
+    }
+
+    public static void AppendToCodexFile(string json)
+    {
+        string path = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
+        // This text is added only once to the file.
+        if (!File.Exists(path))
+        {
+            // Create a file to write to.
+            using (StreamWriter sw = File.CreateText(path))
+            {
+                sw.WriteLine("//Start of codex");
+            }
         }
+
+        // This text is always added, making the file longer over time
+        // if it is not deleted.
+        using (StreamWriter sw = File.AppendText(path))
+        {
+            sw.WriteLine(json);
+        }
+        Debug.Log(json);
     }
 
     private void ValidationErrorBox(string message)
@@ -138,7 +177,7 @@ public class TCGEditorPanel : EditorWindow
             ValidationErrorBox("Health cannot be zero.");
             return false;
         }
-        else if (this.selectedCardType == CardType.Creature && this.summonPrefab == null)
+        else if (this.data.cardType == CardRaw.CardType.Creature && this.summonPrefab == null)
         {
             ValidationErrorBox("Creature cards must have a summon prefab.");
             return false;
@@ -214,7 +253,7 @@ public class TCGEditorPanel : EditorWindow
     {
         //start card attributes
         int enumSelectorYPos = 200;
-        this.selectedCardType = (CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), selectedCardType);
+        this.data.cardType = (CardRaw.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), this.data.cardType);
 
         int standardDetailsYPos = 220;
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos, 40, lineHeight), "Name");
@@ -224,6 +263,9 @@ public class TCGEditorPanel : EditorWindow
         this.data.cost = EditorGUI.IntField(new Rect(50, standardDetailsYPos + lineHeight + lineMargin, 120, lineHeight), this.data.cost);
 
         this.data.rarity = (Card.RarityType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos + lineHeight * 3 + lineMargin * 2, position.width - 10, 20), this.data.rarity);
+
+        EditorGUI.LabelField(new Rect(5, 285, position.width - 10, lineHeight), "Description (use html tags)");
+        this.data.description = EditorGUI.TextArea(new Rect(5, 300, position.width - 10, lineHeight * 3), this.data.description);
     }
 
     private void CardByTypeSection()
@@ -231,10 +273,10 @@ public class TCGEditorPanel : EditorWindow
         // === begin card specific fields ===
         int cardSpecificXPos = 185;
         int cardSpecificYPos = 220;
-        int belowRarity = 300;
-        switch (selectedCardType)
+        int belowRarity = 365;
+        switch (this.data.cardType)
         {
-            case CardType.Creature:
+            case CardRaw.CardType.Creature:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 40, lineHeight), "Attack");
                 this.data.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), this.data.attack);
 
@@ -249,14 +291,14 @@ public class TCGEditorPanel : EditorWindow
                 this.effectPrefab = EditorGUI.ObjectField(new Rect(position.width / 2, belowRarity + lineHeight, position.width / 2 - 10, 16), this.effectPrefab, typeof(GameObject), false) as GameObject;
                 EditorGUI.LabelField(new Rect(5, belowRarity + lineHeight * 2 + lineMargin, position.width - 10, lineHeight * 2), "Reminder: make sure the each prefab has appropriate\nsound effect attached with Play On Enable.");
                 break;
-            case CardType.Weapon:
+            case CardRaw.CardType.Weapon:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 50, lineHeight), "Durability");
-                this.data.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), this.data.attack);
+                this.data.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), this.data.durability);
                 break;
-            case CardType.Structure:
+            case CardRaw.CardType.Structure:
                 //to-do: lots
                 break;
-            case CardType.Spell:
+            case CardRaw.CardType.Spell:
                 this.data.targeted = EditorGUI.ToggleLeft(new Rect(cardSpecificXPos, cardSpecificYPos, 80, 20), "Targeted?", this.data.targeted);
 
                 EditorGUI.LabelField(new Rect(5, belowRarity, position.width / 2 - 10, lineHeight), "Spell Effect Prefab");
