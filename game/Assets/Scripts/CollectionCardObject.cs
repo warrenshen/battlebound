@@ -11,21 +11,6 @@ public class CollectionCardObject : CardObject
     public override void Initialize(Card card)
     {
         this.templateData = CollectionManager.Instance.cardTemplates[card.Name];
-
-        if (card.Id == "HIDDEN")
-        {
-            this.templateData = new CardTemplate();
-        }
-        else if (!BattleManager.Instance.cardTemplates.ContainsKey(card.Name))
-        {
-            Debug.LogError(string.Format("Card {0} does not exist in codex.", card.Name));
-            this.templateData = new CardTemplate();
-        }
-        else
-        {
-            this.templateData = BattleManager.Instance.cardTemplates[card.Name];
-        }
-
         //does the visual stuff using templateData
         base.Initialize(card);
     }
