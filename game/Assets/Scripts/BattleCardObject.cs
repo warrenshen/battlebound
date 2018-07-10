@@ -13,12 +13,10 @@ public class BattleCardObject : CardObject
     public void Initialize(Player player, Card card)
     {
         this.owner = player;
-        this.templateData = BattleManager.Instance.cardTemplates[card.Name];
-
 
         if (card.Id == "HIDDEN")
         {
-            this.templateData = new CardTemplate();
+            this.templateData = new CardTemplate();  //to-do: pretty sure this will break things?
         }
         else if (!BattleManager.Instance.cardTemplates.ContainsKey(card.Name))
         {
