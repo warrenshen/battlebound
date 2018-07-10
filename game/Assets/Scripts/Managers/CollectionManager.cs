@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.IO;
+
 using GameSparks.Core;
 using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using TMPro;
@@ -20,14 +23,17 @@ public class CollectionManager : MonoBehaviour
 
     private List<CardCutout> cutouts;
     private GameObject panel;
-    private Collider panelColl;
+    private Collider panelCollider;
     private GameObject collectionObject;
 
-    private CardObject selectedCard;
+    private CollectionCardObject selectedCard;
     public GameObject deckPanel;
     private LogEventResponse cardsResponse;
 
+    public Dictionary<string, CardTemplate> cardTemplates;
+
     public static CollectionManager Instance { get; private set; }
+
 
     private void Awake()
     {
@@ -36,6 +42,9 @@ public class CollectionManager : MonoBehaviour
         this.decks = new List<Deck>();
         this.cutouts = new List<CardCutout>();
         this.idToCard = new Dictionary<string, Card>();
+
+        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
+        this.cardTemplates = CodexHelper.ParseFile(codexPath);
     }
 
     private void Start()
@@ -45,7 +54,7 @@ public class CollectionManager : MonoBehaviour
 
         collectionObject = new GameObject("Collection");
         panel = GameObject.Find("Build Panel");
-        panelColl = panel.GetComponent<BoxCollider>() as Collider;
+        panelCollider = panel.GetComponent<BoxCollider>() as Collider;
     }
 
     private void GetCollectionRequest()
@@ -118,11 +127,11 @@ public class CollectionManager : MonoBehaviour
             if (!ActionManager.Instance.HasDragTarget())
                 return;
 
-            selectedCard = ActionManager.Instance.GetDragTarget();
+            selectedCard = ActionManager.Instance.GetDragTarget() as CollectionCardObject;     //assumed due to scene file
             Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
             RaycastHit hit;
 
-            if (selectedCard && panelColl.Raycast(ray, out hit, 100.0F))
+            if (selectedCard && panelCollider.Raycast(ray, out hit, 100.0F))
                 MinifyCard(selectedCard);
             else
                 RevertMinify(selectedCard);
@@ -136,10 +145,10 @@ public class CollectionManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (panelColl.Raycast(ray, out hit, 100.0F) && selectedCard)
+            if (panelCollider.Raycast(ray, out hit, 100.0F) && selectedCard)
             {
                 //add to deck
-                AddToDeck(selectedCard);
+                AddToDecklist(selectedCard);
                 RevertMinify(selectedCard);
             }
             else if (Physics.Raycast(ray, out hit, 100.0F))
@@ -170,11 +179,11 @@ public class CollectionManager : MonoBehaviour
         }
     }
 
-    public void AddToDeck(CardObject wrapper)
+    public void AddToDecklist(CollectionCardObject collectionCardObject)
     {
         //add to data structure
-        chosenDeck.AddCard(wrapper.Card);
-        AddToBuildPanel(wrapper);
+        chosenDeck.AddCard(collectionCardObject.Card);
+        AddToBuildPanel(collectionCardObject);
     }
 
     public void AddToBuildPanel(CardObject wrapper)
@@ -183,16 +192,16 @@ public class CollectionManager : MonoBehaviour
         //create and set visuals
         GameObject instance = new GameObject("Added " + wrapper.Card.Name) as GameObject;
         CardCutout cutout = instance.AddComponent<CardCutout>();
-        cutout.Initialize(wrapper, chosenDeck.Cards);
+        //cutout.Initialize(wrapper, chosenDeck.Cards);
         cutouts.Add(cutout);
         //reposition all cutouts
         RenderDecklist();
     }
 
-    public void RemoveFromDeck(CardObject wrapper, CardCutout cutout)
+    public void RemoveFromDecklist(CollectionCardObject collectionCardObject, CardCutout cutout)
     {
-        chosenDeck.RemoveCard(wrapper.Card);
-        wrapper.gameObject.SetActive(true);
+        chosenDeck.RemoveCard(collectionCardObject.Card);
+        collectionCardObject.gameObject.SetActive(true);
 
         cutouts.Remove(cutout);
         //do some resetting of collection/gray cards, reposition the rest of the cards in the panel
@@ -246,8 +255,8 @@ public class CollectionManager : MonoBehaviour
         {
             GameObject created = new GameObject(card.Name);
             created.transform.parent = collectionObject.transform;
-            CardObject wrapper = created.AddComponent<CardObject>();
-            wrapper.Initialize(null, card);
+            CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
+            collectionCardObject.Initialize(card);
             idToCard.Add(card.Id, card);
 
             created.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
@@ -265,16 +274,16 @@ public class CollectionManager : MonoBehaviour
         return created.transform;
     }
 
-    private void MinifyCard(CardObject wrapper)
+    private void MinifyCard(CollectionCardObject collectionCardObject)
     {
-        if (!wrapper.minified)
-            wrapper.Minify(true);
+        if (!collectionCardObject.minified)
+            collectionCardObject.Minify(true);
     }
 
-    private void RevertMinify(CardObject wrapper)
+    private void RevertMinify(CollectionCardObject collectionCardObject)
     {
-        if (wrapper.minified)
-            wrapper.Minify(false);
+        if (collectionCardObject.minified)
+            collectionCardObject.Minify(false);
         selectedCard = null;
     }
 

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CardCutout : ObjectUI
 {
-    CardObject wrapper;
+    CollectionCardObject source;
 
     // Use this for initialization
-    public void Initialize(CardObject wrapper, List<Card> deck)
+    public void Initialize(CollectionCardObject source, List<Card> deck)
     {
-        this.wrapper = wrapper;
+        this.source = source;
 
         SpriteRenderer sp = gameObject.AddComponent<SpriteRenderer>();
         //Texture2D texture = wrapper.Renderer.sprite.texture;
@@ -33,7 +33,7 @@ public class CardCutout : ObjectUI
 
     public override void MouseDown()
     {
-        CollectionManager.Instance.RemoveFromDeck(wrapper, this);
+        CollectionManager.Instance.RemoveFromDecklist(this.source, this);
         Destroy(gameObject);
     }
 }

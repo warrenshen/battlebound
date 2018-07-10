@@ -413,12 +413,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private float GetCardDisplacement(CardObject target)
+    private float GetCardDisplacement(BattleCardObject target)
     {
         Vector3 initial = target.reset.position;
         Vector3 release = target.transform.localPosition;
-        Vector3 diff = initial - release;
-        return diff.sqrMagnitude;
+        Vector3 delta = initial - release;
+        return delta.sqrMagnitude;
     }
 
 
@@ -429,7 +429,7 @@ public class BattleManager : MonoBehaviour
             return false;
         }
 
-        CardObject target = ActionManager.Instance.GetDragTarget();
+        BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
         float minThreshold = 20;
 
         //Debug.Log(String.Format("amt={0}, threshold={1}, mousepos={2}, resetpos={3}", GetCardDisplacement(target), Screen.height * minThreshold, target.transform.localPosition, target.reset.position));
@@ -493,61 +493,59 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator EnemyPlayCardToBoardAnim(object[] args)
     {
-        CardObject cardObject = (CardObject)args[0];
+        BattleCardObject battleCardObject = (BattleCardObject)args[0];
         int fieldIndex = (int)args[1];
 
         Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
 
-        LeanTween.move(cardObject.gameObject, pivotPoint.position, 0.4f).setEaseInQuad();
-        LeanTween.rotate(cardObject.gameObject, pivotPoint.rotation.eulerAngles, 0.4f).setEaseInQuad();
+        LeanTween.move(battleCardObject.gameObject, pivotPoint.position, 0.4f).setEaseInQuad();
+        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, 0.4f).setEaseInQuad();
         yield return new WaitForSeconds(0.4f);
 
         //flash or something
         yield return new WaitForSeconds(1);
 
-        PlayCardToBoard(cardObject, fieldIndex);
+        PlayCardToBoard(battleCardObject, fieldIndex);
     }
 
-    public void AnimateDrawCard(Player player, CardObject cardObject)
+    public void AnimateDrawCard(Player player, BattleCardObject battleCardObject)
     {
-        StartCoroutine("DrawCardAnimation", new object[2] { player, cardObject });
+        StartCoroutine("DrawCardAnimation", new object[2] { player, battleCardObject });
     }
 
     private IEnumerator DrawCardAnimation(object[] args)
     {
         Player player = args[0] as Player;
-        CardObject cardObject = args[1] as CardObject;
+        BattleCardObject battleCardObject = args[1] as BattleCardObject;
 
         GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
-        cardObject.transform.position = deckObject.transform.position;
-        cardObject.transform.rotation = deckObject.transform.rotation;
+        battleCardObject.transform.position = deckObject.transform.position;
+        battleCardObject.transform.rotation = deckObject.transform.rotation;
         //done initializing to match deck orientation
 
         string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
         GameObject fixedPoint = GameObject.Find(fixedPointName);
 
-        float tweenTime = 0.5F;
-        LeanTween.rotate(cardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
-        LeanTween.move(cardObject.gameObject, fixedPoint.transform.position, tweenTime).setEaseInQuad();
-        yield return new WaitForSeconds(tweenTime);
+        LeanTween.rotate(battleCardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, ActionManager.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.move(battleCardObject.gameObject, fixedPoint.transform.position, ActionManager.TWEEN_DURATION).setEaseInQuad();
+        yield return new WaitForSeconds(ActionManager.TWEEN_DURATION);
 
 
-        yield return new WaitForSeconds(tweenTime);
+        yield return new WaitForSeconds(ActionManager.TWEEN_DURATION);
         player.Hand.RepositionCards();
     }
 
-    public void AnimateDrawCardForMulligan(Player player, CardObject cardObject, int position)
+    public void AnimateDrawCardForMulligan(Player player, BattleCardObject battleCardObject, int position)
     {
         string targetPointName = String.Format("{0} Mulligan Holder {1}", player.Name, position);
         GameObject targetPoint = GameObject.Find(targetPointName);
-        cardObject.transform.position = targetPoint.transform.position;
-        cardObject.transform.localScale = Vector3.zero;
+        battleCardObject.transform.position = targetPoint.transform.position;
+        battleCardObject.transform.localScale = Vector3.zero;
 
-        float tweenTime = 0.5F;
-        LeanTween.scale(cardObject.gameObject, cardObject.reset.scale, tweenTime);
-        LeanTween.rotate(cardObject.gameObject, Camera.main.transform.rotation.eulerAngles, tweenTime).setEaseInQuad();
-        LeanTween.move(cardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, tweenTime).setEaseInQuad();
-        cardObject.visual.Redraw();
+        LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, ActionManager.TWEEN_DURATION);
+        LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, ActionManager.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.move(battleCardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, ActionManager.TWEEN_DURATION).setEaseInQuad();
+        battleCardObject.visual.Redraw();
     }
 
     public void HideMulliganOverlay(Player player)
@@ -557,10 +555,9 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator AnimateHideMulliganOverlay(Player player)
     {
-        float tweenTime = 0.5F;
         GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
-        LeanTween.scale(overlay, Vector3.zero, tweenTime);
-        yield return new WaitForSeconds(tweenTime);
+        LeanTween.scale(overlay, Vector3.zero, ActionManager.TWEEN_DURATION);
+        yield return new WaitForSeconds(ActionManager.TWEEN_DURATION);
         overlay.SetActive(false);
 
         if (!player.IsModeMulligan())
@@ -579,24 +576,24 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ToggleMulliganCard(CardObject cardObject)
+    public void ToggleMulliganCard(BattleCardObject battleCardObject)
     {
-        if (cardObject.Owner.KeptMulliganCards.Contains(cardObject.Card))
+        if (battleCardObject.Owner.KeptMulliganCards.Contains(battleCardObject.Card))
         {
-            cardObject.Owner.KeptMulliganCards.Remove(cardObject.Card);
-            cardObject.Owner.RemovedMulliganCards.Add(cardObject.Card);
+            battleCardObject.Owner.KeptMulliganCards.Remove(battleCardObject.Card);
+            battleCardObject.Owner.RemovedMulliganCards.Add(battleCardObject.Card);
 
-            //apply symbol/icon
-            cardObject.visual.SetGrayscale(true);
-            cardObject.visual.SetOutline(false);
+            //to-do: apply symbol/icon
+            battleCardObject.visual.SetGrayscale(true);
+            battleCardObject.visual.SetOutline(false);
         }
         else
         {
-            cardObject.Owner.RemovedMulliganCards.Remove(cardObject.Card);
-            cardObject.Owner.KeptMulliganCards.Add(cardObject.Card);
+            battleCardObject.Owner.RemovedMulliganCards.Remove(battleCardObject.Card);
+            battleCardObject.Owner.KeptMulliganCards.Add(battleCardObject.Card);
             //visuals
-            cardObject.visual.SetGrayscale(false);
-            cardObject.visual.SetOutline(true);
+            battleCardObject.visual.SetGrayscale(false);
+            battleCardObject.visual.SetOutline(true);
         }
     }
 
@@ -609,50 +606,50 @@ public class BattleManager : MonoBehaviour
     /*
      * Play card to board after receiving play card move from server. 
      */
-    public void PlayCardToBoard(CardObject cardObject, int index)
+    public void PlayCardToBoard(BattleCardObject battleCardObject, int index)
     {
-        SpawnCardToBoard(cardObject, index);
+        SpawnCardToBoard(battleCardObject, index);
     }
 
     /*
      * Play card to board after user on-device drags card from hand to field. 
      */
-    public void PlayCardToBoard(CardObject cardObject, RaycastHit hit)
+    public void PlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
     {
         //only called for creature or structure
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
-        Player player = cardObject.Owner;
-        SpawnCardToBoard(cardObject, index);
+        Player player = battleCardObject.Owner;
+        SpawnCardToBoard(battleCardObject, index);
 
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             PlayCardAttributes attributes = new PlayCardAttributes(index);
             BattleSingleton.Instance.SendChallengePlayCardRequest(
-                cardObject.Card.Id,
+                battleCardObject.Card.Id,
                 attributes
             );
         }
     }
 
-    private void SpawnCardToBoard(CardObject cardObject, int fieldIndex)
+    private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
     {
-        cardObject.visual.Renderer.enabled = false;
+        battleCardObject.visual.Renderer.enabled = false;
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
-        Board.Instance.CreateAndPlaceCreature(cardObject, fieldIndex);
+        Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex);
     }
 
     /*
      * Play spell card after user on-device drags card from hand to field. 
      */
-    public void PlayTargetedSpell(CardObject cardObject, RaycastHit hit)
+    public void PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
     {
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
-        SpellCard spellCard = cardObject.Card as SpellCard;
+        SpellCard spellCard = battleCardObject.Card as SpellCard;
         spellCard.Activate(targetedCreature);
-        UseCard(cardObject.Owner, cardObject);
+        UseCard(battleCardObject.Owner, battleCardObject);
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -661,7 +658,7 @@ public class BattleManager : MonoBehaviour
                 targetedCreature.CreatureCard.Id
             );
             BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
-                cardObject.Card.Id,
+                battleCardObject.Card.Id,
                 attributes
             );
         }
@@ -670,15 +667,15 @@ public class BattleManager : MonoBehaviour
     /*
      * Play spell card after receiving play card move from server. 
      */
-    public void PlayTargetedSpell(CardObject target, BoardCreature victimCreature)
+    public void PlayTargetedSpell(BattleCardObject spellCardObject, BoardCreature victimCreature)
     {
-        ((SpellCard)target.Card).Activate(victimCreature);
-        UseCard(target.Owner, target);
+        ((SpellCard)spellCardObject.Card).Activate(victimCreature);
+        UseCard(spellCardObject.Owner, spellCardObject);
     }
 
-    public void UseCard(Player player, CardObject cardObject)
+    public void UseCard(Player player, BattleCardObject battleCardObject)
     {
-        GameObject.Destroy(cardObject.gameObject);
+        GameObject.Destroy(battleCardObject.gameObject);
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
     }
 
@@ -709,7 +706,7 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            CardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
+            BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
             if (target == null)
             {
                 Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
@@ -720,7 +717,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            CardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
+            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
             target.Initialize(opponent, card);
             opponent.PlayCard(target);
             StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
@@ -740,7 +737,7 @@ public class BattleManager : MonoBehaviour
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            CardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
+            BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
             if (target == null)
             {
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
@@ -752,7 +749,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            CardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
             target.Initialize(opponent, card);
             opponent.PlayCard(target);
             PlayTargetedSpell(target, victimCreature);
@@ -768,7 +765,7 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            CardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
+            BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
             if (target == null)
             {
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
@@ -779,7 +776,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            CardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
             target.Initialize(opponent, card);
             opponent.PlayCard(target);
         }

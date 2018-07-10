@@ -57,31 +57,31 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void CreateAndPlaceCreature(CardObject cardObject, int index)
+    public void CreateAndPlaceCreature(BattleCardObject battleCardObject, int index)
     {
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
-            new object[2] { cardObject, index }
+            new object[2] { battleCardObject, index }
         );
     }
 
     private IEnumerator CreateAndPlaceCreatureHelper(object[] args)
     {
-        CardObject cardObject = args[0] as CardObject;
+        BattleCardObject battleCardObject = args[0] as BattleCardObject;
         int index = (int)args[1];
 
-        Transform boardPlace = this.playerIdToIndexToBoardPlace[cardObject.Owner.Id][index];
+        Transform boardPlace = this.playerIdToIndexToBoardPlace[battleCardObject.Owner.Id][index];
 
         FXPoolManager.Instance.PlayEffect("SpawnVFX", boardPlace.position + new Vector3(0f, 0f, -0.1f));
 
         yield return new WaitForSeconds(0.2f);
 
-        GameObject boardCreatureGO = new GameObject(cardObject.Card.Name);
-        boardCreatureGO.transform.position = boardPlace.position;
-        BoardCreature boardCreature = boardCreatureGO.AddComponent<BoardCreature>();
-        boardCreature.Initialize(cardObject);
+        GameObject boardCreatureObject = new GameObject(battleCardObject.Card.Name);
+        boardCreatureObject.transform.position = boardPlace.position;
+        BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
+        boardCreature.Initialize(battleCardObject);
 
-        Destroy(cardObject.gameObject);
+        Destroy(battleCardObject.gameObject);
 
         boardCreature.OnPlay();
 
@@ -166,11 +166,11 @@ public class Board : MonoBehaviour
                     continue;
                 }
 
-                GameObject cardObjectGO = new GameObject(card.Name);
-                CardObject cardObject = cardObjectGO.AddComponent<CardObject>();
-                cardObject.Initialize(player, card);
+                GameObject created = new GameObject(card.Name);
+                BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+                battleCardObject.Initialize(player, card);
 
-                Board.Instance.CreateAndPlaceCreature(cardObject, i);
+                Board.Instance.CreateAndPlaceCreature(battleCardObject, i);
             }
         }
 
