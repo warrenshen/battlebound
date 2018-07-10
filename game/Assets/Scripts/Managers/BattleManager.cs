@@ -702,7 +702,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             CardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
-            target.InitializeCard(opponent, card);
+            target.Initialize(opponent, card);
             opponent.PlayCard(target);
             StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
         }
@@ -734,7 +734,7 @@ public class BattleManager : MonoBehaviour
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             CardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.InitializeCard(opponent, card);
+            target.Initialize(opponent, card);
             opponent.PlayCard(target);
             PlayTargetedSpell(target, victimCreature);
         }
@@ -761,7 +761,7 @@ public class BattleManager : MonoBehaviour
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             CardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.InitializeCard(opponent, card);
+            target.Initialize(opponent, card);
             opponent.PlayCard(target);
         }
     }

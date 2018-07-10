@@ -17,6 +17,7 @@ public class DeveloperPanel : EditorWindow
         DeveloperPanel window = EditorWindow.GetWindow(typeof(DeveloperPanel)) as DeveloperPanel;
         window.minSize = new Vector2(100, 100);
         window.flagsFoldout = true;
+        window.useServer = DeveloperPanel.GetFlag(DeveloperPanel.USE_SERVER_FLAG);
         window.Show();
     }
 
@@ -44,6 +45,7 @@ public class DeveloperPanel : EditorWindow
         int useServerValue = this.useServer ? 1 : 0;
         PlayerPrefs.SetInt(USE_SERVER_FLAG, useServerValue);
 
+        //done getting values, now save
         PlayerPrefs.Save();
     }
 

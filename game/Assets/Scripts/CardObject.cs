@@ -34,7 +34,7 @@ public class CardObject : MouseWatchable
     public Reset reset;
 
 
-    public void InitializeCard(Player player, Card card)
+    public void Initialize(Player player, Card card)
     {
         this.owner = player;
         this.card = card;
@@ -43,9 +43,9 @@ public class CardObject : MouseWatchable
         this.templateData = BattleManager.Instance.cardTemplates[card.Name];
         //make render changes according to card class here
 
-        this.visual = VisualizeCard();
-        LoadCardArtwork();
-        SetThisResetValues();
+        this.visual = this.VisualizeCard();
+        this.LoadCardArtwork();
+        this.SetThisResetValues();
         //set sprite etc here
         collider = gameObject.AddComponent<BoxCollider>() as Collider;
         collider.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.5f, 0.2f);

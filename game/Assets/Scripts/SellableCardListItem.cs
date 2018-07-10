@@ -16,7 +16,7 @@ public class SellableCardListItem : MonoBehaviour
         this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
     }
 
-    public void InitializeCard(CardRaw card)
+    public void Initialize(CardRaw card)
     {
         this.card = card;
 

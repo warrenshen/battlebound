@@ -373,9 +373,8 @@ public class Player
     public CardObject AddDrawnCard(Card card, bool isInit = false, bool animate = true, bool reposition = true)
     {
         GameObject created = new GameObject(card.Name);
-
         CardObject cardObject = created.AddComponent<CardObject>();
-        cardObject.InitializeCard(this, card);
+        cardObject.Initialize(this, card);
 
         created.transform.parent = GameObject.Find(
             this.name + " Hand"

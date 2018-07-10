@@ -160,7 +160,7 @@ public class Board : MonoBehaviour
 
                 GameObject cardObjectGO = new GameObject(card.Name);
                 CardObject cardObject = cardObjectGO.AddComponent<CardObject>();
-                cardObject.InitializeCard(player, card);
+                cardObject.Initialize(player, card);
 
                 Board.Instance.CreateAndPlaceCreature(cardObject, i);
             }
