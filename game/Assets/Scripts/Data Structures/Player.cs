@@ -80,6 +80,10 @@ public class Player
 
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this, playerState);
+
+        Card[] fieldCards = playerState.GetCardsField();
+
+        Board.Instance.RegisterPlayer(this, fieldCards);
     }
 
     public void Initialize(PlayerState playerState)
@@ -87,10 +91,6 @@ public class Player
         List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
         this.AddDrawnCards(handCards, true, animate: false);
-
-        Card[] fieldCards = playerState.GetCardsField();
-
-        Board.Instance.RegisterPlayer(this, fieldCards);
     }
 
     public void SetMode(int mode)
@@ -235,22 +235,44 @@ public class Player
         }
     }
 
-    public void BeginMulligan(List<Card> mulliganCards, bool show)
+    public void BeginMulligan(List<Card> mulliganCards)
     {
         this.mode = PLAYER_STATE_MODE_MULLIGAN;
 
         this.keptMulliganCards = mulliganCards;
         this.removedMulliganCards = new List<Card>();
 
-        if (!show)
-        {
-            return;
-        }
-
         for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
             CardObject cardObject = AddDrawnCard(this.keptMulliganCards[i], isInit: true, reposition: false);  //doesn't use standard RepositionCards()
             BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i); //special animation to replace the omitted reposition
+        }
+
+        BattleManager.Instance.SetBoardCenterText("Choose cards to mulligan..");
+    }
+
+    /*
+     * Function only for connected mode.
+     */
+    public void ResumeMulligan(List<Card> mulliganCards)
+    {
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            Debug.LogError("Resume mulligan called when not in connected mode.");
+            return;
+        }
+
+        if (this.mode == PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BeginMulligan(mulliganCards);
+        }
+        else if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
+        }
+        else
+        {
+            Debug.LogError("Resume mulligan called on player not in mulligan mode.");
         }
     }
 

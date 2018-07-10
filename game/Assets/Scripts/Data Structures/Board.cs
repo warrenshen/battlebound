@@ -28,9 +28,24 @@ public class Board : MonoBehaviour
 
     public void RegisterPlayer(Player player)
     {
+        CacheBoardPlaces(player);
+
         PlayingField playingField = new PlayingField(player);
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
+    }
+
+    public void RegisterPlayer(Player player, Card[] fieldCards)
+    {
+        CacheBoardPlaces(player);
+
+        PlayingField playingField = new PlayingField(player, fieldCards);
+        this.playerIdToField[player.Id] = playingField;
+        this.playerIdToAvatar[player.Id] = player.Avatar;
+    }
+
+    private void CacheBoardPlaces(Player player)
+    {
         this.playerIdToIndexToBoardPlace[player.Id] = new Dictionary<int, Transform>();
 
         for (int i = 0; i < 6; i += 1)
@@ -78,13 +93,6 @@ public class Board : MonoBehaviour
     {
         PlayingField selected = this.playerIdToField[creature.Owner.Id];
         selected.Remove(creature);
-    }
-
-    public void RegisterPlayer(Player player, Card[] fieldCards)
-    {
-        PlayingField playingField = new PlayingField(player, fieldCards);
-        this.playerIdToField[player.Id] = playingField;
-        this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
     public PlayingField GetFieldByPlayerId(string playerId)

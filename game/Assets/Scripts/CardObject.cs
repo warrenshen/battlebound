@@ -33,14 +33,27 @@ public class CardObject : MouseWatchable
     }
     public Reset reset;
 
-
     public void Initialize(Player player, Card card)
     {
         this.owner = player;
         this.card = card;
         this.gameObject.layer = LayerMask.NameToLayer("Card");
         card.wrapper = this;
-        this.templateData = BattleManager.Instance.cardTemplates[card.Name];
+
+        if (card.Id == "HIDDEN")
+        {
+            this.templateData = new CardTemplate();
+        }
+        else if (!BattleManager.Instance.cardTemplates.ContainsKey(card.Name))
+        {
+            Debug.LogError(string.Format("Card {0} does not exist in codex.", card.Name));
+            this.templateData = new CardTemplate();
+        }
+        else
+        {
+            this.templateData = BattleManager.Instance.cardTemplates[card.Name];
+        }
+
         //make render changes according to card class here
 
         this.visual = this.VisualizeCard();
@@ -54,7 +67,6 @@ public class CardObject : MouseWatchable
 
     private void LoadCardArtwork()
     {
-
         Texture2D front = Resources.Load(this.templateData.frontImage) as Texture2D;
         Texture2D back = Resources.Load(this.templateData.backImage) as Texture2D;
 
