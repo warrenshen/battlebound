@@ -99,7 +99,7 @@ const playerResponse = getChallengeStateForPlayerNoSet(playerId, challengeStateD
 const playerMessage = Spark.message("ChallengePlayMulliganMessage");
 const playerMessageData = {};
 
-playerMessageData.challengeId = playerResponse.challengeId;
+playerMessageData.challengeId = challengeId;
 playerMessageData.nonce = playerResponse.nonce;
 playerMessageData.playerState = playerResponse.playerState;
 playerMessageData.opponentState = playerResponse.opponentState;
@@ -113,7 +113,7 @@ const opponentResponse = getChallengeStateForPlayerNoSet(opponentId, challengeSt
 const opponentMessage = Spark.message("ChallengePlayMulliganMessage");
 const opponentMessageData = {};
 
-opponentMessageData.challengeId = opponentResponse.challengeId;
+opponentMessageData.challengeId = challengeId;
 opponentMessageData.nonce = opponentResponse.nonce;
 opponentMessageData.playerState = opponentResponse.playerState;
 opponentMessageData.opponentState = opponentResponse.opponentState;

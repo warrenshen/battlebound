@@ -141,7 +141,7 @@ if (playedCard.abilities.indexOf(CARD_ABILITY_BATTLE_CRY_DRAW_CARD) >= 0) {
 
 // Iterate through cards already on field and grant played card buff(s).
 playerField.forEach(function(fieldCard) {
-    if (fieldCard.abilities && fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE) >= 0) {
+    if (fieldCard.abilities && fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN) >= 0) {
         playedCard.attack += 1;
         playedCard.buffs.push({
             granterId: fieldCard.id,

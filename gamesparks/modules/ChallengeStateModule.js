@@ -25,6 +25,7 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
         "manaCurrent",
         "manaMax",
         "health",
+        "healthMax",
         "armor",
         "field",
         "hand",
@@ -85,7 +86,6 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     });
     
     return {
-        challengeId: challengeId,
         nonce: challengeStateData.nonce,
         playerState: filteredPlayerState,
         opponentState: filteredOpponentState,
@@ -106,7 +106,7 @@ function getChallengeStateForPlayer(playerId, challengeId) {
 
     const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
     
-    Spark.setScriptData("challengeId", response.challengeId);
+    Spark.setScriptData("challengeId", challengeId);
     Spark.setScriptData("nonce", response.nonce);
     Spark.setScriptData("playerState", response.playerState);
     Spark.setScriptData("opponentState", response.opponentState);
