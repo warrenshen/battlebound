@@ -11,7 +11,7 @@ using TMPro;
 [System.Serializable]
 public class CollectionManager : MonoBehaviour
 {
-
+    [SerializeField]
     private List<Card> collection;
     private List<Deck> decks;
     [SerializeField]
@@ -60,6 +60,7 @@ public class CollectionManager : MonoBehaviour
         {
             if (!ActionManager.Instance.HasDragTarget())
                 return;
+
             selectedCard = ActionManager.Instance.GetDragTarget();
             Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
             RaycastHit hit;
@@ -268,7 +269,7 @@ public class CollectionManager : MonoBehaviour
         GameObject created = new GameObject(card.Name + "_gray");
         created.transform.position = source.position;
 
-        SpriteRenderer sprenderer = created.AddComponent<SpriteRenderer>() as SpriteRenderer;
+        //SpriteRenderer sprenderer = created.AddComponent<SpriteRenderer>() as SpriteRenderer;
         //Texture2D image = Resources.Load(Texture) as Texture2D;     //to-do, fix all this shit
         //sprenderer.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
         //sprenderer.sortingOrder = -100;

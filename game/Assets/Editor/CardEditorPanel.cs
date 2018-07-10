@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-public class TCGEditorPanel : EditorWindow
+public class CardEditorPanel : EditorWindow
 {
     private Texture mainTexture;
     private Texture backgroundTexture;
@@ -42,11 +42,11 @@ public class TCGEditorPanel : EditorWindow
     private Dictionary<string, CardTemplate> templates;
 
 
-    [MenuItem("Custom/TCG Editor")]
+    [MenuItem("Custom/Card Editor")]
     static void Init()
     {
         // Get existing open window or if none, make a new one:
-        TCGEditorPanel window = EditorWindow.GetWindow(typeof(TCGEditorPanel)) as TCGEditorPanel;
+        CardEditorPanel window = EditorWindow.GetWindow(typeof(CardEditorPanel)) as CardEditorPanel;
         window.minSize = new Vector2(400, 900);
         window.backgroundTexture = EditorGUIUtility.whiteTexture;
         window.cardFrame = Resources.Load("FrameForEditor") as Texture;
@@ -158,7 +158,7 @@ public class TCGEditorPanel : EditorWindow
     {
         if (!path.Contains("Resources"))
         {
-            Debug.LogError(string.Format("Bad path recieved by TCGEditor: {}, asset not in 'Resources' directory.", path));
+            Debug.LogError(string.Format("Bad path recieved by CardEditorPanel: {}, asset not in 'Resources' directory.", path));
             return null;
         }
 
@@ -299,9 +299,9 @@ public class TCGEditorPanel : EditorWindow
             //background needs to be rendered first to be on bottom
             if (this.backgroundTexture != null)
             {
-                float verticalSize = TCGEditorPanel.imageHeight * 1 / template.backScale.y;
+                float verticalSize = CardEditorPanel.imageHeight * 1 / template.backScale.y;
                 EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 370 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
-                                                      TCGEditorPanel.imageWidth * 1 / template.backScale.x, verticalSize),
+                                                      CardEditorPanel.imageWidth * 1 / template.backScale.x, verticalSize),
                                                       this.backgroundTexture, backMat);
             }
             else
@@ -310,9 +310,9 @@ public class TCGEditorPanel : EditorWindow
             }
             if (this.mainTexture != null)
             {
-                float verticalSize = TCGEditorPanel.imageHeight * 1 / template.frontScale.y;
+                float verticalSize = CardEditorPanel.imageHeight * 1 / template.frontScale.y;
                 EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 370 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
-                                                      TCGEditorPanel.imageWidth * 1 / template.frontScale.x, verticalSize),
+                                                      CardEditorPanel.imageWidth * 1 / template.frontScale.x, verticalSize),
                                                       this.mainTexture, frontMat);
             }
 
