@@ -17,15 +17,21 @@ public class FXPoolManager : MonoBehaviour
         //init conversion
         this.shortToFull[Card.CARD_ABILITY_SHIELD] = "DivineShieldVFX";
         this.shortToFull[Card.CARD_ABILITY_TAUNT] = "TauntVFX";
+
+        foreach (Transform effect in transform)
+        {
+            effectIndices.Add(effect.name, 0);
+        }
     }
 
     // Use this for initialization
     void Start()
     {
-        foreach (Transform effect in transform)
-        {
-            effectIndices.Add(effect.name, 0);
-        }
+        //foreach (Transform effect in transform)
+        //{
+        //    Debug.Log(effect.name);
+        //    effectIndices.Add(effect.name, 0);
+        //}
     }
 
     private string ResolveName(string initial)

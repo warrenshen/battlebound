@@ -66,6 +66,9 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
 
+        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
+        this.cardTemplates = CodexHelper.ParseFile(codexPath);
+
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             if (!BattleSingleton.Instance.ChallengeStarted)
@@ -78,31 +81,10 @@ public class BattleManager : MonoBehaviour
             else
             {
                 Debug.Log("BattleManager in Connected Development Mode.");
-
-                this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
-                this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
-
-                this.playerIdToPlayer = new Dictionary<string, Player>();
-                this.playerIdToPlayer[this.you.Id] = this.you;
-                this.playerIdToPlayer[this.opponent.Id] = this.opponent;
-
-                this.you.Initialize(BattleSingleton.Instance.PlayerState);
-                this.opponent.Initialize(BattleSingleton.Instance.OpponentState);
                 this.initialized = true;
             }
         }
-        else
-        {
-            this.you = new Player("Player", "Player");
-            this.opponent = new Player("Enemy", "Enemy");
 
-            this.playerIdToPlayer = new Dictionary<string, Player>();
-            this.playerIdToPlayer[this.you.Id] = this.you;
-            this.playerIdToPlayer[this.opponent.Id] = this.opponent;
-        }
-
-        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
-        this.cardTemplates = CodexHelper.ParseFile(codexPath);
         attackCommand.SetWidth(0);
     }
 
@@ -116,18 +98,45 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        if (!InspectorControlPanel.Instance.DevelopmentMode || this.initialized)
+        this.playerIdToPlayer = new Dictionary<string, Player>();
+        this.players = new List<Player>();
+
+        this.stencilCount = 1;
+        battleLayer = 9;
+        boardLayer = LayerMask.GetMask("Board");
+
+        ChooseRandomSetting();
+
+        if (InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.players = new List<Player>();
+            if (this.initialized)
+            {
+                this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
+                this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
+
+                this.playerIdToPlayer[this.you.Id] = this.you;
+                this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
+                this.you.Initialize(BattleSingleton.Instance.PlayerState);
+                this.opponent.Initialize(BattleSingleton.Instance.OpponentState);
+
+                this.players.Add(this.you);
+                this.players.Add(this.opponent);
+
+                GameStart();
+            }
+        }
+        else
+        {
+            this.you = new Player("Player", "Player");
+            this.opponent = new Player("Enemy", "Enemy");
+
+            this.playerIdToPlayer[this.you.Id] = this.you;
+            this.playerIdToPlayer[this.opponent.Id] = this.opponent;
+
             this.players.Add(this.you);
             this.players.Add(this.opponent);
-            this.stencilCount = 1;
 
-            // Use this for initialization
-            battleLayer = 9;
-            boardLayer = LayerMask.GetMask("Board");
-
-            ChooseRandomSetting();
             GameStart();
         }
     }
@@ -136,10 +145,9 @@ public class BattleManager : MonoBehaviour
     {
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.you.BeginMulligan(this.you.PopCardsFromDeck(3), true);
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3), true);
+            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
             this.mode = BATTLE_STATE_MULLIGAN_MODE;
-            SetBoardCenterText("Choose cards to mulligan..");
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -151,10 +159,21 @@ public class BattleManager : MonoBehaviour
             activePlayer = players[turnIndex % players.Count];
             activePlayer.RenderTurnStart();
 
-            this.you.BeginMulligan(BattleSingleton.Instance.GetMulliganCards(this.you.Id), true);
-            this.opponent.BeginMulligan(BattleSingleton.Instance.GetMulliganCards(this.opponent.Id), true);
-            this.mode = BATTLE_STATE_MULLIGAN_MODE;
-            SetBoardCenterText("Choose cards to mulligan..");
+            if (this.you.IsModeMulligan())
+            {
+                this.you.ResumeMulligan(
+                    BattleSingleton.Instance.GetMulliganCards(this.you.Id)
+                );
+                this.opponent.ResumeMulligan(
+                    BattleSingleton.Instance.GetMulliganCards(this.opponent.Id)
+                );
+                this.mode = BATTLE_STATE_MULLIGAN_MODE;
+            }
+            else
+            {
+                HideMulliganOverlay(this.you);
+                HideMulliganOverlay(this.opponent);
+            }
         }
     }
 
