@@ -24,16 +24,6 @@ public class CardEditorPanel : EditorWindow
     private Material backMat;
     private Texture cardFrame;
 
-    private float frontHorizontalScale = 1.0F;
-    private float frontVerticalScale = 1.0F;
-    private float frontHorizontalOffset = 0.0F;
-    private float frontVerticalOffset = 0.0F;
-
-    private float backHorizontalScale = 1.0F;
-    private float backVerticalScale = 1.0F;
-    private float backHorizontalOffset = 0.0F;
-    private float backVerticalOffset = 0.0F;
-
     private int shownTab;
     private string codexPath;
 

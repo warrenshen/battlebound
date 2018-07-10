@@ -7,45 +7,45 @@ using UnityEngine;
 public class Hand
 {
     [SerializeField]
-    private List<CardObject> cardObjects;
+    private List<BattleCardObject> battleCardObjects;
 
     private string playerId;
     private string name;
 
     public Hand(Player player)
     {
-        this.cardObjects = new List<CardObject>();
+        this.battleCardObjects = new List<BattleCardObject>();
         this.playerId = player.Id;
         this.name = player.Name;
     }
 
     public int Size()
     {
-        return cardObjects.Count;
+        return battleCardObjects.Count;
     }
 
-    public CardObject GetCardObjectByCardId(string cardId)
+    public BattleCardObject GetCardObjectByCardId(string cardId)
     {
-        foreach (CardObject cardObject in this.cardObjects)
+        foreach (BattleCardObject battleCardObject in this.battleCardObjects)
         {
-            if (cardObject.Card.Id == cardId)
+            if (battleCardObject.Card.Id == cardId)
             {
-                return cardObject;
+                return battleCardObject;
             }
         }
 
         return null;
     }
 
-    public CardObject GetCardObjectByIndex(int index)
+    public BattleCardObject GetCardObjectByIndex(int index)
     {
-        return this.cardObjects.ElementAt(index);
+        return this.battleCardObjects.ElementAt(index);
     }
 
-    public void AddCardObject(CardObject cardObject)
+    public void AddCardObject(BattleCardObject battleCardObject)
     {
-        this.cardObjects.Add(cardObject);
-        SoundManager.Instance.PlaySound("PlayCardSFX", cardObject.transform.position);
+        this.battleCardObjects.Add(battleCardObject);
+        SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
     }
 
     public void Discard(int count)
@@ -55,25 +55,25 @@ public class Hand
 
     public void RemoveByIndex(int index)
     {
-        this.cardObjects.RemoveAt(index);
+        this.battleCardObjects.RemoveAt(index);
     }
 
     public void RemoveByCardId(string cardId)
     {
-        int removeIndex = this.cardObjects.FindIndex(cardObject => cardObject.Card.Id == cardId);
-        this.cardObjects.RemoveAt(removeIndex);
+        int removeIndex = this.battleCardObjects.FindIndex(element => element.Card.Id == cardId);
+        this.battleCardObjects.RemoveAt(removeIndex);
     }
 
-    private void RedrawOutline(CardObject cardObject)
+    private void RedrawOutline(BattleCardObject battleCardObject)
     {
         Player player = BattleManager.Instance.GetPlayerById(this.playerId);
-        cardObject.visual.SetOutline(player.Mana >= cardObject.Card.Cost);
-        cardObject.visual.Redraw();
+        battleCardObject.visual.SetOutline(player.Mana >= battleCardObject.Card.Cost);
+        battleCardObject.visual.Redraw();
     }
 
     public void RepositionCards(float verticalShift = 0)
     {
-        int size = this.cardObjects.Count;
+        int size = this.battleCardObjects.Count;
         //if no cards, return
         if (size <= 0)
         {
@@ -81,19 +81,19 @@ public class Hand
         }
 
         HashSet<string> cardIdSet = new HashSet<string>();
-        foreach (CardObject cardObject in this.cardObjects)
+        foreach (BattleCardObject battleCardObject in this.battleCardObjects)
         {
-            if (cardObject.Card.Id != "HIDDEN" && cardIdSet.Contains(cardObject.Card.Id))
+            if (battleCardObject.Card.Id != "HIDDEN" && cardIdSet.Contains(battleCardObject.Card.Id))
             {
                 Debug.LogError("Duplicate card IDs in hand!");
             }
             else
             {
-                cardIdSet.Add(cardObject.Card.Id);
+                cardIdSet.Add(battleCardObject.Card.Id);
             }
         }
 
-        float cardWidth = this.cardObjects[0].transform.GetComponent<BoxCollider>().size.x + 0.24f - 0.15f * size;
+        float cardWidth = this.battleCardObjects[0].transform.GetComponent<BoxCollider>().size.x + 0.24f - 0.15f * size;
         float rotation_x = 70f;
 
         for (int k = 0; k < size; k++)
@@ -101,14 +101,13 @@ public class Hand
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
 
-            CardObject cardObject = this.cardObjects[k];
-            RedrawOutline(cardObject);
-            //cardObject.Renderer.sortingOrder = 10 + k;
+            BattleCardObject battleCardObject = this.battleCardObjects[k];
+            RedrawOutline(battleCardObject);
+            //to-do: do something with hypercard stencil here?
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.2f * pos, vertical) + verticalShift * cardObject.transform.forward;
-            float tweenTime = 0.5f;
-            LeanTween.moveLocal(cardObject.gameObject, adjustedPos, tweenTime);
-            LeanTween.rotateLocal(cardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), tweenTime);
+            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.2f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
+            LeanTween.moveLocal(battleCardObject.gameObject, adjustedPos, ActionManager.TWEEN_DURATION);
+            LeanTween.rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), ActionManager.TWEEN_DURATION);
         }
     }
 

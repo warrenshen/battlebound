@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
-public class CollectionCardObject : CardObject
+public class BattleCardObject : CardObject
 {
-    public bool minified;
+    protected Player owner;
+    public Player Owner => owner;
 
 
-    public override void Initialize(Card card)
+    public void Initialize(Player player, Card card)
     {
-        this.templateData = CollectionManager.Instance.cardTemplates[card.Name];
+        this.owner = player;
+        this.templateData = BattleManager.Instance.cardTemplates[card.Name];
+
 
         if (card.Id == "HIDDEN")
         {
@@ -32,6 +36,15 @@ public class CollectionCardObject : CardObject
 
     public override void EnterHover()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            SetVisualResetValues();
+            this.visual.transform.localScale = 1.15F * this.visual.reset.scale;
+            return;
+        }
+
+        if (!this.owner.HasTurn)
+            return;
         if (ActionManager.Instance.HasDragTarget())
             return;
         //set defaults of hypercard
@@ -46,6 +59,15 @@ public class CollectionCardObject : CardObject
 
     public override void ExitHover()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BattleManager.Instance.SetPassiveCursor();
+            this.visual.transform.localScale = this.visual.reset.scale;
+            return;
+        }
+
+        if (!this.owner.HasTurn)
+            return;
         if (ActionManager.Instance.HasDragTarget())
             return;
 
@@ -55,6 +77,13 @@ public class CollectionCardObject : CardObject
 
     public override void MouseDown()
     {
+        if (!this.owner.HasTurn)
+            return;
+        if (ActionManager.Instance.HasDragTarget())
+            return;
+        //set defaults of cardobject
+        this.SetThisResetValues();
+
         LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
         //this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
@@ -64,6 +93,16 @@ public class CollectionCardObject : CardObject
 
     public override void MouseUp()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BattleManager.Instance.ToggleMulliganCard(this);
+            return;
+        }
+
+        if (!this.owner.HasTurn)
+        {
+            return;
+        }
         if (!ActionManager.Instance.HasDragTarget())
         {
             return;
@@ -78,19 +117,5 @@ public class CollectionCardObject : CardObject
     public void DoubleClickUp()
     {
         Debug.Log(gameObject.name + " double clicked.");
-    }
-
-    public void Minify(bool value)
-    {
-        //if (value)
-        //{
-        //    spr.sprite = Sprite.Create(image, new Rect(0.0f, image.height / 2 - 40, image.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
-        //    minified = true;
-        //}
-        //else
-        //{
-        //    spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-        //    minified = false;
-        //}
     }
 }

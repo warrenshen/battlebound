@@ -8,6 +8,7 @@ public class ActionManager : MonoBehaviour
     public bool allowPan = false;
     public float cardOffsetFromCamera = 8;
 
+    public static float TWEEN_DURATION = 0.5f;
     private float SCROLL_DAMPING = 0.1f;
     private float M_THRESHOLD = 2000;
     private float L_SPEED = 10;
@@ -19,7 +20,6 @@ public class ActionManager : MonoBehaviour
     private int selectedSortingOrder;
 
     private int cardAndUILayerMask;
-    private int boardLayerMask;
     public Texture2D[] cursors;
 
     public bool active = true;
@@ -38,8 +38,6 @@ public class ActionManager : MonoBehaviour
 
     private void Start()
     {
-        if (Application.loadedLevelName == "Battle")
-            boardLayerMask = LayerMask.GetMask("Board");
         cardAndUILayerMask = LayerMask.GetMask("Card", "UI");
         InitializeDragTilts();
     }
@@ -61,8 +59,8 @@ public class ActionManager : MonoBehaviour
 
         if (target)
         {
-            RepositionCard(target);
-            AdjustCardTilt(target);
+            this.RepositionCard(target);
+            this.AdjustCardTilt(target);
             if (Input.GetMouseButtonUp(0))
                 ClearDragTarget();
         }
@@ -134,7 +132,7 @@ public class ActionManager : MonoBehaviour
 
     public void ResetTarget()
     {
-        target.Owner.Hand.RepositionCards();
+        LeanTween.move(this.target.gameObject, this.target.reset.position, ActionManager.TWEEN_DURATION);
     }
 
     private void DestroyTarget()
@@ -215,12 +213,6 @@ public class ActionManager : MonoBehaviour
         dragTilts[2].eulerAngles = new Vector3(resetRotation.x, -normalized * 0.5f);
         dragTilts[3].eulerAngles = new Vector3(resetRotation.x, normalized * 0.5f);
         dragTilts[4].eulerAngles = new Vector3(resetRotation.x, 0, 0);
-    }
-
-    public void AddCardToDeck(CardObject card)
-    {
-        if (CollectionManager.Instance != null)
-            CollectionManager.Instance.AddToDeck(card);
     }
 
     public void SetCursor(int cursor)

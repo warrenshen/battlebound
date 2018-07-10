@@ -23,7 +23,7 @@ public class BoardCreature : Targetable
     protected int maxHealth;
     public int MaxHealth => maxHealth;
 
-    //removed "image" field because this reuses cardObject initialized visuals
+    //removed "image" field because this reuses BattleCardObject initialized visuals
 
     //int canAttack / CanAttack in Targetable class
     //int maxAttacks in Targetable class
@@ -58,16 +58,16 @@ public class BoardCreature : Targetable
     private List<AnimationState> summonAnimStates;
 
 
-    public void Initialize(CardObject cardObject)
+    public void Initialize(BattleCardObject battleCardObject)
     {
         //data structure stuff
-        this.creatureCard = cardObject.Card as CreatureCard;
+        this.creatureCard = battleCardObject.Card as CreatureCard;
         this.cost = this.creatureCard.Cost;
         this.attack = this.creatureCard.Attack;
         this.health = this.creatureCard.Health;
         this.maxHealth = this.creatureCard.Health;
         this.abilities = this.creatureCard.Abilities;
-        this.summonPrefabPath = cardObject.TemplateData.summonPrefab;
+        this.summonPrefabPath = battleCardObject.TemplateData.summonPrefab;
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
         {
@@ -90,7 +90,7 @@ public class BoardCreature : Targetable
             this.hasShield = false;
         }
 
-        this.owner = cardObject.Owner;
+        this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
         if (this.abilities != null)
@@ -99,12 +99,12 @@ public class BoardCreature : Targetable
         }
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
-        BoxCollider oldCollider = cardObject.GetComponent<BoxCollider>() as BoxCollider;
+        BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
         newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
         newCollider.size *= BOARD_GROW_FACTOR;
         newCollider.center = oldCollider.center;
 
-        this.visual = cardObject.visual;
+        this.visual = battleCardObject.visual;
         this.RepurposeCardVisual();
         this.SummonCreature();
 

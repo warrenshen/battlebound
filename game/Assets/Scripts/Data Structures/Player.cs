@@ -98,11 +98,11 @@ public class Player
         this.mode = mode;
     }
 
-    public void PlayCard(CardObject cardObject)
+    public void PlayCard(BattleCardObject battleCardObject)
     {
-        this.mana -= cardObject.Card.Cost;
+        this.mana -= battleCardObject.Card.Cost;
         RenderMana();
-        this.hand.RemoveByCardId(cardObject.Card.Id);
+        this.hand.RemoveByCardId(battleCardObject.Card.Id);
         this.hand.RepositionCards();
     }
 
@@ -214,7 +214,7 @@ public class Player
     private void ReplaceCardByMulligan(Card card)
     {
         this.hand.RemoveByCardId(card.Id);
-        BattleManager.Instance.UseCard(this, card.wrapper); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
         ReturnCardToDeck(card);
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
@@ -226,7 +226,7 @@ public class Player
     private void ReplaceCardByMulligan(Card card, int index)
     {
         this.hand.RemoveByIndex(index);
-        BattleManager.Instance.UseCard(this, card.wrapper); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
         ReturnCardToDeck(card);
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
@@ -244,8 +244,8 @@ public class Player
 
         for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
-            CardObject cardObject = AddDrawnCard(this.keptMulliganCards[i], isInit: true, reposition: false);  //doesn't use standard RepositionCards()
-            BattleManager.Instance.AnimateDrawCardForMulligan(this, cardObject, i); //special animation to replace the omitted reposition
+            BattleCardObject battleCardObject = AddDrawnCard(this.keptMulliganCards[i], isInit: true, reposition: false);  //doesn't use standard RepositionCards()
+            BattleManager.Instance.AnimateDrawCardForMulligan(this, battleCardObject, i); //special animation to replace the omitted reposition
         }
 
         BattleManager.Instance.SetBoardCenterText("Choose cards to mulligan..");
@@ -392,11 +392,11 @@ public class Player
     /*
      * @param bool isInit - do not decrement deck size if true
      */
-    public CardObject AddDrawnCard(Card card, bool isInit = false, bool animate = true, bool reposition = true)
+    public BattleCardObject AddDrawnCard(Card card, bool isInit = false, bool animate = true, bool reposition = true)
     {
         GameObject created = new GameObject(card.Name);
-        CardObject cardObject = created.AddComponent<CardObject>();
-        cardObject.Initialize(this, card);
+        BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
+        createdBattleCard.Initialize(this, card);
 
         created.transform.parent = GameObject.Find(
             this.name + " Hand"
@@ -407,20 +407,20 @@ public class Player
             this.deckSize -= 1;
         }
 
-        this.Hand.AddCardObject(cardObject);
+        this.Hand.AddCardObject(createdBattleCard);
 
         if (reposition)
         {
             if (animate)
             {
-                BattleManager.Instance.AnimateDrawCard(this, cardObject);
+                BattleManager.Instance.AnimateDrawCard(this, createdBattleCard);
             }
             else
             {
                 this.hand.RepositionCards();
             }
         }
-        return cardObject;
+        return createdBattleCard;
     }
 
     public void AddDrawnCards(List<Card> cards, bool isInit = false, bool animate = true)
