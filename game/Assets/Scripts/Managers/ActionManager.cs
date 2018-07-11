@@ -132,7 +132,8 @@ public class ActionManager : MonoBehaviour
 
     public void ResetTarget()
     {
-        LeanTween.move(this.target.gameObject, this.target.reset.position, ActionManager.TWEEN_DURATION);
+        LeanTween.moveLocal(this.target.gameObject, this.target.reset.position, ActionManager.TWEEN_DURATION);
+        LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, ActionManager.TWEEN_DURATION);
     }
 
     private void DestroyTarget()

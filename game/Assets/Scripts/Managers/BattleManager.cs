@@ -28,7 +28,7 @@ public class BattleManager : MonoBehaviour
     public Dictionary<string, Player> PlayerIdToPlayer => playerIdToPlayer;
 
     public int battleLayer;
-    public int boardLayer;
+    public int boardOrBattleLayer;
     //private List<HistoryItem> history;
 
     [SerializeField]
@@ -102,8 +102,8 @@ public class BattleManager : MonoBehaviour
         this.players = new List<Player>();
 
         this.stencilCount = 1;
-        battleLayer = 9;
-        boardLayer = LayerMask.GetMask("Board");
+        battleLayer = LayerMask.GetMask("Battle");
+        boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
 
         ChooseRandomSetting();
 
@@ -238,11 +238,11 @@ public class BattleManager : MonoBehaviour
         {
             RaycastHit hit;
             bool cast = Physics.Raycast(ray, out hit, 100f);
-            if (cast && hit.collider.gameObject.layer == battleLayer && mouseDownTargetable != null) //use battle layer mask
+            if (cast && CheckFight(mouseDownTargetable, hit)) //use battle layer mask
             {
-                CheckFight(mouseDownTargetable, hit);
+                //do something?
             }
-            else if (CheckPlayCard(ray, hit))
+            else if (cast && CheckPlayCard(ray, hit))
             {
                 //do something?
             }
@@ -382,11 +382,19 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    private void CheckFight(Targetable attacker, RaycastHit hit)
+    private bool CheckFight(Targetable attacker, RaycastHit hit)
     {
         if (!attackCommand.enabled)
         {
-            return;
+            return false;
+        }
+        if (hit.collider.gameObject.layer != battleLayer)
+        {
+            return false;
+        }
+        if (mouseDownTargetable == null)
+        {
+            return false;
         }
 
         mouseUpTargetable = hit.collider.GetComponent<Targetable>();
@@ -410,7 +418,9 @@ public class BattleManager : MonoBehaviour
             }
 
             mouseDownTargetable.Fight(mouseUpTargetable);
+            return true;
         }
+        return false;
     }
 
     private float GetCardDisplacement(BattleCardObject target)
@@ -439,7 +449,7 @@ public class BattleManager : MonoBehaviour
             ActionManager.Instance.ResetTarget();
             return false;
         }
-        else if (GetCardDisplacement(target) < minThreshold)
+        else if (GetCardDisplacement(target) < minThreshold)   //to-do: review this
         {
             //didn't displace card enough to activate
             ActionManager.Instance.ResetTarget();
@@ -475,13 +485,21 @@ public class BattleManager : MonoBehaviour
             this.UseCard(target.Owner, target);    //to-do: change to own weapon func
             return true;
         }
-        else if (Physics.Raycast(ray, out hit, 100f, boardLayer) && hit.collider.name.Contains(target.Owner.Name))
+        else if (Physics.Raycast(ray, out hit, 100f, boardOrBattleLayer) &&
+                 hit.collider.gameObject.layer == LayerMask.NameToLayer("Board") &&
+                 hit.collider.name.Contains(target.Owner.Name))
         {
             //place card
-            Debug.Log("Mouse up with board playable card.");
-            target.Owner.PlayCard(target);
-            this.PlayCardToBoard(target, hit);
-            return true;
+            if (this.PlayCardToBoard(target, hit))
+            {
+                target.Owner.PlayCard(target);
+                return true;
+            }
+            else
+            {
+                ActionManager.Instance.ResetTarget();
+                return false;
+            }
         }
         else
         {
@@ -614,7 +632,7 @@ public class BattleManager : MonoBehaviour
     /*
      * Play card to board after user on-device drags card from hand to field. 
      */
-    public void PlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
+    public bool PlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
     {
         //only called for creature or structure
         Transform targetPosition = hit.collider.transform;
@@ -622,7 +640,6 @@ public class BattleManager : MonoBehaviour
         int index = Int32.Parse(lastChar);
         Player player = battleCardObject.Owner;
         SpawnCardToBoard(battleCardObject, index);
-
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -632,6 +649,7 @@ public class BattleManager : MonoBehaviour
                 attributes
             );
         }
+        return true; //to-do: do some board spot validation @Warren
     }
 
     private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
