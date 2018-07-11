@@ -124,6 +124,7 @@ public class MockMovesPanel : MonoBehaviour
 
         challengeMove.SetCategory(this.moveCategory);
         challengeMove.SetPlayerId(BattleManager.Instance.GetOpponentState().Id);
+        challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
         if (this.moveCategory == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
         {

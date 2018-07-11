@@ -57,6 +57,12 @@ public class Board : MonoBehaviour
         }
     }
 
+    public bool IsBoardPlaceOpen(string playerId, int index)
+    {
+        PlayingField playingField = this.playerIdToField[playerId];
+        return playingField.IsPlaceEmpty(index);
+    }
+
     public void CreateAndPlaceCreature(
         BattleCardObject battleCardObject,
         int index,
@@ -202,6 +208,11 @@ public class Board : MonoBehaviour
                 creatures[index] = creature;
                 return true;
             }
+        }
+
+        public bool IsPlaceEmpty(int index)
+        {
+            return this.creatures[index] == null;
         }
 
         public BoardCreature GetCreatureByIndex(int index)
