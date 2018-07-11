@@ -66,7 +66,7 @@ public class BoardCreature : Targetable
         this.attack = this.creatureCard.Attack;
         this.health = this.creatureCard.Health;
         this.maxHealth = this.creatureCard.Health;
-        this.abilities = this.creatureCard.Abilities;
+        this.abilities = new List<string>(battleCardObject.TemplateData.abilities);
         this.summonPrefabPath = battleCardObject.TemplateData.summonPrefab;
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))

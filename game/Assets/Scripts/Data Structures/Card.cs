@@ -8,6 +8,7 @@ public class Card
 {
     public enum RarityType { Common, Rare, Epic, Legendary }
 
+    public const string CARD_EMPTY_ABILITY = "EMPTY";
     public const string CARD_ABILITY_CHARGE = "CARD_ABILITY_CHARGE";
     public const string CARD_ABILITY_TAUNT = "CARD_ABILITY_TAUNT";
     public const string CARD_ABILITY_SHIELD = "CARD_ABILITY_SHIELD";
@@ -24,6 +25,7 @@ public class Card
     public const string CARD_ABILITY_EACH_KILL_DRAW_CARD = "CARD_ABILITY_EACH_KILL_DRAW_CARD";
 
     public static readonly string[] VALID_ABILITIES = {
+        CARD_EMPTY_ABILITY,
         CARD_ABILITY_CHARGE,
         CARD_ABILITY_TAUNT,
         CARD_ABILITY_SHIELD,
@@ -85,9 +87,6 @@ public class CreatureCard : Card
     protected int health;
     public int Health => health;
 
-    private List<string> abilities;
-    public List<string> Abilities => abilities;
-
     //protected string summonPrefabPath;  obtain from codex loading
 
     public CreatureCard(
@@ -96,8 +95,7 @@ public class CreatureCard : Card
         int level,
         int cost,
         int attack,
-        int health,
-        List<string> abilities
+        int health
     )
     {
         this.id = id;
@@ -106,7 +104,6 @@ public class CreatureCard : Card
         this.cost = cost;
         this.attack = attack;
         this.health = health;
-        this.abilities = abilities;
     }
 }
 

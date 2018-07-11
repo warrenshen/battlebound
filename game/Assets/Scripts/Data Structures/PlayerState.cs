@@ -510,8 +510,7 @@ public class PlayerState
                     this.level,
                     this.cost,
                     this.attackStart,
-                    this.healthStart,
-                    this.abilities
+                    this.healthStart
                 );
             }
             else

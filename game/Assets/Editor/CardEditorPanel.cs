@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System;
 
 using UnityEngine;
 using UnityEditor;
@@ -30,6 +31,11 @@ public class CardEditorPanel : EditorWindow
     private CardTemplate createTemplate;
     private CardTemplate editTemplate;
     private Dictionary<string, CardTemplate> templates;
+
+    private int firstAbility;
+    private int secondAbility;
+    private int thirdAbility;
+    private int fourthAbility;
 
 
     [MenuItem("Custom/Card Editor")]
@@ -106,7 +112,7 @@ public class CardEditorPanel : EditorWindow
     void AddMenuItem(GenericMenu menu, string itemName)
     {
         // the menu item is marked as selected if it matches the current value of m_Color
-        menu.AddItem(new GUIContent(itemName), true, ItemSelected, itemName);
+        menu.AddItem(new GUIContent(itemName), this.editTemplate != null && this.editTemplate.name.Equals(itemName), ItemSelected, itemName);
     }
 
     private void ItemSelected(object chosenName)
@@ -115,7 +121,29 @@ public class CardEditorPanel : EditorWindow
         CardTemplate chosenTemplate = templates[chosen];
 
         this.editTemplate = chosenTemplate;
-        Debug.Log(JsonUtility.ToJson(chosenTemplate));
+
+        //do loading stuff here
+        LoadTemplateData(chosenTemplate);
+    }
+
+    private void LoadTemplateData(CardTemplate chosen)
+    {
+        this.mainTexture = Resources.Load(chosen.frontImage) as Texture;
+        this.backgroundTexture = Resources.Load(chosen.backImage) as Texture;
+
+        this.firstAbility = Array.IndexOf(Card.VALID_ABILITIES, chosen.abilities[0]);
+        this.secondAbility = Array.IndexOf(Card.VALID_ABILITIES, chosen.abilities[1]);
+        this.thirdAbility = Array.IndexOf(Card.VALID_ABILITIES, chosen.abilities[2]);
+        this.fourthAbility = Array.IndexOf(Card.VALID_ABILITIES, chosen.abilities[3]);
+
+        if (this.firstAbility < 0)
+            this.firstAbility = 0;
+        if (this.secondAbility < 0)
+            this.secondAbility = 0;
+        if (this.thirdAbility < 0)
+            this.thirdAbility = 0;
+        if (this.fourthAbility < 0)
+            this.fourthAbility = 0;
     }
 
     private void RenderTemplateEditor(CardTemplate template, int verticalOffset, bool editMode)
@@ -130,10 +158,10 @@ public class CardEditorPanel : EditorWindow
         //then move on to deletion and editing from editor...
 
         bool valid = ValidateEntries(template);
-        string buttonMessage = "Save/Export to card to Codex";
+        string buttonMessage = "Save/export to NEW card to Codex";
         if (editMode)
         {
-            buttonMessage = "Edit existing card in Codex";
+            buttonMessage = "Save/export EDITS to existing card in Codex";
         }
 
         GUIStyle style = new GUIStyle(GUI.skin.button);
@@ -171,7 +199,6 @@ public class CardEditorPanel : EditorWindow
 
         path = string.Format("{0}{1}", normalized,
                              Path.GetFileNameWithoutExtension(path));
-        Debug.Log(path);
         return path;
     }
 
@@ -183,6 +210,11 @@ public class CardEditorPanel : EditorWindow
 
         template.summonPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.summonPrefab));
         template.effectPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.effectPrefab));
+
+        template.abilities[0] = Card.VALID_ABILITIES[this.firstAbility];
+        template.abilities[1] = Card.VALID_ABILITIES[this.secondAbility];
+        template.abilities[2] = Card.VALID_ABILITIES[this.thirdAbility];
+        template.abilities[3] = Card.VALID_ABILITIES[this.fourthAbility];
 
         ////to-do: special attributes?
         if (!editMode)
@@ -256,12 +288,6 @@ public class CardEditorPanel : EditorWindow
 
     private void CardArtworkSelect(CardTemplate template, int verticalOffset, bool editMode)
     {
-        if (editMode)
-        {
-            this.mainTexture = Resources.Load(template.frontImage) as Texture;
-            this.backgroundTexture = Resources.Load(template.backImage) as Texture;
-        }
-
         int top = 25 + verticalOffset;
         this.mainTexture = EditorGUI.ObjectField(new Rect(5, top, boxSize, boxSize), this.mainTexture, typeof(Texture), false) as Texture;
         this.backgroundTexture = EditorGUI.ObjectField(new Rect(5, top + boxSize, boxSize, boxSize), this.backgroundTexture, typeof(Texture), false) as Texture;
@@ -354,6 +380,7 @@ public class CardEditorPanel : EditorWindow
         switch (template.cardType)
         {
             case CardRaw.CardType.Creature:
+
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 40, lineHeight), "Attack");
                 template.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.attack);
 
@@ -366,7 +393,14 @@ public class CardEditorPanel : EditorWindow
 
                 EditorGUI.LabelField(new Rect(position.width / 2, belowRarity, position.width / 2 - 10, lineHeight), "Attack Effect Prefab");
                 this.effectPrefab = EditorGUI.ObjectField(new Rect(position.width / 2, belowRarity + lineHeight, position.width / 2 - 10, 16), this.effectPrefab, typeof(GameObject), false) as GameObject;
-                EditorGUI.LabelField(new Rect(5, belowRarity + lineHeight * 2 + lineMargin, position.width - 10, lineHeight * 2), "Reminder: make sure the each prefab has appropriate\nsound effect attached with Play On Enable.");
+                EditorGUI.LabelField(new Rect(5, belowRarity + lineHeight * 5 + lineMargin * 2, position.width - 10, lineHeight * 2), "Reminder: make sure the each prefab has appropriate\nsound effect attached with Play On Enable.");
+
+
+                float qtr = position.width - 10;
+                this.firstAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40, qtr, 20), this.firstAbility, Card.VALID_ABILITIES);
+                this.secondAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16, qtr, 20), this.secondAbility, Card.VALID_ABILITIES);
+                this.thirdAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 2, qtr, 20), this.thirdAbility, Card.VALID_ABILITIES);
+                this.fourthAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 3, qtr, 20), this.fourthAbility, Card.VALID_ABILITIES);
                 break;
             case CardRaw.CardType.Weapon:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 50, lineHeight), "Durability");

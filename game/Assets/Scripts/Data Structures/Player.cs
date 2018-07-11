@@ -539,16 +539,16 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }));
-        cards.Add(new CreatureCard("C2", "Marshwater Squealer", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }));
-        cards.Add(new CreatureCard("C3", "Temple Guardian", 1, 60, 40, 70, new List<String>() { Card.CARD_ABILITY_TAUNT, Card.CARD_ABILITY_SHIELD }));
-        cards.Add(new CreatureCard("C4", "Firebug Catelyn", 1, 10, 10, 10, new List<String>() { }));
-        cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
+        cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10));
+        cards.Add(new CreatureCard("C2", "Marshwater Squealer", 1, 20, 20, 30));
+        cards.Add(new CreatureCard("C3", "Temple Guardian", 1, 60, 40, 70));
+        cards.Add(new CreatureCard("C4", "Firebug Catelyn", 1, 10, 10, 10));
+        cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20));
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         cards.Add(new SpellCard("C6", "Unstable Power", 4, 30));
-        cards.Add(new CreatureCard("C7", "Cursed Imp", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_LIFE_STEAL }));
-        cards.Add(new CreatureCard("C8", "Waterborne Razorback", 1, 20, 10, 40, new List<String>() { Card.CARD_ABILITY_CHARGE, Card.CARD_ABILITY_END_TURN_HEAL_TWENTY }));
+        cards.Add(new CreatureCard("C7", "Cursed Imp", 1, 20, 10, 40));
+        cards.Add(new CreatureCard("C8", "Waterborne Razorback", 1, 20, 10, 40));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;

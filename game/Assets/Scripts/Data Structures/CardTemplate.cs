@@ -23,6 +23,7 @@ public class CardTemplate
     public int health;
     public string summonPrefab;
     public string effectPrefab; //shared between creature and spell cards
+    public string[] abilities;
 
     //weapon
     public int durability;
@@ -43,5 +44,6 @@ public class CardTemplate
 
         this.rarity = Card.RarityType.Common;
         this.cardType = CardRaw.CardType.Creature;
+        this.abilities = new string[4];
     }
 }
