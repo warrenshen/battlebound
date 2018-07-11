@@ -37,6 +37,7 @@ public class CardEditorPanel : EditorWindow
     private int thirdAbility;
     private int fourthAbility;
 
+    private bool flipHorizontal;
 
     [MenuItem("Custom/Card Editor")]
     static void Init()
@@ -291,10 +292,14 @@ public class CardEditorPanel : EditorWindow
         int top = 25 + verticalOffset;
         this.mainTexture = EditorGUI.ObjectField(new Rect(5, top, boxSize, boxSize), this.mainTexture, typeof(Texture), false) as Texture;
         this.backgroundTexture = EditorGUI.ObjectField(new Rect(5, top + boxSize, boxSize, boxSize), this.backgroundTexture, typeof(Texture), false) as Texture;
+        this.flipHorizontal = EditorGUI.Toggle(new Rect(boxSize + 15 + 120, top, 200, 20), "Flip horizontal", this.flipHorizontal);
 
         // front scale/tiling
-        template.frontScale.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 25, 160, 18), template.frontScale.x, 0.33F, 3);
+        template.frontScale.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 25, 160, 18), Mathf.Abs(template.frontScale.x), 0.33F, 3);
         template.frontScale.y = EditorGUI.Slider(new Rect(boxSize + 160 + 15, top + 25, 160, 18), template.frontScale.y, 0.33F, 3);
+        float maybeFlip = this.flipHorizontal ? -1 : 1;
+        template.frontScale.x *= maybeFlip;
+
         // front offset
         template.frontOffset.x = EditorGUI.Slider(new Rect(boxSize + 10, top + 47, 160, 18), template.frontOffset.x, -3, 3);
         template.frontOffset.y = EditorGUI.Slider(new Rect(boxSize + 160 + 15, top + 47, 160, 18), template.frontOffset.y, -3, 3);
