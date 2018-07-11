@@ -57,8 +57,10 @@ public class BoardCreature : Targetable
     private Animation summonAnimation;
     private List<AnimationState> summonAnimStates;
 
+    private int spawnRank;
+    public int SpawnRank;
 
-    public void Initialize(BattleCardObject battleCardObject)
+    public void Initialize(BattleCardObject battleCardObject, int spawnRank)
     {
         //data structure stuff
         this.creatureCard = battleCardObject.Card as CreatureCard;
@@ -116,6 +118,8 @@ public class BoardCreature : Targetable
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
 
         this.buffs = new List<string>();
+
+        this.spawnRank = spawnRank;
     }
 
     private void RepurposeCardVisual()
@@ -254,35 +258,12 @@ public class BoardCreature : Targetable
     {
         this.canAttack = this.maxAttacks;
 
-        if (HasBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER))
-        {
-            this.health = 0;
-        }
-
-        CheckAlive();
-        this.Redraw();
+        Redraw();
     }
 
     public override void OnEndTurn()
     {
-        if (HasAbility(Card.CARD_ABILITY_END_TURN_HEAL_TEN))
-        {
-            Heal(10);
-        }
-        else if (HasAbility(Card.CARD_ABILITY_END_TURN_HEAL_TWENTY))
-        {
-            Heal(20);
-        }
 
-        if (HasAbility(Card.CARD_ABILITY_END_TURN_DRAW_CARD))
-        {
-            if (!InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                this.Owner.DrawCards(1);
-            }
-        }
-
-        this.Redraw();
     }
 
     public void OnPlay()
@@ -298,23 +279,15 @@ public class BoardCreature : Targetable
         this.Redraw();
     }
 
+    public void SetHealth(int amount)
+    {
+        this.health = amount;
+        CheckAlive();
+    }
+
     private void OnDeath()
     {
-        if (HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD))
-        {
-            if (!InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                this.Owner.DrawCards(1);
-            }
-        }
-
-        if (HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY))
-        {
-            // TODO: animate.
-            // TODO: attack opponent face.
-        }
-
-        this.Redraw();
+        EffectManager.Instance.OnDeath(this.Owner.Id, this.GetCardId());
     }
 
     private void OnDamageDone(int amount)
@@ -355,11 +328,15 @@ public class BoardCreature : Targetable
         }
         else
         {
-            //to-do, delay creature death
-            Board.Instance.RemoveCreature(this);
-            StartCoroutine("Dissolve", 2);
+            OnDeath();
             return false;
         }
+    }
+
+    public void Die()
+    {
+        //to-do, delay creature death
+        StartCoroutine("Dissolve", 2);
     }
 
     private IEnumerator Dissolve(float duration)

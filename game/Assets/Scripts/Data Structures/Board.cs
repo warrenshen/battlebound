@@ -35,11 +35,11 @@ public class Board : MonoBehaviour
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
-    public void RegisterPlayer(Player player, Card[] fieldCards)
+    public void RegisterPlayer(Player player, Card[] fieldCards, int[] spawnRanks)
     {
         CacheBoardPlaces(player);
 
-        PlayingField playingField = new PlayingField(player, fieldCards);
+        PlayingField playingField = new PlayingField(player, fieldCards, spawnRanks);
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
@@ -57,11 +57,15 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void CreateAndPlaceCreature(BattleCardObject battleCardObject, int index)
+    public void CreateAndPlaceCreature(
+        BattleCardObject battleCardObject,
+        int index,
+        int spawnRank
+    )
     {
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
-            new object[2] { battleCardObject, index }
+            new object[3] { battleCardObject, index, spawnRank }
         );
     }
 
@@ -69,6 +73,7 @@ public class Board : MonoBehaviour
     {
         BattleCardObject battleCardObject = args[0] as BattleCardObject;
         int index = (int)args[1];
+        int spawnRank = (int)args[2];
 
         Transform boardPlace = this.playerIdToIndexToBoardPlace[battleCardObject.Owner.Id][index];
 
@@ -79,17 +84,24 @@ public class Board : MonoBehaviour
         GameObject boardCreatureObject = new GameObject(battleCardObject.Card.Name);
         boardCreatureObject.transform.position = boardPlace.position;
         BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
-        boardCreature.Initialize(battleCardObject);
+        boardCreature.Initialize(battleCardObject, spawnRank);
 
         Destroy(battleCardObject.gameObject);
-
-        boardCreature.OnPlay();
+        //boardCreature.OnPlay();
 
         PlayingField playingField = this.playerIdToField[boardCreature.Owner.Id];
         playingField.Place(boardCreature, index);
+
+        EffectManager.Instance.OnPlay(boardCreature.Owner.Id, boardCreature.GetCardId());
     }
 
-    public void RemoveCreature(BoardCreature creature)
+    public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        BoardCreature boardCreature = GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        RemoveCreature(boardCreature);
+    }
+
+    private void RemoveCreature(BoardCreature creature)
     {
         PlayingField selected = this.playerIdToField[creature.Owner.Id];
         selected.Remove(creature);
@@ -137,7 +149,6 @@ public class Board : MonoBehaviour
 
         [SerializeField]
         private Dictionary<int, Transform> indexToBoardPlace;
-        //List<Artifact> artifacts;
 
         private string playerId;
 
@@ -147,19 +158,20 @@ public class Board : MonoBehaviour
             this.creatures = new BoardCreature[6];
         }
 
-        public PlayingField(Player player, Card[] cards)
+        public PlayingField(Player player, Card[] cards, int[] spawnRanks)
         {
             this.playerId = player.Id;
             this.creatures = new BoardCreature[6];
 
-            SpawnCards(player, cards);
+            SpawnCards(player, cards, spawnRanks);
         }
 
-        private void SpawnCards(Player player, Card[] cards)
+        private void SpawnCards(Player player, Card[] cards, int[] spawnRanks)
         {
             for (int i = 0; i < 6; i += 1)
             {
                 Card card = cards[i];
+                int spawnRank = spawnRanks[i];
 
                 if (card.Id == "EMPTY")
                 {
@@ -170,7 +182,11 @@ public class Board : MonoBehaviour
                 BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
                 battleCardObject.Initialize(player, card);
 
-                Board.Instance.CreateAndPlaceCreature(battleCardObject, i);
+                Board.Instance.CreateAndPlaceCreature(
+                    battleCardObject,
+                    i,
+                    spawnRank
+                );
             }
         }
 
@@ -195,10 +211,13 @@ public class Board : MonoBehaviour
 
         public void Remove(BoardCreature creature)
         {
+            creature.Die();
             for (int i = 0; i < creatures.Length; i++)
             {
                 if (creatures[i] == creature)
+                {
                     creatures[i] = null;
+                }
             }
         }
 
@@ -211,7 +230,7 @@ public class Board : MonoBehaviour
         {
             return Array.Find(
                 this.creatures,
-                creature => creature != null && creature.CreatureCard.Id == cardId
+                creature => creature != null && creature.GetCardId() == cardId
             );
         }
 

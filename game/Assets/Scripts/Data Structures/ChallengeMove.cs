@@ -9,6 +9,7 @@ public class ChallengeMove
     public static string MOVE_CATEGORY_SURRENDER_BY_EXPIRE = "MOVE_CATEGORY_SURRENDER_BY_EXPIRE";
     public static string MOVE_CATEGORY_END_TURN = "MOVE_CATEGORY_END_TURN";
     public static string MOVE_CATEGORY_DRAW_CARD = "MOVE_CATEGORY_DRAW_CARD";
+    public static string MOVE_CATEGORY_DRAW_CARD_FAILURE = "MOVE_CATEGORY_DRAW_CARD_FAILURE";
     public static string MOVE_CATEGORY_PLAY_MINION = "MOVE_CATEGORY_PLAY_MINION";
     public static string MOVE_CATEGORY_PLAY_SPELL_TARGETED = "MOVE_CATEGORY_PLAY_SPELL_TARGETED";
     public static string MOVE_CATEGORY_PLAY_SPELL_UNTARGETED = "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED";
@@ -23,8 +24,32 @@ public class ChallengeMove
     public string Category => category;
 
     [SerializeField]
+    private int rank;
+    public int Rank => rank;
+
+    [SerializeField]
     private ChallengeMoveAttributes attributes;
     public ChallengeMoveAttributes Attributes => attributes;
+
+    public void SetPlayerId(string playerId)
+    {
+        this.playerId = playerId;
+    }
+
+    public void SetCategory(string category)
+    {
+        this.category = category;
+    }
+
+    public void SetMoveAttributes(ChallengeMoveAttributes attributes)
+    {
+        this.attributes = attributes;
+    }
+
+    public void SetRank(int rank)
+    {
+        this.rank = rank;
+    }
 
     [System.Serializable]
     public class ChallengeMoveAttributes
@@ -91,20 +116,5 @@ public class ChallengeMove
         {
             this.card = card;
         }
-    }
-
-    public void SetPlayerId(string playerId)
-    {
-        this.playerId = playerId;
-    }
-
-    public void SetCategory(string category)
-    {
-        this.category = category;
-    }
-
-    public void SetMoveAttributes(ChallengeMoveAttributes attributes)
-    {
-        this.attributes = attributes;
     }
 }
