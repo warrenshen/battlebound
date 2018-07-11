@@ -252,6 +252,17 @@ public class PlayerState
         return cards;
     }
 
+    public int[] GetSpawnRanks()
+    {
+        int[] spawnRanks = new int[6];
+        for (int i = 0; i < 6; i += 1)
+        {
+            ChallengeCard challengeCard = this.field[i];
+            spawnRanks[i] = challengeCard.SpawnRank;
+        }
+        return spawnRanks;
+    }
+
     public List<Card> GetCardsMulligan()
     {
         List<Card> cards = new List<Card>();
@@ -330,8 +341,8 @@ public class PlayerState
         public List<string> Abilities => abilities;
 
         [SerializeField]
-        private int mode;
-        public int Mode => mode;
+        private int spawnRank;
+        public int SpawnRank => spawnRank;
 
         // TODO
         //[SerializeField]
@@ -413,6 +424,11 @@ public class PlayerState
             this.abilities = abilities;
         }
 
+        public void SetSpawnRank(int spawnRank)
+        {
+            this.spawnRank = spawnRank;
+        }
+
         public bool Equals(ChallengeCard other)
         {
             if (this.id == "EMPTY" && other.Id == "EMPTY")
@@ -433,7 +449,8 @@ public class PlayerState
                 this.attack == other.Attack &&
                 this.attackStart == other.AttackStart &&
                 this.canAttack == other.CanAttack &&
-                this.hasShield == other.HasShield
+                this.hasShield == other.HasShield &&
+                this.spawnRank == other.SpawnRank
             //this.abilities.SequenceEqual(other.Abilities)
             );
         }
@@ -492,9 +509,9 @@ public class PlayerState
             {
                 return string.Format("HasShield: {0} vs {1}", this.hasShield, other.HasShield);
             }
-            else if (this.mode != other.Mode)
+            else if (this.spawnRank != other.SpawnRank)
             {
-                return string.Format("Mode: {0} vs {1}", this.mode, other.Mode);
+                return string.Format("SpawnRank: {0} vs {1}", this.spawnRank, other.SpawnRank);
             }
 
             return null;
@@ -518,7 +535,7 @@ public class PlayerState
                 return new SpellCard(
                     this.id,
                     this.name,
-                    this.level,     //@Warren, does this change mess anything up for you?
+                    this.level,
                     this.cost
                 );
             }

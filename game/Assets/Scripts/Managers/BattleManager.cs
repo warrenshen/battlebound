@@ -4,6 +4,7 @@ using System;
 using System.IO;
 
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 using TMPro;
@@ -45,17 +46,16 @@ public class BattleManager : MonoBehaviour
     private const int BATTLE_STATE_NORMAL_MODE = 0;
     private const int BATTLE_STATE_MULLIGAN_MODE = 1;
 
+    private int spawnCount;
+    public int SpawnCount => spawnCount;
+
+    private int deviceMoveCount;
+    private int serverMoveCount;
+
+    private List<ChallengeMove> serverMoveQueue;
+    private List<ChallengeMove> deviceMoveQueue;
+
     public static BattleManager Instance { get; private set; }
-
-    public PlayerState GetPlayerState()
-    {
-        return this.you.GeneratePlayerState();
-    }
-
-    public PlayerState GetOpponentState()
-    {
-        return this.opponent.GeneratePlayerState();
-    }
 
     public Player GetPlayerById(string playerId)
     {
@@ -98,6 +98,10 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
+        this.serverMoveCount = 0;
+        this.serverMoveQueue = new List<ChallengeMove>();
+        this.deviceMoveQueue = new List<ChallengeMove>();
+
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.players = new List<Player>();
 
@@ -111,6 +115,8 @@ public class BattleManager : MonoBehaviour
         {
             if (this.initialized)
             {
+                this.spawnCount = BattleSingleton.Instance.SpawnCount;
+
                 this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
                 this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
 
@@ -128,6 +134,8 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            this.spawnCount = 0;
+
             this.you = new Player("Player", "Player");
             this.opponent = new Player("Enemy", "Enemy");
 
@@ -298,11 +306,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            NextTurn();
-        }
-        else
+        if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             if (this.activePlayer.Id == this.you.Id)
             {
@@ -310,14 +314,32 @@ public class BattleManager : MonoBehaviour
                 NextTurn();
             }
         }
+        else
+        {
+            NextTurn();
+        }
     }
 
     private void NextTurn()
+    {
+        EffectManager.Instance.OnEndTurn(
+            activePlayer.Id,
+            new UnityAction(ActualNextTurn)
+        );
+    }
+
+    private void ActualNextTurn()
     {
         activePlayer.EndTurn();
 
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(activePlayer.Id);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        challengeMove.SetRank(GetDeviceMoveRank());
+        AddDeviceMove(challengeMove);
 
         //do some turn transition render
         SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
@@ -325,6 +347,7 @@ public class BattleManager : MonoBehaviour
         //to-do: action manager set active = false, but that makes singleplayer broken
 
         activePlayer.NewTurn();
+        EffectManager.Instance.OnStartTurn(activePlayer.Id);
     }
 
     public void SetBoardCenterText(string message)
@@ -654,9 +677,14 @@ public class BattleManager : MonoBehaviour
 
     private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
     {
+        int spawnCount = this.spawnCount;
+        this.spawnCount += 1;
+
         battleCardObject.visual.Renderer.enabled = false;
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
-        Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex);
+
+        Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex, spawnCount);
+        //OnPlay(battleCardObject.Owner.Id, battleCardObject.Card.Id);
     }
 
     /*
@@ -815,5 +843,245 @@ public class BattleManager : MonoBehaviour
     public void ReceiveChallengeEndState(ChallengeEndState challengeEndState)
     {
 
+    }
+
+    public void ReceiveChallengeMove(ChallengeMove challengeMove)
+    {
+        Debug.Log("Server move queue: " + challengeMove.Rank);
+        Debug.Log(JsonUtility.ToJson(challengeMove));
+        this.serverMoveQueue.Add(challengeMove);
+    }
+
+    public void AddDeviceMove(ChallengeMove challengeMove)
+    {
+        Debug.Log("Device move queue: " + challengeMove.Rank);
+        Debug.Log(JsonUtility.ToJson(challengeMove));
+        this.deviceMoveQueue.Add(challengeMove);
+    }
+
+    private static List<string> OPPONENT_SERVER_ONLY_CHALLENGE_MOVES = new List<string>
+    {
+        ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
+        ChallengeMove.MOVE_CATEGORY_END_TURN,
+        ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
+        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
+        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
+    };
+
+    /*
+     * @return int - rank of move processed, -1 if no move processed
+     */
+    public int ProcessMoveQueue()
+    {
+        if (this.serverMoveQueue.Count <= 0)
+        {
+            return -1;
+        }
+
+        ChallengeMove serverMove = this.serverMoveQueue[0];
+
+        // We only consider draw card moves for "you".
+        if (
+                serverMove.PlayerId == this.you.Id &&
+                serverMove.Category != ChallengeMove.MOVE_CATEGORY_DRAW_CARD
+            )
+        {
+            this.deviceMoveCount += 1;
+            this.serverMoveQueue.RemoveAt(0);
+            return -1;
+        }
+
+        if (
+            serverMove.PlayerId == this.opponent.Id &&
+            OPPONENT_SERVER_ONLY_CHALLENGE_MOVES.Contains(serverMove.Category)
+        )
+        {
+            this.deviceMoveCount += 1;
+        }
+        else if (this.deviceMoveQueue.Count <= 0)
+        {
+            return -1;
+        }
+        else
+        {
+            ChallengeMove deviceMove = this.deviceMoveQueue[0];
+            if (
+                deviceMove.PlayerId != serverMove.PlayerId ||
+                deviceMove.Category != serverMove.Category ||
+                deviceMove.Rank != serverMove.Rank
+            )
+            {
+                Debug.LogError("Device move does not match server move.");
+                Debug.LogWarning(string.Format("PlayerId: {0} vs {1}.", deviceMove.PlayerId, serverMove.PlayerId));
+                Debug.LogWarning(string.Format("Category: {0} vs {1}.", deviceMove.Category, serverMove.Category));
+                Debug.LogWarning(string.Format("Rank: {0} vs {1}.", deviceMove.Rank, serverMove.Rank));
+                return -1;
+            }
+
+            this.deviceMoveQueue.RemoveAt(0);
+        }
+
+        this.serverMoveQueue.RemoveAt(0);
+
+        if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
+        {
+            ReceiveMovePlayMulligan(
+                serverMove.PlayerId,
+                serverMove.Attributes.DeckCardIndices
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
+        {
+            ReceiveMoveEndTurn(
+                serverMove.PlayerId
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD)
+        {
+            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            ReceiveMoveDrawCard(
+                serverMove.PlayerId,
+                card
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
+        {
+            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            if (card.GetType() == typeof(CreatureCard))
+            {
+                ReceiveMovePlayMinion(
+                    serverMove.PlayerId,
+                    serverMove.Attributes.CardId,
+                    card as CreatureCard,
+                    serverMove.Attributes.HandIndex,
+                    serverMove.Attributes.FieldIndex
+                );
+            }
+            else
+            {
+                Debug.LogError("Invalid card category for play minion move");
+            }
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
+        {
+            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            if (card.GetType() == typeof(SpellCard))
+            {
+                ReceiveMovePlaySpellUntargeted(
+                    serverMove.PlayerId,
+                    serverMove.Attributes.CardId,
+                    card as SpellCard,
+                    serverMove.Attributes.HandIndex
+                );
+            }
+            else
+            {
+                Debug.LogError("Invalid card category for play spell general move");
+            }
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
+        {
+            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            if (card.GetType() == typeof(SpellCard))
+            {
+                ReceiveMovePlaySpellTargeted(
+                    serverMove.PlayerId,
+                    serverMove.Attributes.CardId,
+                    card as SpellCard,
+                    serverMove.Attributes.HandIndex,
+                    serverMove.Attributes.FieldId,
+                    serverMove.Attributes.TargetId
+                );
+            }
+            else
+            {
+                Debug.LogError("Invalid card category for play spell targeted move");
+            }
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CARD_ATTACK)
+        {
+            ReceiveMoveCardAttack(
+                serverMove.PlayerId,
+                serverMove.Attributes.CardId,
+                serverMove.Attributes.FieldId,
+                serverMove.Attributes.TargetId
+            );
+        }
+
+        if (this.deviceMoveQueue.Count <= 0 && this.deviceMoveQueue.Count <= 0)
+        {
+            PlayerState devicePlayerState = GetPlayerState();
+            PlayerState deviceOpponentState = GetOpponentState();
+            PlayerState serverPlayerState = BattleSingleton.Instance.PlayerState;
+            PlayerState serverOpponentState = BattleSingleton.Instance.OpponentState;
+
+            if (InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                if (!serverPlayerState.Equals(devicePlayerState))
+                {
+                    Debug.LogWarning("Server vs device player state mismatch.");
+                    Debug.LogWarning("Server: " + JsonUtility.ToJson(serverPlayerState));
+                    Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
+                    Debug.LogWarning("First diff: " + serverPlayerState.FirstDiff(devicePlayerState));
+                }
+                else
+                {
+                    Debug.Log("Server vs device player state match.");
+                    Debug.Log("State: " + JsonUtility.ToJson(serverPlayerState));
+                }
+
+                if (!serverOpponentState.Equals(deviceOpponentState))
+                {
+                    Debug.LogWarning("Server vs device opponent state mismatch.");
+                    Debug.LogWarning("Server: " + JsonUtility.ToJson(serverOpponentState));
+                    Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
+                    Debug.LogWarning("First diff: " + serverOpponentState.FirstDiff(deviceOpponentState));
+                }
+                else
+                {
+                    Debug.Log("Server vs device opponent state match.");
+                    Debug.Log("State: " + JsonUtility.ToJson(serverOpponentState));
+                }
+            }
+            else
+            {
+                Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
+                Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
+            }
+        }
+
+        return serverMove.Rank;
+    }
+
+    private PlayerState GetPlayerState()
+    {
+        return this.you.GeneratePlayerState();
+    }
+
+    public PlayerState GetOpponentState()
+    {
+        return this.opponent.GeneratePlayerState();
+    }
+
+    public int GetDeviceMoveRank()
+    {
+        int rank = this.deviceMoveCount;
+        this.deviceMoveCount += 1;
+        return rank;
+    }
+
+    public int GetServerMoveRank()
+    {
+        int rank = this.serverMoveCount;
+        this.serverMoveCount += 1;
+        return rank;
     }
 }

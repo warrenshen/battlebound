@@ -46,6 +46,7 @@ public class Player
 
     private List<Card> keptMulliganCards;
     public List<Card> KeptMulliganCards => keptMulliganCards;
+
     private List<Card> removedMulliganCards;
     public List<Card> RemovedMulliganCards => removedMulliganCards;
 
@@ -82,8 +83,9 @@ public class Player
         this.avatar.Initialize(this, playerState);
 
         Card[] fieldCards = playerState.GetCardsField();
+        int[] spawnRanks = playerState.GetSpawnRanks();
 
-        Board.Instance.RegisterPlayer(this, fieldCards);
+        Board.Instance.RegisterPlayer(this, fieldCards, spawnRanks);
     }
 
     public void Initialize(PlayerState playerState)
@@ -142,7 +144,7 @@ public class Player
 
         if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.DrawCard();
+            DrawCard();
         }
 
         RenderTurnStart();
@@ -164,31 +166,40 @@ public class Player
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
     }
 
-    private int DrawCard(bool animate = true)
+    private void DrawCard()
     {
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(this.id);
+        challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
         if (this.deck.Cards.Count <= 0)
         {
-            this.Hand.RepositionCards();  //keep, needed to correct recession
-            return 1; //amount fatigue
+            //this.Hand.RepositionCards();
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE);
+        }
+        else
+        {
+            Card drawnCard = this.deck.Cards[0];
+            this.deck.Cards.RemoveAt(0);
+
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+
+            ChallengeMove.ChallengeMoveAttributes challengeMoveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            challengeMoveAttributes.SetCard(drawnCard.GetChallengeCard());
+            challengeMove.SetMoveAttributes(challengeMoveAttributes);
         }
 
-        Card drawn = this.deck.Cards[0];
-        this.deck.Cards.RemoveAt(0);
-        this.AddDrawnCard(drawn, animate: animate); // Handles decrementing this.deckSize.
-
-        return 0;
+        BattleSingleton.Instance.EmitChallengeMove(challengeMove);
+        //this.AddDrawnCard(drawn, animate: animate); // Handles decrementing this.deckSize.
     }
 
-    public int DrawCards(int amount, bool animate = true)
+    public void DrawCards(int amount)
     {
-        int fatigue = 0;
-
         while (amount > 0)
         {
-            fatigue += DrawCard(animate);
+            DrawCard();
             amount--;
         }
-        return fatigue;
     }
 
     private Card PopCardFromDeck()
@@ -209,30 +220,6 @@ public class Player
         }
 
         return cards;
-    }
-
-    private void ReplaceCardByMulligan(Card card)
-    {
-        this.hand.RemoveByCardId(card.Id);
-        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
-        ReturnCardToDeck(card);
-
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            this.DrawCard();
-        }
-    }
-
-    private void ReplaceCardByMulligan(Card card, int index)
-    {
-        this.hand.RemoveByIndex(index);
-        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
-        ReturnCardToDeck(card);
-
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            this.DrawCard();
-        }
     }
 
     public void BeginMulligan(List<Card> mulliganCards)
@@ -279,6 +266,25 @@ public class Player
     public bool IsModeMulligan()
     {
         return this.mode == PLAYER_STATE_MODE_MULLIGAN || this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING;
+    }
+
+    /*
+     * If player is in mulligan waiting state, advance to normal state.
+     * If player is in mulligan state, do nothing.
+     * If player is in normal state, log an error.
+     * 
+     * This function should be called after this player's opponent plays its mulligan.
+     */
+    public void AdvanceMulliganState()
+    {
+        if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        {
+            this.mode = PLAYER_STATE_MODE_NORMAL;
+        }
+        else if (this.mode == PLAYER_STATE_MODE_NORMAL)
+        {
+            Debug.LogError("Advance mulligan state called when player in normal state.");
+        }
     }
 
     public void PlayMulligan(int opponentMode)
@@ -329,6 +335,7 @@ public class Player
      */
     public void PlayMulliganByIndices(List<int> replacedCardIndices, int opponentMode)
     {
+        // TODO: add to server queue.
         if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
             Debug.LogError("Player not in mulligan mode but received play mulligan.");
@@ -362,22 +369,39 @@ public class Player
         EndMulligan();
     }
 
-    /*
-     * If player is in mulligan waiting state, advance to normal state.
-     * If player is in mulligan state, do nothing.
-     * If player is in normal state, log an error.
-     * 
-     * This function should be called after this player's opponent plays its mulligan.
-     */
-    public void AdvanceMulliganState()
+    private void ReplaceCardByMulligan(Card card)
     {
-        if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        this.hand.RemoveByCardId(card.Id);
+        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        ReturnCardToDeck(card);
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(this.id);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            this.mode = PLAYER_STATE_MODE_NORMAL;
+            DrawCard();
         }
-        else if (this.mode == PLAYER_STATE_MODE_NORMAL)
+    }
+
+    private void ReplaceCardByMulligan(Card card, int index)
+    {
+        this.hand.RemoveByIndex(index);
+        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        ReturnCardToDeck(card);
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(this.id);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
         {
-            Debug.LogError("Advance mulligan state called when player in normal state.");
+            DrawCard();
         }
     }
 
@@ -385,6 +409,7 @@ public class Player
     {
         this.keptMulliganCards = new List<Card>();
         this.removedMulliganCards = new List<Card>();
+
         this.hand.RepositionCards();
         BattleManager.Instance.HideMulliganOverlay(this);
     }
@@ -512,8 +537,8 @@ public class Player
                 challengeCard.SetId(boardCreature.CreatureCard.Id);
                 challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
                 challengeCard.SetName(boardCreature.CreatureCard.Name);
-                //challengeCard.SetDescription(boardCreature.Card.Description);
-                //challengeCard.SetLevel(boardCreature.Card.Level);
+                //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
+                challengeCard.SetLevel(boardCreature.CreatureCard.Level);
                 challengeCard.SetCost(boardCreature.CreatureCard.Cost);
                 challengeCard.SetCostStart(boardCreature.CreatureCard.Cost);
                 challengeCard.SetHealth(boardCreature.Health);
@@ -522,7 +547,8 @@ public class Player
                 challengeCard.SetAttack(boardCreature.Attack);
                 challengeCard.SetAttackStart(boardCreature.CreatureCard.Attack);
                 challengeCard.SetCanAttack(boardCreature.CanAttack);
-                //challengeCard.SetHasShield(boardCreature.HasShield);
+                challengeCard.SetHasShield(boardCreature.HasShield ? 1 : 0);
+                challengeCard.SetSpawnRank(boardCreature.SpawnRank);
                 // abilities
             }
 
@@ -544,6 +570,12 @@ public class Player
         cards.Add(new CreatureCard("C3", "Temple Guardian", 1, 60, 40, 70));
         cards.Add(new CreatureCard("C4", "Firebug Catelyn", 1, 10, 10, 10));
         cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20));
+        //cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }));
+        ////cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_END_TURN_DRAW_CARD }));
+        //cards.Add(new CreatureCard("C2", "Marshwater Squealer", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }));
+        //cards.Add(new CreatureCard("C3", "Temple Guardian", 1, 60, 40, 70, new List<String>() { Card.CARD_ABILITY_TAUNT, Card.CARD_ABILITY_SHIELD }));
+        //cards.Add(new CreatureCard("C4", "Firebug Catelyn", 1, 10, 10, 10, new List<String>() { Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD }));
+        //cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         cards.Add(new SpellCard("C6", "Unstable Power", 4, 30));

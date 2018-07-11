@@ -4,7 +4,7 @@ using UnityEngine;
 
 //removed abstract so that card is serialized and attributes are visible from inspector
 [System.Serializable]
-public class Card
+public abstract class Card
 {
     public enum RarityType { Common, Rare, Epic, Legendary }
 
@@ -49,6 +49,7 @@ public class Card
     public static int CARD_CATEGORY_MINION = 0;
     public static int CARD_CATEGORY_SPELL = 1;
     public static int CARD_CATEGORY_STRUCTURE = 2;
+    public static int CARD_CATEGORY_WEAPON = 3;
 
     [SerializeField]
     protected string id;
@@ -74,6 +75,8 @@ public class Card
 
     public CardObject wrapper;
     //Rarity, Description, FrontImage, BackImage all moved into CardObject, obtain via codex loading cached to BattleManager
+
+    public abstract PlayerState.ChallengeCard GetChallengeCard();
 }
 
 [System.Serializable]
@@ -105,6 +108,24 @@ public class CreatureCard : Card
         this.attack = attack;
         this.health = health;
     }
+
+    public override PlayerState.ChallengeCard GetChallengeCard()
+    {
+        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        challengeCard.SetId(this.id);
+        challengeCard.SetCategory(CARD_CATEGORY_MINION);
+        challengeCard.SetName(this.name);
+        challengeCard.SetLevel(this.level);
+        challengeCard.SetCost(this.cost);
+        challengeCard.SetCostStart(this.cost);
+        challengeCard.SetHealth(this.health);
+        challengeCard.SetHealthStart(this.health);
+        challengeCard.SetHealthMax(this.health);
+        challengeCard.SetAttack(this.attack);
+        challengeCard.SetAttackStart(this.attack);
+
+        return challengeCard;
+    }
 }
 
 [System.Serializable]
@@ -135,6 +156,24 @@ public class WeaponCard : Card
         this.attack = attack;
         this.durability = durability;
     }
+
+    public override PlayerState.ChallengeCard GetChallengeCard()
+    {
+        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        challengeCard.SetId(this.id);
+        challengeCard.SetCategory(CARD_CATEGORY_WEAPON);
+        challengeCard.SetName(this.name);
+        challengeCard.SetLevel(this.level);
+        challengeCard.SetCost(this.cost);
+        challengeCard.SetCostStart(this.cost);
+        challengeCard.SetHealth(this.durability);
+        challengeCard.SetHealthStart(this.durability);
+        challengeCard.SetHealthMax(this.durability);
+        challengeCard.SetAttack(this.attack);
+        challengeCard.SetAttackStart(this.attack);
+
+        return challengeCard;
+    }
 }
 
 [System.Serializable]
@@ -153,6 +192,19 @@ public class StructureCard : Card
         this.name = name;
         this.level = level;
         this.cost = cost;
+    }
+
+    public override PlayerState.ChallengeCard GetChallengeCard()
+    {
+        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        challengeCard.SetId(this.id);
+        challengeCard.SetCategory(CARD_CATEGORY_STRUCTURE);
+        challengeCard.SetName(this.name);
+        challengeCard.SetLevel(this.level);
+        challengeCard.SetCost(this.cost);
+        challengeCard.SetCostStart(this.cost);
+
+        return challengeCard;
     }
 }
 
@@ -208,6 +260,19 @@ public class SpellCard : Card
         {
             InitSpellDict();
         }
+    }
+
+    public override PlayerState.ChallengeCard GetChallengeCard()
+    {
+        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        challengeCard.SetId(this.id);
+        challengeCard.SetCategory(CARD_CATEGORY_SPELL);
+        challengeCard.SetName(this.name);
+        challengeCard.SetLevel(this.level);
+        challengeCard.SetCost(this.cost);
+        challengeCard.SetCostStart(this.cost);
+
+        return challengeCard;
     }
 
     private void InitSpellDict()
