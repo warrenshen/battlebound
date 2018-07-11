@@ -143,8 +143,6 @@ public class EffectManager : MonoBehaviour
                 {
                     boardCreature.Owner.DrawCards(1);
                 }
-
-                // TODO: how to wait for process move success?
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
                 AbilityDeathRattleDrawCard(effect);

@@ -143,7 +143,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     )
     {
         int messageNonce = (int)scriptData.GetInt("nonce");
-        Debug.Log("Got message with nonce: " + messageNonce.ToString());
+        //Debug.Log("Got message with nonce: " + messageNonce.ToString());
         if (messageNonce <= this.nonce)
         {
             return;
@@ -174,6 +174,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
         foreach (GSData moveData in movesData)
         {
+            //Debug.Log(moveData.JSON);
             challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
         }
 

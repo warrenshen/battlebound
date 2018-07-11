@@ -85,6 +85,8 @@ public class Player
         Card[] fieldCards = playerState.GetCardsField();
         int[] spawnRanks = playerState.GetSpawnRanks();
 
+        this.mode = playerState.Mode;
+
         Board.Instance.RegisterPlayer(this, fieldCards, spawnRanks);
     }
 
@@ -307,14 +309,22 @@ public class Player
             cardIds.Add(keptCard.Id);
         }
 
-        foreach (Card removedCard in this.removedMulliganCards)
-        {
-            ReplaceCardByMulligan(removedCard);
-        }
-
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
+        }
+        else
+        {
+            ChallengeMove challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(this.id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
+
+        foreach (Card removedCard in this.removedMulliganCards)
+        {
+            ReplaceCardByMulligan(removedCard);
         }
 
         if (opponentMode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
@@ -335,7 +345,6 @@ public class Player
      */
     public void PlayMulliganByIndices(List<int> replacedCardIndices, int opponentMode)
     {
-        // TODO: add to server queue.
         if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
             Debug.LogError("Player not in mulligan mode but received play mulligan.");
@@ -345,6 +354,11 @@ public class Player
         {
             Debug.LogError("Opponent in normal mode but received play mulligan.");
             return;
+        }
+
+        if (replacedCardIndices == null)
+        {
+            replacedCardIndices = new List<int>();
         }
 
         // It is very important that we iterate downwards,

@@ -266,19 +266,6 @@ public class BoardCreature : Targetable
 
     }
 
-    public void OnPlay()
-    {
-        if (HasAbility(Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD))
-        {
-            if (!InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                this.Owner.DrawCards(1);
-            }
-        }
-
-        this.Redraw();
-    }
-
     public void SetHealth(int amount)
     {
         this.health = amount;

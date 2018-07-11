@@ -151,21 +151,10 @@ public class BattleManager : MonoBehaviour
 
     private void GameStart()
     {
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
-            this.mode = BATTLE_STATE_MULLIGAN_MODE;
-
-            turnIndex = UnityEngine.Random.Range(0, players.Count);
-            activePlayer = players[turnIndex % players.Count];
-            activePlayer.RenderTurnStart();
-        }
-        else
+        if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             turnIndex = this.players.FindIndex(player => player.HasTurn);
             activePlayer = players[turnIndex % players.Count];
-            activePlayer.RenderTurnStart();
 
             if (this.you.IsModeMulligan())
             {
@@ -181,7 +170,18 @@ public class BattleManager : MonoBehaviour
             {
                 HideMulliganOverlay(this.you);
                 HideMulliganOverlay(this.opponent);
+                activePlayer.RenderTurnStart();
             }
+        }
+        else
+        {
+            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
+            this.mode = BATTLE_STATE_MULLIGAN_MODE;
+
+            turnIndex = UnityEngine.Random.Range(0, players.Count);
+            activePlayer = players[turnIndex % players.Count];
+            activePlayer.RenderTurnStart();
         }
     }
 
@@ -310,6 +310,12 @@ public class BattleManager : MonoBehaviour
         {
             if (this.activePlayer.Id == this.you.Id)
             {
+                ChallengeMove challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(activePlayer.Id);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
+                challengeMove.SetRank(GetDeviceMoveRank());
+                AddDeviceMove(challengeMove);
+
                 BattleSingleton.Instance.SendChallengeEndTurnRequest();
                 NextTurn();
             }
@@ -403,7 +409,6 @@ public class BattleManager : MonoBehaviour
             return allTargets;
         }
     }
-
 
     private bool CheckFight(Targetable attacker, RaycastHit hit)
     {
@@ -513,9 +518,15 @@ public class BattleManager : MonoBehaviour
                  hit.collider.name.Contains(target.Owner.Name))
         {
             //place card
-            if (this.PlayCardToBoard(target, hit))
+            if (CanPlayCardToBoard(target, hit))
             {
-                target.Owner.PlayCard(target);
+                // We'll enter this condition if card is actually played,
+                // otherwise the "playing" will be handled elsewhere.
+                if (PlayCardToBoard(target, hit))
+                {
+                    target.Owner.PlayCard(target);
+                }
+
                 return true;
             }
             else
@@ -591,6 +602,16 @@ public class BattleManager : MonoBehaviour
 
     public void HideMulliganOverlay(Player player)
     {
+        // If not in connected mode, automatically perform mulligan for opponent.
+        if (!InspectorControlPanel.Instance.DevelopmentMode && player.Id == this.you.Id)
+        {
+            ChallengeMove challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(this.opponent.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
+
         StartCoroutine("AnimateHideMulliganOverlay", player);
     }
 
@@ -608,12 +629,6 @@ public class BattleManager : MonoBehaviour
             SetPassiveCursor();
             this.activePlayer.MulliganNewTurn();
             this.mode = BATTLE_STATE_NORMAL_MODE;
-        }
-        //If not in connected mode, automatically perform mulligan for opponent.
-        else if (!InspectorControlPanel.Instance.DevelopmentMode && player.Id == this.you.Id)
-        {
-            this.opponent.PlayMulliganByIndices(new List<int>(), this.you.Mode);
-            this.you.AdvanceMulliganState();
         }
     }
 
@@ -640,16 +655,25 @@ public class BattleManager : MonoBehaviour
 
     public void FinishedMulligan()
     {
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(this.you.Id);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+        challengeMove.SetRank(GetDeviceMoveRank());
+        AddDeviceMove(challengeMove);
+
         this.you.PlayMulligan(this.opponent.Mode);
         this.opponent.AdvanceMulliganState();
     }
 
-    /*
-     * Play card to board after receiving play card move from server. 
-     */
-    public void PlayCardToBoard(BattleCardObject battleCardObject, int index)
+    public bool CanPlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
     {
-        SpawnCardToBoard(battleCardObject, index);
+        Transform targetPosition = hit.collider.transform;
+        string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
+        int index = Int32.Parse(lastChar);
+
+        Player player = battleCardObject.Owner;
+
+        return Board.Instance.IsBoardPlaceOpen(player.Id, index);
     }
 
     /*
@@ -662,17 +686,62 @@ public class BattleManager : MonoBehaviour
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
         Player player = battleCardObject.Owner;
-        SpawnCardToBoard(battleCardObject, index);
 
-        if (InspectorControlPanel.Instance.DevelopmentMode)
+        ChallengeMove challengeMove;
+
+        if (player.Id == this.opponent.Id)
         {
-            PlayCardAttributes attributes = new PlayCardAttributes(index);
-            BattleSingleton.Instance.SendChallengePlayCardRequest(
-                battleCardObject.Card.Id,
-                attributes
-            );
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
+            challengeMove.SetRank(GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCardId(battleCardObject.Card.Id);
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetFieldIndex(index);
+            challengeMove.SetMoveAttributes(moveAttributes);
+            ReceiveChallengeMove(challengeMove);
+
+            return false;
         }
-        return true; //to-do: do some board spot validation @Warren
+        else
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
+            challengeMove.SetRank(GetDeviceMoveRank());
+            AddDeviceMove(challengeMove);
+
+            if (InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                PlayCardAttributes attributes = new PlayCardAttributes(index);
+                BattleSingleton.Instance.SendChallengePlayCardRequest(
+                    battleCardObject.Card.Id,
+                    attributes
+                );
+            }
+            else
+            {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(player.Id);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
+                challengeMove.SetRank(GetServerMoveRank());
+                ReceiveChallengeMove(challengeMove);
+            }
+
+            SpawnCardToBoard(battleCardObject, index);
+
+            return true;
+        }
+    }
+
+    /*
+     * Play card to board after receiving play card move from server. 
+     */
+    public void PlayCardToBoard(BattleCardObject battleCardObject, int index)
+    {
+        SpawnCardToBoard(battleCardObject, index);
     }
 
     private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
@@ -750,7 +819,14 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
     {
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
+            target.Initialize(opponent, card);
+            opponent.PlayCard(target);
+            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
+        }
+        else
         {
             BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
             if (target == null)
@@ -758,13 +834,6 @@ public class BattleManager : MonoBehaviour
                 Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            opponent.PlayCard(target);
-            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
-        }
-        else
-        {
-            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
-            target.Initialize(opponent, card);
             opponent.PlayCard(target);
             StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
         }
@@ -781,7 +850,15 @@ public class BattleManager : MonoBehaviour
     {
         BoardCreature victimCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
+            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            target.Initialize(opponent, card);
+            opponent.PlayCard(target);
+            PlayTargetedSpell(target, victimCreature);
+        }
+        else
         {
             BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
             if (target == null)
@@ -789,14 +866,6 @@ public class BattleManager : MonoBehaviour
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            opponent.PlayCard(target);
-            PlayTargetedSpell(target, victimCreature);
-        }
-        else
-        {
-            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.Initialize(opponent, card);
             opponent.PlayCard(target);
             PlayTargetedSpell(target, victimCreature);
         }
@@ -809,7 +878,14 @@ public class BattleManager : MonoBehaviour
         int handIndex
     )
     {
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
+            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            target.Initialize(opponent, card);
+            opponent.PlayCard(target);
+        }
+        else
         {
             BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
             if (target == null)
@@ -817,13 +893,6 @@ public class BattleManager : MonoBehaviour
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            opponent.PlayCard(target);
-        }
-        else
-        {
-            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.Initialize(opponent, card);
             opponent.PlayCard(target);
         }
     }
@@ -859,7 +928,18 @@ public class BattleManager : MonoBehaviour
         this.deviceMoveQueue.Add(challengeMove);
     }
 
-    private static List<string> OPPONENT_SERVER_ONLY_CHALLENGE_MOVES = new List<string>
+    // Challenge moves that cannot be predicted by device.
+    private static List<string> OPPONENT_SERVER_CHALLENGE_MOVES = new List<string>
+    {
+        ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
+        ChallengeMove.MOVE_CATEGORY_END_TURN,
+        ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
+        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
+        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
+    };
+
+    // Challenge moves to skip since device has already performed them.
+    private static List<string> PLAYER_SKIP_CHALLENGE_MOVES = new List<string>
     {
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
         ChallengeMove.MOVE_CATEGORY_END_TURN,
@@ -880,20 +960,9 @@ public class BattleManager : MonoBehaviour
 
         ChallengeMove serverMove = this.serverMoveQueue[0];
 
-        // We only consider draw card moves for "you".
-        if (
-                serverMove.PlayerId == this.you.Id &&
-                serverMove.Category != ChallengeMove.MOVE_CATEGORY_DRAW_CARD
-            )
-        {
-            this.deviceMoveCount += 1;
-            this.serverMoveQueue.RemoveAt(0);
-            return -1;
-        }
-
         if (
             serverMove.PlayerId == this.opponent.Id &&
-            OPPONENT_SERVER_ONLY_CHALLENGE_MOVES.Contains(serverMove.Category)
+            OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
         )
         {
             this.deviceMoveCount += 1;
@@ -915,6 +984,10 @@ public class BattleManager : MonoBehaviour
                 Debug.LogWarning(string.Format("PlayerId: {0} vs {1}.", deviceMove.PlayerId, serverMove.PlayerId));
                 Debug.LogWarning(string.Format("Category: {0} vs {1}.", deviceMove.Category, serverMove.Category));
                 Debug.LogWarning(string.Format("Rank: {0} vs {1}.", deviceMove.Rank, serverMove.Rank));
+
+                this.deviceMoveQueue.RemoveAt(0);
+                this.serverMoveQueue.RemoveAt(0);
+
                 return -1;
             }
 
@@ -922,6 +995,14 @@ public class BattleManager : MonoBehaviour
         }
 
         this.serverMoveQueue.RemoveAt(0);
+
+        if (
+            serverMove.PlayerId == this.you.Id &&
+            PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
+        )
+        {
+            return -1;
+        }
 
         if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
         {
