@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class DeckPanel : ObjectUI
+public class DeckPanel : BasicButton
 {
     private Deck deck;
 

@@ -32,6 +32,13 @@ public class BattleCardObject : CardObject
         base.Initialize(card);
     }
 
+    protected override void LoadCardArtwork()
+    {
+        base.LoadCardArtwork();
+        this.visual.Stencil = BattleManager.Instance.stencilCount;
+        BattleManager.Instance.stencilCount += 1 % 255;
+    }
+
     public override void EnterHover()
     {
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)

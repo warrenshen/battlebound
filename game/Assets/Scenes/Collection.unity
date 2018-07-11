@@ -9993,6 +9993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb3417ac7326492bb5e1a58ea041167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collection: []
   chosenDeck:
     cards: []
   deckPanel: {fileID: 1682544773196616, guid: 1c7395cdf5c8b4a32a4adca2630d06c7, type: 2}
@@ -10058,7 +10059,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowPan: 1
   cardOffsetFromCamera: 8.5
-  cursors: []
+  cursors:
+  - {fileID: 2800000, guid: 023379cca75b34b49bf5b4f9c8126ea2, type: 3}
+  - {fileID: 2800000, guid: 4a4fb3ec0df7c43f993bf39bd33356d2, type: 3}
+  active: 1
   target: {fileID: 0}
 --- !u!1 &290305041
 GameObject:
@@ -10192,11 +10196,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 290305046}
@@ -14916,6 +14920,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9587840a8070748ecbe54ae720f891db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  functionName: 
 --- !u!1 &369204651
 GameObject:
   m_ObjectHideFlags: 0
@@ -15375,11 +15381,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 503560549}
@@ -15578,6 +15584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8e15f4a2d4c41a8abffc881a8c5a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hide: 1
 --- !u!1 &562310441
 GameObject:
   m_ObjectHideFlags: 0
@@ -17026,11 +17033,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1090064396}
@@ -18145,6 +18152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9587840a8070748ecbe54ae720f891db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  functionName: 
 --- !u!1 &1687376481
 GameObject:
   m_ObjectHideFlags: 0

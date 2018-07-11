@@ -45,7 +45,7 @@ public abstract class CardObject : MouseWatchable
         colliderBox.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.5f, 0.2f);
     }
 
-    private void LoadCardArtwork()
+    protected virtual void LoadCardArtwork()
     {
         Texture2D front = Resources.Load(this.templateData.frontImage) as Texture2D;
         Texture2D back = Resources.Load(this.templateData.backImage) as Texture2D;
@@ -53,9 +53,6 @@ public abstract class CardObject : MouseWatchable
         this.visual.SetFrontTiling(this.templateData.frontScale, this.templateData.frontOffset);
         this.visual.SetBackTiling(this.templateData.backScale, this.templateData.backOffset);
         this.visual.SetCardArtwork(front, back);
-
-        this.visual.Stencil = BattleManager.Instance.stencilCount;
-        BattleManager.Instance.stencilCount += 1 % 255;
     }
 
     private HyperCard.Card VisualizeCard()

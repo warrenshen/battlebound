@@ -102,7 +102,7 @@ public class BattleManager : MonoBehaviour
         this.players = new List<Player>();
 
         this.stencilCount = 1;
-        battleLayer = LayerMask.GetMask("Battle");
+        battleLayer = LayerMask.NameToLayer("Battle");
         boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
 
         ChooseRandomSetting();

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 33790987023063026}
   - component: {fileID: 222506262414130480}
   - component: {fileID: 114722882832179880}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Deck Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4285303579513524}
   - component: {fileID: 212741614335324488}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Panel (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 212350922696540812}
   - component: {fileID: 65067274732114048}
   - component: {fileID: 114785574030652344}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Deck Plaque
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 33291069702831938}
   - component: {fileID: 222029641544118552}
   - component: {fileID: 114569471687309078}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Deck Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4455283952858334}
   - component: {fileID: 212393380959801012}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,7 +236,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6.4, y: 3.3333328, z: 0.20000003}
+  m_Size: {x: 6.4, y: 3.3333328, z: 1}
   m_Center: {x: 2.2, y: 0, z: 0}
 --- !u!114 &114569471687309078
 MonoBehaviour:
@@ -475,6 +475,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9819f1ec17b404bf9b3f6cbe194037b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  functionName: 
 --- !u!212 &212350922696540812
 SpriteRenderer:
   m_ObjectHideFlags: 1
