@@ -7,6 +7,9 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     [SerializeField]
+    private Dictionary<string, string> playerIdToOpponentId;
+
+    [SerializeField]
     private Dictionary<string, PlayingField> playerIdToField;
 
     [SerializeField]
@@ -21,6 +24,7 @@ public class Board : MonoBehaviour
     {
         Instance = this;
 
+        this.playerIdToOpponentId = new Dictionary<string, string>();
         this.playerIdToField = new Dictionary<string, PlayingField>();
         this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
         this.playerIdToIndexToBoardPlace = new Dictionary<string, Dictionary<int, Transform>>();
@@ -55,6 +59,11 @@ public class Board : MonoBehaviour
             ).transform;
             this.playerIdToIndexToBoardPlace[player.Id][i] = boardPlace;
         }
+    }
+
+    public void RegisterPlayerOpponent(string playerId, string opponentId)
+    {
+        this.playerIdToOpponentId[playerId] = opponentId;
     }
 
     public bool IsBoardPlaceOpen(string playerId, int index)
@@ -93,7 +102,6 @@ public class Board : MonoBehaviour
         boardCreature.Initialize(battleCardObject, spawnRank);
 
         Destroy(battleCardObject.gameObject);
-        //boardCreature.OnPlay();
 
         PlayingField playingField = this.playerIdToField[boardCreature.Owner.Id];
         playingField.Place(boardCreature, index);
@@ -123,14 +131,31 @@ public class Board : MonoBehaviour
 
     public BoardCreature GetCreatureByPlayerIdAndCardId(string playerId, string cardId)
     {
-        PlayingField field = GetFieldByPlayerId(playerId);
-        return field.GetCreatureByCardId(cardId);
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetCreatureByCardId(cardId);
+    }
+
+    public BoardCreature GetCreatureByPlayerIdAndIndex(string playerId, int index)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetCreatureByIndex(index);
+    }
+
+    public BoardCreature GetInFrontCreatureByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        int playerIndex = playingField.GetIndexByCardId(cardId);
+        int opponentIndex = 6 - playerIndex;
+        Debug.Log(playerIndex);
+        Debug.Log(opponentIndex);
+        return GetCreatureByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
     }
 
     public Targetable GetTargetableByPlayerIdAndCardId(string playerId, string cardId)
     {
         if (cardId == PlayerAvatar.TARGET_ID_FACE)
         {
+            Debug.Log(playerId);
             return this.playerIdToAvatar[playerId];
         }
         else
@@ -143,11 +168,6 @@ public class Board : MonoBehaviour
     public void OnPlayerStartTurn(string playerId)
     {
         GetFieldByPlayerId(playerId).RunCreatureStartTurns();
-    }
-
-    public void OnPlayerEndTurn(string playerId)
-    {
-        GetFieldByPlayerId(playerId).RunCreatureEndTurns();
     }
 
     [System.Serializable]
@@ -240,6 +260,14 @@ public class Board : MonoBehaviour
             return creatures;
         }
 
+        public int GetIndexByCardId(string cardId)
+        {
+            return Array.FindIndex(
+                this.creatures,
+                creature => creature != null && creature.GetCardId() == cardId
+            );
+        }
+
         public BoardCreature GetCreatureByCardId(string cardId)
         {
             return Array.Find(
@@ -258,19 +286,6 @@ public class Board : MonoBehaviour
                 }
 
                 creature.OnStartTurn();
-            }
-        }
-
-        public void RunCreatureEndTurns()
-        {
-            foreach (BoardCreature creature in creatures)
-            {
-                if (creature == null)
-                {
-                    continue;
-                }
-
-                creature.OnEndTurn();
             }
         }
     }

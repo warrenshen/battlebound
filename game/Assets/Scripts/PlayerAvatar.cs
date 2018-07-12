@@ -113,11 +113,6 @@ public class PlayerAvatar : Targetable
         this.canAttack = this.maxAttacks;
     }
 
-    public override void OnEndTurn()
-    {
-
-    }
-
     public bool HasWeapon()
     {
         return this.weapon != null;
@@ -226,6 +221,11 @@ public class PlayerAvatar : Targetable
             yield return new WaitForEndOfFrame();
         }
         Destroy(gameObject);
+    }
+
+    public void Redraw()
+    {
+        UpdateStatText();
     }
 
     private void UpdateStatText()

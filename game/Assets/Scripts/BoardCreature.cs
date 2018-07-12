@@ -166,15 +166,13 @@ public class BoardCreature : Targetable
         return this.owner.Id;
     }
 
+    public void DecrementCanAttack()
+    {
+        this.canAttack -= 1;
+    }
+
     public override void Fight(Targetable other)
     {
-        if (this.canAttack <= 0)
-        {
-            Debug.LogError("Fight called when canAttack is 0 or below!");
-            return;
-        }
-        this.canAttack -= 1;
-
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
@@ -183,19 +181,13 @@ public class BoardCreature : Targetable
         StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, 0.25f });
         StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, 0.4f });
 
-        int damageDone = other.TakeDamage(this.attack);
-        OnDamageDone(damageDone);
-
         if (!other.IsAvatar)
         {
             FXPoolManager.Instance.PlayEffect("SlashVFX", this.transform.position);
-            this.TakeDamage(((BoardCreature)other).Attack);
 
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
                 StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, 0.5f });
         }
-
-        Redraw();
     }
 
     IEnumerator PlaySoundWithDelay(object[] args)
@@ -224,11 +216,6 @@ public class BoardCreature : Targetable
             int healthBefore = this.health;
             this.health -= amount;
             this.health = Math.Max(this.health, 0);
-
-            if (CheckAlive())
-            {
-                //do something
-            }
 
             Redraw();
             return Math.Min(healthBefore, amount);
@@ -261,38 +248,9 @@ public class BoardCreature : Targetable
         Redraw();
     }
 
-    public override void OnEndTurn()
-    {
-
-    }
-
     public void SetHealth(int amount)
     {
         this.health = amount;
-        CheckAlive();
-    }
-
-    private void OnDamageDone(int amount)
-    {
-        if (HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
-        {
-            this.Owner.Heal(amount);
-        }
-
-        this.Redraw();
-    }
-
-    private void OnKill()
-    {
-        if (HasAbility(Card.CARD_ABILITY_EACH_KILL_DRAW_CARD))
-        {
-            if (!InspectorControlPanel.Instance.DevelopmentMode)
-            {
-                this.Owner.DrawCards(1);
-            }
-        }
-
-        this.Redraw();
     }
 
     public void AddAttack(int amount)
@@ -300,18 +258,6 @@ public class BoardCreature : Targetable
         this.attack += amount;
         // TODO: animate.
         Redraw();
-    }
-
-    private bool CheckAlive()
-    {
-        if (this.health > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     public void Die()
@@ -339,8 +285,10 @@ public class BoardCreature : Targetable
     public void Redraw()
     {
         UpdateStatText();
+
         this.visual.SetOutline(this.Owner.HasTurn && this.canAttack > 0);
         this.visual.Redraw();
+
         RenderAbilitiesAndBuffs();
     }
 
@@ -358,9 +306,6 @@ public class BoardCreature : Targetable
 
     private void RenderAbilitiesAndBuffs()
     {
-        //if (abilities == null)
-        //return;
-
         if (this.hasShield && !this.abilitiesFX.ContainsKey(Card.CARD_ABILITY_SHIELD))
         {
             this.abilitiesFX[Card.CARD_ABILITY_SHIELD] = FXPoolManager.Instance.AssignEffect(Card.CARD_ABILITY_SHIELD, this.transform).gameObject;
@@ -398,17 +343,6 @@ public class BoardCreature : Targetable
             GameObject effect = abilitiesFX[key];
             FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
         }
-    }
-
-    public void AddAbility(string ability)
-    {
-        if (abilities == null)
-        {
-            this.abilities = new List<string>();
-            this.abilitiesFX = new Dictionary<string, GameObject>();
-        }
-        abilities.Add(ability);
-        RenderAbilitiesAndBuffs();
     }
 
     public bool HasAbility(string ability)
