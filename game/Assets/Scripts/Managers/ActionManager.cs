@@ -152,7 +152,7 @@ public class ActionManager : MonoBehaviour
     public void ResetTarget()
     {
         CardTween.moveLocal(this.target, this.target.reset.position, CardTween.TWEEN_DURATION);
-        CardTween.rotateLocal(this.target, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
+        LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
     }
 
     private void DestroyTarget()
