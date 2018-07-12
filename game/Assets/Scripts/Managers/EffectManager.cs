@@ -23,6 +23,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_END_TURN_DRAW_CARD,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY,
     };
 
     private class Effect
@@ -153,8 +154,11 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
                 AbilityDeathRattleDrawCard(effect);
                 break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_TWENTY:
+                AbilityDeathRattleAttackFace(effect, 20);
+                break;
             case Card.BUFF_CATEGORY_UNSTABLE_POWER:
-                boardCreature.SetHealth(0);
+                BuffUnstablePower(effect);
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
@@ -179,6 +183,36 @@ public class EffectManager : MonoBehaviour
         }
 
         Board.Instance.RemoveCreatureByPlayerIdAndCardId(effect.PlayerId, effect.CardId);
+    }
+
+    private void AbilityDeathRattleAttackFace(Effect effect, int amount)
+    {
+
+    }
+
+    private void BuffUnstablePower(Effect effect)
+    {
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+
+        boardCreature.SetHealth(0);
+
+        List<Effect> effects = new List<Effect>();
+
+        effects.Add(
+            new Effect(
+                boardCreature.Owner.Id,
+                EFFECT_CARD_DIE,
+                boardCreature.GetCardId(),
+                boardCreature.SpawnRank
+            )
+        );
+
+        effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
+
+        this.queue.AddRange(effects);
     }
 
     private IEnumerator WaitForDrawCard(object[] args)
