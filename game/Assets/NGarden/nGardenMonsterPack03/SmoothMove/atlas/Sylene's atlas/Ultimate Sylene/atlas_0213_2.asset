@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 529336600, guid: 289bab7cc27a12745b5df9b71d7b06c4, type: 3}
+  m_Name: atlas_0213_2
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: ae1ed771f0f45f24f87785aa198b8317, type: 2}
+  uvs:
+  - serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0.37890625
+    height: 0.9003906
+  - serializedVersion: 2
+    x: 0.6455078
+    y: 0
+    width: 0.17089844
+    height: 0.37109375
+  - serializedVersion: 2
+    x: 0.3798828
+    y: 0
+    width: 0.26464844
+    height: 0.8066406
+  - serializedVersion: 2
+    x: 0.6455078
+    y: 0.37304688
+    width: 0.20605469
+    height: 0.30273438
+  textureGUIDs:
+  - 907ae21141a8531469661cb34804c65d
+  - 1d31a3c1070cf4849909672339dba565
+  - 4c922a274aecc0a429a55a4cf2713ead
+  - ce7ad6eb12a4bd84a8981486badec1e6
+  textureSizes:
+  - {x: 388, y: 461}
+  - {x: 175, y: 190}
+  - {x: 271, y: 413}
+  - {x: 211, y: 155}
+  defaultPivotOffsets:
+  - {x: 0.4446429, y: -0.1172057}
+  - {x: -0.42, y: -0.21}
+  - {x: -0.24, y: -0.13}
+  - {x: 0.45, y: -0.27}
+  textureNames:
+  - 0213_13_right_wingB
+  - 0213_14_left_wingS
+  - 0213_15_left_wingB
+  - 0213_12_right_wingS
+  texturePaths:
+  - Assets/0208_0243/Textures/0208_0243/0211_0213/0213/0213_13_right_wingB.png
+  - Assets/0208_0243/Textures/0208_0243/0211_0213/0213/0213_14_left_wingS.png
+  - Assets/0208_0243/Textures/0208_0243/0211_0213/0213/0213_15_left_wingB.png
+  - Assets/0208_0243/Textures/0208_0243/0211_0213/0213/0213_12_right_wingS.png
+  lastBuildID: 20150513101522511
+  needsRebuilt: 0
+  dataVersion: 4
+  maxAtlasSize: 1024
+  padding: 1
+  forceSquare: 0
