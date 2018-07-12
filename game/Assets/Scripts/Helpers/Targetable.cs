@@ -24,5 +24,5 @@ public abstract class Targetable : MonoBehaviour
     public abstract int Heal(int amount);
 
     public abstract void OnStartTurn();
-    public abstract void OnEndTurn();
+    //public abstract void OnEndTurn();
 }

@@ -124,6 +124,9 @@ public class BattleManager : MonoBehaviour
                 this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
                 this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
 
+                Board.Instance.RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
+                Board.Instance.RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
+
                 this.playerIdToPlayer[this.you.Id] = this.you;
                 this.playerIdToPlayer[this.opponent.Id] = this.opponent;
 
@@ -142,6 +145,9 @@ public class BattleManager : MonoBehaviour
 
             this.you = new Player("Player", "Player");
             this.opponent = new Player("Enemy", "Enemy");
+
+            Board.Instance.RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
+            Board.Instance.RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
 
             this.playerIdToPlayer[this.you.Id] = this.you;
             this.playerIdToPlayer[this.opponent.Id] = this.opponent;
@@ -332,6 +338,8 @@ public class BattleManager : MonoBehaviour
 
     private void NextTurn()
     {
+        activePlayer.EndTurn();
+
         EffectManager.Instance.OnEndTurn(
             activePlayer.Id,
             new UnityAction(ActualNextTurn)
@@ -340,14 +348,19 @@ public class BattleManager : MonoBehaviour
 
     private void ActualNextTurn()
     {
-        activePlayer.EndTurn();
-
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(activePlayer.Id);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        if (activePlayer.DeckSize > 0)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        }
+        else
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE);
+        }
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
 
@@ -440,11 +453,16 @@ public class BattleManager : MonoBehaviour
             Targetable attackingTargetable = mouseDownTargetable;
             Targetable defendingTargetable = mouseUpTargetable;
 
-            ChallengeMove challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(attackingTargetable.GetPlayerId());
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
-            challengeMove.SetRank(GetDeviceMoveRank());
-            AddDeviceMove(challengeMove);
+            ChallengeMove challengeMove;
+
+            if (attackingTargetable.Owner.Id == this.you.Id)
+            {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(attackingTargetable.GetPlayerId());
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
+                challengeMove.SetRank(GetDeviceMoveRank());
+                AddDeviceMove(challengeMove);
+            }
 
             if (InspectorControlPanel.Instance.DevelopmentMode)
             {
@@ -465,6 +483,7 @@ public class BattleManager : MonoBehaviour
                 challengeMove.SetRank(GetServerMoveRank());
 
                 ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetCardId(attackingTargetable.GetCardId());
                 moveAttributes.SetFieldId(defendingTargetable.Owner.Id);
                 moveAttributes.SetTargetId(defendingTargetable.GetCardId());
                 challengeMove.SetMoveAttributes(moveAttributes);
@@ -472,10 +491,13 @@ public class BattleManager : MonoBehaviour
                 ReceiveChallengeMove(challengeMove);
             }
 
-            EffectManager.Instance.OnCreatureAttack(
-                attackingTargetable,
-                defendingTargetable
-            );
+            if (attackingTargetable.Owner.Id == this.you.Id)
+            {
+                EffectManager.Instance.OnCreatureAttack(
+                    attackingTargetable,
+                    defendingTargetable
+                );
+            }
 
             return true;
         }
@@ -788,7 +810,6 @@ public class BattleManager : MonoBehaviour
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
 
         Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex, spawnCount);
-        //OnPlay(battleCardObject.Owner.Id, battleCardObject.Card.Id);
     }
 
     /*
@@ -945,9 +966,13 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        Targetable attacker = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
-        Targetable defender = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
-        attacker.Fight(defender);
+        Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
+        Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
+
+        EffectManager.Instance.OnCreatureAttack(
+            attackingTargetable,
+            defendingTargetable
+        );
     }
 
     public void ReceiveChallengeEndState(ChallengeEndState challengeEndState)
@@ -975,6 +1000,7 @@ public class BattleManager : MonoBehaviour
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
+        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
     };

@@ -57,6 +57,8 @@ public class Player
 
         this.hasTurn = false;
         this.deck = GetDeck();
+        this.deckSize = this.deck.Size();
+
         this.mana = 30;
         this.maxMana = 30;
 
@@ -130,7 +132,6 @@ public class Player
     {
         this.hasTurn = false;
         this.hand.RecedeCards();
-        Board.Instance.OnPlayerEndTurn(this.id);
     }
 
     public void NewTurn()
@@ -192,7 +193,6 @@ public class Player
         }
 
         BattleSingleton.Instance.EmitChallengeMove(challengeMove);
-        //this.AddDrawnCard(drawn, animate: animate); // Handles decrementing this.deckSize.
     }
 
     public void DrawCards(int amount)
