@@ -271,6 +271,9 @@ public class CollectionManager : MonoBehaviour
         created.transform.position = source.position;
 
         //do visual stuff
+        CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
+        collectionCardObject.Initialize(card);
+        collectionCardObject.visual.SetGrayscale(true);
         return created.transform;
     }
 

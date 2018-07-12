@@ -582,12 +582,12 @@ public class BattleManager : MonoBehaviour
 
         Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
 
-        LeanTween.move(battleCardObject.gameObject, pivotPoint.position, 0.4f).setEaseInQuad();
-        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, 0.4f).setEaseInQuad();
-        yield return new WaitForSeconds(0.4f);
+        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
 
         //flash or something
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
 
         PlayCardToBoard(battleCardObject, fieldIndex);
     }
@@ -610,12 +610,14 @@ public class BattleManager : MonoBehaviour
         string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
         GameObject fixedPoint = GameObject.Find(fixedPointName);
 
-        LeanTween.rotate(battleCardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, ActionManager.TWEEN_DURATION).setEaseInQuad();
-        LeanTween.move(battleCardObject.gameObject, fixedPoint.transform.position, ActionManager.TWEEN_DURATION).setEaseInQuad();
-        yield return new WaitForSeconds(ActionManager.TWEEN_DURATION);
+        LeanTween.rotate(battleCardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
 
-
-        yield return new WaitForSeconds(ActionManager.TWEEN_DURATION);
+        battleCardObject.noInteraction = true;  //to-do: try to streamline this if possible
+        LeanTween.move(battleCardObject.gameObject, fixedPoint.transform.position, CardTween.TWEEN_DURATION).setEaseInQuad();
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
+        //card stops to show what it is
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
+        battleCardObject.noInteraction = false;
         player.Hand.RepositionCards();
     }
 
@@ -626,9 +628,9 @@ public class BattleManager : MonoBehaviour
         battleCardObject.transform.position = targetPoint.transform.position;
         battleCardObject.transform.localScale = Vector3.zero;
 
-        LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, ActionManager.TWEEN_DURATION);
-        LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, ActionManager.TWEEN_DURATION).setEaseInQuad();
-        LeanTween.move(battleCardObject.gameObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, ActionManager.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
+        LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        CardTween.move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION).setEaseInQuad();
         battleCardObject.visual.Redraw();
     }
 
@@ -650,8 +652,8 @@ public class BattleManager : MonoBehaviour
     private IEnumerator AnimateHideMulliganOverlay(Player player)
     {
         GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
-        LeanTween.scale(overlay, Vector3.zero, ActionManager.TWEEN_DURATION);
-        yield return new WaitForSeconds(ActionManager.TWEEN_DURATION);
+        LeanTween.scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION);
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
         overlay.SetActive(false);
 
         if (!player.IsModeMulligan())

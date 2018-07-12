@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class BattleCardObject : CardObject
 {
+    [SerializeField]
     protected Player owner;
     public Player Owner => owner;
 

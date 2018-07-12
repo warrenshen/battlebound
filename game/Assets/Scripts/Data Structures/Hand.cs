@@ -106,8 +106,8 @@ public class Hand
             //to-do: do something with hypercard stencil here?
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.2f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
-            LeanTween.moveLocal(battleCardObject.gameObject, adjustedPos, ActionManager.TWEEN_DURATION);
-            LeanTween.rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), ActionManager.TWEEN_DURATION);
+            CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
+            LeanTween.rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 5, 0), CardTween.TWEEN_DURATION);
         }
     }
 

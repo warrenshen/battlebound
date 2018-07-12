@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public abstract class MouseWatchable : MonoBehaviour
 {
+    [SerializeField]
+    public bool noInteraction;
+
     public virtual void MouseDown()
     {
 

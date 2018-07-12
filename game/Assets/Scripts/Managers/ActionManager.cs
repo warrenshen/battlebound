@@ -2,6 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//used to lock mouse interactions while moving CardObject using LeanTween
+public static class CardTween
+{
+    public static float TWEEN_DURATION = 0.5f;
+
+    public static LTDescr move(CardObject target, Vector3 finalPosition, float duration)
+    {
+        target.noInteraction = true;
+        return LeanTween.move(target.gameObject, finalPosition, duration).setOnComplete(() => target.noInteraction = false);
+    }
+
+    public static LTDescr moveLocal(CardObject target, Vector3 finalPosition, float duration)
+    {
+        target.noInteraction = true;
+        return LeanTween.moveLocal(target.gameObject, finalPosition, duration).setOnComplete(() => target.noInteraction = false);
+    }
+}
+
 [System.Serializable]
 public class ActionManager : MonoBehaviour
 {
@@ -84,8 +102,9 @@ public class ActionManager : MonoBehaviour
             return;
         }
         MouseWatchable hitWatchable = hit.collider.GetComponent<MouseWatchable>();
-        if (hitWatchable == null)
+        if (hitWatchable == null || hitWatchable.noInteraction)
             return;
+
         if (Input.GetMouseButtonDown(0))
         {
             hitWatchable.MouseDown();
@@ -132,8 +151,8 @@ public class ActionManager : MonoBehaviour
 
     public void ResetTarget()
     {
-        LeanTween.moveLocal(this.target.gameObject, this.target.reset.position, ActionManager.TWEEN_DURATION);
-        LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, ActionManager.TWEEN_DURATION);
+        CardTween.moveLocal(this.target, this.target.reset.position, CardTween.TWEEN_DURATION);
+        CardTween.rotateLocal(this.target, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
     }
 
     private void DestroyTarget()

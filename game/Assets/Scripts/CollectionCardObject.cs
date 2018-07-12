@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class CollectionCardObject : CardObject
 {
+    [SerializeField]
     public bool minified;
 
 
