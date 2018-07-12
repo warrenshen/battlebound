@@ -98,7 +98,11 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        this.serverMoveCount = 0;
+        // Initialize server and device move counts to be that of the server,
+        // since we could be resuming a battle.
+        this.serverMoveCount = BattleSingleton.Instance.MoveCount;
+        this.deviceMoveCount = BattleSingleton.Instance.MoveCount;
+
         this.serverMoveQueue = new List<ChallengeMove>();
         this.deviceMoveQueue = new List<ChallengeMove>();
 
@@ -433,21 +437,49 @@ public class BattleManager : MonoBehaviour
         }
         else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpTargetable))
         {
+            Targetable attackingTargetable = mouseDownTargetable;
+            Targetable defendingTargetable = mouseUpTargetable;
+
+            ChallengeMove challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(attackingTargetable.GetPlayerId());
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
+            challengeMove.SetRank(GetDeviceMoveRank());
+            AddDeviceMove(challengeMove);
+
             if (InspectorControlPanel.Instance.DevelopmentMode)
             {
                 CardAttackAttributes attributes = new CardAttackAttributes(
-                    mouseUpTargetable.GetPlayerId(),
-                    mouseUpTargetable.GetCardId()
+                    defendingTargetable.GetPlayerId(),
+                    defendingTargetable.GetCardId()
                 );
                 BattleSingleton.Instance.SendChallengeCardAttackRequest(
-                    mouseDownTargetable.GetCardId(),
+                    attackingTargetable.GetCardId(),
                     attributes
                 );
             }
+            else
+            {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(attackingTargetable.GetPlayerId());
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
+                challengeMove.SetRank(GetServerMoveRank());
 
-            mouseDownTargetable.Fight(mouseUpTargetable);
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetFieldId(defendingTargetable.Owner.Id);
+                moveAttributes.SetTargetId(defendingTargetable.GetCardId());
+                challengeMove.SetMoveAttributes(moveAttributes);
+
+                ReceiveChallengeMove(challengeMove);
+            }
+
+            EffectManager.Instance.OnCreatureAttack(
+                attackingTargetable,
+                defendingTargetable
+            );
+
             return true;
         }
+
         return false;
     }
 
@@ -701,6 +733,7 @@ public class BattleManager : MonoBehaviour
             moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
             moveAttributes.SetFieldIndex(index);
             challengeMove.SetMoveAttributes(moveAttributes);
+
             ReceiveChallengeMove(challengeMove);
 
             return false;
@@ -904,6 +937,12 @@ public class BattleManager : MonoBehaviour
         string targetId
     )
     {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
         Targetable attacker = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
         Targetable defender = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
         attacker.Fight(defender);
@@ -944,6 +983,7 @@ public class BattleManager : MonoBehaviour
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
+        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
     };

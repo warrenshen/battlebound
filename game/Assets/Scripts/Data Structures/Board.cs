@@ -98,7 +98,10 @@ public class Board : MonoBehaviour
         PlayingField playingField = this.playerIdToField[boardCreature.Owner.Id];
         playingField.Place(boardCreature, index);
 
-        EffectManager.Instance.OnPlay(boardCreature.Owner.Id, boardCreature.GetCardId());
+        EffectManager.Instance.OnCreaturePlay(
+            boardCreature.Owner.Id,
+            boardCreature.GetCardId()
+        );
     }
 
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)

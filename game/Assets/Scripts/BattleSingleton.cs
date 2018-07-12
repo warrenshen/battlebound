@@ -22,12 +22,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private bool challengeStarted;
     public bool ChallengeStarted => challengeStarted;
 
+    private int moveCount;
+    public int MoveCount => moveCount;
+
     private int spawnCount;
     public int SpawnCount => spawnCount;
-
-    private List<ChallengeMove> moves;
-
-    private List<ChallengeMove> lastMoves;
 
     private void Awake()
     {
@@ -40,8 +39,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
         this.challengeStarted = false;
 
-        this.moves = new List<ChallengeMove>();
-        this.lastMoves = new List<ChallengeMove>();
+        this.moveCount = 0;
+        this.spawnCount = 0;
 
         ChallengeIssuedMessage.Listener = ChallengeIssuedMessageHandler;
         ChallengeStartedMessage.Listener = ChallengeStartedMessageHandler;
@@ -165,6 +164,15 @@ public class BattleSingleton : Singleton<BattleSingleton>
             this.spawnCount = (int)scriptData.GetInt("spawnCount");
         }
 
+        if (scriptData.GetInt("moveCount") == null)
+        {
+            this.moveCount = 0;
+        }
+        else
+        {
+            this.moveCount = (int)scriptData.GetInt("moveCount");
+        }
+
         if (BattleManager.Instance == null)
         {
             return;
@@ -177,9 +185,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             //Debug.Log(moveData.JSON);
             challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
         }
-
-        this.moves.AddRange(challengeMoves);
-        this.lastMoves = challengeMoves;
 
         if (shouldEmitMoves)
         {
@@ -210,149 +215,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
         {
             EmitChallengeMove(challengeMove);
         }
-        //    if (
-        //        challengeMove.PlayerId == BattleManager.Instance.You.Id &&
-        //        challengeMove.Category != ChallengeMove.MOVE_CATEGORY_DRAW_CARD
-        //    )
-        //    {
-        //        continue;
-        //    }
-
-        //    if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
-        //    {
-        //        BattleManager.Instance.ReceiveMovePlayMulligan(
-        //            challengeMove.PlayerId,
-        //            challengeMove.Attributes.DeckCardIndices
-        //        );
-        //    }
-        //    else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
-        //    {
-        //        BattleManager.Instance.ReceiveMoveEndTurn(
-        //            challengeMove.PlayerId
-        //        );
-        //    }
-        //    else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD)
-        //    {
-        //        Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-        //        Card card = challengeMove.Attributes.Card.GetCard();
-
-        //        BattleManager.Instance.ReceiveMoveDrawCard(
-        //            challengeMove.PlayerId,
-        //            card
-        //        );
-        //    }
-        //    else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
-        //    {
-        //        Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-        //        Card card = challengeMove.Attributes.Card.GetCard();
-
-        //        if (card.GetType() == typeof(CreatureCard))
-        //        {
-        //            BattleManager.Instance.ReceiveMovePlayMinion(
-        //                challengeMove.PlayerId,
-        //                challengeMove.Attributes.CardId,
-        //                card as CreatureCard,
-        //                challengeMove.Attributes.HandIndex,
-        //                challengeMove.Attributes.FieldIndex
-        //            );
-        //        }
-        //        else
-        //        {
-        //            Debug.LogError("Invalid card category for play minion move");
-        //        }
-        //    }
-        //    else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
-        //    {
-        //        Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-        //        Card card = challengeMove.Attributes.Card.GetCard();
-
-        //        if (card.GetType() == typeof(SpellCard))
-        //        {
-        //            BattleManager.Instance.ReceiveMovePlaySpellUntargeted(
-        //                challengeMove.PlayerId,
-        //                challengeMove.Attributes.CardId,
-        //                card as SpellCard,
-        //                challengeMove.Attributes.HandIndex
-        //            );
-        //        }
-        //        else
-        //        {
-        //            Debug.LogError("Invalid card category for play spell general move");
-        //        }
-        //    }
-        //    else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
-        //    {
-        //        Player owner = BattleManager.Instance.PlayerIdToPlayer[challengeMove.PlayerId];
-        //        Card card = challengeMove.Attributes.Card.GetCard();
-
-        //        if (card.GetType() == typeof(SpellCard))
-        //        {
-        //            BattleManager.Instance.ReceiveMovePlaySpellTargeted(
-        //                challengeMove.PlayerId,
-        //                challengeMove.Attributes.CardId,
-        //                card as SpellCard,
-        //                challengeMove.Attributes.HandIndex,
-        //                challengeMove.Attributes.FieldId,
-        //                challengeMove.Attributes.TargetId
-        //            );
-        //        }
-        //        else
-        //        {
-        //            Debug.LogError("Invalid card category for play spell targeted move");
-        //        }
-        //    }
-        //    else if (challengeMove.Category == ChallengeMove.MOVE_CATEGORY_CARD_ATTACK)
-        //    {
-        //        BattleManager.Instance.ReceiveMoveCardAttack(
-        //            challengeMove.PlayerId,
-        //            challengeMove.Attributes.CardId,
-        //            challengeMove.Attributes.FieldId,
-        //            challengeMove.Attributes.TargetId
-        //        );
-        //    }
-        //}
-
-        //if (!BattleManager.Instance.Initialized)
-        //{
-        //    return;
-        //}
-
-        //PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
-        //PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
-
-        //if (InspectorControlPanel.Instance.DevelopmentMode)
-        //{
-        //    if (!this.playerState.Equals(devicePlayerState))
-        //    {
-        //        Debug.LogWarning("Server vs device player state mismatch.");
-        //        Debug.LogWarning("Server: " + JsonUtility.ToJson(this.playerState));
-        //        Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
-        //        Debug.LogWarning("First diff: " + this.playerState.FirstDiff(devicePlayerState));
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Server vs device player state match.");
-        //        Debug.Log("State: " + JsonUtility.ToJson(this.playerState));
-        //    }
-
-        //    if (!this.opponentState.Equals(deviceOpponentState))
-        //    {
-        //        Debug.LogWarning("Server vs device opponent state mismatch.");
-        //        Debug.LogWarning("Server: " + JsonUtility.ToJson(this.opponentState));
-        //        Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
-        //        Debug.LogWarning("First diff: " + this.opponentState.FirstDiff(deviceOpponentState));
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Server vs device opponent state match.");
-        //        Debug.Log("State: " + JsonUtility.ToJson(this.opponentState));
-        //    }
-        //}
-        //else
-        //{
-        //    Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
-        //    Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
-        //}
     }
 
     public void SendChallengeEndTurnRequest()

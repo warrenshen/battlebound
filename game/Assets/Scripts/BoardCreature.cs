@@ -195,7 +195,7 @@ public class BoardCreature : Targetable
                 StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, 0.5f });
         }
 
-        this.Redraw();
+        Redraw();
     }
 
     IEnumerator PlaySoundWithDelay(object[] args)
@@ -272,11 +272,6 @@ public class BoardCreature : Targetable
         CheckAlive();
     }
 
-    private void OnDeath()
-    {
-        EffectManager.Instance.OnDeath(this.Owner.Id, this.GetCardId());
-    }
-
     private void OnDamageDone(int amount)
     {
         if (HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
@@ -315,7 +310,6 @@ public class BoardCreature : Targetable
         }
         else
         {
-            OnDeath();
             return false;
         }
     }
