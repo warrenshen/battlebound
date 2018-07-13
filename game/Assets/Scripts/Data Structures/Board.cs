@@ -151,9 +151,7 @@ public class Board : MonoBehaviour
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
         int playerIndex = playingField.GetIndexByCardId(cardId);
-        int opponentIndex = 6 - playerIndex;
-        Debug.Log(playerIndex);
-        Debug.Log(opponentIndex);
+        int opponentIndex = 5 - playerIndex;
         return GetCreatureByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
     }
 
@@ -161,7 +159,6 @@ public class Board : MonoBehaviour
     {
         if (cardId == PlayerAvatar.TARGET_ID_FACE)
         {
-            Debug.Log(playerId);
             return this.playerIdToAvatar[playerId];
         }
         else

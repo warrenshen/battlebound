@@ -271,8 +271,9 @@ public class EffectManager : MonoBehaviour
             challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCardId(effect.CardId);
             moveAttributes.SetFieldId(randomTargetable.Owner.Id);
-            moveAttributes.SetCardId(randomTargetable.GetCardId());
+            moveAttributes.SetTargetId(randomTargetable.GetCardId());
             challengeMove.SetMoveAttributes(moveAttributes);
 
             BattleManager.Instance.ReceiveChallengeMove(challengeMove);
