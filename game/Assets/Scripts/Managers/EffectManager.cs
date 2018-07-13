@@ -14,10 +14,15 @@ public class EffectManager : MonoBehaviour
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
+    public const string EFFECT_ATTACK_RANDOM = "EFFECT_ATTACK_RANDOM";
 
     private static List<string> EFFECT_PRIORITY_ORDER = new List<string>
     {
+        EFFECT_ATTACK_RANDOM,
         EFFECT_PLAYER_AVATAR_DIE,
+
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
+
         EFFECT_CARD_DIE,
         Card.CARD_ABILITY_LIFE_STEAL,
 
@@ -31,8 +36,9 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
-        Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+
+        Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
     };
 
     private static List<string> EFFECTS_END_TURN = new List<string>
@@ -54,6 +60,13 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
+    };
+
+    private static List<string> EFFECT_DEATH_RATTLE = new List<string>
+    {
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
     };
 
     private class Effect
@@ -126,6 +139,31 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    private void AddToQueue(Effect effect)
+    {
+        this.queue.Add(effect);
+    }
+
+    private void AddToQueue(List<Effect> effects)
+    {
+        effects.Sort(delegate (Effect a, Effect b)
+        {
+            int aOrder = EFFECT_PRIORITY_ORDER.IndexOf(a.Name);
+            int bOrder = EFFECT_PRIORITY_ORDER.IndexOf(b.Name);
+
+            if (a.SpawnRank == b.SpawnRank)
+            {
+                return aOrder < bOrder ? -1 : 1;
+            }
+            else
+            {
+                return a.SpawnRank < b.SpawnRank ? -1 : 1;
+            }
+        });
+
+        this.queue.AddRange(effects);
+    }
+
     private void ProcessQueue()
     {
         if (this.queue.Count <= 0)
@@ -133,21 +171,6 @@ public class EffectManager : MonoBehaviour
             Debug.LogError("Process queue called when queue is empty.");
             return;
         }
-
-        this.queue.Sort(delegate (Effect a, Effect b)
-        {
-            int aOrder = EFFECT_PRIORITY_ORDER.IndexOf(a.Name);
-            int bOrder = EFFECT_PRIORITY_ORDER.IndexOf(b.Name);
-
-            if (aOrder == bOrder)
-            {
-                return a.SpawnRank < b.SpawnRank ? -1 : 1;
-            }
-            else
-            {
-                return aOrder < bOrder ? -1 : 1;
-            }
-        });
 
         Effect effect = this.queue[0];
         this.queue.RemoveAt(0);
@@ -165,10 +188,17 @@ public class EffectManager : MonoBehaviour
 
         switch (effect.Name)
         {
+            case EFFECT_ATTACK_RANDOM:
+                EffectAttackRandom(effect);
+                break;
             case EFFECT_PLAYER_AVATAR_DIE:
                 Debug.LogWarning("Game over");
                 break;
             case EFFECT_CARD_DIE:
+                Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+                    effect.PlayerId,
+                    effect.CardId
+                );
                 boardCreature.Die();
                 break;
             case Card.CARD_ABILITY_LIFE_STEAL:
@@ -180,8 +210,23 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_END_TURN_HEAL_TWENTY:
                 boardCreature.Heal(20);
                 break;
+            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
+                AbilityAttackInFront(effect, 10);
+                break;
+            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
+                AbilityAttackInFront(effect, 20);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
+                AbilityDeathRattleAttackFace(effect, 20);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
+                AbilityDeathRattleAttackRandomThree(effect, 20);
+                break;
             case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
             case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
+            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
                 ChallengeMove challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(effect.PlayerId);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
@@ -196,18 +241,6 @@ public class EffectManager : MonoBehaviour
                     boardCreature.Owner.DrawCards(1);
                 }
                 break;
-            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
-                AbilityEndTurnAttackInFront(effect, 10);
-                break;
-            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY:
-                AbilityEndTurnAttackInFront(effect, 20);
-                break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
-                AbilityDeathRattleDrawCard(effect);
-                break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
-                AbilityDeathRattleAttackFace(effect, 20);
-                break;
             case Card.BUFF_CATEGORY_UNSTABLE_POWER:
                 BuffUnstablePower(effect);
                 break;
@@ -217,65 +250,135 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    private void EffectAttackRandom(Effect effect)
+    {
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(effect.PlayerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_ATTACK_RANDOM_TARGET);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true;
+        StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(effect.PlayerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_ATTACK_RANDOM_TARGET);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetFieldId(randomTargetable.Owner.Id);
+            moveAttributes.SetCardId(randomTargetable.GetCardId());
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
+    }
+
+    private IEnumerator WaitForAttackRandom(object[] args)
+    {
+        int moveRank = (int)args[0];
+        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        this.isWaiting = false;
+    }
+
     private void AbilityLifeSteal(Effect effect)
     {
         Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
         player.Heal(effect.Value);
     }
 
-    private void AbilityEndTurnAttackInFront(Effect effect, int amount)
+    private void AbilityAttackInFront(Effect effect, int amount)
     {
-        BoardCreature boardCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
+        BoardCreature attackingCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+        BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
 
-        if (boardCreature != null)
-        {
-            boardCreature.TakeDamage(amount);
-            // TODO: animate.
-            if (boardCreature.Health <= 0)
-            {
-                List<Effect> effects = new List<Effect>();
+        List<Effect> effects = new List<Effect>();
+        // TODO: animate.
 
+        if (defendingCreature != null)
+        {
+            int damageDone = defendingCreature.TakeDamage(amount);
+            effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+            effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+            if (defendingCreature.Health <= 0)
+            {
                 effects.Add(
                     new Effect(
-                        boardCreature.Owner.Id,
+                        defendingCreature.Owner.Id,
                         EFFECT_CARD_DIE,
-                        boardCreature.GetCardId(),
-                        boardCreature.SpawnRank
+                        defendingCreature.GetCardId(),
+                        defendingCreature.SpawnRank
                     )
                 );
 
-                effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
+                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
 
-                this.queue.AddRange(effects);
             }
         }
-    }
 
-    private void AbilityDeathRattleDrawCard(Effect effect)
-    {
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(effect.PlayerId);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        this.isWaiting = true;
-        StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
-
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            BattleManager.Instance.GetPlayerById(effect.PlayerId).DrawCards(1);
-        }
-
-        Board.Instance.RemoveCreatureByPlayerIdAndCardId(effect.PlayerId, effect.CardId);
+        AddToQueue(effects);
     }
 
     private void AbilityDeathRattleAttackFace(Effect effect, int amount)
     {
 
+    }
+
+    private void AbilityDeathRattleAttackRandomThree(Effect effect, int amount)
+    {
+        List<Effect> effects = new List<Effect>();
+
+        for (int i = 0; i < 3; i += 1)
+        {
+            effects.Add(
+                new Effect(
+                    effect.PlayerId,
+                    EFFECT_ATTACK_RANDOM,
+                    effect.CardId,
+                    effect.SpawnRank,
+                    amount
+                )
+            );
+        }
+
+        AddToQueue(effects);
+
+        //ChallengeMove challengeMove;
+
+        //challengeMove = new ChallengeMove();
+        //challengeMove.SetPlayerId(effect.PlayerId);
+        //challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_EFFECT_TARGETS);
+        //challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        //BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        //this.isWaiting = true;
+        //StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
+
+        //if (!InspectorControlPanel.Instance.DevelopmentMode)
+        //{
+        //    challengeMove = new ChallengeMove();
+        //    challengeMove.SetPlayerId(effect.PlayerId);
+        //    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_EFFECT_TARGETS);
+        //    challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+        //    BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        //}
     }
 
     private void BuffUnstablePower(Effect effect)
@@ -300,7 +403,7 @@ public class EffectManager : MonoBehaviour
 
         effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
 
-        this.queue.AddRange(effects);
+        AddToQueue(effects);
     }
 
     private IEnumerator WaitForDrawCard(object[] args)
@@ -344,7 +447,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        this.queue.AddRange(effects);
+        AddToQueue(effects);
     }
 
     public void OnEndTurn(string playerId, UnityAction callback)
@@ -385,7 +488,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        this.queue.AddRange(effects);
+        AddToQueue(effects);
     }
 
     public void OnCreaturePlay(string playerId, string cardId)
@@ -419,10 +522,13 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        this.queue.AddRange(effects);
+        AddToQueue(effects);
     }
 
-    public void OnCreatureAttack(Targetable attackingTargetable, Targetable defendingTargetable)
+    public void OnCreatureAttack(
+        Targetable attackingTargetable,
+        Targetable defendingTargetable
+    )
     {
         if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
@@ -472,19 +578,24 @@ public class EffectManager : MonoBehaviour
             }
             if (defendingCreature.Health <= 0)
             {
-                effects.Add(
-                    new Effect(
-                        defendingCreature.Owner.Id,
-                        EFFECT_CARD_DIE,
-                        defendingCreature.GetCardId(),
-                        defendingCreature.SpawnRank
-                    )
-                );
+                List<Effect> deathEffects = GetEffectsOnCreatureDeath(defendingCreature);
 
-                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
+                if (deathEffects.Count <= 0)
+                {
+                    effects.Add(
+                        new Effect(
+                            defendingCreature.Owner.Id,
+                            EFFECT_CARD_DIE,
+                            defendingCreature.GetCardId(),
+                            defendingCreature.SpawnRank
+                        )
+                    );
+                }
+
+                effects.AddRange(deathEffects);
             }
 
-            this.queue.AddRange(effects);
+            AddToQueue(effects);
         }
         else if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
@@ -544,7 +655,7 @@ public class EffectManager : MonoBehaviour
                 );
             }
 
-            this.queue.AddRange(effects);
+            AddToQueue(effects);
         }
         else
         {
@@ -552,14 +663,99 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    private List<Effect> GetEffectsOnCreatureDamageTaken(
-        BoardCreature boardCreature,
-        int amount
+    public void OnAttackRandomTarget(
+        Targetable attackingTargetable,
+        Targetable defendingTargetable
     )
     {
-        List<Effect> effects = new List<Effect>();
+        // TODO: animate as bomb or whatever.
+        if (
+            attackingTargetable.GetType() == typeof(BoardCreature) &&
+            defendingTargetable.GetType() == typeof(BoardCreature)
+        )
+        {
+            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
+            BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-        return effects;
+            List<Effect> effects = new List<Effect>();
+
+            attackingCreature.Fight(defendingCreature);
+
+            int damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
+            effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+            defendingCreature.Redraw();
+            attackingCreature.Redraw();
+
+            if (defendingCreature.Health <= 0)
+            {
+                effects.Add(
+                    new Effect(
+                        defendingCreature.Owner.Id,
+                        EFFECT_CARD_DIE,
+                        defendingCreature.GetCardId(),
+                        defendingCreature.SpawnRank
+                    )
+                );
+
+                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
+            }
+
+            AddToQueue(effects);
+        }
+        else if (
+            attackingTargetable.GetType() == typeof(BoardCreature) &&
+            defendingTargetable.GetType() == typeof(PlayerAvatar)
+        )
+        {
+            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
+            PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
+
+            List<Effect> effects = new List<Effect>();
+
+            attackingCreature.Fight(defendingAvatar);
+
+            int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
+            //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+            //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
+            //effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
+            //effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
+
+            defendingAvatar.Redraw();
+            attackingCreature.Redraw();
+
+            //if (attackingCreature.Health <= 0)
+            //{
+            //    effects.Add(
+            //        new Effect(
+            //            attackingCreature.Owner.Id,
+            //            EFFECT_CARD_DIE,
+            //            attackingCreature.GetCardId(),
+            //            attackingCreature.SpawnRank
+            //        )
+            //    );
+
+            //    effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
+            //}
+            if (defendingAvatar.Health <= 0)
+            {
+                effects.Add(
+                    new Effect(
+                        defendingAvatar.Owner.Id,
+                        EFFECT_PLAYER_AVATAR_DIE,
+                        defendingAvatar.GetCardId(),
+                        0
+                    )
+                );
+            }
+
+            AddToQueue(effects);
+        }
+        else
+        {
+            Debug.LogError("Unsupported.");
+        }
     }
 
     private List<Effect> GetEffectsOnCreatureDamageDealt(
@@ -585,31 +781,33 @@ public class EffectManager : MonoBehaviour
         return effects;
     }
 
+    private List<Effect> GetEffectsOnCreatureDamageTaken(
+        BoardCreature boardCreature,
+        int amount
+    )
+    {
+        List<Effect> effects = new List<Effect>();
+
+        return effects;
+    }
+
     private List<Effect> GetEffectsOnCreatureDeath(BoardCreature boardCreature)
     {
         List<Effect> effects = new List<Effect>();
 
-        if (boardCreature.HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD))
+        foreach (string effectName in EFFECT_DEATH_RATTLE)
         {
-            effects.Add(
-                new Effect(
-                    boardCreature.Owner.Id,
-                    Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
-                    boardCreature.GetCardId(),
-                    boardCreature.SpawnRank
-                )
-            );
-        }
-        if (boardCreature.HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY))
-        {
-            effects.Add(
-                new Effect(
-                    boardCreature.Owner.Id,
-                    Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
-                    boardCreature.GetCardId(),
-                    boardCreature.SpawnRank
-                )
-            );
+            if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
+            {
+                effects.Add(
+                    new Effect(
+                        boardCreature.Owner.Id,
+                        effectName,
+                        boardCreature.GetCardId(),
+                        boardCreature.SpawnRank
+                    )
+                );
+            }
         }
 
         return effects;

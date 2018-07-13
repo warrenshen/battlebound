@@ -351,6 +351,7 @@ public class BattleManager : MonoBehaviour
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(activePlayer.Id);
+
         if (activePlayer.DeckSize > 0)
         {
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
@@ -367,6 +368,8 @@ public class BattleManager : MonoBehaviour
         SetPassiveCursor();
         //to-do: action manager set active = false, but that makes singleplayer broken
 
+        // TODO: should we move newTurn stuff to after OnStartTurn call?
+        // But draw card should be before.
         activePlayer.NewTurn();
         EffectManager.Instance.OnStartTurn(activePlayer.Id);
     }
@@ -388,13 +391,12 @@ public class BattleManager : MonoBehaviour
         foreach (Player player in players)
         {
             if (player == attacker.Owner)
-                continue;
-            BoardCreature[] fieldCreatures = Board.Instance.GetFieldByPlayerId(player.Id).GetCreatures();
-            for (int i = 0; i < fieldCreatures.Length; i++)
             {
-                if (fieldCreatures[i] != null)
-                    allTargets.Add(fieldCreatures[i]);
+                continue;
             }
+
+            List<BoardCreature> fieldCreatures = Board.Instance.GetAliveCreaturesByPlayerId(player.Id);
+            allTargets.AddRange(fieldCreatures);
             allTargets.Add(player.Avatar);
         }
 
@@ -510,7 +512,6 @@ public class BattleManager : MonoBehaviour
         Vector3 delta = initial - release;
         return delta.sqrMagnitude;
     }
-
 
     private bool CheckPlayCard(Ray ray, RaycastHit hit)
     {
@@ -848,7 +849,7 @@ public class BattleManager : MonoBehaviour
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
     }
 
-    public void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
+    private void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
         if (playerId != this.opponent.Id)
         {
@@ -860,19 +861,31 @@ public class BattleManager : MonoBehaviour
         this.you.AdvanceMulliganState();
     }
 
-    public void ReceiveMoveEndTurn(string playerId)
+    private void ReceiveMoveEndTurn(string playerId)
     {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
         NextTurn();
     }
 
-    public void ReceiveMoveDrawCard(string playerId, Card card)
+    private void ReceiveMoveDrawCard(string playerId, Card card)
     {
         Player player = GetPlayerById(playerId);
         player.AddDrawnCard(card);
     }
 
-    public void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
+    private void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
     {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             BattleCardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
@@ -893,7 +906,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMovePlaySpellTargeted(
+    private void ReceiveMovePlaySpellTargeted(
         string playerId,
         string cardId,
         SpellCard card,
@@ -902,6 +915,12 @@ public class BattleManager : MonoBehaviour
         string targetId
     )
     {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
         BoardCreature victimCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
@@ -925,13 +944,19 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMovePlaySpellUntargeted(
+    private void ReceiveMovePlaySpellUntargeted(
         string playerId,
         string cardId,
         SpellCard card,
         int handIndex
     )
     {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
@@ -951,7 +976,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ReceiveMoveCardAttack(
+    private void ReceiveMoveCardAttack(
         string playerId,
         string cardId,
         string fieldId,
@@ -972,6 +997,29 @@ public class BattleManager : MonoBehaviour
             defendingTargetable
         );
     }
+
+    private void ReceiveMoveAttackRandomTarget(
+        string playerId,
+        string cardId,
+        string fieldId,
+        string targetId
+    )
+    {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
+        Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
+        Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
+
+        EffectManager.Instance.OnAttackRandomTarget(
+            attackingTargetable,
+            defendingTargetable
+        );
+    }
+
 
     public void ReceiveChallengeEndState(ChallengeEndState challengeEndState)
     {
@@ -1162,6 +1210,15 @@ public class BattleManager : MonoBehaviour
                 serverMove.Attributes.TargetId
             );
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_ATTACK_RANDOM_TARGET)
+        {
+            ReceiveMoveAttackRandomTarget(
+                serverMove.PlayerId,
+                serverMove.Attributes.CardId,
+                serverMove.Attributes.FieldId,
+                serverMove.Attributes.TargetId
+            );
+        }
 
         if (this.deviceMoveQueue.Count <= 0 && this.deviceMoveQueue.Count <= 0)
         {
@@ -1200,8 +1257,8 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
-                Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
+                //Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
+                //Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
             }
         }
 

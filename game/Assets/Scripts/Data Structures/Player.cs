@@ -167,6 +167,7 @@ public class Player
         Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
         GameObject light = GameObject.Find("Point Light");
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
+        this.hand.RepositionCards();
     }
 
     private void DrawCard()
@@ -177,13 +178,13 @@ public class Player
 
         if (this.deck.Cards.Count <= 0)
         {
-            //this.Hand.RepositionCards();
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE);
         }
         else
         {
-            Card drawnCard = this.deck.Cards[0];
-            this.deck.Cards.RemoveAt(0);
+            int randomIndex = UnityEngine.Random.Range(0, this.deck.Size());
+            Card drawnCard = this.deck.Cards[randomIndex];
+            this.deck.Cards.RemoveAt(randomIndex);
 
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
 
@@ -206,9 +207,13 @@ public class Player
 
     private Card PopCardFromDeck()
     {
-        Card card = this.deck.Cards[0];
-        this.deck.Cards.RemoveAt(0);
-        return card;
+        this.deckSize -= 1;
+
+        int randomIndex = UnityEngine.Random.Range(0, this.deck.Size());
+        Card drawnCard = this.deck.Cards[randomIndex];
+        this.deck.Cards.RemoveAt(randomIndex);
+
+        return drawnCard;
     }
 
     public List<Card> PopCardsFromDeck(int amount)
@@ -233,8 +238,16 @@ public class Player
 
         for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
-            BattleCardObject battleCardObject = AddDrawnCard(this.keptMulliganCards[i], isInit: true, reposition: false);  //doesn't use standard RepositionCards()
-            BattleManager.Instance.AnimateDrawCardForMulligan(this, battleCardObject, i); //special animation to replace the omitted reposition
+            BattleCardObject battleCardObject = AddDrawnCard(
+                this.keptMulliganCards[i],
+                isInit: true,
+                reposition: false
+            );  //doesn't use standard RepositionCards()
+            BattleManager.Instance.AnimateDrawCardForMulligan(
+                this,
+                battleCardObject,
+                i
+            ); //special animation to replace the omitted reposition
         }
 
         BattleManager.Instance.SetBoardCenterText("Choose cards to mulligan..");
@@ -579,11 +592,28 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10));
-        cards.Add(new CreatureCard("C2", "Marshwater Squealer", 1, 20, 20, 30));
-        cards.Add(new CreatureCard("C3", "Temple Guardian", 1, 60, 40, 70));
-        cards.Add(new CreatureCard("C4", "Firebug Catelyn", 1, 10, 10, 10));
+        cards.Add(new CreatureCard("C0", "Blessed Newborn", 2, 20, 10, 10));
+        cards.Add(new CreatureCard("C1", "Temple Guardian", 1, 60, 40, 70));
+        cards.Add(new CreatureCard("C2", "Cursed Imp", 1, 20, 10, 40));
+        cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1, 40, 30, 60));
+        cards.Add(new SpellCard("C4", "Unstable Power", 4, 30));
         cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20));
+        cards.Add(new CreatureCard("C6", "Firebug Catelyn", 1, 10, 10, 10));
+        cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1, 20, 20, 30));
+        cards.Add(new CreatureCard("C8", "Taji the Fearless", 1, 30, 40, 30));
+        cards.Add(new CreatureCard("C9", "Young Kyo", 1, 20, 30, 20));
+        cards.Add(new CreatureCard("C10", "Emberkitty", 1, 30, 30, 40));
+        cards.Add(new CreatureCard("C11", "Firestrided Tigress", 1, 50, 60, 40));
+        cards.Add(new CreatureCard("C12", "Unkindled Junior", 1, 20, 10, 20));
+        cards.Add(new CreatureCard("C13", "Flamebelcher", 1, 20, 30, 30));
+        cards.Add(new CreatureCard("C14", "Fireborn Menace", 1, 70, 70, 60));
+        cards.Add(new CreatureCard("C15", "Te'a Greenleaf", 1, 20, 20, 40));
+        cards.Add(new CreatureCard("C16", "Wave Charmer", 1, 20, 20, 30));
+        cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1, 50, 30, 60));
+        cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1, 50, 40, 60));
+        cards.Add(new CreatureCard("C19", "Bombshell Bombadier", 1, 70, 20, 40));
+
+
         //cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD }));
         ////cards.Add(new CreatureCard("C1", "Blessed Newborn", 2, 20, 10, 10, new List<String>() { Card.CARD_ABILITY_END_TURN_DRAW_CARD }));
         //cards.Add(new CreatureCard("C2", "Marshwater Squealer", 1, 20, 20, 30, new List<String>() { Card.CARD_ABILITY_END_TURN_HEAL_TEN }));
@@ -592,9 +622,6 @@ public class Player
         //cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20, new List<String>() { Card.CARD_ABILITY_CHARGE }));
         //cards.Add(new WeaponCard("C4", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
         //cards.Add(new WeaponCard("C5", "Fiery War Axe", "HS/Fiery_War_Axe", 1, 3, 3, 2));
-        cards.Add(new SpellCard("C6", "Unstable Power", 4, 30));
-        cards.Add(new CreatureCard("C7", "Cursed Imp", 1, 20, 10, 40));
-        cards.Add(new CreatureCard("C8", "Waterborne Razorback", 1, 20, 10, 40));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;
