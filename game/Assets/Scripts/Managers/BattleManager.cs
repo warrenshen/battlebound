@@ -1004,12 +1004,6 @@ public class BattleManager : MonoBehaviour
         string targetId
     )
     {
-        if (this.activePlayer.Id != playerId)
-        {
-            Debug.LogError("Device active player does not match challenge move player.");
-            return;
-        }
-
         Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
         Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
