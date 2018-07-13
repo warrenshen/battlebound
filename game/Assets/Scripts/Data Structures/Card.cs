@@ -220,7 +220,7 @@ public class StructureCard : Card
 [System.Serializable]
 public class SpellCard : Card
 {
-    public const string SPELL_NAME_LIGHTNING_BOLT = "Lightning Bolt";
+    public const string SPELL_NAME_LIGHTNING_BOLT = "Touch of Zeus";
     public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
 
     public static readonly List<string> VALID_SPELLS = new List<string>
@@ -301,8 +301,6 @@ public class SpellCard : Card
     public void LightningBolt(BoardCreature target)
     {
         SoundManager.Instance.PlaySound("ShockSFX", target.transform.position);
-        target.TakeDamage(3);
-        //play effect
         FXPoolManager.Instance.PlayEffect("LightningBoltVFX", target.transform.position);
     }
 
