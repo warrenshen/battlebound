@@ -129,6 +129,12 @@ public class Board : MonoBehaviour
         return this.playerIdToField[playerId];
     }
 
+    public List<BoardCreature> GetAliveCreaturesByPlayerId(string playerId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetAliveCreatures();
+    }
+
     public BoardCreature GetCreatureByPlayerIdAndCardId(string playerId, string cardId)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
@@ -163,6 +169,20 @@ public class Board : MonoBehaviour
             PlayingField field = GetFieldByPlayerId(playerId);
             return field.GetCreatureByCardId(cardId);
         }
+    }
+
+    public Targetable GetOpponentRandomTargetable(string playerId)
+    {
+        string opponentId = this.playerIdToOpponentId[playerId];
+
+        List<Targetable> opponentTargetables = new List<Targetable>();
+
+        List<BoardCreature> opponentCreatures = GetAliveCreaturesByPlayerId(opponentId);
+        opponentTargetables.AddRange(opponentCreatures);
+        opponentTargetables.Add(BattleManager.Instance.GetPlayerById(opponentId).Avatar);
+
+        int randomIndex = UnityEngine.Random.Range(0, opponentTargetables.Count);
+        return opponentTargetables[randomIndex];
     }
 
     public void OnPlayerStartTurn(string playerId)
@@ -258,6 +278,19 @@ public class Board : MonoBehaviour
         public BoardCreature[] GetCreatures()
         {
             return creatures;
+        }
+
+        public List<BoardCreature> GetAliveCreatures()
+        {
+            List<BoardCreature> boardCreatures = new List<BoardCreature>();
+            for (int i = 0; i < this.creatures.Length; i++)
+            {
+                if (creatures[i] != null)
+                {
+                    boardCreatures.Add(creatures[i]);
+                }
+            }
+            return boardCreatures;
         }
 
         public int GetIndexByCardId(string cardId)

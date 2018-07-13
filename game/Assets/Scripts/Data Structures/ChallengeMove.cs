@@ -14,6 +14,7 @@ public class ChallengeMove
     public static string MOVE_CATEGORY_PLAY_SPELL_TARGETED = "MOVE_CATEGORY_PLAY_SPELL_TARGETED";
     public static string MOVE_CATEGORY_PLAY_SPELL_UNTARGETED = "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED";
     public static string MOVE_CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
+    public static string MOVE_CATEGORY_ATTACK_RANDOM_TARGET = "MOVE_CATEGORY_ATTACK_RANDOM_TARGET";
 
     [SerializeField]
     private string playerId;
