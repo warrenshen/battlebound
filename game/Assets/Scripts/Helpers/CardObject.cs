@@ -23,6 +23,7 @@ public abstract class CardObject : MouseWatchable
         public Vector3 scale;
         public Quaternion rotation;
     }
+    [SerializeField]
     public Reset reset;
 
     public virtual void Initialize(Card card)
@@ -55,6 +56,9 @@ public abstract class CardObject : MouseWatchable
         this.visual.SetFrontTiling(this.templateData.frontScale, this.templateData.frontOffset);
         this.visual.SetBackTiling(this.templateData.backScale, this.templateData.backOffset);
         this.visual.SetCardArtwork(front, back);
+
+        this.visual.Stencil = ActionManager.Instance.stencilCount;
+        ActionManager.Instance.stencilCount += 1 % 255;
     }
 
     private HyperCard.Card VisualizeCard()
@@ -98,5 +102,10 @@ public abstract class CardObject : MouseWatchable
         this.reset.position = this.transform.localPosition;
         this.reset.scale = this.transform.localScale;
         this.reset.rotation = this.transform.localRotation;
+    }
+
+    public virtual void Release()
+    {
+
     }
 }

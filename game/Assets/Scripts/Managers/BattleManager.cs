@@ -38,7 +38,6 @@ public class BattleManager : MonoBehaviour
     private List<Targetable> validTargets; //used to store/cache valid targets
 
     public CurvedLineRenderer attackCommand;
-    public int stencilCount;
 
     public Dictionary<string, CardTemplate> cardTemplates;
     private int mode;
@@ -109,7 +108,6 @@ public class BattleManager : MonoBehaviour
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.players = new List<Player>();
 
-        this.stencilCount = 1;
         battleLayer = LayerMask.NameToLayer("Battle");
         boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
 

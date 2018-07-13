@@ -33,13 +33,6 @@ public class BattleCardObject : CardObject
         base.Initialize(card);
     }
 
-    protected override void LoadCardArtwork()
-    {
-        base.LoadCardArtwork();
-        this.visual.Stencil = BattleManager.Instance.stencilCount;
-        BattleManager.Instance.stencilCount += 1 % 255;
-    }
-
     public override void EnterHover()
     {
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
@@ -104,24 +97,16 @@ public class BattleCardObject : CardObject
             BattleManager.Instance.ToggleMulliganCard(this);
             return;
         }
-
-        if (!this.owner.HasTurn)
-        {
-            return;
-        }
-        if (!ActionManager.Instance.HasDragTarget())
-        {
-            return;
-        }
-
-        //// card object position reset to original, handled in actionmanager already
-        if (Time.time - lastClicked < 0.5f)
-            DoubleClickUp();
-        lastClicked = Time.time;
+        //nothing being done.. conditional checks since removed
     }
 
     public void DoubleClickUp()
     {
         Debug.Log(gameObject.name + " double clicked.");
+    }
+
+    public override void Release()
+    {
+
     }
 }

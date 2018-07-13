@@ -23,11 +23,11 @@ public class CollectionCardObject : CardObject
         //set defaults of hypercard
         this.SetVisualResetValues();
 
-        float scaling = 1.8f;
+        float scaling = 1.1f;
         this.visual.transform.localScale = scaling * this.visual.reset.scale;
+        this.visual.transform.Translate(Vector3.forward * 0.33f, Space.Self);
 
-        this.visual.transform.Translate(Vector3.up * 3.5f, Space.Self);
-        this.visual.transform.Translate(Vector3.forward * 1, Space.Self);
+        this.visual.SetOutline(true);
     }
 
     public override void ExitHover()
@@ -37,28 +37,27 @@ public class CollectionCardObject : CardObject
 
         this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
+
+        this.visual.SetOutline(false);
     }
 
     public override void MouseDown()
     {
-        LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
-        //this.visual.transform.localScale = this.visual.reset.scale;
-        this.visual.transform.localPosition = this.visual.reset.position;
-
+        this.visual.transform.Translate(Vector3.forward * 0.33f, Space.Self);
+        this.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
         ActionManager.Instance.SetDragTarget(this);
     }
 
-    public override void MouseUp()
+    public override void Release()
     {
-        if (!ActionManager.Instance.HasDragTarget())
-        {
-            return;
-        }
-
-        //// card object position reset to original, handled in actionmanager already
         if (Time.time - lastClicked < 0.5f)
             DoubleClickUp();
         lastClicked = Time.time;
+
+        LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
+        this.visual.transform.localPosition = this.visual.reset.position;
+
+        ActionManager.Instance.ResetTarget().setOnComplete(() => this.gameObject.SetLayer(LayerMask.NameToLayer("Card")));
     }
 
     public void DoubleClickUp()

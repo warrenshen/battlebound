@@ -40,6 +40,8 @@ public class ActionManager : MonoBehaviour
     private int cardAndUILayerMask;
     public Texture2D[] cursors;
 
+    public int stencilCount;
+
     public bool active = true;
     public static ActionManager Instance { get; private set; }
 
@@ -58,6 +60,7 @@ public class ActionManager : MonoBehaviour
     {
         cardAndUILayerMask = LayerMask.GetMask("Card", "UI");
         InitializeDragTilts();
+        this.stencilCount = 0;
     }
 
     // Update is called once per frame
@@ -142,17 +145,18 @@ public class ActionManager : MonoBehaviour
 
     public void ClearDragTarget()
     {
-        if (!this.target)
+        if (!this.HasDragTarget())
             return;
         //this.sp.sortingOrder = selectedSortingOrder;
+        this.target.Release();
         this.target = null;
         this.SetCursor(0);
     }
 
-    public void ResetTarget()
+    public LTDescr ResetTarget()
     {
         CardTween.moveLocal(this.target, this.target.reset.position, CardTween.TWEEN_DURATION);
-        LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
+        return LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
     }
 
     private void DestroyTarget()

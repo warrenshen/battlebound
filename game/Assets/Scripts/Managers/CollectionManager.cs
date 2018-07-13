@@ -246,8 +246,8 @@ public class CollectionManager : MonoBehaviour
         int index = 0;
         int rowSize = 4;
 
-        Vector3 topLeft = new Vector3(-5.05f, 3.11f, 18.18f);
-        Vector3 horizontalOffset = new Vector3(2.64f, 0f, 0f);
+        Vector3 topLeft = new Vector3(-5.65f, 3.11f, 18.18f);
+        Vector3 horizontalOffset = new Vector3(2.75f, 0f, 0f);
         Vector3 verticalOffset = new Vector3(0f, -3.75f, 0f);
 
         Transform grayed = new GameObject("Grayed").transform as Transform;
@@ -255,11 +255,13 @@ public class CollectionManager : MonoBehaviour
         {
             GameObject created = new GameObject(card.Name);
             created.transform.parent = collectionObject.transform;
+            created.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
+
             CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
             collectionCardObject.Initialize(card);
+            collectionCardObject.visual.SetOutline(false);
             idToCard.Add(card.Id, card);
 
-            created.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
             CreateGrayed(created.transform, card).parent = grayed;
             index++;
         }
@@ -273,7 +275,10 @@ public class CollectionManager : MonoBehaviour
         //do visual stuff
         CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
         collectionCardObject.Initialize(card);
+        collectionCardObject.visual.Stencil = -100;
         collectionCardObject.visual.SetGrayscale(true);
+        collectionCardObject.visual.SetOutline(false);
+        collectionCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
         return created.transform;
     }
 

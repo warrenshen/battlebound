@@ -9355,7 +9355,7 @@ GameObject:
   m_Component:
   - component: {fileID: 508319512}
   - component: {fileID: 508319513}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Board/Shadow Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26205,7 +26205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1205481998}
   - component: {fileID: 1205481999}
-  m_Layer: 5
+  m_Layer: 12
   m_Name: Card Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26571,6 +26571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9587840a8070748ecbe54ae720f891db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noInteraction: 0
   target: {fileID: 1237661222}
   functionName: Surrender
 --- !u!65 &1222217034
@@ -35522,6 +35523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9587840a8070748ecbe54ae720f891db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noInteraction: 0
   target: {fileID: 1237661222}
   functionName: OnEndTurnClick
 --- !u!43 &1835525759
@@ -41237,6 +41239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9587840a8070748ecbe54ae720f891db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noInteraction: 0
   target: {fileID: 1237661222}
   functionName: FinishedMulligan
 --- !u!65 &1973426307
