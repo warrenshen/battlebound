@@ -573,7 +573,6 @@ Shader "HyperCard/Card (Face)"
 
                  finalColor.rgb += glitter_fcolor + glitter_spec_color;
              }
-             //finalColor.a *= _CardOpacity;
 
              // Materialization
              if (_BlackAndWhite == 1) 
@@ -581,6 +580,8 @@ Shader "HyperCard/Card (Face)"
                  half c = (finalColor.r + finalColor.g + finalColor.b) / 3;
                  finalColor = fixed4(c,c,c, alpha_col.a);
              };
+
+             finalColor.a *= _CardOpacity;
 
              // dissolve Fx
              float cosburn = cos(0.5 * time.g * _BurningRotateSpeed);

@@ -320,8 +320,8 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: dfa8675239dfb1e4ba1b779baaf49b05, type: 2}
+  - {fileID: 2100000, guid: 4d32e97d1ed3b5849885489e80ee80ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -755,20 +755,20 @@ MonoBehaviour:
   EnableBackOutline: 0
   OutlineNoiseFreq: 5
   OutlineNoiseSpeed: 1
-  OutlineNoiseMult: 1
+  OutlineNoiseMult: 1.2
   OutlineNoiseDistance: 0.123
   OutlineNoiseOffset: 0.189
   OutlineNoiseThreshold: 0.062
   OutlineNoiseVerticalAjust: 0.23
-  OutlineTrimOffset: 0.15
+  OutlineTrimOffset: 0.09
   OutlinePosOffset: {x: 0, y: -0}
   OutlineColor: {r: 1, g: 0.7857587, b: 0, a: 1}
   OutlineEndColor: {r: 1, g: 0.25464603, b: 0, a: 1}
-  OutlineEndColorDistance: 1
-  OutlineAlphaMult: 20
-  OutlineWidth: 0.9
-  OutlineHeight: 0.9
-  OutlineSmooth: 0.05
+  OutlineEndColorDistance: 0.2
+  OutlineAlphaMult: 40
+  OutlineWidth: 1.1
+  OutlineHeight: 1.1
+  OutlineSmooth: 0.07
   OutlineSmoothSpeed: 1
   BurnNoiseFreq: 4
   BurningAmount: 0
