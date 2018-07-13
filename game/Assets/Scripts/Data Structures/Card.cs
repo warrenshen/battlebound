@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Card
 {
-    public enum RarityType { Common, Rare, Epic, Legendary }
+    public enum RarityType { Common, Uncommon, Rare, Epic, Legendary, Cosmic }
 
     public const string CARD_EMPTY_ABILITY = "EMPTY";
     public const string CARD_ABILITY_CHARGE = "CARD_ABILITY_CHARGE";

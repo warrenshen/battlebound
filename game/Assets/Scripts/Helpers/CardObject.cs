@@ -40,6 +40,7 @@ public abstract class CardObject : MouseWatchable
         this.visual = this.VisualizeCard();
         this.LoadCardArtwork();
         this.SetThisResetValues();
+        this.SetVisualResetValues();
 
         //set sprite etc here
         colliderBox = gameObject.AddComponent<BoxCollider>() as Collider;
