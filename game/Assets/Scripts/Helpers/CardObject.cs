@@ -10,12 +10,14 @@ public abstract class CardObject : MouseWatchable
     public Card Card => card;
 
     protected Collider colliderBox;
-
     protected float lastClicked;
 
     public HyperCard.Card visual;
     protected CardTemplate templateData;
     public CardTemplate TemplateData => templateData;
+
+    public Texture2D frontImage;
+    public Texture2D backImage;
 
     public struct Reset
     {
@@ -50,12 +52,12 @@ public abstract class CardObject : MouseWatchable
 
     protected virtual void LoadCardArtwork()
     {
-        Texture2D front = Resources.Load(this.templateData.frontImage) as Texture2D;
-        Texture2D back = Resources.Load(this.templateData.backImage) as Texture2D;
+        this.frontImage = Resources.Load(this.templateData.frontImage) as Texture2D;
+        this.backImage = Resources.Load(this.templateData.backImage) as Texture2D;
 
         this.visual.SetFrontTiling(this.templateData.frontScale, this.templateData.frontOffset);
         this.visual.SetBackTiling(this.templateData.backScale, this.templateData.backOffset);
-        this.visual.SetCardArtwork(front, back);
+        this.visual.SetCardArtwork(this.frontImage, this.backImage);
 
         this.visual.Stencil = ActionManager.Instance.stencilCount;
         ActionManager.Instance.stencilCount += 3 % 255;

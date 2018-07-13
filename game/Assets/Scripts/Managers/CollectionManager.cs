@@ -22,6 +22,7 @@ public class CollectionManager : MonoBehaviour
     private Dictionary<string, Card> idToCard;
 
     private List<CardCutout> cutouts;
+    public GameObject cutoutPrefab;
     private GameObject panel;
     private Collider panelCollider;
     private GameObject collectionObject;
@@ -122,45 +123,48 @@ public class CollectionManager : MonoBehaviour
 
     private void RaycastMouse()
     {
-        if (Input.GetMouseButton(0))
+        if (!Input.GetMouseButton(0))
+            return;
+        if (!ActionManager.Instance.HasDragTarget())
+            return;
+
+        selectedCard = ActionManager.Instance.GetDragTarget() as CollectionCardObject;     //assumed due to scene file
+        Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
+        RaycastHit hit;
+        if (selectedCard && panelCollider.Raycast(ray, out hit, 100.0F))
         {
-            if (!ActionManager.Instance.HasDragTarget())
-                return;
-
-            selectedCard = ActionManager.Instance.GetDragTarget() as CollectionCardObject;     //assumed due to scene file
-            Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
-            RaycastHit hit;
-
-            if (selectedCard && panelCollider.Raycast(ray, out hit, 100.0F))
-                MinifyCard(selectedCard);
-            else
-                RevertMinify(selectedCard);
+            Debug.Log(hit.collider.name);
+            MinifyCard(selectedCard);
+        }
+        else
+        {
+            RevertMinify(selectedCard);
         }
     }
 
     private void RaycastMouseUp()
     {
-        if (Input.GetMouseButtonUp(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        if (!Input.GetMouseButtonUp(0))
+            return;
 
-            if (panelCollider.Raycast(ray, out hit, 100.0F) && selectedCard)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (panelCollider.Raycast(ray, out hit, 100.0F) && selectedCard)
+        {
+            //add to deck
+            AddToDecklist(selectedCard);
+            RevertMinify(selectedCard);
+        }
+        else if (Physics.Raycast(ray, out hit, 100.0F))
+        {
+            if (hit.collider.name == "Save Button")
             {
-                //add to deck
-                AddToDecklist(selectedCard);
-                RevertMinify(selectedCard);
+                SaveCollectionRequest();
             }
-            else if (Physics.Raycast(ray, out hit, 100.0F))
+            else if (hit.collider.name == "Back Button")
             {
-                if (hit.collider.name == "Save Button")
-                {
-                    SaveCollectionRequest();
-                }
-                else if (hit.collider.name == "Back Button")
-                {
-                    SceneManager.LoadScene("Collection");
-                }
+                SceneManager.LoadScene("Collection");
             }
         }
     }
@@ -186,13 +190,13 @@ public class CollectionManager : MonoBehaviour
         AddToBuildPanel(collectionCardObject);
     }
 
-    public void AddToBuildPanel(CardObject wrapper)
+    public void AddToBuildPanel(CardObject cardObject)
     {
-        wrapper.gameObject.SetActive(false);
+        //cardObject.gameObject.SetActive(false);
         //create and set visuals
-        GameObject instance = new GameObject("Added " + wrapper.Card.Name) as GameObject;
+        GameObject instance = Instantiate(cutoutPrefab, Vector3.zero, Quaternion.identity);
         CardCutout cutout = instance.AddComponent<CardCutout>();
-        //cutout.Initialize(wrapper, chosenDeck.Cards);
+        //cutout.Initialize(cardObject as CollectionCardObject, chosenDeck.Cards);
         cutouts.Add(cutout);
         //reposition all cutouts
         RenderDecklist();
@@ -212,7 +216,7 @@ public class CollectionManager : MonoBehaviour
     {
         for (int i = 0; i < cutouts.Count; ++i)
         {
-            cutouts[i].PositionCutout(i);
+            cutouts[i].PositionForDecklist(i);
         }
     }
 

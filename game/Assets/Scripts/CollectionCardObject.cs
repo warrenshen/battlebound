@@ -72,15 +72,14 @@ public class CollectionCardObject : CardObject
 
     public void Minify(bool value)
     {
-        //if (value)
-        //{
-        //    spr.sprite = Sprite.Create(image, new Rect(0.0f, image.height / 2 - 40, image.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
-        //    minified = true;
-        //}
-        //else
-        //{
-        //    spr.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-        //    minified = false;
-        //}
+        //Create CardCutout
+        this.minified = true;
+        this.visual.gameObject.SetActive(false);
+        GameObject instance = Instantiate(CollectionManager.Instance.cutoutPrefab, Vector3.zero, Quaternion.identity);
+        instance.transform.parent = this.transform;
+        instance.transform.localPosition = Vector3.zero;
+
+        CardCutout cutout = instance.AddComponent<CardCutout>();
+        cutout.Initialize(this); //, chosenDeck.Cards);
     }
 }

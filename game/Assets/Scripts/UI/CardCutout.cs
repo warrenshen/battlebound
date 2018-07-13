@@ -5,30 +5,37 @@ using UnityEngine;
 public class CardCutout : ObjectUI
 {
     CollectionCardObject source;
+    HyperCard.Card visual;
 
     // Use this for initialization
-    public void Initialize(CollectionCardObject source, List<Card> deck)
+    public void Initialize(CollectionCardObject source) //, List<Card> deck)
     {
         this.source = source;
+        this.visual = this.GetComponent<HyperCard.Card>();
+        this.SetCardArtwork();
 
-        SpriteRenderer sp = gameObject.AddComponent<SpriteRenderer>();
-        //Texture2D texture = wrapper.Renderer.sprite.texture;
-        //sp.sprite = Sprite.Create(texture, new Rect(0.0f, texture.height / 2 - 40, texture.width, 40), new Vector2(0.5f, 0.5f), 100.0f);
-
-        //reposition and rotate
-        gameObject.transform.parent = GameObject.Find("Build Panel").transform;
-        PositionCutout(deck.Count);
-        //create collider
-        BoxCollider coll = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        BoxCollider collider = this.gameObject.AddComponent<BoxCollider>() as BoxCollider;
         base.Initialize();
-        scalingFactor = 1.06f;
     }
 
-    public void PositionCutout(int index)
+    private void SetCardArtwork()
     {
-        gameObject.transform.localPosition = new Vector3((index + 1) * 0.3f, Random.Range(-0.05f, 0.05f), 0f);
+        //this.visual.SetFrontTiling(this.templateData.frontScale, this.templateData.frontOffset);
+        //this.visual.SetBackTiling(this.templateData.backScale, this.templateData.backOffset);
+        this.visual.SetCardArtwork(this.source.frontImage, this.source.backImage);
+
+        this.visual.Stencil = ActionManager.Instance.stencilCount;
+        ActionManager.Instance.stencilCount += 3 % 255;
+    }
+
+    public void PositionForDecklist(int index)
+    {
+        gameObject.transform.parent = GameObject.Find("Build Panel").transform;
+        //this.PositionCutout(deck.Count);
+
+        gameObject.transform.localPosition = new Vector3((index + 0.5F) * 0.44F, Random.Range(-0.05F, 0.05F), 0F);
         gameObject.transform.localRotation = Quaternion.identity;
-        gameObject.transform.Rotate(new Vector3(0f, 0f, 90f), Space.Self);
+        gameObject.transform.Rotate(new Vector3(0f, 180f, -90f), Space.Self);
     }
 
     public override void MouseDown()

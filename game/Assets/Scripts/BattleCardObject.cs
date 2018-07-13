@@ -76,6 +76,12 @@ public class BattleCardObject : CardObject
 
     public override void MouseDown()
     {
+        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BattleManager.Instance.ToggleMulliganCard(this);
+            return;
+        }
+
         if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())
@@ -92,11 +98,6 @@ public class BattleCardObject : CardObject
 
     public override void MouseUp()
     {
-        if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
-        {
-            BattleManager.Instance.ToggleMulliganCard(this);
-            return;
-        }
         //nothing being done.. conditional checks since removed
     }
 
