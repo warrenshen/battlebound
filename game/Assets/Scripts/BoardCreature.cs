@@ -134,6 +134,7 @@ public class BoardCreature : Targetable
 
         //this.visual.TmpTextObjects[0].TmpObject.enabled = false;
         //this.visual.TmpTextObjects[1].TmpObject.enabled = false;
+        this.visual.SetOpacity(0.8f);
         this.visual.SetBlackAndWhite(true);
         this.visual.Renderer.enabled = true;
     }

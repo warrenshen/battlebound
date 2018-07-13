@@ -188,7 +188,7 @@ Shader "HyperCard/Card (Face)"
 
                  float smc = 1 - smoothstep(0.0, _OutlineEndColorDistance, i.uv0.x) * (1 - smoothstep(1 - _OutlineEndColorDistance, 1.0, i.uv0.x)) * smoothstep(0.0, _OutlineEndColorDistance, i.uv0.y) * (1 - smoothstep(1 - _OutlineEndColorDistance, 1.0, i.uv0.y));
 
-                 col.xyz = lerp(_OutlineColor.xyz, _OutlineEndColor.xyz, smc) * (_OutlineAlphaMult * pow(_CardOpacity, 6));
+                 col.xyz = lerp(_OutlineColor.xyz, _OutlineEndColor.xyz, smc) * (_OutlineAlphaMult ); //* pow(_CardOpacity, 6)
 
                  float trim = 1 - smoothstep(0.0, _OutlineTrimOffset, i.uv0.x) * (1 - smoothstep(1 - _OutlineTrimOffset, 1.0, i.uv0.x)) * smoothstep(0.0, _OutlineTrimOffset, i.uv0.y) * (1 - smoothstep(1 - _OutlineTrimOffset, 1.0, i.uv0.y));
 
@@ -217,8 +217,7 @@ Shader "HyperCard/Card (Face)"
                  discard;
              }
 
-             col.a *= _CardOpacity;
-
+             //col.a *= _CardOpacity;
              return col;
          }
 
@@ -388,7 +387,6 @@ Shader "HyperCard/Card (Face)"
              o.vertexInWorld = vertexWorld.xyz;
              o.viewDirInWorld = vertexWorld.xyz - _WorldSpaceCameraPos;
              o.normalInWorld = normalWorld.xyz;
-
 
              o.tangentDir = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
              o.bitangentDir = normalize(cross(o.normalInWorld, o.tangentDir) * v.tangent.w);
@@ -574,10 +572,8 @@ Shader "HyperCard/Card (Face)"
                  glitter_fcolor *= glitter_mask_col;
 
                  finalColor.rgb += glitter_fcolor + glitter_spec_color;
-
-                 //finalColor.rbg = glitter_fcolor.rgb;
              }
-
+             //finalColor.a *= _CardOpacity;
 
              // Materialization
              if (_BlackAndWhite == 1) 
@@ -607,9 +603,6 @@ Shader "HyperCard/Card (Face)"
                      clip(-1);
                  }
              }
-
-
-             finalColor.a *= _CardOpacity;
 
              return finalColor;
          }
@@ -718,7 +711,7 @@ Shader "HyperCard/Card (Face)"
                  float2 card_mask =  tex2D(_CardMask, (IN.texcoord / _SpriteSheetScale) + _SpriteSheetOffset);
 
                  ss_col.a *= card_mask.g;
-                 ss_col.a *= _CardOpacity;
+                 //ss_col.a *= _CardOpacity;
 
                  if (ss_col.a < 0.1) discard;
 

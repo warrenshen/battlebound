@@ -58,7 +58,7 @@ public abstract class CardObject : MouseWatchable
         this.visual.SetCardArtwork(front, back);
 
         this.visual.Stencil = ActionManager.Instance.stencilCount;
-        ActionManager.Instance.stencilCount += 1 % 255;
+        ActionManager.Instance.stencilCount += 3 % 255;
     }
 
     private HyperCard.Card VisualizeCard()

@@ -634,7 +634,7 @@ namespace HyperCard
                 mat.SetFloat("_Stencil", Stencil);
                 mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
                 mat.name = Guid.NewGuid().ToString();
-                txt.TmpObject.alpha = CardOpacity;
+                //txt.TmpObject.alpha = CardOpacity;
                 txt.TmpObject.fontMaterial = mat;
             }
 
@@ -671,10 +671,8 @@ namespace HyperCard
         {
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
-                var color = x.Color;
-                color.a *= CardOpacity;
-
-                x.Sprite.color = color;
+                //color.a *= CardOpacity;
+                x.Sprite.color = x.Color;
 
                 if (x.Value != null)
                 {
@@ -708,10 +706,8 @@ namespace HyperCard
             // Change opacity of custom sprites without redrawing all card
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
-                var color = x.Color;
-                color.a *= CardOpacity;
-
-                x.Sprite.color = color;
+                //color.a *= CardOpacity;
+                x.Sprite.color = x.Color;
             }
 
             ComputePeriodicalFx();
@@ -890,6 +886,11 @@ namespace HyperCard
         {
             this.CardFaceBackgroundArtworkScale = scale;
             this.CardFaceBackgroundArtworkOffset = offset;
+        }
+        public void SetOpacity(float opacity)
+        {
+            this.CardOpacity = opacity;
+            this.Redraw(); //to-do: should REALLY optimize this later, imp!
         }
 
     }
