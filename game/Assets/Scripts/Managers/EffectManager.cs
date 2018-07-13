@@ -13,12 +13,12 @@ public class EffectManager : MonoBehaviour
     public static EffectManager Instance { get; private set; }
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
+    public const string EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
-    public const string EFFECT_ATTACK_RANDOM = "EFFECT_ATTACK_RANDOM";
+    public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
 
     private static List<string> EFFECT_PRIORITY_ORDER = new List<string>
     {
-        EFFECT_ATTACK_RANDOM,
         EFFECT_PLAYER_AVATAR_DIE,
 
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
@@ -33,12 +33,15 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_END_TURN_DRAW_CARD,
+
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
-        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
 
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
+        EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
+        EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
     };
 
     private static List<string> EFFECTS_END_TURN = new List<string>
@@ -188,12 +191,13 @@ public class EffectManager : MonoBehaviour
 
         switch (effect.Name)
         {
-            case EFFECT_ATTACK_RANDOM:
-                EffectAttackRandom(effect);
+            case EFFECT_DEATH_RATTLE_ATTACK_RANDOM:
+                EffectDeathRattleAttackRandom(effect);
                 break;
             case EFFECT_PLAYER_AVATAR_DIE:
                 Debug.LogWarning("Game over");
                 break;
+            case EFFECT_CARD_DIE_AFTER_DEATH_RATTLE:
             case EFFECT_CARD_DIE:
                 Board.Instance.RemoveCreatureByPlayerIdAndCardId(
                     effect.PlayerId,
@@ -222,11 +226,13 @@ public class EffectManager : MonoBehaviour
                 AbilityDeathRattleAttackFace(effect, 20);
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
-                AbilityDeathRattleAttackRandomThree(effect, 20);
+                AbilityDeathRattleAttackRandomThree(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
+                AbilityDeathRattleDrawCard(effect);
                 break;
             case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
             case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
-            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
                 ChallengeMove challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(effect.PlayerId);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
@@ -250,11 +256,11 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    private void EffectAttackRandom(Effect effect)
+    private void EffectDeathRattleAttackRandom(Effect effect)
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(effect.PlayerId);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_ATTACK_RANDOM_TARGET);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET);
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
@@ -267,7 +273,7 @@ public class EffectManager : MonoBehaviour
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(effect.PlayerId);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_ATTACK_RANDOM_TARGET);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET);
             challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
@@ -319,17 +325,7 @@ public class EffectManager : MonoBehaviour
 
             if (defendingCreature.Health <= 0)
             {
-                effects.Add(
-                    new Effect(
-                        defendingCreature.Owner.Id,
-                        EFFECT_CARD_DIE,
-                        defendingCreature.GetCardId(),
-                        defendingCreature.SpawnRank
-                    )
-                );
-
                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-
             }
         }
 
@@ -338,10 +334,21 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDeathRattleAttackFace(Effect effect, int amount)
     {
+        List<Effect> effects = new List<Effect>();
 
+        effects.Add(
+            new Effect(
+                effect.PlayerId,
+                EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
+                effect.CardId,
+                effect.SpawnRank
+            )
+        );
+
+        AddToQueue(effects);
     }
 
-    private void AbilityDeathRattleAttackRandomThree(Effect effect, int amount)
+    private void AbilityDeathRattleAttackRandomThree(Effect effect)
     {
         List<Effect> effects = new List<Effect>();
 
@@ -350,36 +357,58 @@ public class EffectManager : MonoBehaviour
             effects.Add(
                 new Effect(
                     effect.PlayerId,
-                    EFFECT_ATTACK_RANDOM,
+                    EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
                     effect.CardId,
-                    effect.SpawnRank,
-                    amount
+                    effect.SpawnRank
                 )
             );
         }
 
+        effects.Add(
+            new Effect(
+                effect.PlayerId,
+                EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
+                effect.CardId,
+                effect.SpawnRank
+            )
+        );
+
+        AddToQueue(effects);
+    }
+
+    private void AbilityDeathRattleDrawCard(Effect effect)
+    {
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+
+        List<Effect> effects = new List<Effect>();
+
+        effects.Add(
+            new Effect(
+                effect.PlayerId,
+                EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
+                effect.CardId,
+                effect.SpawnRank
+            )
+        );
+
         AddToQueue(effects);
 
-        //ChallengeMove challengeMove;
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(effect.PlayerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        //challengeMove = new ChallengeMove();
-        //challengeMove.SetPlayerId(effect.PlayerId);
-        //challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_EFFECT_TARGETS);
-        //challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        //BattleManager.Instance.AddDeviceMove(challengeMove);
+        this.isWaiting = true;
+        StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
 
-        //this.isWaiting = true;
-        //StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
-
-        //if (!InspectorControlPanel.Instance.DevelopmentMode)
-        //{
-        //    challengeMove = new ChallengeMove();
-        //    challengeMove.SetPlayerId(effect.PlayerId);
-        //    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_EFFECT_TARGETS);
-        //    challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-        //    BattleManager.Instance.ReceiveChallengeMove(challengeMove);
-        //}
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            boardCreature.Owner.DrawCards(1);
+        }
     }
 
     private void BuffUnstablePower(Effect effect)
@@ -392,15 +421,6 @@ public class EffectManager : MonoBehaviour
         boardCreature.SetHealth(0);
 
         List<Effect> effects = new List<Effect>();
-
-        effects.Add(
-            new Effect(
-                boardCreature.Owner.Id,
-                EFFECT_CARD_DIE,
-                boardCreature.GetCardId(),
-                boardCreature.SpawnRank
-            )
-        );
 
         effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
 
@@ -566,34 +586,11 @@ public class EffectManager : MonoBehaviour
 
             if (attackingCreature.Health <= 0)
             {
-                effects.Add(
-                    new Effect(
-                        attackingCreature.Owner.Id,
-                        EFFECT_CARD_DIE,
-                        attackingCreature.GetCardId(),
-                        attackingCreature.SpawnRank
-                    )
-                );
-
                 effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
             }
             if (defendingCreature.Health <= 0)
             {
-                List<Effect> deathEffects = GetEffectsOnCreatureDeath(defendingCreature);
-
-                if (deathEffects.Count <= 0)
-                {
-                    effects.Add(
-                        new Effect(
-                            defendingCreature.Owner.Id,
-                            EFFECT_CARD_DIE,
-                            defendingCreature.GetCardId(),
-                            defendingCreature.SpawnRank
-                        )
-                    );
-                }
-
-                effects.AddRange(deathEffects);
+                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
             }
 
             AddToQueue(effects);
@@ -664,7 +661,7 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    public void OnAttackRandomTarget(
+    public void OnDeathRattleAttackRandomTarget(
         Targetable attackingTargetable,
         Targetable defendingTargetable
     )
@@ -690,15 +687,6 @@ public class EffectManager : MonoBehaviour
 
             if (defendingCreature.Health <= 0)
             {
-                effects.Add(
-                    new Effect(
-                        defendingCreature.Owner.Id,
-                        EFFECT_CARD_DIE,
-                        defendingCreature.GetCardId(),
-                        defendingCreature.SpawnRank
-                    )
-                );
-
                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
             }
 
@@ -759,6 +747,32 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    public void OnSpellTargetedPlay(BattleCardObject battleCardObject, BoardCreature targetedCreature)
+    {
+        SpellCard spellCard = battleCardObject.Card as SpellCard;
+        spellCard.Activate(targetedCreature);
+
+        List<Effect> effects = new List<Effect>();
+
+        switch (spellCard.Name)
+        {
+            case SpellCard.SPELL_NAME_LIGHTNING_BOLT:
+                int damageTaken = targetedCreature.TakeDamage(30);
+                effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+
+                if (targetedCreature.Health <= 0)
+                {
+                    effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
+                }
+                break;
+            default:
+                Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
+                break;
+        }
+
+        AddToQueue(effects);
+    }
+
     private List<Effect> GetEffectsOnCreatureDamageDealt(
         BoardCreature boardCreature,
         int amount
@@ -809,6 +823,20 @@ public class EffectManager : MonoBehaviour
                     )
                 );
             }
+        }
+
+        // If no death ratlle effects, add in card die effect.
+        // If there are death rattle effects, they will handle card die.
+        if (effects.Count <= 0)
+        {
+            effects.Add(
+                new Effect(
+                    boardCreature.Owner.Id,
+                    EFFECT_CARD_DIE,
+                    boardCreature.GetCardId(),
+                    boardCreature.SpawnRank
+                )
+            );
         }
 
         return effects;

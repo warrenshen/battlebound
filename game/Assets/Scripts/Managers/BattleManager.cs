@@ -816,8 +816,8 @@ public class BattleManager : MonoBehaviour
     public void PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
     {
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
-        SpellCard spellCard = battleCardObject.Card as SpellCard;
-        spellCard.Activate(targetedCreature);
+
+        EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
         UseCard(battleCardObject.Owner, battleCardObject);
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
@@ -997,7 +997,7 @@ public class BattleManager : MonoBehaviour
         );
     }
 
-    private void ReceiveMoveAttackRandomTarget(
+    private void ReceiveMoveDeathRattleAttackRandomTarget(
         string playerId,
         string cardId,
         string fieldId,
@@ -1007,7 +1007,7 @@ public class BattleManager : MonoBehaviour
         Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
         Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
-        EffectManager.Instance.OnAttackRandomTarget(
+        EffectManager.Instance.OnDeathRattleAttackRandomTarget(
             attackingTargetable,
             defendingTargetable
         );
@@ -1203,9 +1203,9 @@ public class BattleManager : MonoBehaviour
                 serverMove.Attributes.TargetId
             );
         }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_ATTACK_RANDOM_TARGET)
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET)
         {
-            ReceiveMoveAttackRandomTarget(
+            ReceiveMoveDeathRattleAttackRandomTarget(
                 serverMove.PlayerId,
                 serverMove.Attributes.CardId,
                 serverMove.Attributes.FieldId,
