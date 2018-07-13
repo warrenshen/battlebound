@@ -64,11 +64,9 @@ public class Hand
         this.battleCardObjects.RemoveAt(removeIndex);
     }
 
-    private void RedrawOutline(BattleCardObject battleCardObject)
+    public void RecedeCards()
     {
-        Player player = BattleManager.Instance.GetPlayerById(this.playerId);
-        battleCardObject.visual.SetOutline(player.Mana >= battleCardObject.Card.Cost);
-        battleCardObject.visual.Redraw();
+        RepositionCards(-1);
     }
 
     public void RepositionCards(float verticalShift = 0)
@@ -111,8 +109,12 @@ public class Hand
         }
     }
 
-    public void RecedeCards()
+    private void RedrawOutline(BattleCardObject battleCardObject)
     {
-        RepositionCards(-1);
+        Player player = BattleManager.Instance.GetPlayerById(this.playerId);
+        battleCardObject.visual.SetOutline(
+            player.HasTurn && player.Mana >= battleCardObject.Card.Cost
+        );
+        battleCardObject.visual.Redraw();
     }
 }
