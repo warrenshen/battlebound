@@ -189,7 +189,6 @@ public class BattleManager : MonoBehaviour
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
-            activePlayer.RenderTurnStart();
         }
     }
 
