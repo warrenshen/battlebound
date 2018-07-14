@@ -277,12 +277,16 @@ public class Board : MonoBehaviour
             return creatures;
         }
 
+        /*
+         * @return List<BoardCreature> - list of non-null board creatures with positive health
+         */
         public List<BoardCreature> GetAliveCreatures()
         {
             List<BoardCreature> boardCreatures = new List<BoardCreature>();
             for (int i = 0; i < this.creatures.Length; i++)
             {
-                if (creatures[i] != null)
+                BoardCreature boardCreature = this.creatures[i];
+                if (boardCreature != null && boardCreature.Health > 0)
                 {
                     boardCreatures.Add(creatures[i]);
                 }

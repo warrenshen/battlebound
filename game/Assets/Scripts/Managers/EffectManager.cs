@@ -2,10 +2,14 @@
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class EffectManager : MonoBehaviour
 {
-    private List<Effect> queue;
+    private List<Effect> hQueue; // High priority.
+    private List<Effect> mQueue; // Medium priority.
+    private List<Effect> lQueue; // Low priority.
+
     private bool isWaiting;
 
     private UnityAction callback;
@@ -17,31 +21,48 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
     public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
 
-    private static List<string> EFFECT_PRIORITY_ORDER = new List<string>
+    private static List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
-        EFFECT_PLAYER_AVATAR_DIE,
-
-        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
-
-        EFFECT_CARD_DIE,
+        // Deal damage.
         Card.CARD_ABILITY_LIFE_STEAL,
 
+        // Take damage.
+        Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+
+        // Die should be the last "now" effect since all other
+        // "now" should finish before it removes card from board.
+        EFFECT_CARD_DIE,
+    };
+
+    private static List<string> EFFECT_M_PRIORITY_ORDER = new List<string>
+    {
+        EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
+        EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
+    };
+
+    private static List<string> EFFECT_L_PRIORITY_ORDER = new List<string>
+    {
+        // Start turn.
         Card.BUFF_CATEGORY_UNSTABLE_POWER,
 
+        // End turn.
         Card.CARD_ABILITY_END_TURN_HEAL_TEN,
         Card.CARD_ABILITY_END_TURN_HEAL_TWENTY,
         Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_END_TURN_DRAW_CARD,
 
+        // Battlecry.
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
 
+        // Deathrattle.
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
-        EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
-        EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
+
+        EFFECT_PLAYER_AVATAR_DIE,
     };
 
     private static List<string> EFFECTS_END_TURN = new List<string>
@@ -70,6 +91,11 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
+    };
+
+    private static List<string> EFFECT_DAMAGE_TAKEN = new List<string>
+    {
+        Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
     };
 
     private class Effect
@@ -114,7 +140,10 @@ public class EffectManager : MonoBehaviour
     {
         Instance = this;
 
-        this.queue = new List<Effect>();
+        this.hQueue = new List<Effect>();
+        this.mQueue = new List<Effect>();
+        this.lQueue = new List<Effect>();
+
         this.isWaiting = false;
     }
 
@@ -126,7 +155,11 @@ public class EffectManager : MonoBehaviour
             return;
         }
 
-        if (this.queue.Count <= 0)
+        if (
+            this.hQueue.Count <= 0 &&
+            this.mQueue.Count <= 0 &&
+            this.lQueue.Count <= 0
+        )
         {
             if (this.callback != null)
             {
@@ -134,25 +167,77 @@ public class EffectManager : MonoBehaviour
                 this.callback = null;
                 action();
             }
+
             BattleManager.Instance.ProcessMoveQueue();
+        }
+        else if (this.hQueue.Count > 0)
+        {
+            ProcessHQueue();
+        }
+        else if (this.mQueue.Count > 0)
+        {
+            ProcessMQueue();
         }
         else
         {
-            ProcessQueue();
+            ProcessLQueue();
         }
     }
 
-    private void AddToQueue(Effect effect)
+    private void AddToQueues(Effect effect)
     {
-        this.queue.Add(effect);
+        AddToQueues(new List<Effect> { effect });
     }
 
-    private void AddToQueue(List<Effect> effects)
+    private void AddToQueues(List<Effect> effects)
     {
-        effects.Sort(delegate (Effect a, Effect b)
+        List<Effect> hEffects = new List<Effect>(
+            effects.Where(effect => EFFECT_H_PRIORITY_ORDER.Contains(effect.Name))
+        );
+        List<Effect> mEffects = new List<Effect>(
+            effects.Where(effect => EFFECT_M_PRIORITY_ORDER.Contains(effect.Name))
+        );
+        List<Effect> lEffects = new List<Effect>(
+            effects.Where(effect => EFFECT_L_PRIORITY_ORDER.Contains(effect.Name))
+        );
+
+        if (hEffects.Count + mEffects.Count + lEffects.Count != effects.Count)
         {
-            int aOrder = EFFECT_PRIORITY_ORDER.IndexOf(a.Name);
-            int bOrder = EFFECT_PRIORITY_ORDER.IndexOf(b.Name);
+            Debug.LogError("Somehow have different number of effects after partition than before");
+        }
+
+        hEffects.Sort(delegate (Effect a, Effect b)
+        {
+            int aOrder = EFFECT_H_PRIORITY_ORDER.IndexOf(a.Name);
+            int bOrder = EFFECT_H_PRIORITY_ORDER.IndexOf(b.Name);
+
+            if (a.SpawnRank == b.SpawnRank)
+            {
+                return aOrder < bOrder ? -1 : 1;
+            }
+            else
+            {
+                return a.SpawnRank < b.SpawnRank ? -1 : 1;
+            }
+        });
+        mEffects.Sort(delegate (Effect a, Effect b)
+        {
+            int aOrder = EFFECT_M_PRIORITY_ORDER.IndexOf(a.Name);
+            int bOrder = EFFECT_M_PRIORITY_ORDER.IndexOf(b.Name);
+
+            if (a.SpawnRank == b.SpawnRank)
+            {
+                return aOrder < bOrder ? -1 : 1;
+            }
+            else
+            {
+                return a.SpawnRank < b.SpawnRank ? -1 : 1;
+            }
+        });
+        lEffects.Sort(delegate (Effect a, Effect b)
+        {
+            int aOrder = EFFECT_L_PRIORITY_ORDER.IndexOf(a.Name);
+            int bOrder = EFFECT_L_PRIORITY_ORDER.IndexOf(b.Name);
 
             if (a.SpawnRank == b.SpawnRank)
             {
@@ -164,19 +249,64 @@ public class EffectManager : MonoBehaviour
             }
         });
 
-        this.queue.AddRange(effects);
+        this.hQueue.AddRange(hEffects);
+        this.mQueue.AddRange(mEffects);
+        this.lQueue.AddRange(lEffects);
     }
 
-    private void ProcessQueue()
+    private void ProcessHQueue()
     {
-        if (this.queue.Count <= 0)
+        if (this.hQueue.Count <= 0)
         {
             Debug.LogError("Process queue called when queue is empty.");
             return;
         }
 
-        Effect effect = this.queue[0];
-        this.queue.RemoveAt(0);
+        Effect effect = this.hQueue[0];
+        this.hQueue.RemoveAt(0);
+
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+
+        if (boardCreature == null)
+        {
+            Debug.LogError("Invalid effect - board creature does not exist.");
+            return;
+        }
+
+        switch (effect.Name)
+        {
+            case Card.CARD_ABILITY_LIFE_STEAL:
+                AbilityLifeSteal(effect);
+                break;
+            case Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY:
+                AbilityDamageTakenDamagePlayerFace(effect, 30);
+                break;
+            case EFFECT_CARD_DIE:
+                Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+                    effect.PlayerId,
+                    effect.CardId
+                );
+                boardCreature.Die();
+                break;
+            default:
+                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
+                break;
+        }
+    }
+
+    private void ProcessMQueue()
+    {
+        if (this.mQueue.Count <= 0)
+        {
+            Debug.LogError("Process queue called when queue is empty.");
+            return;
+        }
+
+        Effect effect = this.mQueue[0];
+        this.mQueue.RemoveAt(0);
 
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
@@ -194,19 +324,45 @@ public class EffectManager : MonoBehaviour
             case EFFECT_DEATH_RATTLE_ATTACK_RANDOM:
                 EffectDeathRattleAttackRandom(effect);
                 break;
-            case EFFECT_PLAYER_AVATAR_DIE:
-                Debug.LogWarning("Game over");
-                break;
             case EFFECT_CARD_DIE_AFTER_DEATH_RATTLE:
-            case EFFECT_CARD_DIE:
                 Board.Instance.RemoveCreatureByPlayerIdAndCardId(
                     effect.PlayerId,
                     effect.CardId
                 );
                 boardCreature.Die();
                 break;
-            case Card.CARD_ABILITY_LIFE_STEAL:
-                AbilityLifeSteal(effect);
+            default:
+                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
+                break;
+        }
+    }
+
+    private void ProcessLQueue()
+    {
+        if (this.lQueue.Count <= 0)
+        {
+            Debug.LogError("Process queue called when queue is empty.");
+            return;
+        }
+
+        Effect effect = this.lQueue[0];
+        this.lQueue.RemoveAt(0);
+
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+
+        if (boardCreature == null)
+        {
+            Debug.LogError("Invalid effect - board creature does not exist.");
+            return;
+        }
+
+        switch (effect.Name)
+        {
+            case EFFECT_PLAYER_AVATAR_DIE:
+                Debug.LogWarning("Game over");
                 break;
             case Card.CARD_ABILITY_END_TURN_HEAL_TEN:
                 boardCreature.Heal(10);
@@ -297,6 +453,12 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = false;
     }
 
+    private void AbilityDamageTakenDamagePlayerFace(Effect effect, int amount)
+    {
+        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
+        player.TakeDamage(amount);
+    }
+
     private void AbilityLifeSteal(Effect effect)
     {
         Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
@@ -329,7 +491,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     private void AbilityDeathRattleAttackFace(Effect effect, int amount)
@@ -345,7 +507,7 @@ public class EffectManager : MonoBehaviour
             )
         );
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     private void AbilityDeathRattleAttackRandomThree(Effect effect)
@@ -373,7 +535,7 @@ public class EffectManager : MonoBehaviour
             )
         );
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     private void AbilityDeathRattleDrawCard(Effect effect)
@@ -394,7 +556,7 @@ public class EffectManager : MonoBehaviour
             )
         );
 
-        AddToQueue(effects);
+        AddToQueues(effects);
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(effect.PlayerId);
@@ -424,7 +586,7 @@ public class EffectManager : MonoBehaviour
 
         effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     private IEnumerator WaitForDrawCard(object[] args)
@@ -468,7 +630,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     public void OnEndTurn(string playerId, UnityAction callback)
@@ -509,7 +671,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     public void OnCreaturePlay(string playerId, string cardId)
@@ -543,7 +705,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     public void OnCreatureAttack(
@@ -593,7 +755,7 @@ public class EffectManager : MonoBehaviour
                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
             }
 
-            AddToQueue(effects);
+            AddToQueues(effects);
         }
         else if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
@@ -653,7 +815,7 @@ public class EffectManager : MonoBehaviour
                 );
             }
 
-            AddToQueue(effects);
+            AddToQueues(effects);
         }
         else
         {
@@ -690,7 +852,7 @@ public class EffectManager : MonoBehaviour
                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
             }
 
-            AddToQueue(effects);
+            AddToQueues(effects);
         }
         else if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
@@ -739,7 +901,7 @@ public class EffectManager : MonoBehaviour
                 );
             }
 
-            AddToQueue(effects);
+            AddToQueues(effects);
         }
         else
         {
@@ -770,7 +932,7 @@ public class EffectManager : MonoBehaviour
                 break;
         }
 
-        AddToQueue(effects);
+        AddToQueues(effects);
     }
 
     private List<Effect> GetEffectsOnCreatureDamageDealt(
@@ -802,6 +964,21 @@ public class EffectManager : MonoBehaviour
     )
     {
         List<Effect> effects = new List<Effect>();
+
+        foreach (string effectName in EFFECT_DAMAGE_TAKEN)
+        {
+            if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
+            {
+                effects.Add(
+                    new Effect(
+                        boardCreature.Owner.Id,
+                        effectName,
+                        boardCreature.GetCardId(),
+                        boardCreature.SpawnRank
+                    )
+                );
+            }
+        }
 
         return effects;
     }
