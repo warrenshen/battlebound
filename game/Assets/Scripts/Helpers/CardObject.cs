@@ -12,7 +12,6 @@ public abstract class CardObject : MouseWatchable
     public Card Card => card;
 
     protected BoxCollider colliderBox;
-    protected float lastClicked;
 
     public HyperCard.Card visual;
     protected CardTemplate templateData;

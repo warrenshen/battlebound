@@ -23,7 +23,6 @@ public static class CardTween
 [System.Serializable]
 public class ActionManager : MonoBehaviour
 {
-    public bool allowPan = false;
     public float cardOffsetFromCamera = 8;
 
     public static float TWEEN_DURATION = 0.5f;
@@ -48,6 +47,7 @@ public class ActionManager : MonoBehaviour
     [SerializeField]
     private CardObject target;
 
+    [SerializeField]
     private MouseWatchable lastHitWatchable;
 
 
@@ -68,8 +68,6 @@ public class ActionManager : MonoBehaviour
     {
         if (!active)
             return;
-
-        if (allowPan) ScrollToPan(new Vector3(0f, 1f, 0f));
         MouseWatch();
     }
 
@@ -83,14 +81,15 @@ public class ActionManager : MonoBehaviour
             this.AdjustCardTilt(target);
             this.RepositionCard(target);
             if (Input.GetMouseButtonUp(0))
+            {
                 ClearDragTarget();
+            }
         }
     }
 
     public void SetDragTarget(CardObject target)
     {
         this.target = target;
-        //selectedSortingOrder = this.sp.sortingOrder;
         this.SetCursor(4);
     }
 
@@ -147,8 +146,6 @@ public class ActionManager : MonoBehaviour
     {
         if (!this.HasDragTarget())
             return;
-        //this.sp.sortingOrder = selectedSortingOrder;
-        //this.target.Release();
         this.target = null;
         this.SetCursor(0);
     }
@@ -164,16 +161,11 @@ public class ActionManager : MonoBehaviour
         GameObject.Destroy(target.gameObject);
     }
 
-    private void ScrollToPan(Vector3 axes)
-    {
-        Camera.main.transform.Translate(axes * Input.mouseScrollDelta.y * SCROLL_DAMPING);
-    }
-
-    private void RepositionCard(CardObject cardObj)
+    private void RepositionCard(CardObject cardObject)
     {
         //set target position by mouse position
         Vector3 endPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cardOffsetFromCamera));
-        cardObj.transform.position = Vector3.Lerp(cardObj.transform.position, endPos, Time.deltaTime * L_SPEED);
+        cardObject.transform.position = Vector3.Lerp(cardObject.transform.position, endPos, Time.deltaTime * L_SPEED);
     }
 
     private void AdjustCardTilt(CardObject cardObject)

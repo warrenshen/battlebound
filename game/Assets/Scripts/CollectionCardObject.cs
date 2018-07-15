@@ -12,6 +12,8 @@ public class CollectionCardObject : CardObject
     public bool minified;
     public HyperCard.Card cutout;
 
+    public float lastClickedTime;
+    public float lastDoubleClickedTime;
 
     public override void Initialize(Card card)
     {
@@ -85,12 +87,13 @@ public class CollectionCardObject : CardObject
         ActionManager.Instance.SetDragTarget(this);
     }
 
+    public override void MouseUp()
+    {
+        //nothing
+    }
+
     public override void Release()
     {
-        if (Time.time - lastClicked < 0.5f)
-            DoubleClickUp();
-        lastClicked = Time.time;
-
         LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
         this.visual.transform.localPosition = this.visual.reset.position;
 
@@ -99,7 +102,15 @@ public class CollectionCardObject : CardObject
 
     public void DoubleClickUp()
     {
-        CollectionManager.Instance.AddToDecklist(this);
+        this.lastDoubleClickedTime = Time.time;
+
+        if (!CollectionManager.Instance.ActiveDecklist.Contains(this))
+        {
+            LeanTween.cancel(this.gameObject);
+            this.noInteraction = false;
+
+            CollectionManager.Instance.AddToDecklist(this);  //to-do: buggy af if spam-clicked
+        }
     }
 
     public void SetMinify(bool value)
@@ -112,10 +123,12 @@ public class CollectionCardObject : CardObject
         if (value)
         {
             this.colliderBox.size = CollectionCardObject.CUTOUT_BOUNDS;
+            this.transform.parent = null;
         }
         else
         {
             this.colliderBox.size = CollectionCardObject.CARD_BOUNDS;
+            this.transform.parent = CollectionManager.Instance.collectionObject.transform;
         }
     }
 }

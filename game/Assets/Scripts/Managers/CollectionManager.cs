@@ -20,7 +20,9 @@ public class CollectionManager : MonoBehaviour
 
     [SerializeField]
     private Dictionary<string, Card> idToCard;
+    [SerializeField]
     private List<CollectionCardObject> activeDecklist;  //list that is currently rendered/being changed
+    public List<CollectionCardObject> ActiveDecklist => activeDecklist;
     private int activeDeck;
 
     public GameObject cutoutPrefab;
@@ -28,8 +30,9 @@ public class CollectionManager : MonoBehaviour
 
     private GameObject buildPanel;
     private Collider buildPanelCollider;
-    private GameObject collectionObject;
+    public GameObject collectionObject;
 
+    private CollectionCardObject lastClickedCard;
     private CollectionCardObject selectedCard;
     private LogEventResponse cardsResponse;
 
@@ -55,7 +58,7 @@ public class CollectionManager : MonoBehaviour
         //ping server for collection json
         GetCollectionRequest();
 
-        collectionObject = new GameObject("Collection");
+        collectionObject = GameObject.Find("Collection");
         buildPanel = GameObject.Find("Build Panel");
         buildPanelCollider = buildPanel.GetComponent<BoxCollider>() as Collider;
     }
@@ -121,6 +124,12 @@ public class CollectionManager : MonoBehaviour
     {
         RaycastMouse();
         RaycastMouseUp();
+        ScrollToPan(Vector3.up);  //to-do only allow situationally
+    }
+
+    private void ScrollToPan(Vector3 axes)
+    {
+        collectionObject.transform.Translate(axes * Input.mouseScrollDelta.y * 0.1F);
     }
 
     private void RaycastMouse()
@@ -153,7 +162,7 @@ public class CollectionManager : MonoBehaviour
         bool raycastHit = Physics.Raycast(ray, out hit, 100.0F);
 
         CollectionCardObject hitCardObject = hit.collider.GetComponent<CollectionCardObject>();
-        if (hitCardObject != null && this.activeDecklist.Contains(hitCardObject))
+        if (hitCardObject != null && this.activeDecklist.Contains(hitCardObject))   //if hit a card object, and it is minified
         {
             RemoveFromDecklist(hitCardObject);
         }
@@ -166,6 +175,19 @@ public class CollectionManager : MonoBehaviour
         {
             ActionManager.Instance.GetDragTarget().Release();
         }
+
+        //check for double clicks
+        if (hitCardObject != null)
+        {
+            if (hitCardObject == lastClickedCard &&
+                (Time.time - hitCardObject.lastClickedTime) < 0.5F &&
+                (Time.time - hitCardObject.lastDoubleClickedTime) > 2)
+            {
+                hitCardObject.DoubleClickUp();
+            }
+            hitCardObject.lastClickedTime = Time.time;
+        }
+        lastClickedCard = hitCardObject;
     }
 
     private void OnSaveButton()
@@ -259,6 +281,8 @@ public class CollectionManager : MonoBehaviour
         Vector3 verticalOffset = new Vector3(0f, -3.75f, 0f);
 
         Transform grayed = new GameObject("Grayed").transform as Transform;
+        grayed.parent = this.collectionObject.transform;
+
         foreach (Card card in collection)
         {
             GameObject created = new GameObject(card.Name);
