@@ -20,7 +20,7 @@ public abstract class Targetable : MonoBehaviour
     public abstract string GetPlayerId();
     public abstract bool CanAttackNow();
 
-    public abstract void Fight(Targetable other);
+    public abstract int Fight(Targetable other);
     public abstract int TakeDamage(int amount);
     public abstract int Heal(int amount);
 

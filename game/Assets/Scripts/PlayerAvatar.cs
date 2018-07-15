@@ -134,17 +134,19 @@ public class PlayerAvatar : Targetable
         return false;
     }
 
-    public override void Fight(Targetable other)
+    public override int Fight(Targetable other)
     {
+        int damageDone = 0;
+
         if (this.canAttack <= 0)
         {
             Debug.LogError("Fight called when canAttack is 0 or below!");
-            return;
+            return 0;
         }
         if (!this.HasWeapon())
         {
             Debug.LogError("Fight called when avatar has no weapon!");
-            return;
+            return 0;
         }
 
         this.canAttack -= 1;
@@ -155,7 +157,7 @@ public class PlayerAvatar : Targetable
 
         FXPoolManager.Instance.PlayEffect("SlashVFX", other.transform.position);
         SoundManager.Instance.PlaySound("SlashSFX", other.transform.position);
-        this.weapon.AttackMade(other); //diff from boardcreature fight!!
+        damageDone = this.weapon.AttackMade(other); //diff from boardcreature fight!!
 
         if (!other.IsAvatar)
         {
@@ -167,6 +169,7 @@ public class PlayerAvatar : Targetable
         }
 
         this.UpdateStatText();
+        return damageDone;
     }
 
     public override int TakeDamage(int amount)
