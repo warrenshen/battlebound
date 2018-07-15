@@ -990,15 +990,25 @@ public class EffectManager : MonoBehaviour
     {
         targetedCreature.Freeze(2);
 
-        List<BoardCreature> aroundCreatures =
-            Board.Instance.GetAroundCreaturesByPlayerIdAndCardId(
+        BoardCreature inFrontCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
+            targetedCreature.Owner.Id,
+            targetedCreature.GetCardId()
+        );
+
+        if (inFrontCreature != null)
+        {
+            inFrontCreature.Freeze(2);
+        }
+
+        List<BoardCreature> adjacentCreatures =
+            Board.Instance.GetAdjacentCreaturesByPlayerIdAndCardId(
                 targetedCreature.Owner.Id,
                 targetedCreature.GetCardId()
             );
 
-        foreach (BoardCreature aroundCreature in aroundCreatures)
+        foreach (BoardCreature adjacentCreature in adjacentCreatures)
         {
-            aroundCreature.Freeze(1);
+            adjacentCreature.Freeze(1);
         }
 
         // No triggered effects on freeze for now.
