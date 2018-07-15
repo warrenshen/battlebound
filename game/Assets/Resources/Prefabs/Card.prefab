@@ -349,8 +349,8 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: dfa8675239dfb1e4ba1b779baaf49b05, type: 2}
+  - {fileID: 2100000, guid: 4d32e97d1ed3b5849885489e80ee80ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -663,7 +663,7 @@ MonoBehaviour:
     TmpObject: {fileID: 114086214066180350}
     Value: 30
     DisplayMode: 0
-  - Key: Life
+  - Key: Health
     TmpObject: {fileID: 114673017940596804}
     Value: 50
     DisplayMode: 0
