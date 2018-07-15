@@ -21,7 +21,7 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
     public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
 
-    private static List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
+    private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
         // Deal damage.
         Card.CARD_ABILITY_LIFE_STEAL,
@@ -34,13 +34,13 @@ public class EffectManager : MonoBehaviour
         EFFECT_CARD_DIE,
     };
 
-    private static List<string> EFFECT_M_PRIORITY_ORDER = new List<string>
+    private static readonly List<string> EFFECT_M_PRIORITY_ORDER = new List<string>
     {
         EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
         EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
     };
 
-    private static List<string> EFFECT_L_PRIORITY_ORDER = new List<string>
+    private static readonly List<string> EFFECT_L_PRIORITY_ORDER = new List<string>
     {
         // Start turn.
         Card.BUFF_CATEGORY_UNSTABLE_POWER,
@@ -65,7 +65,7 @@ public class EffectManager : MonoBehaviour
         EFFECT_PLAYER_AVATAR_DIE,
     };
 
-    private static List<string> EFFECTS_END_TURN = new List<string>
+    private static readonly List<string> EFFECTS_END_TURN = new List<string>
     {
         Card.CARD_ABILITY_END_TURN_HEAL_TEN,
         Card.CARD_ABILITY_END_TURN_HEAL_TWENTY,
@@ -74,26 +74,26 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_END_TURN_DRAW_CARD,
     };
 
-    private static List<string> EFFECTS_START_TURN = new List<string>
+    private static readonly List<string> EFFECTS_START_TURN = new List<string>
     {
         Card.BUFF_CATEGORY_UNSTABLE_POWER,
     };
 
-    private static List<string> EFFECTS_BATTLE_CRY = new List<string>
+    private static readonly List<string> EFFECTS_BATTLE_CRY = new List<string>
     {
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
     };
 
-    private static List<string> EFFECT_DEATH_RATTLE = new List<string>
+    private static readonly List<string> EFFECT_DEATH_RATTLE = new List<string>
     {
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
     };
 
-    private static List<string> EFFECT_DAMAGE_TAKEN = new List<string>
+    private static readonly List<string> EFFECT_DAMAGE_TAKEN = new List<string>
     {
         Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
     };
@@ -837,17 +837,27 @@ public class EffectManager : MonoBehaviour
         Targetable defendingTargetable
     )
     {
-        // TODO: animate as bomb or whatever.
-        if (
-            attackingTargetable.GetType() == typeof(BoardCreature) &&
-            defendingTargetable.GetType() == typeof(BoardCreature)
-        )
+        if (attackingTargetable.GetType() == typeof(PlayerAvatar))
         {
-            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
+            Debug.LogError("Player avatar cannot have death rattle.");
+            return;
+        }
+
+        BoardCreature attackingCreature = attackingTargetable as BoardCreature;
+        if (!attackingCreature.HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY))
+        {
+            Debug.LogError("Board creature does not have a death rattle attack random ability.");
+            return;
+        }
+
+
+        if (defendingTargetable.GetType() == typeof(BoardCreature))
+        {
             BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
             List<Effect> effects = new List<Effect>();
 
+            // TODO: animate as bomb or whatever.
             attackingCreature.Fight(defendingCreature);
 
             int damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
@@ -863,12 +873,8 @@ public class EffectManager : MonoBehaviour
 
             AddToQueues(effects);
         }
-        else if (
-            attackingTargetable.GetType() == typeof(BoardCreature) &&
-            defendingTargetable.GetType() == typeof(PlayerAvatar)
-        )
+        else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
         {
-            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
             PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
             List<Effect> effects = new List<Effect>();
@@ -878,26 +884,9 @@ public class EffectManager : MonoBehaviour
             int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-            //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
-            //effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
-            //effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
-
             defendingAvatar.Redraw();
             attackingCreature.Redraw();
 
-            //if (attackingCreature.Health <= 0)
-            //{
-            //    effects.Add(
-            //        new Effect(
-            //            attackingCreature.Owner.Id,
-            //            EFFECT_CARD_DIE,
-            //            attackingCreature.GetCardId(),
-            //            attackingCreature.SpawnRank
-            //        )
-            //    );
-
-            //    effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
-            //}
             if (defendingAvatar.Health <= 0)
             {
                 effects.Add(
