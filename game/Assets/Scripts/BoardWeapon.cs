@@ -22,18 +22,22 @@ public class BoardWeapon : MonoBehaviour
         this.wielder = player;
     }
 
-    public void AttackMade(Targetable target)
+    public int AttackMade(Targetable target)
     {
+        int damageDone = 0;
+
         target.TakeDamage(this.attack);
         if (!target.IsAvatar)
         {
             BoardCreature targetCreature = target as BoardCreature;
-            this.wielder.TakeDamage(targetCreature.Attack);
+            damageDone = this.wielder.TakeDamage(targetCreature.Attack);
         }
         //to-do: updated weapon durability rendering
         this.durability -= 1;
         if (CheckBroken())
             Destroy(gameObject);
+
+        return damageDone;
     }
 
     private bool CheckBroken()

@@ -27,11 +27,11 @@ public class FXPoolManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //foreach (Transform effect in transform)
-        //{
-        //    Debug.Log(effect.name);
-        //    effectIndices.Add(effect.name, 0);
-        //}
+        foreach (Transform effect in transform)
+        {
+            Debug.Log(effect.name);
+            effectIndices.Add(effect.name, 0);
+        }
     }
 
     private string ResolveName(string initial)

@@ -7,6 +7,13 @@ using TMPro;
 [System.Serializable]
 public class BoardCreature : Targetable
 {
+    void HandleAction()
+    {
+    }
+
+
+    public const float ATTACK_DELAY = 0.66F;
+
     [SerializeField]
     private int cost;           //cost retained for conditional removal cards
     public int Cost => cost;    //e.g. remove all cards with cost 2 or less
@@ -180,25 +187,53 @@ public class BoardCreature : Targetable
         this.canAttack -= 1;
     }
 
-    public override void Fight(Targetable other)
+    public override int Fight(Targetable other)
     {
         this.summonAnimation.Play(summonAnimStates[0].name);
         this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);     //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-        LeanTween.move(this.gameObject, this.transform.position - delta, 1.3F).setEasePunch().setDelay(0.66F);
+        Vector3 originalPosition = this.transform.position;
+        int damageDone = 0;
 
-        FXPoolManager.Instance.PlayEffect("SlashVFX", other.transform.position);
-        StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, 0.25f });
-        StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, 0.4f });
+        LeanTween.move(this.gameObject, this.transform.position - delta, 0.3F).setEaseOutCubic().setDelay(BoardCreature.ATTACK_DELAY).setOnComplete(() =>
+        {
+            damageDone = DamageLogic(other);
+            LeanTween.move(this.gameObject, originalPosition, 0.3F).setEaseInCubic();
+        }
+        );
+
+        StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.25f });
+        StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.4f });
 
         if (!other.IsAvatar)
         {
-            FXPoolManager.Instance.PlayEffect("SlashVFX", this.transform.position);
+            StartCoroutine("PlayVFXWithDelay", new object[3] { "SlashVFX", other.transform.position, BoardCreature.ATTACK_DELAY });
 
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
-                StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, 0.5f });
+                StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.5f });
         }
+        return damageDone;
+    }
+
+    private int DamageLogic(Targetable other)
+    {
+        if (!other.IsAvatar)
+        {
+            BoardCreature otherCreature = other as BoardCreature;
+            this.TakeDamage(otherCreature.Attack);
+        }
+        return other.TakeDamage(this.attack);
+    }
+
+    IEnumerator PlayVFXWithDelay(object[] args)
+    {
+        string VFXName = (string)args[0];
+        Vector3 location = (Vector3)args[1];
+        float delay = (float)args[2];
+
+        yield return new WaitForSeconds(delay);
+        FXPoolManager.Instance.PlayEffect(VFXName, location);
     }
 
     IEnumerator PlaySoundWithDelay(object[] args)
