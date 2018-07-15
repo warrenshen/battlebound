@@ -224,18 +224,37 @@ public class SpellCard : Card
 {
     public const string SPELL_NAME_LIGHTNING_BOLT = "Touch of Zeus";
     public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
+    public const string SPELL_NAME_FREEZE = "Freeze";
+    public const string SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
+
+    public const string SPELL_NAME_RIOT_UP = "Riot Up";
+    public const string SPELL_NAME_BLIZZARD = "Blizzard";
+
 
     public static readonly List<string> VALID_SPELLS = new List<string>
     {
         SPELL_NAME_LIGHTNING_BOLT,
         SPELL_NAME_UNSTABLE_POWER,
+        SPELL_NAME_FREEZE,
+        SPELL_NAME_DEEP_FREEZE,
+        SPELL_NAME_RIOT_UP,
+        SPELL_NAME_BLIZZARD,
     };
 
     public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
     {
         SPELL_NAME_LIGHTNING_BOLT,
         SPELL_NAME_UNSTABLE_POWER,
+        SPELL_NAME_FREEZE,
+        SPELL_NAME_DEEP_FREEZE,
     };
+
+    public static readonly List<string> UNTARGETED_SPELL_NAMES = new List<string>
+    {
+        SPELL_NAME_RIOT_UP,
+        SPELL_NAME_BLIZZARD,
+    };
+
     private static Dictionary<string, string> spellToMethod;
 
     private bool targeted;      //affects single target or whole board?
@@ -291,24 +310,7 @@ public class SpellCard : Card
         spellToMethod = new Dictionary<string, string>();
         spellToMethod[SPELL_NAME_LIGHTNING_BOLT] = "LightningBolt";
         spellToMethod[SPELL_NAME_UNSTABLE_POWER] = "UnstablePower";
-    }
-
-    public void Activate(BoardCreature creature)
-    {
-        string methodName = spellToMethod[this.name];
-        MethodInfo method = typeof(SpellCard).GetMethod(methodName);
-        method.Invoke(this, new object[] { creature });
-    }
-
-    public void LightningBolt(BoardCreature target)
-    {
-        SoundManager.Instance.PlaySound("ShockSFX", target.transform.position);
-        FXPoolManager.Instance.PlayEffect("LightningBoltVFX", target.transform.position);
-    }
-
-    public void UnstablePower(BoardCreature target)
-    {
-        target.AddAttack(30);
-        target.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
+        spellToMethod[SPELL_NAME_FREEZE] = "Freeze";
+        spellToMethod[SPELL_NAME_DEEP_FREEZE] = "DeepFreeze";
     }
 }

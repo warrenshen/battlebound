@@ -1,6 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -135,6 +136,12 @@ public class Board : MonoBehaviour
         return playingField.GetAliveCreatures();
     }
 
+    public List<BoardCreature> GetOpponentAliveCreaturesByPlayerId(string playerId)
+    {
+        string opponentId = this.playerIdToOpponentId[playerId];
+        return GetAliveCreaturesByPlayerId(opponentId);
+    }
+
     public BoardCreature GetCreatureByPlayerIdAndCardId(string playerId, string cardId)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
@@ -153,6 +160,26 @@ public class Board : MonoBehaviour
         int playerIndex = playingField.GetIndexByCardId(cardId);
         int opponentIndex = 5 - playerIndex;
         return GetCreatureByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
+    }
+
+    /*
+     * Returns list of three board creatures to the left, right, and in front
+     * of creature with given player and card IDs. List can be length 0 - 3.
+     */
+    public List<BoardCreature> GetAroundCreaturesByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        List<BoardCreature> aroundCreatures = new List<BoardCreature>();
+
+        aroundCreatures.Add(GetInFrontCreatureByPlayerIdAndCardId(playerId, cardId));
+
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        int cardIndex = playingField.GetIndexByCardId(cardId);
+
+        Debug.Log(cardIndex);
+        aroundCreatures.Add(playingField.GetCreatureByIndex(cardIndex - 1));
+        aroundCreatures.Add(playingField.GetCreatureByIndex(cardIndex + 1));
+
+        return new List<BoardCreature>(aroundCreatures.Where(boardCreature => boardCreature != null));
     }
 
     public Targetable GetTargetableByPlayerIdAndCardId(string playerId, string cardId)
@@ -180,11 +207,6 @@ public class Board : MonoBehaviour
 
         int randomIndex = UnityEngine.Random.Range(0, opponentTargetables.Count);
         return opponentTargetables[randomIndex];
-    }
-
-    public void OnPlayerStartTurn(string playerId)
-    {
-        GetFieldByPlayerId(playerId).RunCreatureStartTurns();
     }
 
     [System.Serializable]
@@ -257,7 +279,14 @@ public class Board : MonoBehaviour
 
         public BoardCreature GetCreatureByIndex(int index)
         {
-            return this.creatures[index];
+            if (index < 0 || index > 5)
+            {
+                return null;
+            }
+            else
+            {
+                return this.creatures[index];
+            }
         }
 
         public void Remove(BoardCreature creature)
@@ -308,19 +337,6 @@ public class Board : MonoBehaviour
                 this.creatures,
                 creature => creature != null && creature.GetCardId() == cardId
             );
-        }
-
-        public void RunCreatureStartTurns()
-        {
-            foreach (BoardCreature creature in creatures)
-            {
-                if (creature == null)
-                {
-                    continue;
-                }
-
-                creature.OnStartTurn();
-            }
         }
     }
 }

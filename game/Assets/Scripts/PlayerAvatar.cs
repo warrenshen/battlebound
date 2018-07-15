@@ -108,6 +108,11 @@ public class PlayerAvatar : Targetable
         return this.owner.Id;
     }
 
+    public override bool CanAttackNow()
+    {
+        return false;
+    }
+
     public override void OnStartTurn()
     {
         this.canAttack = this.maxAttacks;

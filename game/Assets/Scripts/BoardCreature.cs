@@ -48,6 +48,9 @@ public class BoardCreature : Targetable
     private bool hasShield;
     public bool HasShield => hasShield;
 
+    private int isFrozen;
+    public int IsFrozen => isFrozen;
+
     Material dissolve;
 
     private HyperCard.Card visual;
@@ -92,13 +95,12 @@ public class BoardCreature : Targetable
             this.hasShield = false;
         }
 
+        this.isFrozen = 0;
+
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
-        if (this.abilities != null)
-        {
-            this.abilitiesFX = new Dictionary<string, GameObject>();
-        }
+        this.abilitiesFX = new Dictionary<string, GameObject>();
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
         BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
@@ -165,6 +167,11 @@ public class BoardCreature : Targetable
     public override string GetPlayerId()
     {
         return this.owner.Id;
+    }
+
+    public override bool CanAttackNow()
+    {
+        return this.Owner.HasTurn && this.isFrozen <= 0 && this.canAttack > 0;
     }
 
     public void DecrementCanAttack()
@@ -249,6 +256,25 @@ public class BoardCreature : Targetable
         Redraw();
     }
 
+    public void OnEndTurn()
+    {
+        DecrementIsFrozen();
+        Redraw();
+    }
+
+    private bool DecrementIsFrozen()
+    {
+        if (this.isFrozen > 0)
+        {
+            this.isFrozen -= 1;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void SetHealth(int amount)
     {
         this.health = amount;
@@ -283,11 +309,26 @@ public class BoardCreature : Targetable
         Destroy(gameObject);
     }
 
+    public void GrantShield()
+    {
+        if (!this.hasShield)
+        {
+            this.hasShield = true;
+            Redraw();
+        }
+    }
+
+    public void Freeze(int amount)
+    {
+        this.isFrozen += amount;
+        Redraw();
+    }
+
     public void Redraw()
     {
         UpdateStatText();
 
-        this.visual.SetOutline(this.Owner.HasTurn && this.canAttack > 0);
+        this.visual.SetOutline(CanAttackNow());
         this.visual.Redraw();
 
         RenderAbilitiesAndBuffs();
@@ -307,19 +348,14 @@ public class BoardCreature : Targetable
 
     private void RenderAbilitiesAndBuffs()
     {
-        if (this.hasShield && !this.abilitiesFX.ContainsKey(Card.CARD_ABILITY_SHIELD))
-        {
-            this.abilitiesFX[Card.CARD_ABILITY_SHIELD] = FXPoolManager.Instance.AssignEffect(Card.CARD_ABILITY_SHIELD, this.transform).gameObject;
-        }
-        else if (!this.hasShield && this.abilitiesFX.ContainsKey(Card.CARD_ABILITY_SHIELD))
-        {
-            GameObject effect = abilitiesFX[Card.CARD_ABILITY_SHIELD];
-            FXPoolManager.Instance.UnassignEffect(Card.CARD_ABILITY_SHIELD, effect, this.transform);
-        }
-
         //doing additions
-        foreach (string ability in abilities)
+        foreach (string ability in this.abilities)
         {
+            if (ability == Card.CARD_ABILITY_SHIELD)
+            {
+                continue;
+            }
+
             if (abilitiesFX.ContainsKey(ability))
             {
                 continue;
@@ -333,8 +369,13 @@ public class BoardCreature : Targetable
         }
 
         //do removals
-        foreach (string key in abilitiesFX.Keys)
+        foreach (string key in this.abilitiesFX.Keys)
         {
+            if (key == Card.CARD_ABILITY_SHIELD)
+            {
+                continue;
+            }
+
             if (abilities.Contains(key))
             {
                 continue;
@@ -343,6 +384,18 @@ public class BoardCreature : Targetable
             //if not continue, needs removal
             GameObject effect = abilitiesFX[key];
             FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
+        }
+
+        if (this.hasShield)
+        {
+            //this.shieldObject.SetActive(true);
+            //this.abilitiesFX[Card.CARD_ABILITY_SHIELD] = FXPoolManager.Instance.AssignEffect(Card.CARD_ABILITY_SHIELD, this.transform).gameObject;
+        }
+        else
+        {
+            //this.shieldObject.SetActive(false);
+            //GameObject effect = abilitiesFX[Card.CARD_ABILITY_SHIELD];
+            //FXPoolManager.Instance.UnassignEffect(Card.CARD_ABILITY_SHIELD, effect, this.transform);
         }
     }
 
