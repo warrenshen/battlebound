@@ -541,8 +541,12 @@ public class BattleManager : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle")))
                 {
-                    target.Owner.PlayCard(target);
-                    PlayTargetedSpell(target, hit);
+                    // We'll enter this condition if card is actually played,
+                    // otherwise the "playing" will be handled elsewhere.
+                    if (PlayTargetedSpell(target, hit))
+                    {
+                        target.Owner.PlayCard(target);
+                    }
                     return true;
                 }
                 else
@@ -554,8 +558,10 @@ public class BattleManager : MonoBehaviour
             }
             else  //not targeted spell, play freely
             {
-                target.Owner.PlayCard(target);
-                PlayUntargetedSpell(target);
+                if (PlayUntargetedSpell(target))
+                {
+                    target.Owner.PlayCard(target);
+                }
                 return true;
             }
         }
@@ -594,23 +600,6 @@ public class BattleManager : MonoBehaviour
             ActionManager.Instance.ResetTarget();
             return false;
         }
-    }
-
-    private IEnumerator EnemyPlayCardToBoardAnim(object[] args)
-    {
-        BattleCardObject battleCardObject = (BattleCardObject)args[0];
-        int fieldIndex = (int)args[1];
-
-        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
-
-        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
-        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-
-        //flash or something
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
-
-        PlayCardToBoard(battleCardObject, fieldIndex);
     }
 
     public void AnimateDrawCard(Player player, BattleCardObject battleCardObject)
@@ -814,49 +803,136 @@ public class BattleManager : MonoBehaviour
     /*
      * Play spell card after user on-device drags card from hand to field. 
      */
-    public void PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
+    public bool PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
     {
         BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
 
-        EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
-        UseCard(battleCardObject.Owner, battleCardObject);
+        Player player = battleCardObject.Owner;
+        ChallengeMove challengeMove;
 
-        if (InspectorControlPanel.Instance.DevelopmentMode)
+        if (player.Id == this.opponent.Id)
         {
-            PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
-                targetedCreature.Owner.Id,
-                targetedCreature.CreatureCard.Id
-            );
-            BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
-                battleCardObject.Card.Id,
-                attributes
-            );
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
+            challengeMove.SetRank(GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCardId(battleCardObject.Card.Id);
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetFieldId(targetedCreature.Owner.Id);
+            moveAttributes.SetTargetId(targetedCreature.GetCardId());
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            ReceiveChallengeMove(challengeMove);
+
+            return false;
+        }
+        else
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
+            challengeMove.SetRank(GetDeviceMoveRank());
+            AddDeviceMove(challengeMove);
+
+            if (InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
+                    targetedCreature.Owner.Id,
+                    targetedCreature.GetCardId()
+                );
+                BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
+                    battleCardObject.Card.Id,
+                    attributes
+                );
+            }
+            else
+            {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(player.Id);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
+                challengeMove.SetRank(GetServerMoveRank());
+                ReceiveChallengeMove(challengeMove);
+            }
+
+            EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
+            UseCard(battleCardObject.Owner, battleCardObject);
+
+            return true;
         }
     }
 
     /*
      * Play targeted spell card after receiving play card move from server. 
      */
-    public void PlayTargetedSpell(BattleCardObject battleCardObject, BoardCreature targetedCreature)
+    public void PlayTargetedSpellFromServer(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
         EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
         UseCard(battleCardObject.Owner, battleCardObject);
     }
 
     /*
- * Play spell card after user on-device drags card from hand to field. 
- */
-    public void PlayUntargetedSpell(BattleCardObject battleCardObject, bool isFromServer = false)
+     * Play spell card after user on-device drags card from hand to field. 
+     */
+    public bool PlayUntargetedSpell(BattleCardObject battleCardObject)
+    {
+        Player player = battleCardObject.Owner;
+        ChallengeMove challengeMove;
+
+        if (player.Id == this.opponent.Id)
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
+            challengeMove.SetRank(GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCardId(battleCardObject.Card.Id);
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            ReceiveChallengeMove(challengeMove);
+
+            return false;
+        }
+        else
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
+            challengeMove.SetRank(GetDeviceMoveRank());
+            AddDeviceMove(challengeMove);
+
+            if (InspectorControlPanel.Instance.DevelopmentMode)
+            {
+                BattleSingleton.Instance.SendChallengePlaySpellUntargetedRequest(
+                    battleCardObject.Card.Id
+                );
+            }
+            else
+            {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(player.Id);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
+                challengeMove.SetRank(GetServerMoveRank());
+                ReceiveChallengeMove(challengeMove);
+            }
+
+            EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
+            UseCard(battleCardObject.Owner, battleCardObject);
+
+            return true;
+        }
+    }
+
+    /*
+     * Play untargeted spell card after receiving play card move from server. 
+     */
+    public void PlayUntargetedSpellFromServer(BattleCardObject battleCardObject)
     {
         EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
         UseCard(battleCardObject.Owner, battleCardObject);
-
-        if (isFromServer && InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            BattleSingleton.Instance.SendChallengePlaySpellUntargetedRequest(
-                battleCardObject.Card.Id
-            );
-        }
     }
 
     ///*
@@ -945,26 +1021,34 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        BoardCreature victimCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+        BoardCreature targetedCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.Initialize(opponent, card);
-            opponent.PlayCard(target);
-            PlayTargetedSpell(target, victimCreature);
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            battleCardObject.Initialize(opponent, card);
+
+            opponent.PlayCard(battleCardObject);
+            StartCoroutine(
+                "EnemyPlaySpellTargetedAnim",
+                new object[2] { battleCardObject, targetedCreature }
+            );
         }
         else
         {
-            BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (target == null)
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
+            if (battleCardObject == null)
             {
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            opponent.PlayCard(target);
-            PlayTargetedSpell(target, victimCreature);
+
+            opponent.PlayCard(battleCardObject);
+            StartCoroutine(
+                "EnemyPlaySpellTargetedAnim",
+                new object[2] { battleCardObject, targetedCreature }
+            );
         }
     }
 
@@ -984,21 +1068,29 @@ public class BattleManager : MonoBehaviour
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            target.Initialize(opponent, card);
-            opponent.PlayCard(target);
-            PlayUntargetedSpell(target, true);
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
+            battleCardObject.Initialize(opponent, card);
+
+            opponent.PlayCard(battleCardObject);
+            StartCoroutine(
+                "EnemyPlaySpellUntargetedAnim",
+                new object[1] { battleCardObject }
+            );
         }
         else
         {
-            BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (target == null)
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
+            if (battleCardObject == null)
             {
                 Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            opponent.PlayCard(target);
-            PlayUntargetedSpell(target, true);
+
+            opponent.PlayCard(battleCardObject);
+            StartCoroutine(
+                "EnemyPlaySpellUntargetedAnim",
+                new object[1] { battleCardObject }
+            );
         }
     }
 
@@ -1283,6 +1375,56 @@ public class BattleManager : MonoBehaviour
         }
 
         return serverMove.Rank;
+    }
+
+    private IEnumerator EnemyPlayCardToBoardAnim(object[] args)
+    {
+        BattleCardObject battleCardObject = (BattleCardObject)args[0];
+        int fieldIndex = (int)args[1];
+
+        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+
+        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
+
+        //flash or something
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
+
+        PlayCardToBoard(battleCardObject, fieldIndex);
+    }
+
+    private IEnumerator EnemyPlaySpellTargetedAnim(object[] args)
+    {
+        BattleCardObject battleCardObject = (BattleCardObject)args[0];
+        BoardCreature targetedCreature = (BoardCreature)args[1];
+
+        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+
+        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
+
+        //flash or something
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
+
+        PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+    }
+
+    private IEnumerator EnemyPlaySpellUntargetedAnim(object[] args)
+    {
+        BattleCardObject battleCardObject = (BattleCardObject)args[0];
+
+        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+
+        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
+
+        //flash or something
+        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
+
+        PlayUntargetedSpellFromServer(battleCardObject);
     }
 
     private PlayerState GetPlayerState()

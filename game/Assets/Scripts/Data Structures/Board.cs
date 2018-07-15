@@ -166,20 +166,20 @@ public class Board : MonoBehaviour
      * Returns list of three board creatures to the left, right, and in front
      * of creature with given player and card IDs. List can be length 0 - 3.
      */
-    public List<BoardCreature> GetAroundCreaturesByPlayerIdAndCardId(string playerId, string cardId)
+    public List<BoardCreature> GetAdjacentCreaturesByPlayerIdAndCardId(string playerId, string cardId)
     {
-        List<BoardCreature> aroundCreatures = new List<BoardCreature>();
-
-        aroundCreatures.Add(GetInFrontCreatureByPlayerIdAndCardId(playerId, cardId));
-
         PlayingField playingField = GetFieldByPlayerId(playerId);
         int cardIndex = playingField.GetIndexByCardId(cardId);
 
-        Debug.Log(cardIndex);
-        aroundCreatures.Add(playingField.GetCreatureByIndex(cardIndex - 1));
-        aroundCreatures.Add(playingField.GetCreatureByIndex(cardIndex + 1));
+        List<BoardCreature> adjacentCreatures = new List<BoardCreature>
+        {
+            playingField.GetCreatureByIndex(cardIndex - 1),
+            playingField.GetCreatureByIndex(cardIndex + 1),
+        };
 
-        return new List<BoardCreature>(aroundCreatures.Where(boardCreature => boardCreature != null));
+        return new List<BoardCreature>(
+            adjacentCreatures.Where(boardCreature => boardCreature != null)
+        );
     }
 
     public Targetable GetTargetableByPlayerIdAndCardId(string playerId, string cardId)
