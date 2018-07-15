@@ -182,9 +182,11 @@ public class BoardCreature : Targetable
 
     public override void Fight(Targetable other)
     {
+        this.summonAnimation.Play(summonAnimStates[0].name);
+        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);     //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-        LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch();
+        LeanTween.move(this.gameObject, this.transform.position - delta, 1).setEasePunch().setDelay(0.2F);
 
         FXPoolManager.Instance.PlayEffect("SlashVFX", other.transform.position);
         StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, 0.25f });

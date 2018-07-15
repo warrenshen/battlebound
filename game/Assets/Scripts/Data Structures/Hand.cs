@@ -96,10 +96,13 @@ public class Hand
 
         for (int k = 0; k < size; k++)
         {
+            BattleCardObject battleCardObject = this.battleCardObjects[k];
+            if (ActionManager.Instance.GetDragTarget() == battleCardObject)
+                continue;
+
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
 
-            BattleCardObject battleCardObject = this.battleCardObjects[k];
             RedrawOutline(battleCardObject);
             //to-do: do something with hypercard stencil here?
 
