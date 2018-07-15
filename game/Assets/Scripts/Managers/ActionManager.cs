@@ -80,8 +80,8 @@ public class ActionManager : MonoBehaviour
 
         if (target)
         {
-            this.RepositionCard(target);
             this.AdjustCardTilt(target);
+            this.RepositionCard(target);
             if (Input.GetMouseButtonUp(0))
                 ClearDragTarget();
         }
@@ -148,7 +148,7 @@ public class ActionManager : MonoBehaviour
         if (!this.HasDragTarget())
             return;
         //this.sp.sortingOrder = selectedSortingOrder;
-        this.target.Release();
+        //this.target.Release();
         this.target = null;
         this.SetCursor(0);
     }

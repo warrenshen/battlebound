@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Deck
 {
+    //to-do: make deck reference a DeckRaw, so not redundantly storing things like name and DeckClass?
     private string name;
     public string Name => name;
 
@@ -12,11 +13,10 @@ public class Deck
     private List<Card> cards;
     public List<Card> Cards => cards;
 
-    public enum DeckClass : byte { Warrior, Hunter }; //TODO: add more
-    private DeckClass hero;
-    public DeckClass Hero => Hero;
+    private DeckRaw.DeckClass hero;
+    public DeckRaw.DeckClass Hero => Hero;
 
-    public Deck(string name, List<Card> cards, DeckClass hero, Player owner = null)
+    public Deck(string name, List<Card> cards, DeckRaw.DeckClass hero, Player owner = null)
     {
         this.name = name;
         this.cards = cards;
@@ -37,8 +37,12 @@ public class Deck
 
     public void RemoveCard(Card card)
     {
-        //Debug.Log(this.cards.Remove(card));
         this.cards.Remove(card);
+    }
+
+    public int Size()
+    {
+        return cards.Count;
     }
 
     public override string ToString()
@@ -49,10 +53,5 @@ public class Deck
             output += card.Name + ", ";
         }
         return output.Substring(0, output.Length - 1);
-    }
-
-    public int Size()
-    {
-        return cards.Count;
     }
 }

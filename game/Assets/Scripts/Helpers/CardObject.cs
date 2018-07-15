@@ -5,11 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public abstract class CardObject : MouseWatchable
 {
+    protected static Vector3 CARD_BOUNDS = new Vector3(2.3F, 3.5F, 0.2F);
+
     [SerializeField]
     protected Card card;
     public Card Card => card;
 
-    protected Collider colliderBox;
+    protected BoxCollider colliderBox;
     protected float lastClicked;
 
     public HyperCard.Card visual;
@@ -40,30 +42,64 @@ public abstract class CardObject : MouseWatchable
         }
 
         //make render changes according to card class here
-        this.visual = this.VisualizeCard();
         this.LoadCardArtwork();
+        this.visual = this.VisualizeCard();
+
         this.SetThisResetValues();
         this.SetVisualResetValues();
 
         //set sprite etc here
-        colliderBox = gameObject.AddComponent<BoxCollider>() as Collider;
-        colliderBox.GetComponent<BoxCollider>().size = new Vector3(2.3f, 3.5f, 0.2f);
+        colliderBox = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        colliderBox.size = CardObject.CARD_BOUNDS;
     }
 
     protected virtual void LoadCardArtwork()
     {
         this.frontImage = Resources.Load(this.templateData.frontImage) as Texture2D;
         this.backImage = Resources.Load(this.templateData.backImage) as Texture2D;
+    }
 
-        this.visual.SetFrontTiling(this.templateData.frontScale, this.templateData.frontOffset);
-        this.visual.SetBackTiling(this.templateData.backScale, this.templateData.backOffset);
-        this.visual.SetCardArtwork(this.frontImage, this.backImage);
+    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, CardTemplate cardTemplate, Texture2D frontImage = null, Texture2D backImage = null)
+    {
+        if (frontImage == null)
+        {
+            frontImage = Resources.Load(cardTemplate.frontImage) as Texture2D;
+        }
+        if (backImage == null)
+        {
+            backImage = Resources.Load(cardTemplate.backImage) as Texture2D;
+        }
 
-        this.visual.Stencil = ActionManager.Instance.stencilCount;
+        cardVisual.SetFrontTiling(cardTemplate.frontScale, cardTemplate.frontOffset);
+        cardVisual.SetBackTiling(cardTemplate.backScale, cardTemplate.backOffset);
+        cardVisual.SetCardArtwork(frontImage, backImage);
+
+        cardVisual.Stencil = ActionManager.Instance.stencilCount;
         ActionManager.Instance.stencilCount += 3 % 255;
     }
 
-    private HyperCard.Card VisualizeCard()
+    protected static void SetHyperCardFromData(HyperCard.Card cardVisual, CardTemplate cardTemplate)
+    {
+        //set sprites and set textmeshpro labels using TmpTextObjects (?)
+        cardVisual.SetTextFieldWithKey("Title", cardTemplate.name);
+        cardVisual.SetTextFieldWithKey("Description", cardTemplate.description);
+        cardVisual.SetTextFieldWithKey("Cost", cardTemplate.cost.ToString());
+
+        bool isCreature = cardTemplate.cardType == CardRaw.CardType.Creature;
+        if (isCreature)
+        {
+            cardVisual.SetTextFieldWithKey("Attack", cardTemplate.attack.ToString());
+            cardVisual.SetTextFieldWithKey("Health", cardTemplate.health.ToString());
+        }
+        else
+        {
+            cardVisual.GetTextFieldWithKey("Attack").TmpObject.enabled = false;
+            cardVisual.GetTextFieldWithKey("Health").TmpObject.enabled = false;
+        }
+        cardVisual.Redraw();
+    }
+
+    protected HyperCard.Card VisualizeCard()
     {
         GameObject visualPrefab = Resources.Load("Prefabs/Card") as GameObject;
         Transform created = Instantiate(visualPrefab, this.transform).transform as Transform;
@@ -72,23 +108,9 @@ public abstract class CardObject : MouseWatchable
         created.Rotate(0, 180, 0, Space.Self);
 
         HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
-        //set sprites and set textmeshpro labels using TmpTextObjects (?)
-        cardVisual.TmpTextObjects[0].Value = this.card.Name;
-        cardVisual.TmpTextObjects[1].Value = this.templateData.description;
-        cardVisual.TmpTextObjects[2].Value = this.card.Cost.ToString();
+        CardObject.SetHyperCardFromData(cardVisual, this.templateData);
+        CardObject.SetHyperCardArtwork(cardVisual, this.templateData, this.frontImage, this.backImage);
 
-        CreatureCard creatureCard = this.card as CreatureCard;
-        if (creatureCard != null)
-        {
-            cardVisual.TmpTextObjects[3].Value = creatureCard.Attack.ToString();
-            cardVisual.TmpTextObjects[4].Value = creatureCard.Health.ToString();
-        }
-        else
-        {
-            cardVisual.TmpTextObjects[3].TmpObject.enabled = false;
-            cardVisual.TmpTextObjects[4].TmpObject.enabled = false;
-        }
-        cardVisual.Redraw();
         return cardVisual;
     }
 

@@ -893,5 +893,26 @@ namespace HyperCard
             this.Redraw(); //to-do: should REALLY optimize this later, imp!
         }
 
+        public TextMeshProParam GetTextFieldWithKey(string key)
+        {
+            foreach (TextMeshProParam element in this.TmpTextObjects)
+            {
+                if (element.Key != key)
+                    continue;
+
+                return element;
+            }
+            return null;
+        }
+
+        public void SetTextFieldWithKey(string key, string value)
+        {
+            foreach (TextMeshProParam element in this.TmpTextObjects)
+            {
+                if (element.Key != key)
+                    continue;
+                element.Value = value;
+            }
+        }
     }
 }

@@ -611,7 +611,7 @@ public class Player
         cards.Add(new SpellCard("C23", "Blizzard", 1, 60));
         cards.Add(new SpellCard("C24", "Riot Up", 1, 60));
 
-        Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
+        Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;
     }
 }

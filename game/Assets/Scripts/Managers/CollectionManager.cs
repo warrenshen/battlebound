@@ -16,19 +16,21 @@ public class CollectionManager : MonoBehaviour
 {
     [SerializeField]
     private List<Card> collection;
-    private List<Deck> decks;
-    [SerializeField]
-    private Deck chosenDeck;
-    private Dictionary<string, Card> idToCard;
+    private List<DeckRaw> decksRaw;
 
-    private List<CardCutout> cutouts;
+    [SerializeField]
+    private Dictionary<string, Card> idToCard;
+    private List<CollectionCardObject> activeDecklist;  //list that is currently rendered/being changed
+    private int activeDeck;
+
     public GameObject cutoutPrefab;
-    private GameObject panel;
-    private Collider panelCollider;
+    public GameObject deckPanelPrefab;
+
+    private GameObject buildPanel;
+    private Collider buildPanelCollider;
     private GameObject collectionObject;
 
     private CollectionCardObject selectedCard;
-    public GameObject deckPanel;
     private LogEventResponse cardsResponse;
 
     public Dictionary<string, CardTemplate> cardTemplates;
@@ -40,8 +42,8 @@ public class CollectionManager : MonoBehaviour
     {
         Instance = this;
         this.collection = new List<Card>();
-        this.decks = new List<Deck>();
-        this.cutouts = new List<CardCutout>();
+        this.decksRaw = new List<DeckRaw>();
+        this.activeDecklist = new List<CollectionCardObject>();
         this.idToCard = new Dictionary<string, Card>();
 
         string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
@@ -54,8 +56,8 @@ public class CollectionManager : MonoBehaviour
         GetCollectionRequest();
 
         collectionObject = new GameObject("Collection");
-        panel = GameObject.Find("Build Panel");
-        panelCollider = panel.GetComponent<BoxCollider>() as Collider;
+        buildPanel = GameObject.Find("Build Panel");
+        buildPanelCollider = buildPanel.GetComponent<BoxCollider>() as Collider;
     }
 
     private void GetCollectionRequest()
@@ -71,6 +73,20 @@ public class CollectionManager : MonoBehaviour
         GSData decksData = resp.ScriptData.GetGSData("decks");
         Debug.Log(decksData.BaseData.Count + " decks found.");
 
+        this.LoadCollection(resp);
+
+        //Create decks by mapping to cards
+        foreach (string deckName in decksData.BaseData.Keys)
+        {
+            List<string> gdata = decksData.GetStringList(deckName);
+            DeckRaw created = new DeckRaw(deckName, gdata, DeckRaw.DeckClass.Warrior);
+            decksRaw.Add(created);
+        }
+        this.CreateDecksView();
+    }
+
+    private void LoadCollection(LogEventResponse resp)
+    {
         //Create pool of cards
         List<GSData> data = resp.ScriptData.GetGSDataList("cards");
         foreach (GSData elem in data)
@@ -99,20 +115,6 @@ public class CollectionManager : MonoBehaviour
             collection.Add(newCard);
         }
         this.CreateCardObjects();
-
-        //Create decks by mapping to cards
-        foreach (string deckName in decksData.BaseData.Keys)
-        {
-            List<string> gdata = decksData.GetStringList(deckName);
-            Deck created = new Deck(deckName, new List<Card>(), Deck.DeckClass.Warrior);
-            foreach (string cardId in gdata)
-            {
-                //Card newCard = JsonUtility.FromJson<Card>(card.JSON);
-                created.Cards.Add(idToCard[cardId]);
-            }
-            decks.Add(created);
-        }
-        this.CreateDecksView();
     }
 
     private void Update()
@@ -131,9 +133,8 @@ public class CollectionManager : MonoBehaviour
         selectedCard = ActionManager.Instance.GetDragTarget() as CollectionCardObject;     //assumed due to scene file
         Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
         RaycastHit hit;
-        if (selectedCard && panelCollider.Raycast(ray, out hit, 100.0F))
+        if (selectedCard && buildPanelCollider.Raycast(ray, out hit, 100.0F))
         {
-            Debug.Log(hit.collider.name);
             MinifyCard(selectedCard);
         }
         else
@@ -149,36 +150,44 @@ public class CollectionManager : MonoBehaviour
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
+        bool raycastHit = Physics.Raycast(ray, out hit, 100.0F);
 
-        if (panelCollider.Raycast(ray, out hit, 100.0F) && selectedCard)
+        CollectionCardObject hitCardObject = hit.collider.GetComponent<CollectionCardObject>();
+        if (hitCardObject != null && this.activeDecklist.Contains(hitCardObject))
+        {
+            RemoveFromDecklist(hitCardObject);
+        }
+        else if (buildPanelCollider.Raycast(ray, out hit, 100.0F) && selectedCard)
         {
             //add to deck
             AddToDecklist(selectedCard);
-            RevertMinify(selectedCard);
         }
-        else if (Physics.Raycast(ray, out hit, 100.0F))
+        else if (ActionManager.Instance.HasDragTarget())
         {
-            if (hit.collider.name == "Save Button")
-            {
-                SaveCollectionRequest();
-            }
-            else if (hit.collider.name == "Back Button")
-            {
-                SceneManager.LoadScene("Collection");
-            }
+            ActionManager.Instance.GetDragTarget().Release();
         }
+    }
+
+    private void OnSaveButton()
+    {
+        SaveCollectionRequest();
+    }
+
+    private void OnBackButton()
+    {
+        SceneManager.LoadScene("Collection");
     }
 
     private void CreateDecksView()
     {
         GameObject placeholders = GameObject.Find("Deck Panel Placeholders");
         int count = 0;
-        foreach (Deck deck in decks)
+        foreach (DeckRaw deckRaw in decksRaw)
         {
             Transform t = placeholders.transform.GetChild(count);
-            GameObject created = GameObject.Instantiate(deckPanel, t.position, t.localRotation);
-            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
-            created.GetComponent<DeckPanel>().Initialize(deck);
+            GameObject created = GameObject.Instantiate(deckPanelPrefab, t.position, t.localRotation);
+            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deckRaw.name;
+            created.GetComponent<DeckPanel>().Initialize(deckRaw);
             ++count;
         }
     }
@@ -186,38 +195,33 @@ public class CollectionManager : MonoBehaviour
     public void AddToDecklist(CollectionCardObject collectionCardObject)
     {
         //add to data structure
-        chosenDeck.AddCard(collectionCardObject.Card);
-        AddToBuildPanel(collectionCardObject);
-    }
+        collectionCardObject.SetMinify(true);
+        this.activeDecklist.Add(collectionCardObject);
 
-    public void AddToBuildPanel(CardObject cardObject)
-    {
-        //cardObject.gameObject.SetActive(false);
-        //create and set visuals
-        GameObject instance = Instantiate(cutoutPrefab, Vector3.zero, Quaternion.identity);
-        CardCutout cutout = instance.AddComponent<CardCutout>();
-        //cutout.Initialize(cardObject as CollectionCardObject, chosenDeck.Cards);
-        cutouts.Add(cutout);
         //reposition all cutouts
         RenderDecklist();
     }
 
-    public void RemoveFromDecklist(CollectionCardObject collectionCardObject, CardCutout cutout)
+    public void RemoveFromDecklist(CollectionCardObject collectionCardObject)
     {
-        chosenDeck.RemoveCard(collectionCardObject.Card);
-        collectionCardObject.gameObject.SetActive(true);
+        collectionCardObject.SetMinify(false);
 
-        cutouts.Remove(cutout);
-        //do some resetting of collection/gray cards, reposition the rest of the cards in the panel
-        RenderDecklist();
+        this.activeDecklist.Remove(collectionCardObject);
+        collectionCardObject.Release();
+        RenderDecklist();  //do some resetting of collection/gray cards, reposition the rest of the cards in the panel
     }
 
     private void RenderDecklist()
     {
-        for (int i = 0; i < cutouts.Count; ++i)
+        for (int i = 0; i < this.activeDecklist.Count; i++)
         {
-            cutouts[i].PositionForDecklist(i);
+            this.PositionForDecklist(this.activeDecklist[i], i);
         }
+    }
+
+    private void PositionForDecklist(CollectionCardObject targetObject, int index)
+    {
+        CardTween.move(targetObject, buildPanel.transform.position + Vector3.down * (index + 1) * 0.6F, ActionManager.TWEEN_DURATION);
     }
 
     private void SaveCollectionRequest()
@@ -225,13 +229,13 @@ public class CollectionManager : MonoBehaviour
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("CreateUpdatePlayerDeck");
         List<string> cardIds = new List<string>();
-        foreach (Card card in chosenDeck.Cards)
+        foreach (CollectionCardObject elem in this.activeDecklist)
         {
-            cardIds.Add(card.Id);
+            cardIds.Add(elem.Card.Id);
         }
         request.SetEventAttribute("cardIds", cardIds);
-        request.SetEventAttribute("previousName", chosenDeck.Name);
-        request.SetEventAttribute("name", chosenDeck.Name);
+        request.SetEventAttribute("previousName", decksRaw[activeDeck].name);
+        request.SetEventAttribute("name", decksRaw[activeDeck].name);   //to-do, let name be changed, and pull from input field
         request.Send(SaveCollectionSuccess, Error);
     }
 
@@ -273,12 +277,12 @@ public class CollectionManager : MonoBehaviour
 
     private Transform CreateGrayed(Transform source, Card card)
     {
-        GameObject created = new GameObject(card.Name + "_gray");
+        GameObject created = new GameObject("_gray_" + card.Name.Substring(0, 5));
         created.transform.position = source.position;
 
         //do visual stuff
         CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
-        collectionCardObject.Initialize(card);
+        collectionCardObject.InitializeHollow(card);
         collectionCardObject.visual.Stencil = -100;
         collectionCardObject.visual.SetGrayscale(true);
         collectionCardObject.visual.SetOutline(false);
@@ -289,27 +293,27 @@ public class CollectionManager : MonoBehaviour
     private void MinifyCard(CollectionCardObject collectionCardObject)
     {
         if (!collectionCardObject.minified)
-            collectionCardObject.Minify(true);
+            collectionCardObject.SetMinify(true);
     }
 
     private void RevertMinify(CollectionCardObject collectionCardObject)
     {
         if (collectionCardObject.minified)
-            collectionCardObject.Minify(false);
+            collectionCardObject.SetMinify(false);
         selectedCard = null;
     }
 
-    public void RotateToDeck(Deck deck)
+    public void RotateToDeck(DeckRaw deckRaw)
     {
-        LeanTween.rotateY(Camera.main.gameObject, 2f, 1f).setEaseOutCubic();
-        Debug.Log("# of cards in deck: " + deck.Cards.Count);
-        List<Card> existing = new List<Card>(deck.Cards);
-        chosenDeck = deck;
-        GameObject.Find("Deck Name").GetComponent<TextMeshPro>().text = deck.Name;
+        this.activeDeck = decksRaw.IndexOf(deckRaw);
+        Debug.Log("# of cards in deck: " + deckRaw.cardIds.Count);
 
-        foreach (Card card in existing)
+        GameObject.Find("Deck Name").GetComponent<TextMeshPro>().text = deckRaw.name;
+        LeanTween.rotateY(Camera.main.gameObject, 2f, 1f).setEaseOutCubic();
+
+        foreach (string cardId in deckRaw.cardIds)
         {
-            AddToBuildPanel(card.wrapper);
+            this.AddToDecklist(idToCard[cardId].wrapper as CollectionCardObject);
         }
     }
 }

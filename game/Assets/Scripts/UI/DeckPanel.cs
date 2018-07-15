@@ -5,7 +5,7 @@ using TMPro;
 
 public class DeckPanel : BasicButton
 {
-    private Deck deck;
+    private DeckRaw deckRaw;
 
     // Use this for initialization
     void Start()
@@ -13,15 +13,15 @@ public class DeckPanel : BasicButton
         base.Initialize();
     }
 
-    public void Initialize(Deck deck)
+    public void Initialize(DeckRaw deckRaw)
     {
-        this.deck = deck;
-        this.transform.Find("Deck Info").GetComponent<TextMeshPro>().text = deck.ToString();
+        this.deckRaw = deckRaw;
+        this.transform.Find("Deck Info").GetComponent<TextMeshPro>().text = deckRaw.ToString();
     }
 
     public override void MouseUp()
     {
-        CollectionManager.Instance.RotateToDeck(deck);
+        CollectionManager.Instance.RotateToDeck(this.deckRaw);
     }
 
 }

@@ -5,8 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class CollectionCardObject : CardObject
 {
+    protected static Vector3 CUTOUT_BOUNDS = new Vector3(3.0F, 0.6F, 0.2F);
+    protected static float FOCUS_OFFSET = 0.2F;
+
     [SerializeField]
     public bool minified;
+    public HyperCard.Card cutout;
 
 
     public override void Initialize(Card card)
@@ -19,6 +23,35 @@ public class CollectionCardObject : CardObject
         this.templateData = CollectionManager.Instance.cardTemplates[card.Name];
         //does the visual stuff using templateData
         base.Initialize(card);
+        //this is always at the end
+        CreateCutout();
+    }
+
+    public void InitializeHollow(Card card) //no cutout, no wrapper assignment, no collider
+    {
+        this.templateData = CollectionManager.Instance.cardTemplates[card.Name];
+        this.card = card;
+
+        //make render changes according to card class here
+        this.visual = this.VisualizeCard();
+        this.LoadCardArtwork();
+        this.SetThisResetValues();
+        this.SetVisualResetValues();
+    }
+
+    private void CreateCutout()
+    {
+        GameObject instance = Instantiate(CollectionManager.Instance.cutoutPrefab, Vector3.zero, Quaternion.identity);
+        instance.transform.parent = this.transform;
+        instance.transform.localPosition = Vector3.zero;
+        instance.transform.Rotate(0, 180, 0);
+
+        cutout = instance.GetComponent<HyperCard.Card>();
+        cutout.SetOutline(false);
+
+        CardObject.SetHyperCardFromData(cutout, this.templateData);
+        CardObject.SetHyperCardArtwork(cutout, this.templateData);
+        cutout.gameObject.SetActive(false);
     }
 
     public override void EnterHover()
@@ -26,11 +59,10 @@ public class CollectionCardObject : CardObject
         if (ActionManager.Instance.HasDragTarget())
             return;
         //set defaults of hypercard
-        this.SetVisualResetValues();
 
         float scaling = 1.1f;
         this.visual.transform.localScale = scaling * this.visual.reset.scale;
-        this.visual.transform.Translate(Vector3.forward * 0.33f, Space.Self);
+        this.visual.transform.Translate(Vector3.forward * CollectionCardObject.FOCUS_OFFSET, Space.Self);
 
         this.visual.SetOutline(true);
     }
@@ -48,7 +80,7 @@ public class CollectionCardObject : CardObject
 
     public override void MouseDown()
     {
-        this.visual.transform.Translate(Vector3.forward * 0.33f, Space.Self);
+        this.visual.transform.Translate(Vector3.forward * CollectionCardObject.FOCUS_OFFSET, Space.Self);
         this.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
         ActionManager.Instance.SetDragTarget(this);
     }
@@ -67,19 +99,23 @@ public class CollectionCardObject : CardObject
 
     public void DoubleClickUp()
     {
-        Debug.Log(gameObject.name + " double clicked.");
+        CollectionManager.Instance.AddToDecklist(this);
     }
 
-    public void Minify(bool value)
+    public void SetMinify(bool value)
     {
         //Create CardCutout
-        this.minified = true;
-        this.visual.gameObject.SetActive(false);
-        GameObject instance = Instantiate(CollectionManager.Instance.cutoutPrefab, Vector3.zero, Quaternion.identity);
-        instance.transform.parent = this.transform;
-        instance.transform.localPosition = Vector3.zero;
+        this.minified = value;
+        this.visual.gameObject.SetActive(!value);
+        this.cutout.gameObject.SetActive(value);
 
-        CardCutout cutout = instance.AddComponent<CardCutout>();
-        cutout.Initialize(this); //, chosenDeck.Cards);
+        if (value)
+        {
+            this.colliderBox.size = CollectionCardObject.CUTOUT_BOUNDS;
+        }
+        else
+        {
+            this.colliderBox.size = CollectionCardObject.CARD_BOUNDS;
+        }
     }
 }

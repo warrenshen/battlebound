@@ -336,13 +336,13 @@ public class BoardCreature : Targetable
 
     private void UpdateStatText()
     {
-        //0 = title, 1 = description, 2 = price, 3 = attack, 4 = health
-        this.visual.TmpTextObjects[0].Value = this.name;
-        this.visual.TmpTextObjects[2].Value = this.cost.ToString();
-        this.visual.TmpTextObjects[3].Value = this.attack.ToString();
-        this.visual.TmpTextObjects[4].Value = this.health.ToString();
+        this.visual.SetTextFieldWithKey("Title", this.name);
+        this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
+        this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
+        this.visual.SetTextFieldWithKey("Health", this.health.ToString());
 
-        //float scaleFactor = 1.6f;
+        //to-do:
+        //float scaleFactor = 1.3f;
         //LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
     }
 
