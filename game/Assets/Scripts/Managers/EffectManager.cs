@@ -688,7 +688,6 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-
         foreach (string effectName in EFFECTS_BATTLE_CRY)
         {
             if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
@@ -860,7 +859,7 @@ public class EffectManager : MonoBehaviour
             // TODO: animate as bomb or whatever.
             attackingCreature.Fight(defendingCreature);
 
-            int damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
+            int damageDone = defendingCreature.TakeDamage(20);
             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
             defendingCreature.Redraw();
@@ -879,9 +878,10 @@ public class EffectManager : MonoBehaviour
 
             List<Effect> effects = new List<Effect>();
 
+            // TODO: animate as bomb or whatever.
             attackingCreature.Fight(defendingAvatar);
 
-            int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
+            int damageDone = defendingAvatar.TakeDamage(20);
             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
             defendingAvatar.Redraw();
