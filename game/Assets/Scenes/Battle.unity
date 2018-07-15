@@ -443,7 +443,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300016, guid: 4029ecf14233cea4980157b99d0cbc26, type: 3}
-  m_Color: {r: 0.103773594, g: 0.103773594, b: 0.103773594, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11389,7 +11389,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300016, guid: 4029ecf14233cea4980157b99d0cbc26, type: 3}
-  m_Color: {r: 0.05660379, g: 0.05660379, b: 0.05660379, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -27073,7 +27073,6 @@ MonoBehaviour:
   boardOrBattleLayer: 0
   mouseDownTargetable: {fileID: 0}
   attackCommand: {fileID: 490075135}
-  stencilCount: 0
 --- !u!114 &1237661228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27085,7 +27084,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 478c1ead63a464c3490d0f7a4348fbfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowPan: 0
   cardOffsetFromCamera: 9.5
   cursors:
   - {fileID: 2800000, guid: 023379cca75b34b49bf5b4f9c8126ea2, type: 3}
@@ -27095,8 +27093,10 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 8739c88938aa94db8979a2a51534165a, type: 3}
   - {fileID: 2800000, guid: 64d4b5ccf31da40c184ed9593eb3f8e9, type: 3}
   - {fileID: 2800000, guid: 390549b93bfb14ae09322699dbccc292, type: 3}
+  stencilCount: 0
   active: 1
   target: {fileID: 0}
+  lastHitWatchable: {fileID: 0}
 --- !u!114 &1237661229
 MonoBehaviour:
   m_ObjectHideFlags: 0

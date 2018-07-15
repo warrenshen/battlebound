@@ -155,7 +155,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4746362038484782}
   - component: {fileID: 114704530023946250}
-  - component: {fileID: 114813129736153006}
   - component: {fileID: 111045734671451944}
   - component: {fileID: 137710019318793566}
   m_Layer: 13
@@ -1303,7 +1302,7 @@ Animation:
   - {fileID: 7400000, guid: ee4b0bda4db48294dadaacb541d30cb8, type: 2}
   - {fileID: 7400000, guid: 7199d3cad7e84b046984f8312704d035, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
 --- !u!114 &114704530023946250
@@ -10580,18 +10579,6 @@ MonoBehaviour:
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
   updatePrefabs: 1
---- !u!114 &114813129736153006
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1226899357227644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
 --- !u!137 &137710019318793566
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

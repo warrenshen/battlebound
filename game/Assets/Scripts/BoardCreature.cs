@@ -157,6 +157,7 @@ public class BoardCreature : Targetable
             this.summonAnimStates.Add(state);
         }
         this.summonAnimation.Play(summonAnimStates[0].name);
+        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);
     }
 
     public override string GetCardId()

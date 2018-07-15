@@ -305,7 +305,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4704335192054728}
   - component: {fileID: 114880324826055352}
-  - component: {fileID: 114020112817746110}
   - component: {fileID: 111386483004552980}
   - component: {fileID: 137410796402764096}
   m_Layer: 13
@@ -839,21 +838,9 @@ Animation:
   - {fileID: 7400000, guid: 8a71dff4086933949a76ed6382732533, type: 2}
   - {fileID: 7400000, guid: 05d1785c7584abc4b85cb95d2ea5d42d, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &114020112817746110
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1746335479449252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
 --- !u!114 &114880324826055352
 MonoBehaviour:
   m_ObjectHideFlags: 1
