@@ -141,15 +141,6 @@ public class Player
         this.maxMana = Math.Min(maxMana + 10, 100);
         this.mana = maxMana;
 
-        //board resetting
-        Board.Instance.OnPlayerStartTurn(this.id);
-        this.avatar.OnStartTurn();
-
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
-        {
-            DrawCard();
-        }
-
         RenderTurnStart();
     }
 
@@ -167,6 +158,7 @@ public class Player
         Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
         GameObject light = GameObject.Find("Point Light");
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
+
         this.hand.RepositionCards();
     }
 
@@ -597,7 +589,7 @@ public class Player
         cards.Add(new CreatureCard("C2", "Cursed Imp", 1, 20, 10, 40));
         cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1, 40, 30, 60));
         cards.Add(new SpellCard("C4", "Unstable Power", 4, 30));
-        cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20));
+        //cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20));
         cards.Add(new CreatureCard("C6", "Firebug Catelyn", 1, 10, 10, 10));
         cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1, 20, 20, 30));
         cards.Add(new CreatureCard("C8", "Taji the Fearless", 1, 30, 40, 30));
@@ -614,6 +606,10 @@ public class Player
         cards.Add(new CreatureCard("C19", "Bombshell Bombadier", 1, 30, 20, 40));
         cards.Add(new SpellCard("C20", "Touch of Zeus", 1, 20));
         //cards.Add(new SpellCard("C21", "The Seven", 1, 40));
+        cards.Add(new SpellCard("C21", "Freeze", 1, 20));
+        cards.Add(new SpellCard("C22", "Deep Freeze", 1, 40));
+        cards.Add(new SpellCard("C23", "Blizzard", 1, 60));
+        cards.Add(new SpellCard("C24", "Riot Up", 1, 60));
 
         Deck chosen = new Deck(deckName, cards, Deck.DeckClass.Hunter, owner: this);
         return chosen;

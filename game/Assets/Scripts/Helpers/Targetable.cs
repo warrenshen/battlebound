@@ -18,6 +18,7 @@ public abstract class Targetable : MonoBehaviour
 
     public abstract string GetCardId();
     public abstract string GetPlayerId();
+    public abstract bool CanAttackNow();
 
     public abstract void Fight(Targetable other);
     public abstract int TakeDamage(int amount);

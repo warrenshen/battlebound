@@ -328,7 +328,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         if (this.challengeId == null)
         {
-            Debug.LogWarning("Cannot send SendChallengePlaySpellTargeted( request without challengeId set.");
+            Debug.LogWarning("Cannot send SendChallengePlaySpellTargeted request without challengeId set.");
             return;
         }
 
@@ -348,6 +348,32 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengePlaySpellTargetedError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengePlaySpellTargeted request error.");
+        OnChallengeRequestError();
+    }
+
+    public void SendChallengePlaySpellUntargetedRequest(string cardId)
+    {
+        if (this.challengeId == null)
+        {
+            Debug.LogWarning("Cannot send SendChallengePlaySpellUntargeted request without challengeId set.");
+            return;
+        }
+
+        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        request.SetEventKey("ChallengePlaySpellUntargeted");
+        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("cardId", cardId);
+        request.Send(OnChallengePlaySpellTargetedSuccess, OnChallengePlaySpellTargetedError);
+    }
+
+    private void OnChallengePlaySpellUntargetedSuccess(LogChallengeEventResponse response)
+    {
+        Debug.Log("ChallengePlaySpellUntargeted request success.");
+    }
+
+    private void OnChallengePlaySpellUntargetedError(LogChallengeEventResponse response)
+    {
+        Debug.LogError("ChallengePlaySpellUntargeted request error.");
         OnChallengeRequestError();
     }
 

@@ -602,17 +602,22 @@ public class EffectManager : MonoBehaviour
 
     public void OnStartTurn(string playerId)
     {
-        Board.PlayingField field = Board.Instance.GetFieldByPlayerId(playerId);
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+
+        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            player.DrawCards(1);
+        }
+
+        player.Avatar.OnStartTurn();
 
         List<Effect> effects = new List<Effect>();
 
-        for (int i = 0; i < 6; i += 1)
+        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        foreach (BoardCreature boardCreature in boardCreatures)
         {
-            BoardCreature boardCreature = field.GetCreatureByIndex(i);
-            if (boardCreature == null)
-            {
-                continue;
-            }
+            // Handles redrawing creature.
+            boardCreature.OnStartTurn();
 
             foreach (string effectName in EFFECTS_START_TURN)
             {
@@ -637,23 +642,17 @@ public class EffectManager : MonoBehaviour
     {
         this.callback = callback;
 
-        Board.PlayingField field = Board.Instance.GetFieldByPlayerId(playerId);
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+
+        //player.Avatar.OnEndTurn();
 
         List<Effect> effects = new List<Effect>();
 
-        for (int i = 0; i < 6; i += 1)
+        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        foreach (BoardCreature boardCreature in boardCreatures)
         {
-            BoardCreature boardCreature = field.GetCreatureByIndex(i);
-            if (boardCreature == null)
-            {
-                continue;
-            }
-
-            /*
-             * Redraw each creature, handles things like:
-             * - Creature can attack outline
-             */
-            boardCreature.Redraw();
+            // Handles redrawing creature.
+            boardCreature.OnEndTurn();
 
             foreach (string effectName in EFFECTS_END_TURN)
             {
@@ -726,6 +725,11 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError("Fight called when canAttack is 0 or below!");
                 return;
             }
+            else if (attackingCreature.IsFrozen > 0)
+            {
+                Debug.LogError("Fight called when isFrozen is greater than 0!");
+                return;
+            }
             else
             {
                 attackingCreature.DecrementCanAttack();
@@ -768,6 +772,11 @@ public class EffectManager : MonoBehaviour
             if (attackingCreature.CanAttack <= 0)
             {
                 Debug.LogError("Fight called when canAttack is 0 or below!");
+                return;
+            }
+            else if (attackingCreature.IsFrozen > 0)
+            {
+                Debug.LogError("Fight called when isFrozen is greater than 0!");
                 return;
             }
             else
@@ -909,23 +918,30 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    public void OnSpellTargetedPlay(BattleCardObject battleCardObject, BoardCreature targetedCreature)
+    public void OnSpellTargetedPlay(
+        BattleCardObject battleCardObject,
+        BoardCreature targetedCreature
+    )
     {
+        string playerId = battleCardObject.Owner.Id;
+
         SpellCard spellCard = battleCardObject.Card as SpellCard;
-        spellCard.Activate(targetedCreature);
 
         List<Effect> effects = new List<Effect>();
 
         switch (spellCard.Name)
         {
             case SpellCard.SPELL_NAME_LIGHTNING_BOLT:
-                int damageTaken = targetedCreature.TakeDamage(30);
-                effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-
-                if (targetedCreature.Health <= 0)
-                {
-                    effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
-                }
+                effects = SpellTargetedLightningBolt(playerId, targetedCreature);
+                break;
+            case SpellCard.SPELL_NAME_UNSTABLE_POWER:
+                effects = SpellTargetedUnstablePower(playerId, targetedCreature);
+                break;
+            case SpellCard.SPELL_NAME_FREEZE:
+                effects = SpellTargetedFreeze(playerId, targetedCreature);
+                break;
+            case SpellCard.SPELL_NAME_DEEP_FREEZE:
+                effects = SpellTargetedDeepFreeze(playerId, targetedCreature);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
@@ -933,6 +949,108 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
+    }
+
+    private List<Effect> SpellTargetedLightningBolt(string playerId, BoardCreature targetedCreature)
+    {
+        SoundManager.Instance.PlaySound("ShockSFX", targetedCreature.transform.position);
+        FXPoolManager.Instance.PlayEffect("LightningBoltVFX", targetedCreature.transform.position);
+
+        List<Effect> effects = new List<Effect>();
+
+        int damageTaken = targetedCreature.TakeDamage(30);
+        effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+
+        if (targetedCreature.Health <= 0)
+        {
+            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
+        }
+
+        return effects;
+    }
+
+    private List<Effect> SpellTargetedUnstablePower(string playerId, BoardCreature targetedCreature)
+    {
+        targetedCreature.AddAttack(30);
+        targetedCreature.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
+
+        // No triggered effects on unstable power for now.
+        return new List<Effect>();
+    }
+
+    private List<Effect> SpellTargetedFreeze(string playerId, BoardCreature targetedCreature)
+    {
+        targetedCreature.Freeze(1);
+
+        // No triggered effects on freeze for now.
+        return new List<Effect>();
+    }
+
+    private List<Effect> SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)
+    {
+        targetedCreature.Freeze(2);
+
+        List<BoardCreature> aroundCreatures =
+            Board.Instance.GetAroundCreaturesByPlayerIdAndCardId(
+                targetedCreature.Owner.Id,
+                targetedCreature.GetCardId()
+            );
+
+        foreach (BoardCreature aroundCreature in aroundCreatures)
+        {
+            aroundCreature.Freeze(1);
+        }
+
+        // No triggered effects on freeze for now.
+        return new List<Effect>();
+    }
+
+    public void OnSpellUntargetedPlay(BattleCardObject battleCardObject)
+    {
+        string playerId = battleCardObject.Owner.Id;
+
+        SpellCard spellCard = battleCardObject.Card as SpellCard;
+
+        List<Effect> effects;
+
+        switch (spellCard.Name)
+        {
+            case SpellCard.SPELL_NAME_RIOT_UP:
+                effects = SpellUntargetedRiotUp(playerId);
+                break;
+            case SpellCard.SPELL_NAME_BLIZZARD:
+                effects = SpellUntargetedBlizzard(playerId);
+                break;
+            default:
+                Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
+                break;
+        }
+    }
+
+    private List<Effect> SpellUntargetedRiotUp(string playerId)
+    {
+        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        foreach (BoardCreature boardCreature in boardCreatures)
+        {
+            boardCreature.GrantShield();
+        }
+
+        // No triggered effects on grant shield for now.
+        return new List<Effect>();
+    }
+
+    private List<Effect> SpellUntargetedBlizzard(string playerId)
+    {
+        List<BoardCreature> opponentAliveCreatures =
+            Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        foreach (BoardCreature aliveCreature in opponentAliveCreatures)
+        {
+            aliveCreature.Freeze(1);
+        }
+
+        // No triggered effects on freeze for now.
+        return new List<Effect>();
     }
 
     private List<Effect> GetEffectsOnCreatureDamageDealt(

@@ -231,7 +231,7 @@ public class BattleManager : MonoBehaviour
                 return;
             }
 
-            if (!mouseDownTargetable.Owner.HasTurn || mouseDownTargetable.CanAttack <= 0)
+            if (!mouseDownTargetable.CanAttackNow())
             {
                 return;
             }
@@ -348,6 +348,11 @@ public class BattleManager : MonoBehaviour
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
 
+        //do some turn transition render
+        SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
+        SetPassiveCursor();
+        //to-do: action manager set active = false, but that makes singleplayer broken
+
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(activePlayer.Id);
 
@@ -361,12 +366,6 @@ public class BattleManager : MonoBehaviour
         }
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
-
-        //do some turn transition render
-        SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
-        SetPassiveCursor();
-        //to-do: action manager set active = false, but that makes singleplayer broken
-
         // TODO: should we move newTurn stuff to after OnStartTurn call?
         // But draw card should be before.
         activePlayer.NewTurn();
@@ -543,18 +542,20 @@ public class BattleManager : MonoBehaviour
                 if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle")))
                 {
                     target.Owner.PlayCard(target);
-                    this.PlayTargetedSpell(target, hit);
+                    PlayTargetedSpell(target, hit);
                     return true;
                 }
                 else
                 {
+                    Debug.Log("Returning");
                     ActionManager.Instance.ResetTarget();
                     return false;
                 }
             }
             else  //not targeted spell, play freely
             {
-                this.UseCard(target.Owner, target); //change to own board spell func
+                target.Owner.PlayCard(target);
+                PlayUntargetedSpell(target);
                 return true;
             }
         }
@@ -834,13 +835,37 @@ public class BattleManager : MonoBehaviour
     }
 
     /*
-     * Play spell card after receiving play card move from server. 
+     * Play targeted spell card after receiving play card move from server. 
      */
-    public void PlayTargetedSpell(BattleCardObject spellCardObject, BoardCreature victimCreature)
+    public void PlayTargetedSpell(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
-        ((SpellCard)spellCardObject.Card).Activate(victimCreature);
-        UseCard(spellCardObject.Owner, spellCardObject);
+        EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
+        UseCard(battleCardObject.Owner, battleCardObject);
     }
+
+    /*
+ * Play spell card after user on-device drags card from hand to field. 
+ */
+    public void PlayUntargetedSpell(BattleCardObject battleCardObject, bool isFromServer = false)
+    {
+        EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
+        UseCard(battleCardObject.Owner, battleCardObject);
+
+        if (isFromServer && InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            BattleSingleton.Instance.SendChallengePlaySpellUntargetedRequest(
+                battleCardObject.Card.Id
+            );
+        }
+    }
+
+    ///*
+    // * Play untargeted spell card after receiving play card move from server. 
+    // */
+    //public void PlayUntargetedSpell(BattleCardObject battleCardObject)
+    //{
+
+    //}
 
     public void UseCard(Player player, BattleCardObject battleCardObject)
     {
@@ -962,6 +987,7 @@ public class BattleManager : MonoBehaviour
             BattleCardObject target = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
             target.Initialize(opponent, card);
             opponent.PlayCard(target);
+            PlayUntargetedSpell(target, true);
         }
         else
         {
@@ -972,6 +998,7 @@ public class BattleManager : MonoBehaviour
                 return;
             }
             opponent.PlayCard(target);
+            PlayUntargetedSpell(target, true);
         }
     }
 
