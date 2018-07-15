@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System;
 
 [System.Serializable]
 public class PlayerState
@@ -436,6 +435,17 @@ public class PlayerState
                 return true;
             }
 
+            if (this.abilities.Count != other.abilities.Count)
+            {
+                return false;
+            }
+
+            List<string> exceptAbilities = this.abilities.Except(other.abilities).ToList();
+            if (exceptAbilities.Count > 0)
+            {
+                return false;
+            }
+
             return (
                 this.id == other.Id &&
                 this.category == other.Category &&
@@ -451,7 +461,6 @@ public class PlayerState
                 this.canAttack == other.CanAttack &&
                 this.hasShield == other.HasShield &&
                 this.spawnRank == other.SpawnRank
-            //this.abilities.SequenceEqual(other.Abilities)
             );
         }
 
@@ -512,6 +521,12 @@ public class PlayerState
             else if (this.spawnRank != other.SpawnRank)
             {
                 return string.Format("SpawnRank: {0} vs {1}", this.spawnRank, other.SpawnRank);
+            }
+
+            List<string> exceptAbilities = this.abilities.Except(other.abilities).ToList();
+            if (exceptAbilities.Count > 0)
+            {
+                return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
             }
 
             return null;
