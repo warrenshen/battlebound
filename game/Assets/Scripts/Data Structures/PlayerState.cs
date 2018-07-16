@@ -430,38 +430,7 @@ public class PlayerState
 
         public bool Equals(ChallengeCard other)
         {
-            if (this.id == "EMPTY" && other.Id == "EMPTY")
-            {
-                return true;
-            }
-
-            if (this.abilities.Count != other.abilities.Count)
-            {
-                return false;
-            }
-
-            List<string> exceptAbilities = this.abilities.Except(other.abilities).ToList();
-            if (exceptAbilities.Count > 0)
-            {
-                return false;
-            }
-
-            return (
-                this.id == other.Id &&
-                this.category == other.Category &&
-                this.name == other.Name &&
-                this.level == other.Level &&
-                this.cost == other.Cost &&
-                this.costStart == other.CostStart &&
-                this.health == other.Health &&
-                this.healthStart == other.HealthStart &&
-                this.healthMax == other.HealthMax &&
-                this.attack == other.Attack &&
-                this.attackStart == other.AttackStart &&
-                this.canAttack == other.CanAttack &&
-                this.hasShield == other.HasShield &&
-                this.spawnRank == other.SpawnRank
-            );
+            return FirstDiff(other) == null;
         }
 
         public string FirstDiff(ChallengeCard other)
@@ -523,10 +492,30 @@ public class PlayerState
                 return string.Format("SpawnRank: {0} vs {1}", this.spawnRank, other.SpawnRank);
             }
 
-            List<string> exceptAbilities = this.abilities.Except(other.abilities).ToList();
-            if (exceptAbilities.Count > 0)
+            if (this.abilities == null && other.abilities != null)
             {
-                return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
+                return string.Format("Abilities existence: {0} vs {1}", this.abilities != null, other.abilities != null);
+            }
+            if (this.abilities != null && other.abilities == null)
+            {
+                return string.Format("Abilities existence: {0} vs {1}", this.abilities != null, other.abilities != null);
+            }
+
+            if (
+                this.abilities != null &&
+                other.abilities != null
+            )
+            {
+                if (this.abilities.Count != other.abilities.Count)
+                {
+                    return string.Format("Abilities length: {0} vs {1}", this.abilities.Count, other.abilities.Count);
+                }
+
+                List<string> exceptAbilities = this.abilities.Except(other.abilities).ToList();
+                if (exceptAbilities.Count > 0)
+                {
+                    return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
+                }
             }
 
             return null;
