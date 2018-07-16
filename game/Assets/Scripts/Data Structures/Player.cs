@@ -106,7 +106,7 @@ public class Player
 
     public void PlayCard(BattleCardObject battleCardObject)
     {
-        this.mana -= battleCardObject.Card.Cost;
+        this.mana -= battleCardObject.Card.GetCost();
         RenderMana();
         this.hand.RemoveByCardId(battleCardObject.Card.Id);
         this.hand.RepositionCards();
@@ -429,7 +429,7 @@ public class Player
         this.keptMulliganCards = new List<Card>();
         this.removedMulliganCards = new List<Card>();
 
-        this.hand.RepositionCards();
+        RenderTurnStart();
         BattleManager.Instance.HideMulliganOverlay(this);
     }
 
@@ -510,31 +510,7 @@ public class Player
             for (int i = 0; i < this.hand.Size(); i += 1)
             {
                 Card card = this.hand.GetCardObjectByIndex(i).Card;
-                PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
-
-                challengeCard.SetId(card.Id);
-                challengeCard.SetName(card.Name);
-                //challengeCard.SetDescription(boardCreature.Card.Description);
-                //challengeCard.SetLevel(boardCreature.Card.Level);
-                challengeCard.SetCost(card.Cost);
-                challengeCard.SetCostStart(card.Cost);
-
-                if (card.GetType() == typeof(CreatureCard))
-                {
-                    CreatureCard creatureCard = (CreatureCard)card;
-                    challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
-                    challengeCard.SetHealth(creatureCard.Health);
-                    challengeCard.SetHealthStart(creatureCard.Health);
-                    challengeCard.SetHealthMax(creatureCard.Health);
-                    challengeCard.SetAttack(creatureCard.Attack);
-                    challengeCard.SetAttackStart(creatureCard.Attack);
-                }
-                else if (card.GetType() == typeof(SpellCard))
-                {
-                    challengeCard.SetCategory(Card.CARD_CATEGORY_SPELL);
-                }
-                // abilities
-
+                PlayerState.ChallengeCard challengeCard = card.GetChallengeCard();
                 handCards.Add(challengeCard);
             }
         }
@@ -558,13 +534,13 @@ public class Player
                 challengeCard.SetName(boardCreature.CreatureCard.Name);
                 //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
                 challengeCard.SetLevel(boardCreature.CreatureCard.Level);
-                challengeCard.SetCost(boardCreature.CreatureCard.Cost);
-                challengeCard.SetCostStart(boardCreature.CreatureCard.Cost);
+                challengeCard.SetCost(boardCreature.CreatureCard.GetCost());
+                challengeCard.SetCostStart(boardCreature.CreatureCard.GetCost());
                 challengeCard.SetHealth(boardCreature.Health);
-                challengeCard.SetHealthStart(boardCreature.CreatureCard.Health);
+                challengeCard.SetHealthStart(boardCreature.CreatureCard.GetHealth());
                 challengeCard.SetHealthMax(boardCreature.MaxHealth);
                 challengeCard.SetAttack(boardCreature.Attack);
-                challengeCard.SetAttackStart(boardCreature.CreatureCard.Attack);
+                challengeCard.SetAttackStart(boardCreature.CreatureCard.GetAttack());
                 challengeCard.SetCanAttack(boardCreature.CanAttack);
                 challengeCard.SetHasShield(boardCreature.HasShield ? 1 : 0);
                 challengeCard.SetSpawnRank(boardCreature.SpawnRank);
@@ -584,32 +560,32 @@ public class Player
 
         //do manually for now
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C0", "Blessed Newborn", 2, 20, 10, 10));
-        cards.Add(new CreatureCard("C1", "Temple Guardian", 1, 60, 40, 70));
-        cards.Add(new CreatureCard("C2", "Cursed Imp", 1, 20, 10, 40));
-        cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1, 40, 30, 60));
-        cards.Add(new SpellCard("C4", "Unstable Power", 4, 30));
-        //cards.Add(new CreatureCard("C5", "Pyre Dancer", 1, 30, 30, 20));
-        cards.Add(new CreatureCard("C6", "Firebug Catelyn", 1, 10, 10, 10));
-        cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1, 20, 20, 30));
-        cards.Add(new CreatureCard("C8", "Taji the Fearless", 1, 30, 40, 30));
-        cards.Add(new CreatureCard("C9", "Young Kyo", 1, 20, 30, 20));
-        cards.Add(new CreatureCard("C10", "Emberkitty", 1, 30, 30, 40));
-        cards.Add(new CreatureCard("C11", "Firestrided Tigress", 1, 50, 60, 40));
-        cards.Add(new CreatureCard("C12", "Unkindled Junior", 1, 20, 10, 20));
-        cards.Add(new CreatureCard("C13", "Flamebelcher", 1, 20, 30, 30));
-        cards.Add(new CreatureCard("C14", "Fireborn Menace", 1, 70, 70, 60));
-        cards.Add(new CreatureCard("C15", "Te'a Greenleaf", 1, 20, 20, 40));
-        cards.Add(new CreatureCard("C16", "Wave Charmer", 1, 20, 20, 30));
-        cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1, 50, 30, 60));
-        cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1, 50, 40, 60));
-        cards.Add(new CreatureCard("C19", "Bombshell Bombadier", 1, 30, 20, 40));
-        cards.Add(new SpellCard("C20", "Touch of Zeus", 1, 20));
-        //cards.Add(new SpellCard("C21", "The Seven", 1, 40));
-        cards.Add(new SpellCard("C21", "Freeze", 1, 20));
-        cards.Add(new SpellCard("C22", "Deep Freeze", 1, 40));
-        cards.Add(new SpellCard("C23", "Blizzard", 1, 60));
-        cards.Add(new SpellCard("C24", "Riot Up", 1, 60));
+        cards.Add(new CreatureCard("C0", "Blessed Newborn", 2));
+        cards.Add(new CreatureCard("C1", "Temple Guardian", 1));
+        cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
+        cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1));
+        cards.Add(new SpellCard("C4", "Unstable Power", 4));
+        cards.Add(new CreatureCard("C5", "Pyre Dancer", 1));
+        cards.Add(new CreatureCard("C6", "Firebug Catelyn", 1));
+        cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1));
+        cards.Add(new CreatureCard("C8", "Taji the Fearless", 1));
+        cards.Add(new CreatureCard("C9", "Young Kyo", 1));
+        cards.Add(new CreatureCard("C10", "Emberkitty", 1));
+        cards.Add(new CreatureCard("C11", "Firestrided Tigress", 1));
+        cards.Add(new CreatureCard("C12", "Unkindled Junior", 1));
+        cards.Add(new CreatureCard("C13", "Flamebelcher", 1));
+        cards.Add(new CreatureCard("C14", "Fireborn Menace", 1));
+        cards.Add(new CreatureCard("C15", "Te'a Greenleaf", 1));
+        cards.Add(new CreatureCard("C16", "Wave Charmer", 1));
+        cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1));
+        cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1));
+        cards.Add(new CreatureCard("C19", "Bombshell Bombadier", 1));
+        cards.Add(new SpellCard("C20", "Touch of Zeus", 1));
+        cards.Add(new SpellCard("C21", "The Seven", 1));
+        cards.Add(new SpellCard("C21", "Freeze", 1));
+        cards.Add(new SpellCard("C22", "Deep Freeze", 1));
+        cards.Add(new SpellCard("C23", "Blizzard", 1));
+        cards.Add(new SpellCard("C24", "Riot Up", 1));
 
         Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;

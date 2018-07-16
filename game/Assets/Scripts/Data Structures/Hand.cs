@@ -116,7 +116,7 @@ public class Hand
     {
         Player player = BattleManager.Instance.GetPlayerById(this.playerId);
         battleCardObject.visual.SetOutline(
-            player.HasTurn && player.Mana >= battleCardObject.Card.Cost
+            player.HasTurn && player.Mana >= battleCardObject.Card.GetCost()
         );
         battleCardObject.visual.Redraw();
     }

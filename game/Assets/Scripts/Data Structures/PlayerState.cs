@@ -539,10 +539,7 @@ public class PlayerState
                 return new CreatureCard(
                     this.id,
                     this.name,
-                    this.level,
-                    this.cost,
-                    this.attackStart,
-                    this.healthStart
+                    this.level
                 );
             }
             else
@@ -550,8 +547,7 @@ public class PlayerState
                 return new SpellCard(
                     this.id,
                     this.name,
-                    this.level,
-                    this.cost
+                    this.level
                 );
             }
         }
