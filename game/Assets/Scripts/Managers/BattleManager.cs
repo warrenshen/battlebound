@@ -39,7 +39,9 @@ public class BattleManager : MonoBehaviour
 
     public CurvedLineRenderer attackCommand;
 
-    public Dictionary<string, CardTemplate> cardTemplates;
+    private Dictionary<string, CardTemplate> cardTemplates;
+    public Dictionary<string, CardTemplate> CardNameToTemplate => cardTemplates;
+
     private int mode;
 
     private const int BATTLE_STATE_NORMAL_MODE = 0;
@@ -183,8 +185,8 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
+            this.you.BeginMulligan(this.you.PopCardsFromDeck(1));
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(1));
             this.mode = BATTLE_STATE_MULLIGAN_MODE;
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
@@ -522,7 +524,7 @@ public class BattleManager : MonoBehaviour
         float minThreshold = 20;
 
         //Debug.Log(String.Format("amt={0}, threshold={1}, mousepos={2}, resetpos={3}", GetCardDisplacement(target), Screen.height * minThreshold, target.transform.localPosition, target.reset.position));
-        if (target.Card.Cost > target.Owner.Mana)
+        if (target.Card.GetCost() > target.Owner.Mana)
         {
             //can't play card due to mana
             ActionManager.Instance.ResetTarget();
@@ -1252,6 +1254,10 @@ public class BattleManager : MonoBehaviour
                 serverMove.PlayerId,
                 card
             );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE)
+        {
+            Debug.LogError("Not supported.");
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
         {

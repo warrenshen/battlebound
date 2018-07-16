@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using TMPro;
 
 [System.Serializable]
@@ -74,12 +75,12 @@ public class BoardCreature : Targetable
     {
         //data structure stuff
         this.creatureCard = battleCardObject.Card as CreatureCard;
-        this.cost = this.creatureCard.Cost;
-        this.attack = this.creatureCard.Attack;
-        this.health = this.creatureCard.Health;
-        this.maxHealth = this.creatureCard.Health;
-        this.abilities = new List<string>(battleCardObject.TemplateData.abilities);
-        this.summonPrefabPath = battleCardObject.TemplateData.summonPrefab;
+        this.cost = this.creatureCard.GetCost();
+        this.attack = this.creatureCard.GetAttack();
+        this.health = this.creatureCard.GetHealth();
+        this.maxHealth = this.creatureCard.GetHealth();
+        this.abilities = this.creatureCard.GetAbilities();
+        this.summonPrefabPath = this.creatureCard.GetSummonPrefab();
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
         {
@@ -189,18 +190,29 @@ public class BoardCreature : Targetable
 
     public override int Fight(Targetable other)
     {
+        return 0;
+    }
+
+    public void FightWithCallback(Targetable other, UnityAction<int> onFightFinish)
+    {
         this.summonAnimation.Play(summonAnimStates[0].name);
         this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);     //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.transform.position;
-        int damageDone = 0;
 
-        LeanTween.move(this.gameObject, this.transform.position - delta, 0.3F).setEaseOutCubic().setDelay(BoardCreature.ATTACK_DELAY).setOnComplete(() =>
-        {
-            damageDone = DamageLogic(other);
-            LeanTween.move(this.gameObject, originalPosition, 0.3F).setEaseInCubic();
-        }
+        LeanTween
+            .move(this.gameObject, this.transform.position - delta, 0.3F)
+            .setEaseOutCubic().setDelay(BoardCreature.ATTACK_DELAY)
+            .setOnComplete(
+                () =>
+                {
+                    int damageDone = DamageLogic(other);
+                    LeanTween
+                        .move(this.gameObject, originalPosition, 0.3F)
+                        .setEaseInCubic()
+                        .setOnComplete(() => onFightFinish(damageDone));
+                }
         );
 
         StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.25f });
@@ -213,7 +225,6 @@ public class BoardCreature : Targetable
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
                 StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.5f });
         }
-        return damageDone;
     }
 
     private int DamageLogic(Targetable other)

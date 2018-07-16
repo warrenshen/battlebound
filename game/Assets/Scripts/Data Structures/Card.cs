@@ -74,50 +74,107 @@ public abstract class Card
     protected int level;
     public int Level => level;
 
-    [SerializeField]
-    protected int cost;
-    public int Cost
-    {
-        get { return cost; }
-        set { cost = value; }
-    }
-
     protected string primaryEffectName;
+
+    protected CardTemplate cardTemplate;
 
     public CardObject wrapper;
     //Rarity, Description, FrontImage, BackImage all moved into CardObject, obtain via codex loading cached to BattleManager
 
     public abstract PlayerState.ChallengeCard GetChallengeCard();
+
+    public string GetName()
+    {
+        return this.cardTemplate.name;
+    }
+
+    public string GetDescription()
+    {
+        return this.cardTemplate.description;
+    }
+
+    public int GetCost()
+    {
+        return this.cardTemplate.cost;
+    }
+
+    public string GetFrontImage()
+    {
+        return this.cardTemplate.frontImage;
+    }
+
+    public string GetBackImage()
+    {
+        return this.cardTemplate.backImage;
+    }
+
+    public Vector2 GetFrontScale()
+    {
+        return this.cardTemplate.frontScale;
+    }
+
+    public Vector2 GetFrontOffset()
+    {
+        return this.cardTemplate.frontOffset;
+    }
+
+    public Vector2 GetBackScale()
+    {
+        return this.cardTemplate.backScale;
+    }
+    public Vector2 GetBackOffset()
+    {
+        return this.cardTemplate.backOffset;
+    }
+
+    protected void LoadCodex()
+    {
+        if (!BattleManager.Instance.CardNameToTemplate.ContainsKey(this.name))
+        {
+            Debug.LogError(string.Format("Card {0} does not exist in codex.", this.Name));
+            this.cardTemplate = new CardTemplate();
+        }
+        else
+        {
+            this.cardTemplate = BattleManager.Instance.CardNameToTemplate[this.name];
+        }
+    }
 }
 
 [System.Serializable]
 public class CreatureCard : Card
 {
-    [SerializeField]
-    protected int attack;
-    public int Attack => attack;
-
-    [SerializeField]
-    protected int health;
-    public int Health => health;
-
-    //protected string summonPrefabPath;  obtain from codex loading
-
     public CreatureCard(
         string id,
         string name,
-        int level,
-        int cost,
-        int attack,
-        int health
+        int level
     )
     {
         this.id = id;
         this.name = name;
         this.level = level;
-        this.cost = cost;
-        this.attack = attack;
-        this.health = health;
+
+        LoadCodex();
+    }
+
+    public int GetAttack()
+    {
+        return this.cardTemplate.attack;
+    }
+
+    public int GetHealth()
+    {
+        return this.cardTemplate.health;
+    }
+
+    public List<string> GetAbilities()
+    {
+        return new List<string>(this.cardTemplate.abilities);
+    }
+
+    public string GetSummonPrefab()
+    {
+        return this.cardTemplate.summonPrefab;
     }
 
     public override PlayerState.ChallengeCard GetChallengeCard()
@@ -127,13 +184,13 @@ public class CreatureCard : Card
         challengeCard.SetCategory(CARD_CATEGORY_MINION);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
-        challengeCard.SetCost(this.cost);
-        challengeCard.SetCostStart(this.cost);
-        challengeCard.SetHealth(this.health);
-        challengeCard.SetHealthStart(this.health);
-        challengeCard.SetHealthMax(this.health);
-        challengeCard.SetAttack(this.attack);
-        challengeCard.SetAttackStart(this.attack);
+        challengeCard.SetCost(this.GetCost());
+        challengeCard.SetCostStart(this.GetCost());
+        challengeCard.SetHealth(this.GetHealth());
+        challengeCard.SetHealthStart(this.GetHealth());
+        challengeCard.SetHealthMax(this.GetHealth());
+        challengeCard.SetAttack(this.GetAttack());
+        challengeCard.SetAttackStart(this.GetAttack());
 
         return challengeCard;
     }
@@ -162,10 +219,8 @@ public class WeaponCard : Card
         this.id = id;
         this.name = name;
         this.level = level;
-        this.cost = cost;
 
-        this.attack = attack;
-        this.durability = durability;
+        LoadCodex();
     }
 
     public override PlayerState.ChallengeCard GetChallengeCard()
@@ -175,8 +230,8 @@ public class WeaponCard : Card
         challengeCard.SetCategory(CARD_CATEGORY_WEAPON);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
-        challengeCard.SetCost(this.cost);
-        challengeCard.SetCostStart(this.cost);
+        challengeCard.SetCost(this.GetCost());
+        challengeCard.SetCostStart(this.GetCost());
         challengeCard.SetHealth(this.durability);
         challengeCard.SetHealthStart(this.durability);
         challengeCard.SetHealthMax(this.durability);
@@ -202,7 +257,8 @@ public class StructureCard : Card
         this.id = id;
         this.name = name;
         this.level = level;
-        this.cost = cost;
+
+        LoadCodex();
     }
 
     public override PlayerState.ChallengeCard GetChallengeCard()
@@ -212,8 +268,8 @@ public class StructureCard : Card
         challengeCard.SetCategory(CARD_CATEGORY_STRUCTURE);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
-        challengeCard.SetCost(this.cost);
-        challengeCard.SetCostStart(this.cost);
+        challengeCard.SetCost(this.GetCost());
+        challengeCard.SetCostStart(this.GetCost());
 
         return challengeCard;
     }
@@ -263,8 +319,7 @@ public class SpellCard : Card
     public SpellCard(
         string id,
         string name,
-        int level,
-        int cost
+        int level
     )
     {
         if (!VALID_SPELLS.Contains(name))
@@ -275,7 +330,6 @@ public class SpellCard : Card
         this.id = id;
         this.name = name;
         this.level = level;
-        this.cost = cost;
 
         if (TARGETED_SPELL_NAMES.Contains(this.name))
         {
@@ -286,10 +340,12 @@ public class SpellCard : Card
             this.targeted = false;
         }
 
-        if (spellToMethod == null)
-        {
-            InitSpellDict();
-        }
+        LoadCodex();
+    }
+
+    public int GetCost()
+    {
+        return this.cardTemplate.cost;
     }
 
     public override PlayerState.ChallengeCard GetChallengeCard()
@@ -299,18 +355,9 @@ public class SpellCard : Card
         challengeCard.SetCategory(CARD_CATEGORY_SPELL);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
-        challengeCard.SetCost(this.cost);
-        challengeCard.SetCostStart(this.cost);
+        challengeCard.SetCost(this.GetCost());
+        challengeCard.SetCostStart(this.GetCost());
 
         return challengeCard;
-    }
-
-    private void InitSpellDict()
-    {
-        spellToMethod = new Dictionary<string, string>();
-        spellToMethod[SPELL_NAME_LIGHTNING_BOLT] = "LightningBolt";
-        spellToMethod[SPELL_NAME_UNSTABLE_POWER] = "UnstablePower";
-        spellToMethod[SPELL_NAME_FREEZE] = "Freeze";
-        spellToMethod[SPELL_NAME_DEEP_FREEZE] = "DeepFreeze";
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]  //serialization won't work because abstract
 public abstract class Targetable : MonoBehaviour

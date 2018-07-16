@@ -22,7 +22,6 @@ public class CollectionCardObject : CardObject
             Debug.LogError(string.Format("Card with name {0} does not exist.", card.Name));
         }
 
-        this.templateData = CollectionManager.Instance.cardTemplates[card.Name];
         //does the visual stuff using templateData
         base.Initialize(card);
         //this is always at the end
@@ -31,7 +30,6 @@ public class CollectionCardObject : CardObject
 
     public void InitializeHollow(Card card) //no cutout, no wrapper assignment, no collider
     {
-        this.templateData = CollectionManager.Instance.cardTemplates[card.Name];
         this.card = card;
 
         //make render changes according to card class here
@@ -51,8 +49,8 @@ public class CollectionCardObject : CardObject
         cutout = instance.GetComponent<HyperCard.Card>();
         cutout.SetOutline(false);
 
-        CardObject.SetHyperCardFromData(cutout, this.templateData);
-        CardObject.SetHyperCardArtwork(cutout, this.templateData);
+        CardObject.SetHyperCardFromData(cutout, this.card);
+        CardObject.SetHyperCardArtwork(cutout, this.card);
         cutout.gameObject.SetActive(false);
     }
 

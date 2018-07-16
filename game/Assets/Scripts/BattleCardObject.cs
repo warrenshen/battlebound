@@ -14,21 +14,6 @@ public class BattleCardObject : CardObject
     public void Initialize(Player player, Card card)
     {
         this.owner = player;
-
-        if (card.Id == "HIDDEN")
-        {
-            this.templateData = new CardTemplate();  //to-do: pretty sure this will break things?
-        }
-        else if (!BattleManager.Instance.cardTemplates.ContainsKey(card.Name))
-        {
-            Debug.LogError(string.Format("Card {0} does not exist in codex.", card.Name));
-            this.templateData = new CardTemplate();
-        }
-        else
-        {
-            this.templateData = BattleManager.Instance.cardTemplates[card.Name];
-        }
-
         //does the visual stuff using templateData
         base.Initialize(card);
     }

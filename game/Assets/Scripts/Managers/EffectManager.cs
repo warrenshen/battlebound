@@ -736,28 +736,33 @@ public class EffectManager : MonoBehaviour
 
             List<Effect> effects = new List<Effect>();
 
-            int damageDone = attackingCreature.Fight(defendingCreature); //defendingCreature.TakeDamage(attackingCreature.Attack);
+            this.isWaiting = true;
+            attackingCreature.FightWithCallback(defendingCreature, new UnityAction<int>(
+                (int damageDone) =>
+                {
+                    effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                    effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-            effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-            effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                    int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
+                    effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageReceived));
+                    effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageReceived));
 
-            int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
-            effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
-            effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
+                    defendingCreature.Redraw();
+                    attackingCreature.Redraw();
 
-            defendingCreature.Redraw();
-            attackingCreature.Redraw();
+                    if (attackingCreature.Health <= 0)
+                    {
+                        effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
+                    }
+                    if (defendingCreature.Health <= 0)
+                    {
+                        effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
+                    }
 
-            if (attackingCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
-            }
-            if (defendingCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-            }
-
-            AddToQueues(effects);
+                    AddToQueues(effects);
+                    this.isWaiting = false;
+                }
+            ));
         }
         else if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&

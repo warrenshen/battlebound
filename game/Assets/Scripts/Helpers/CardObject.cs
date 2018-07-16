@@ -14,8 +14,6 @@ public abstract class CardObject : MouseWatchable
     protected BoxCollider colliderBox;
 
     public HyperCard.Card visual;
-    protected CardTemplate templateData;
-    public CardTemplate TemplateData => templateData;
 
     public Texture2D frontImage;
     public Texture2D backImage;
@@ -26,6 +24,7 @@ public abstract class CardObject : MouseWatchable
         public Vector3 scale;
         public Quaternion rotation;
     }
+
     [SerializeField]
     public Reset reset;
 
@@ -34,11 +33,6 @@ public abstract class CardObject : MouseWatchable
         this.card = card;
         this.gameObject.layer = LayerMask.NameToLayer("Card");
         card.wrapper = this;
-
-        if (this.templateData == null)
-        {
-            Debug.LogError("WTF, templateData doesn't exist, OOP??");
-        }
 
         //make render changes according to card class here
         this.LoadCardArtwork();
@@ -54,41 +48,42 @@ public abstract class CardObject : MouseWatchable
 
     protected virtual void LoadCardArtwork()
     {
-        this.frontImage = Resources.Load(this.templateData.frontImage) as Texture2D;
-        this.backImage = Resources.Load(this.templateData.backImage) as Texture2D;
+        this.frontImage = Resources.Load(this.card.GetFrontImage()) as Texture2D;
+        this.backImage = Resources.Load(this.card.GetBackImage()) as Texture2D;
     }
 
-    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, CardTemplate cardTemplate, Texture2D frontImage = null, Texture2D backImage = null)
+    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, Card card, Texture2D frontImage = null, Texture2D backImage = null)
     {
         if (frontImage == null)
         {
-            frontImage = Resources.Load(cardTemplate.frontImage) as Texture2D;
+            frontImage = Resources.Load(card.GetFrontImage()) as Texture2D;
         }
         if (backImage == null)
         {
-            backImage = Resources.Load(cardTemplate.backImage) as Texture2D;
+            backImage = Resources.Load(card.GetBackImage()) as Texture2D;
         }
 
-        cardVisual.SetFrontTiling(cardTemplate.frontScale, cardTemplate.frontOffset);
-        cardVisual.SetBackTiling(cardTemplate.backScale, cardTemplate.backOffset);
+        cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
+        cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
         cardVisual.SetCardArtwork(frontImage, backImage);
 
         cardVisual.Stencil = ActionManager.Instance.stencilCount;
         ActionManager.Instance.stencilCount += 3 % 255;
     }
 
-    protected static void SetHyperCardFromData(HyperCard.Card cardVisual, CardTemplate cardTemplate)
+    protected static void SetHyperCardFromData(HyperCard.Card cardVisual, Card card)
     {
         //set sprites and set textmeshpro labels using TmpTextObjects (?)
-        cardVisual.SetTextFieldWithKey("Title", cardTemplate.name);
-        cardVisual.SetTextFieldWithKey("Description", cardTemplate.description);
-        cardVisual.SetTextFieldWithKey("Cost", cardTemplate.cost.ToString());
+        cardVisual.SetTextFieldWithKey("Title", card.GetName());
+        cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
+        cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
 
-        bool isCreature = cardTemplate.cardType == CardRaw.CardType.Creature;
+        bool isCreature = card.GetType() == typeof(CreatureCard);
         if (isCreature)
         {
-            cardVisual.SetTextFieldWithKey("Attack", cardTemplate.attack.ToString());
-            cardVisual.SetTextFieldWithKey("Health", cardTemplate.health.ToString());
+            CreatureCard creatureCard = card as CreatureCard;
+            cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
+            cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
         }
         else
         {
@@ -107,8 +102,8 @@ public abstract class CardObject : MouseWatchable
         created.Rotate(0, 180, 0, Space.Self);
 
         HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
-        CardObject.SetHyperCardFromData(cardVisual, this.templateData);
-        CardObject.SetHyperCardArtwork(cardVisual, this.templateData, this.frontImage, this.backImage);
+        CardObject.SetHyperCardFromData(cardVisual, this.card);
+        CardObject.SetHyperCardArtwork(cardVisual, this.card);
 
         return cardVisual;
     }
