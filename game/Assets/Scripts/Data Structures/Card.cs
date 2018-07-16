@@ -129,7 +129,11 @@ public abstract class Card
 
     protected void LoadCodex()
     {
-        if (!BattleManager.Instance.CardNameToTemplate.ContainsKey(this.name))
+        if (this.name == null)
+        {
+            this.cardTemplate = new CardTemplate();
+        }
+        else if (!BattleManager.Instance.CardNameToTemplate.ContainsKey(this.name))
         {
             Debug.LogError(string.Format("Card {0} does not exist in codex.", this.Name));
             this.cardTemplate = new CardTemplate();
@@ -341,11 +345,6 @@ public class SpellCard : Card
         }
 
         LoadCodex();
-    }
-
-    public int GetCost()
-    {
-        return this.cardTemplate.cost;
     }
 
     public override PlayerState.ChallengeCard GetChallengeCard()
