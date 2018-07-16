@@ -185,8 +185,8 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            this.you.BeginMulligan(this.you.PopCardsFromDeck(1));
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(1));
+            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
+            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
             this.mode = BATTLE_STATE_MULLIGAN_MODE;
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);

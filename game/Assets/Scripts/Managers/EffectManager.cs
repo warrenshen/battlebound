@@ -789,44 +789,51 @@ public class EffectManager : MonoBehaviour
 
             List<Effect> effects = new List<Effect>();
 
-            int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
+            //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
 
-            effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-            //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+            this.isWaiting = true;
+            attackingCreature.FightWithCallback(defendingAvatar, new UnityAction<int>(
+                (int damageDone) =>
+                {
+                    effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                    //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-            //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
-            //effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
-            //effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
+                    //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
+                    //effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
+                    //effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
 
-            defendingAvatar.Redraw();
-            attackingCreature.Redraw();
+                    defendingAvatar.Redraw();
+                    attackingCreature.Redraw();
 
-            //if (attackingCreature.Health <= 0)
-            //{
-            //    effects.Add(
-            //        new Effect(
-            //            attackingCreature.Owner.Id,
-            //            EFFECT_CARD_DIE,
-            //            attackingCreature.GetCardId(),
-            //            attackingCreature.SpawnRank
-            //        )
-            //    );
+                    //if (attackingCreature.Health <= 0)
+                    //{
+                    //    effects.Add(
+                    //        new Effect(
+                    //            attackingCreature.Owner.Id,
+                    //            EFFECT_CARD_DIE,
+                    //            attackingCreature.GetCardId(),
+                    //            attackingCreature.SpawnRank
+                    //        )
+                    //    );
 
-            //    effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
-            //}
-            if (defendingAvatar.Health <= 0)
-            {
-                effects.Add(
-                    new Effect(
-                        defendingAvatar.Owner.Id,
-                        EFFECT_PLAYER_AVATAR_DIE,
-                        defendingAvatar.GetCardId(),
-                        0
-                    )
-                );
-            }
+                    //    effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
+                    //}
+                    if (defendingAvatar.Health <= 0)
+                    {
+                        effects.Add(
+                            new Effect(
+                                defendingAvatar.Owner.Id,
+                                EFFECT_PLAYER_AVATAR_DIE,
+                                defendingAvatar.GetCardId(),
+                                0
+                            )
+                        );
+                    }
 
-            AddToQueues(effects);
+                    AddToQueues(effects);
+                    this.isWaiting = false;
+                }
+            ));
         }
         else
         {
