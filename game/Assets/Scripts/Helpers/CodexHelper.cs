@@ -34,12 +34,13 @@ public static class CodexHelper
         }
 
         string json = JsonUtility.ToJson(inputted);
+        Debug.Log(json);
+
         using (StreamWriter sw = File.AppendText(path))
         {
             sw.WriteLine(json);
         }
 
-        Debug.Log(json);
         return true;
     }
 

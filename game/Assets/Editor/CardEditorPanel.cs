@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.IO;
 using System;
@@ -197,9 +198,7 @@ public class CardEditorPanel : EditorWindow
         {
             normalized = normalized + projectPath[i] + Path.DirectorySeparatorChar;
         }
-
-        path = string.Format("{0}{1}", normalized,
-                             Path.GetFileNameWithoutExtension(path));
+        path = normalized + Path.GetFileNameWithoutExtension(path);
         return path;
     }
 
@@ -269,7 +268,7 @@ public class CardEditorPanel : EditorWindow
             ValidationErrorBox("Missing name.");
             return false;
         }
-        else if (template.health == 0)
+        else if (template.cardType == CardRaw.CardType.Creature && template.health == 0)
         {
             ValidationErrorBox("Health cannot be zero.");
             return false;
