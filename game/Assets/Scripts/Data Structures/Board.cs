@@ -73,15 +73,19 @@ public class Board : MonoBehaviour
         return playingField.IsPlaceEmpty(index);
     }
 
+    /*
+     * @param bool isInit - if true, function will not invoke onCreaturePlay in EffectManager
+     */
     public void CreateAndPlaceCreature(
         BattleCardObject battleCardObject,
         int index,
-        int spawnRank
+        int spawnRank,
+        bool isInit = false
     )
     {
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
-            new object[3] { battleCardObject, index, spawnRank }
+            new object[4] { battleCardObject, index, spawnRank, isInit }
         );
     }
 
@@ -90,6 +94,7 @@ public class Board : MonoBehaviour
         BattleCardObject battleCardObject = args[0] as BattleCardObject;
         int index = (int)args[1];
         int spawnRank = (int)args[2];
+        bool isInit = (bool)args[3];
 
         Transform boardPlace = this.playerIdToIndexToBoardPlace[battleCardObject.Owner.Id][index];
 
@@ -107,10 +112,13 @@ public class Board : MonoBehaviour
         PlayingField playingField = this.playerIdToField[boardCreature.Owner.Id];
         playingField.Place(boardCreature, index);
 
-        EffectManager.Instance.OnCreaturePlay(
-            boardCreature.Owner.Id,
-            boardCreature.GetCardId()
-        );
+        if (!isInit)
+        {
+            EffectManager.Instance.OnCreaturePlay(
+                boardCreature.Owner.Id,
+                boardCreature.GetCardId()
+            );
+        }
     }
 
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
@@ -253,7 +261,8 @@ public class Board : MonoBehaviour
                 Board.Instance.CreateAndPlaceCreature(
                     battleCardObject,
                     i,
-                    spawnRank
+                    spawnRank,
+                    true
                 );
             }
         }

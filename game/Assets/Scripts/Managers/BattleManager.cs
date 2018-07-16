@@ -368,8 +368,7 @@ public class BattleManager : MonoBehaviour
         }
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
-        // TODO: should we move newTurn stuff to after OnStartTurn call?
-        // But draw card should be before.
+
         activePlayer.NewTurn();
         EffectManager.Instance.OnStartTurn(activePlayer.Id);
     }
