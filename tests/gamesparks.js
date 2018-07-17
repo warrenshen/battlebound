@@ -630,8 +630,7 @@ GameSparks.prototype.withdrawChallengeRequest = function(challengeInstanceId, me
 
 const gamesparks = new GameSparks();
 
-describe("ChallengeEndTurn", function() {
-
+describe("challenge events", function() {
   before(function() {
     return new Promise((resolve) => {
       gamesparks.initPreview({
@@ -656,184 +655,542 @@ describe("ChallengeEndTurn", function() {
     })
   });
 
-  it("should change player hasTurn's", function() {
-    const challengeStateData = {
-      "current": {
-        "ID_PLAYER": {
-          "hasTurn": 1,
-          "manaCurrent": 20,
-          "manaMax": 30,
-          "health": 100,
-          "healthMax": 100,
-          "armor": 0,
-          "field": [
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-          ],
-          "hand": [
-            {
-              "id": "C1-5b0b017502bd4e052f08a28d-1",
-              "level": 0,
-              "category": 0,
-              "attack": 20,
-              "health": 30,
-              "cost": 20,
-              "name": "Marshwater Squealer",
-              "description": "At the end of each turn, recover 10 health",
-              "abilities": [
-                7
-              ],
-              "baseId": "C1",
-              "attackStart": 20,
-              "costStart": 20,
-              "healthStart": 30,
-              "healthMax": 30
-            },
-            {
-              "id": "C4-5b0b017502bd4e052f08a28d-4",
-              "level": 0,
-              "category": 0,
-              "attack": 10,
-              "health": 10,
-              "cost": 10,
-              "name": "Firebug Catelyn",
-              "description": "",
-              "abilities": [],
-              "baseId": "C4",
-              "attackStart": 10,
-              "costStart": 10,
-              "healthStart": 10,
-              "healthMax": 10
-            },
-            {
-              "id": "C6-ID_PLAYER-6",
-              "level": 0,
-              "category": 0,
-              "attack": 20,
-              "health": 10,
-              "cost": 10,
-              "name": "Young Kyo",
-              "description": "",
-              "abilities": [],
-              "baseId": "C6",
-              "attackStart": 20,
-              "costStart": 10,
-              "healthStart": 10,
-              "healthMax": 10,
-            },
-          ],
-          "deckSize": 5,
-          "cardCount": 8,
-          "mode": 0,
-          "mulliganCards": [],
-          "id": "ID_PLAYER",
-          "expiredStreak": 0,
-          "deck": [],
+  describe("challenge end turn", function() {
+    it("should change player hasTurn's", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "C1-5b0b017502bd4e052f08a28d-1",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "C4-5b0b017502bd4e052f08a28d-4",
+                "level": 0,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+              {
+                "id": "C6-ID_PLAYER-6",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              },
+            ],
+            "deckSize": 5,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 30,
+            "manaMax": 40,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+            ],
+            "deckSize": 4,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+            "deck": [],
+          },
         },
-        "ID_OPPONENT": {
-          "hasTurn": 0,
-          "manaCurrent": 30,
-          "manaMax": 40,
-          "health": 100,
-          "healthMax": 100,
-          "armor": 0,
-          "field": [
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-          ],
-          "hand": [
-            {
-              "id": "HIDDEN"
-            },
-            {
-              "id": "HIDDEN"
-            },
-            {
-              "id": "HIDDEN"
-            },
-            {
-              "id": "HIDDEN"
-            },
-          ],
-          "deckSize": 4,
-          "cardCount": 8,
-          "mode": 0,
-          "mulliganCards": [],
-          "id": "ID_OPPONENT",
-          "expiredStreak": 0,
-          "deck": [],
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
         },
-      },
-      "opponentIdByPlayerId": {
-        "ID_PLAYER": "ID_OPPONENT",
-        "ID_OPPONENT": "ID_PLAYER",
-      },
-      "lastMoves": [],
-      "moves": [],
-      "moveTakenThisTurn": 0,
-      "turnCountByPlayerId": {
-        "ID_PLAYER": 0,
-        "ID_OPPONENT": 0,
-      },
-      "expiredStreakByPlayerId": {
-        "ID_PLAYER": 0,
-        "ID_OPPONENT": 0,
-      },
-      "spawnCount": 0,
-      "nonce": 4,
-    };
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "nonce": 4,
+      };
 
-    return new Promise((resolve) => {
-      gamesparks.sendWithData(
-        "LogEventRequest",
-        {
-          eventKey: "TestChallengeEndTurn",
-          challengeStateString: JSON.stringify(challengeStateData),
-          challengePlayerId: "ID_PLAYER"
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should run Bombshell Bombadier's deathrattle", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 0,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C10-5b0b012e7486050526c9c1a8-5",
+                "level": 0,
+                "category": 0,
+                "attack": 50,
+                "health": 10,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  0,
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 1,
+                "hasShield": 0,
+                "isFrozen": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 6,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b012e7486050526c9c1a8",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 70,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C2-5b0b017502bd4e052f08a28d-2",
+                "level": 0,
+                "category": 0,
+                "attack": 30,
+                "health": 30,
+                "cost": 40,
+                "name": "Waterborne Razorback",
+                "description": "Charge; At the end of each turn, recover 20 health",
+                "abilities": [
+                  0,
+                  8
+                ],
+                "baseId": "C2",
+                "attackStart": 30,
+                "costStart": 40,
+                "healthStart": 50,
+                "healthMax": 50,
+                "buffs": [],
+                "canAttack": 1,
+                "hasShield": 0,
+                "isFrozen": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 1,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b017502bd4e052f08a28d",
+            "expiredStreak": 0
+          },
         },
-        function(response) {
-          const challengeStateData = response.scriptData.challengeStateData;
-          assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
-          assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
-          resolve();
-        }
-      );
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C2-5b0b017502bd4e052f08a28d-2",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 4);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "EMPTY");
+
+            assert.equal(playerState.healthMax, 100);
+            assert.equal(playerState.health, 40);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[2].id, "EMPTY");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
     });
   });
 
-  it("should run Bombshell Bombadier's deathrattle", function() {
+  describe("dying breath", function() {
+    it("should run Bombshell Bombadier's deathrattle", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 0,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C10-5b0b012e7486050526c9c1a8-5",
+                "level": 0,
+                "category": 0,
+                "attack": 50,
+                "health": 10,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  0,
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 1,
+                "hasShield": 0,
+                "isFrozen": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 6,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b012e7486050526c9c1a8",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 70,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C2-5b0b017502bd4e052f08a28d-2",
+                "level": 0,
+                "category": 0,
+                "attack": 30,
+                "health": 30,
+                "cost": 40,
+                "name": "Waterborne Razorback",
+                "description": "Charge; At the end of each turn, recover 20 health",
+                "abilities": [
+                  0,
+                  8
+                ],
+                "baseId": "C2",
+                "attackStart": 30,
+                "costStart": 40,
+                "healthStart": 50,
+                "healthMax": 50,
+                "buffs": [],
+                "canAttack": 1,
+                "hasShield": 0,
+                "isFrozen": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 1,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b017502bd4e052f08a28d",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C2-5b0b017502bd4e052f08a28d-2",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 4);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "EMPTY");
+
+            assert.equal(playerState.healthMax, 100);
+            assert.equal(playerState.health, 40);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[2].id, "EMPTY");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("spells", function() {
     const challengeStateData = {
       "current": {
         "ID_OPPONENT": {
@@ -845,12 +1202,6 @@ describe("ChallengeEndTurn", function() {
           "armor": 0,
           "field": [
             {
-              "id": "EMPTY"
-            },
-            {
-              "id": "EMPTY"
-            },
-            {
               "id": "C10-5b0b012e7486050526c9c1a8-5",
               "level": 0,
               "category": 0,
@@ -859,10 +1210,7 @@ describe("ChallengeEndTurn", function() {
               "cost": 70,
               "name": "Bombshell Bombadier",
               "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
-              "abilities": [
-                0,
-                12
-              ],
+              "abilities": [],
               "baseId": "C10",
               "attackStart": 50,
               "costStart": 70,
@@ -875,6 +1223,30 @@ describe("ChallengeEndTurn", function() {
               "spawnRank": 2
             },
             {
+              "id": "C2-5b0b012e7486050526c9c1a8-2",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 3
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
               "id": "EMPTY"
             },
             {
@@ -884,8 +1256,7 @@ describe("ChallengeEndTurn", function() {
               "id": "EMPTY"
             }
           ],
-          "hand": [
-          ],
+          "hand": [],
           "deckSize": 0,
           "cardCount": 6,
           "mode": 0,
@@ -929,7 +1300,28 @@ describe("ChallengeEndTurn", function() {
               "spawnRank": 1
             },
             {
-              "id": "EMPTY"
+              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C3",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 0
             },
             {
               "id": "EMPTY"
@@ -943,19 +1335,84 @@ describe("ChallengeEndTurn", function() {
           ],
           "hand": [
             {
-              "id": "HIDDEN"
+              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "level": 0,
+              "category": 1,
+              "attack": null,
+              "health": null,
+              "cost": 50,
+              "name": "Brr Brr Blizzard",
+              "description": "Freeze all opponent creatures",
+              "abilities": null,
+              "baseId": "C23",
+              "attackStart": null,
+              "costStart": 50,
+              "healthStart": null,
+              "healthMax": null
             },
             {
-              "id": "HIDDEN"
+              "id": "C19-5b0b012e7486050526c9c1a8-0",
+              "level": 0,
+              "category": 1,
+              "attack": null,
+              "health": null,
+              "cost": 20,
+              "name": "Touch of Zeus",
+              "description": "Deal 20 damage to a creature",
+              "abilities": null,
+              "baseId": "C19",
+              "attackStart": null,
+              "costStart": 20,
+              "healthStart": null,
+              "healthMax": null
             },
             {
-              "id": "HIDDEN"
+              "id": "C20-5b0b012e7486050526c9c1a8-1",
+              "level": 0,
+              "category": 1,
+              "attack": null,
+              "health": null,
+              "cost": 50,
+              "name": "Riot Up",
+              "description": "Give all your creatures shields",
+              "abilities": null,
+              "baseId": "C20",
+              "attackStart": null,
+              "costStart": 50,
+              "healthStart": null,
+              "healthMax": null
             },
             {
-              "id": "HIDDEN"
+              "id": "C22-5b0b012e7486050526c9c1a8-3",
+              "level": 0,
+              "category": 1,
+              "attack": null,
+              "health": null,
+              "cost": 40,
+              "name": "Widespread Frostbite",
+              "description": "Freeze creature and one opposite it for two turns, and two adjacent creatures for one turn",
+              "abilities": null,
+              "baseId": "C22",
+              "attackStart": null,
+              "costStart": 40,
+              "healthStart": null,
+              "healthMax": null
             },
             {
-              "id": "HIDDEN"
+              "id": "C21-5b0b012e7486050526c9c1a8-2",
+              "level": 0,
+              "category": 1,
+              "attack": null,
+              "health": null,
+              "cost": 30,
+              "name": "Freeze",
+              "description": "Deal 10 damage to creature and freeze it",
+              "abilities": null,
+              "baseId": "C21",
+              "attackStart": null,
+              "costStart": 30,
+              "healthStart": null,
+              "healthMax": null
             }
           ],
           "deckSize": 1,
@@ -985,45 +1442,138 @@ describe("ChallengeEndTurn", function() {
       "nonce": 14
     };
 
-    return new Promise((resolve) => {
-      gamesparks.sendWithData(
-        "LogEventRequest",
-        {
-          eventKey: "TestChallengeCardAttackCard",
-          challengeStateString: JSON.stringify(challengeStateData),
-          challengePlayerId: "ID_PLAYER",
-          cardId: "C2-5b0b017502bd4e052f08a28d-2",
-          attributesJson: {
-            fieldId: "ID_OPPONENT",
-            targetId: "C10-5b0b012e7486050526c9c1a8-5",
+    it("should support brr brr blizzard", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C23-5b0b012e7486050526c9c1a8-4",
           },
-        },
-        function(response) {
-          const challengeStateData = response.scriptData.challengeStateData;
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
 
-          const lastMoves = challengeStateData.lastMoves;
-          assert.equal(lastMoves.length, 4);
-          assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
-          assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-          assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-          assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
 
-          const playerState = challengeStateData.current["ID_PLAYER"];
-          const playerField = playerState.field;
-          assert.equal(playerField[1].id, "EMPTY");
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].isFrozen, 1);
+            assert.equal(opponentField[1].isFrozen, 1);
 
-          assert.equal(playerState.healthMax, 100);
-          assert.equal(playerState.health, 40);
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
 
-          const opponentState = challengeStateData.current["ID_OPPONENT"];
-          const opponentField = opponentState.field;
-          assert.equal(opponentField[2].id, "EMPTY");
+    it("should support riot up", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C20-5b0b012e7486050526c9c1a8-1",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
 
-          assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
-          assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
-          resolve();
-        }
-      );
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C20-5b0b012e7486050526c9c1a8-1");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[1].hasShield, 1);
+            assert.equal(playerField[2].hasShield, 1);
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support touch of zeus", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellTargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C19-5b0b012e7486050526c9c1a8-0",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C2-5b0b012e7486050526c9c1a8-2",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C19-5b0b012e7486050526c9c1a8-0");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].health, 10);
+            assert.equal(opponentField[1].id, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(opponentField[1].health, 10);
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support freeze", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellTargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C21-5b0b012e7486050526c9c1a8-2",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C2-5b0b012e7486050526c9c1a8-2",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C21-5b0b012e7486050526c9c1a8-2");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[1].id, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(opponentField[1].health, 20);
+            assert.equal(opponentField[1].isFrozen, 1);
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
     });
   });
 });
