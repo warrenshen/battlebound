@@ -61,8 +61,8 @@ public class PlayerAvatar : Targetable
     public void Initialize(Player player, PlayerState playerState)
     {
         this.armor = playerState.Armor;
-        this.maxHealth = playerState.Health;
-        this.health = this.maxHealth;
+        this.maxHealth = playerState.HealthMax;
+        this.health = playerState.Health;
 
         this.weapon = null;
         this.isAvatar = true;
