@@ -178,7 +178,7 @@ public class CardEditorPanel : EditorWindow
     {
         if (!path.Contains("Resources"))
         {
-            Debug.LogError(string.Format("Bad path recieved by CardEditorPanel: {}, asset not in 'Resources' directory.", path));
+            Debug.LogError("Bad path recieved by CardEditorPanel; asset not in 'Resources' directory: " + path);
             return null;
         }
 
@@ -208,7 +208,8 @@ public class CardEditorPanel : EditorWindow
         template.frontImage = LocalToResources(AssetDatabase.GetAssetPath(this.mainTexture));
         template.backImage = LocalToResources(AssetDatabase.GetAssetPath(this.backgroundTexture));
 
-        template.summonPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.summonPrefab));
+        if (this.summonPrefab != null)
+            template.summonPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.summonPrefab));
         template.effectPrefab = LocalToResources(AssetDatabase.GetAssetPath(this.effectPrefab));
 
         template.abilities[0] = Card.VALID_ABILITIES[this.firstAbility];
