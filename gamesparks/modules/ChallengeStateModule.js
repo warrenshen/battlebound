@@ -65,10 +65,14 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     
     const lastMoves = challengeStateData.lastMoves || [];
     const obfuscatedMoves = lastMoves.map(function(move) {
+        if (move === null) {
+            setScriptError("Move is null - did you remember to set move to something?");
+        }
         if (move.playerId === opponentId && move.category === MOVE_CATEGORY_DRAW_CARD) {
             return {
                 playerId: move.playerId,
                 category: move.category,
+                rank: move.rank,
                 attributes: {
                     card: { id: "HIDDEN" },
                 },
@@ -77,19 +81,14 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
             return move;
         }
     });
-    const newMoves = obfuscatedMoves.filter(function(move) {
-        if (move === null) {
-            setScriptError("Move is null - did you remember to set move to something?");
-        }
-        
-        return move.playerId == opponentId || move.category == MOVE_CATEGORY_DRAW_CARD;
-    });
     
     return {
         nonce: challengeStateData.nonce,
         playerState: filteredPlayerState,
         opponentState: filteredOpponentState,
-        newMoves: newMoves,
+        newMoves: obfuscatedMoves,
+        moveCount: challengeStateData.moves.length,
+        spawnCount: challengeStateData.spawnCount,
     };
 }
 
@@ -111,6 +110,8 @@ function getChallengeStateForPlayer(playerId, challengeId) {
     Spark.setScriptData("playerState", response.playerState);
     Spark.setScriptData("opponentState", response.opponentState);
     Spark.setScriptData("newMoves", response.newMoves);
+    Spark.setScriptData("moveCount", response.moveCount);
+    Spark.setScriptData("spawnCount", response.spawnCount);
     
     return challenge;
 }

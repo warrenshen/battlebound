@@ -74,7 +74,6 @@ function getInstancesByCards(cards, cardFields) {
             result[templateFieldToInstanceField[field]] = template[field];
         });
         
-        result.image = template.name.replace(/ /g, "_");
         return result;
     });
     

@@ -22,6 +22,7 @@ require("ChallengeEventPrefix");
 require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
+require("ChallengeEffectsModule");
 
 const cardId = Spark.getData().cardId;
 const attributesJson = Spark.getData().attributesJson;
@@ -101,6 +102,11 @@ if (playedCard.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
 } else {
     playedCard.hasShield = 0;
 }
+playedCard.isFrozen = 0;
+
+const spawnRank = challengeStateData.spawnCount;
+playedCard.spawnRank = spawnRank;
+challengeStateData.spawnCount += 1;
 
 // Reset `lastMoves` attribute in ChallengeState.
 challengeStateData.lastMoves = [];
@@ -116,46 +122,43 @@ var move = {
         handIndex: handIndex,
     },
 };
-challengeStateData.moves.push(move);
-challengeStateData.lastMoves.push(move);
-
-if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN) >= 0) {
-    // Iterate through cards already on field and grant them buff(s).
-    playerField.forEach(function(card) {
-        if (card.category === CARD_CATEGORY_MINION) {
-            card.attack += 10;
-            card.buffs.push({
-                category: BUFF_CATEGORY_INCREMENT_ATTACK,
-                granterId: playedCard.id,
-                attack: 1,
-                abilities: [],
-            });
-        }
-    });
-}
-if (playedCard.abilities.indexOf(CARD_ABILITY_BATTLE_CRY_DRAW_CARD) >= 0) {
-    move = drawCardForPlayer(playerId, playerState);
-    challengeStateData.moves.push(move);
-    challengeStateData.lastMoves.push(move);
-}
-
-// Iterate through cards already on field and grant played card buff(s).
-playerField.forEach(function(fieldCard) {
-    if (fieldCard.abilities && fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN) >= 0) {
-        playedCard.attack += 1;
-        playedCard.buffs.push({
-            granterId: fieldCard.id,
-            attack: 1,
-            abilities: [],
-        });
-    }
-});
-
-playerField[fieldIndex] = playedCard;
+addChallengeMove(challengeStateData, move);
 
 // Remove played card from hand.
 const newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
 playerState.hand = newHand;
+
+// Play card onto field.
+playerField[fieldIndex] = playedCard;
+
+processCreaturePlay(challengeStateData, playerId, cardId);
+
+// if (playedCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN) >= 0) {
+//     // Iterate through cards already on field and grant them buff(s).
+//     playerField.forEach(function(card) {
+//         if (card.category === CARD_CATEGORY_MINION) {
+//             card.attack += 10;
+//             card.buffs.push({
+//                 category: BUFF_CATEGORY_INCREMENT_ATTACK,
+//                 granterId: playedCard.id,
+//                 attack: 1,
+//                 abilities: [],
+//             });
+//         }
+//     });
+// }
+
+// Iterate through cards already on field and grant played card buff(s).
+// playerField.forEach(function(fieldCard) {
+//     if (fieldCard.abilities && fieldCard.abilities.indexOf(CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN) >= 0) {
+//         playedCard.attack += 1;
+//         playedCard.buffs.push({
+//             granterId: fieldCard.id,
+//             attack: 1,
+//             abilities: [],
+//         });
+//     }
+// });
     
 require("PersistChallengeStateModule");
 

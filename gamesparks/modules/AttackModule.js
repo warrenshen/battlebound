@@ -5,6 +5,8 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+const TARGET_ID_FACE = "TARGET_ID_FACE";
+
 /**
  * @return int - damage done to card
  **/
@@ -175,4 +177,12 @@ function addCardToPlayerHand(playerId, playerState, card) {
 function addCardToPlayerDeck(playerId, playerState, card) {
     playerState.deck.push(card);
     playerState.deckSize = playerState.deck.length;
+}
+
+function addChallengeMove(challengeStateData, move) {
+    const moveCount = challengeStateData.moves.length;
+    move.rank = moveCount;
+    
+    challengeStateData.moves.push(move);
+    challengeStateData.lastMoves.push(move);
 }

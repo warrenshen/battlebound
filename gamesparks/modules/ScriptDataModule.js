@@ -7,15 +7,15 @@
 // ====================================================================================================
 function setScriptError(errorMessage) {
     const logger = Spark.getLog();
-    // const stackTrace = Spark.currentStack();
+    const stackTrace = Spark.currentStack();
     
     const logMessage = {
         errorMessage: errorMessage,
-        // stackTrace: stackTrace,
     };
     logger.error(logMessage);
 
     Spark.setScriptError("errorMessage", errorMessage);
+    Spark.setScriptError("stackTrace", stackTrace);
     Spark.setScriptError("statusCode", 400);
     Spark.exit();
 }

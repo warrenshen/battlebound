@@ -58,7 +58,7 @@
  * 
  * ChallengeCard schema: {
  *   id: string, // Challenge-unique card ID: "{card ID}-{player ID}-{auto-incrementing ID}".
- *   baseId: string, // // Card ID in owner player.
+ *   baseId: string, // Card ID in owner player.
  *   category: int,
  *   name: string,
  *   image: string,
@@ -71,8 +71,10 @@
  *   healthMax: int, // The max value of health - starts at initial health.
  *   attack: int,
  *   attackStart: int, // The initial value of attack.
- *   canAttack: bool (int), // Field probably not set until card is played on field.
- *   hasShield: bool (int), // Field probably not set until card is played on field.
+ *   canAttack: int, // Number of attacks left this turn - field probably not set until card is played.
+ *   hasShield: bool (int), // Whether card has shield or not - field probably not set until card is played.
+ *   isFrozen: int, // Number of turns stuck frozen - field not set until card is played.
+ *   spawnRank: int, // Number of cards played before this card - not set until card is played on field.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
  *   buffs: [
  *     {
@@ -118,11 +120,13 @@
  *     [cardId]: ChallengeCard,
  *     ...
  *   },
+ *   spawnCount: int, // "Auto-increment" int for any spawn by either player.
  * }
  * 
  * Move schema: {
  *   playerId: string,
  *   category: string,
+ *   rank: int, // Number of moves before this move.
  *   attributes: {
  *     cardId: string, // Card ID of card (attacker, played card, etc).
  *     card: ChallengeCard object, // Card associated with `cardId`.
