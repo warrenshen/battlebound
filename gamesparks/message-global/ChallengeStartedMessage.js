@@ -32,6 +32,7 @@ const challengeStateData = {};
 const challengeState = challengeStateData.current = {};
 challengeStateData.moves = [];
 challengeStateData.cardIdToCard = {};
+challengeStateData.spawnCount = 0;
 
 // Any card that can show up in game needs to go into `challengeStateData.cardIdToCard`.
 challengerDeck.forEach(function(card) {

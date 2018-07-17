@@ -70,16 +70,14 @@ var move = {
         deckCardIndices: deckCardIndices,
     },
 };
-challengeStateData.moves.push(move);
-challengeStateData.lastMoves.push(move);
+addChallengeMove(challengeStateData, move);
 
 // Draw cards into hand to replaces ones put back in deck.
 mulliganCards.forEach(function(mulliganCard, index) {
     const isDeck = cardIds.indexOf(mulliganCard.id) < 0;
     if (isDeck) {
         const move = drawCardForPlayer(playerId, playerState);
-        challengeStateData.moves.push(move);
-        challengeStateData.lastMoves.push(move);
+        addChallengeMove(challengeStateData, move);
     }
 });
 
@@ -104,6 +102,8 @@ playerMessageData.nonce = playerResponse.nonce;
 playerMessageData.playerState = playerResponse.playerState;
 playerMessageData.opponentState = playerResponse.opponentState;
 playerMessageData.newMoves = playerResponse.newMoves;
+playerMessageData.moveCount = playerResponse.moveCount;
+playerMessageData.spawnCount = playerResponse.spawnCount;
 
 playerMessage.setMessageData(playerMessageData);
 playerMessage.setPlayerIds([playerId]);
@@ -118,6 +118,8 @@ opponentMessageData.nonce = opponentResponse.nonce;
 opponentMessageData.playerState = opponentResponse.playerState;
 opponentMessageData.opponentState = opponentResponse.opponentState;
 opponentMessageData.newMoves = opponentResponse.newMoves;
+opponentMessageData.moveCount = opponentResponse.moveCount;
+opponentMessageData.spawnCount = opponentResponse.spawnCount;
 
 opponentMessage.setMessageData(opponentMessageData);
 opponentMessage.setPlayerIds([opponentId]);

@@ -28,8 +28,16 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
     ];
     
     const expMoves = playerMoves.filter(function(move) { return expMoveCategories.indexOf(move.category) >= 0 });
-    const expCardIds = expMoves.map(function(move) { return move.attributes.cardId });
-    // TODO: card IDs are broken.
+    const expCardIds = expMoves.map(function(move) {
+        var challengeCardId = move.attributes.cardId;
+        var splitResponse = challengeCardId.split("-");
+        if (splitResponse.length != 3) {
+            setScriptError("Split response of challenge card ID is not length 3.");
+        }
+        
+        return splitResponse[0];
+    });
+    
     const bExpCardIds = expCardIds.filter(function(cardId) { return cardId.indexOf("B") === 0 });
     const cExpCardIds = expCardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });
     
@@ -75,7 +83,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
         
         const resultCard = {};
         resultCard.id = cardData.id;
-        resultCard.templateId = resultCard.templateId;
+        resultCard.templateId = cardData.templateId;
         resultCard.levelPrevious = cardData.level;
         resultCard.expPrevious = cardData.exp;
         
