@@ -288,7 +288,8 @@ public class SpellCard : Card
     public const string SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
 
     public const string SPELL_NAME_RIOT_UP = "Riot Up";
-    public const string SPELL_NAME_BLIZZARD = "Blizzard";
+    public const string SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
+    public const string SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
 
 
     public static readonly List<string> VALID_SPELLS = new List<string>
@@ -298,7 +299,7 @@ public class SpellCard : Card
         SPELL_NAME_FREEZE,
         SPELL_NAME_DEEP_FREEZE,
         SPELL_NAME_RIOT_UP,
-        SPELL_NAME_BLIZZARD,
+        SPELL_NAME_BRR_BRR_BLIZZARD,
     };
 
     public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
@@ -312,7 +313,7 @@ public class SpellCard : Card
     public static readonly List<string> UNTARGETED_SPELL_NAMES = new List<string>
     {
         SPELL_NAME_RIOT_UP,
-        SPELL_NAME_BLIZZARD,
+        SPELL_NAME_BRR_BRR_BLIZZARD,
     };
 
     private static Dictionary<string, string> spellToMethod;
@@ -328,7 +329,7 @@ public class SpellCard : Card
     {
         if (!VALID_SPELLS.Contains(name))
         {
-            Debug.LogError("Invalid spell name.");
+            Debug.LogError(string.Format("Invalid spell name: {0}.", name));
         }
 
         this.id = id;

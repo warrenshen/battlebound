@@ -581,7 +581,7 @@ public class Player
         cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1));
         cards.Add(new CreatureCard("C19", "Bombshell Bombadier", 1));
         cards.Add(new SpellCard("C20", "Touch of Zeus", 1));
-        cards.Add(new SpellCard("C21", "Raze To Ashes", 1));
+        cards.Add(new SpellCard("C21", "Raze to Ashes", 1));
         cards.Add(new SpellCard("C22", "Deep Freeze", 1));
         cards.Add(new SpellCard("C23", "Brr Brr Blizzard", 1));
         cards.Add(new SpellCard("C24", "Riot Up", 1));

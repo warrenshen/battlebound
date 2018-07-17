@@ -1028,8 +1028,8 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_RIOT_UP:
                 effects = SpellUntargetedRiotUp(playerId);
                 break;
-            case SpellCard.SPELL_NAME_BLIZZARD:
-                effects = SpellUntargetedBlizzard(playerId);
+            case SpellCard.SPELL_NAME_BRR_BRR_BLIZZARD:
+                effects = SpellUntargetedBrrBrrBlizzard(playerId);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
@@ -1049,7 +1049,7 @@ public class EffectManager : MonoBehaviour
         return new List<Effect>();
     }
 
-    private List<Effect> SpellUntargetedBlizzard(string playerId)
+    private List<Effect> SpellUntargetedBrrBrrBlizzard(string playerId)
     {
         List<BoardCreature> opponentAliveCreatures =
             Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
