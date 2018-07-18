@@ -488,6 +488,11 @@ public class PlayerState
 
             List<string> abilitiesOne = Card.GetAbilityStringsByCodes(abilityCodes);
 
+            if (abilitiesTwo == null)
+            {
+                abilitiesTwo = new List<string>();
+            }
+
             abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
             abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
 
