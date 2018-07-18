@@ -48,24 +48,18 @@ public abstract class CardObject : MouseWatchable
 
     protected virtual void LoadCardArtwork()
     {
-        this.frontImage = Resources.Load(this.card.GetFrontImage()) as Texture2D;
-        this.backImage = Resources.Load(this.card.GetBackImage()) as Texture2D;
+        this.frontImage = this.card.GetFrontImageTexture();
+        this.backImage = this.card.GetBackImageTexture();
     }
 
-    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, Card card, Texture2D frontImage = null, Texture2D backImage = null)
+    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, Card card)
     {
-        if (frontImage == null)
-        {
-            frontImage = Resources.Load(card.GetFrontImage()) as Texture2D;
-        }
-        if (backImage == null)
-        {
-            backImage = Resources.Load(card.GetBackImage()) as Texture2D;
-        }
-
         cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
         cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
-        cardVisual.SetCardArtwork(frontImage, backImage);
+        cardVisual.SetCardArtwork(
+            card.GetFrontImageTexture(),
+            card.GetBackImageTexture()
+        );
 
         cardVisual.Stencil = ActionManager.Instance.stencilCount;
         ActionManager.Instance.stencilCount += 3 % 255;
@@ -95,7 +89,7 @@ public abstract class CardObject : MouseWatchable
 
     protected HyperCard.Card VisualizeCard()
     {
-        GameObject visualPrefab = Resources.Load("Prefabs/Card") as GameObject;
+        GameObject visualPrefab = BattleManager.Instance.CardPrefab as GameObject;
         Transform created = Instantiate(visualPrefab, this.transform).transform as Transform;
         created.localPosition = Vector3.zero;
         created.localRotation = Quaternion.identity;

@@ -8,6 +8,8 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
     private Dictionary<string, CardTemplate> cardNametoTemplate;
 
+    private Dictionary<string, Texture2D> imageNameToTexture;
+
     private void Awake()
     {
         base.Awake();
@@ -16,6 +18,17 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
         string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
         this.cardNametoTemplate = CodexHelper.ParseFile(codexPath);
+
+        this.imageNameToTexture = new Dictionary<string, Texture2D>();
+
+        foreach (string cardName in this.cardNametoTemplate.Keys)
+        {
+            CardTemplate cardTemplate = this.cardNametoTemplate[cardName];
+            string frontImage = cardTemplate.frontImage;
+            string backImage = cardTemplate.backImage;
+            this.imageNameToTexture[frontImage] = Resources.Load(frontImage) as Texture2D;
+            this.imageNameToTexture[backImage] = Resources.Load(backImage) as Texture2D;
+        }
 
         foreach (string creatureName in Card.CREATURE_CARD_NAMES)
         {
@@ -30,7 +43,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
     {
         if (!this.creatureNameToPrefab.ContainsKey(creatureName))
         {
-            Debug.LogError("Creature name does not exist in resource cache.");
+            Debug.LogError(string.Format("Creature name {0} does not exist in resource cache.", creatureName));
             return null;
         }
 
@@ -41,10 +54,26 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
     {
         if (!this.cardNametoTemplate.ContainsKey(cardName))
         {
-            Debug.LogError(string.Format("Creature name {0} does not exist in resource cache.", cardName));
+            Debug.LogError(string.Format("Card name {0} does not exist in resource cache.", cardName));
             return null;
         }
 
         return this.cardNametoTemplate[cardName];
+    }
+
+    public Texture2D GetImageTextureByName(string imageName)
+    {
+        if (imageName == null)
+        {
+            return null;
+        }
+
+        if (!this.imageNameToTexture.ContainsKey(imageName))
+        {
+            Debug.LogError(string.Format("Image name {0} does not exist in resource cache.", imageName));
+            return null;
+        }
+
+        return this.imageNameToTexture[imageName];
     }
 }
