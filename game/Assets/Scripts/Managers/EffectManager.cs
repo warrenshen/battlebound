@@ -737,15 +737,16 @@ public class EffectManager : MonoBehaviour
             List<Effect> effects = new List<Effect>();
 
             this.isWaiting = true;
-            attackingCreature.FightWithCallback(defendingCreature, new UnityAction<int>(
-                (int damageDone) =>
+            attackingCreature.FightAnimationWithCallback(defendingCreature, new UnityAction(
+                () =>
                 {
+                    int damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                    int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
-                    effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageReceived));
-                    effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageReceived));
+                    int damageTaken = attackingCreature.TakeDamage(defendingCreature.Attack);
+                    effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
+                    effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
 
                     defendingCreature.Redraw();
                     attackingCreature.Redraw();
@@ -792,9 +793,10 @@ public class EffectManager : MonoBehaviour
             //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
 
             this.isWaiting = true;
-            attackingCreature.FightWithCallback(defendingAvatar, new UnityAction<int>(
-                (int damageDone) =>
+            attackingCreature.FightAnimationWithCallback(defendingAvatar, new UnityAction(
+                () =>
                 {
+                    int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 

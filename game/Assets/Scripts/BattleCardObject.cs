@@ -26,10 +26,24 @@ public class BattleCardObject : CardObject
             return;
         }
 
-        if (!this.owner.HasTurn)
+        if (InspectorControlPanel.Instance.DevelopmentMode)
+        {
+            // Do not do anything when hovering over opponent card.
+            if (this.owner.Id != BattleManager.Instance.You.Id)
+            {
+                return;
+            }
+        }
+        else if (!this.owner.HasTurn)
+        {
             return;
+        }
+
         if (ActionManager.Instance.HasDragTarget())
+        {
             return;
+        }
+
         //set defaults of hypercard
         this.SetVisualResetValues();
 

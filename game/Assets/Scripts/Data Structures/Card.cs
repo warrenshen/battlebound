@@ -223,8 +223,15 @@ public abstract class Card
         List<string> abilityStrings = new List<string>();
         foreach (string abilityCode in abilityCodes)
         {
-            int abilityInt = Int32.Parse(abilityCode);
-            abilityStrings.Add(ABILITY_CODE_TO_STRING[abilityInt]);
+            if (VALID_ABILITIES.Contains(abilityCode))
+            {
+                abilityStrings.Add(abilityCode);
+            }
+            else
+            {
+                int abilityInt = Int32.Parse(abilityCode);
+                abilityStrings.Add(ABILITY_CODE_TO_STRING[abilityInt]);
+            }
         }
         return abilityStrings;
     }

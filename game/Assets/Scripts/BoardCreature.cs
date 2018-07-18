@@ -245,7 +245,7 @@ public class BoardCreature : Targetable
         return 0;
     }
 
-    public void FightWithCallback(Targetable other, UnityAction<int> onFightFinish)
+    public void FightAnimationWithCallback(Targetable other, UnityAction onFightFinish)
     {
         this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
 
@@ -261,11 +261,10 @@ public class BoardCreature : Targetable
             .setOnComplete(
                 () =>
                 {
-                    int damageDone = DamageLogic(other);
                     LeanTween
                         .move(this.gameObject, originalPosition, 0.3F)
-                        .setEaseInCubic()
-                        .setOnComplete(() => onFightFinish(damageDone));
+                        .setEaseInCubic();
+                    onFightFinish();
                 }
         );
 
@@ -281,15 +280,15 @@ public class BoardCreature : Targetable
         }
     }
 
-    private int DamageLogic(Targetable other)
-    {
-        if (!other.IsAvatar)
-        {
-            BoardCreature otherCreature = other as BoardCreature;
-            this.TakeDamage(otherCreature.Attack);
-        }
-        return other.TakeDamage(this.attack);
-    }
+    //private int DamageLogic(Targetable other)
+    //{
+    //    if (!other.IsAvatar)
+    //    {
+    //        BoardCreature otherCreature = other as BoardCreature;
+    //        this.TakeDamage(otherCreature.Attack);
+    //    }
+    //    return other.TakeDamage(this.attack);
+    //}
 
     IEnumerator PlayVFXWithDelay(object[] args)
     {
@@ -319,17 +318,15 @@ public class BoardCreature : Targetable
         if (this.hasShield)
         {
             this.hasShield = false;
-            Redraw();
             return 0;
         }
         else
         {
             int healthBefore = this.health;
             this.health -= amount;
-            this.health = Math.Max(this.health, 0);
+            //this.health = Math.Max(this.health, 0);
             this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
 
-            Redraw();
             return Math.Min(healthBefore, amount);
         }
     }

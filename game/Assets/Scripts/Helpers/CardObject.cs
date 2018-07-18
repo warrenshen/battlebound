@@ -37,6 +37,7 @@ public abstract class CardObject : MouseWatchable
         //make render changes according to card class here
         this.LoadCardArtwork();
         this.visual = this.VisualizeCard();
+        Debug.Log("Initializing");
 
         this.SetThisResetValues();
         this.SetVisualResetValues();
