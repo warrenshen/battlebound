@@ -150,14 +150,11 @@ public class CardEditorPanel : EditorWindow
 
     private void RenderTemplateEditor(CardTemplate template, int verticalOffset, bool editMode)
     {
+        ApplyCorrections(template);  //do fixes as needed
+
         CardArtworkSelect(template, verticalOffset, editMode);
         CardDefaultSection(template, verticalOffset);
         CardByTypeSection(template, verticalOffset, editMode);
-
-        //to-do: monster cards need attributes list
-
-        //to-do: validation that all fields are filled, saving using create new class, serialize to text file
-        //then move on to deletion and editing from editor...
 
         bool valid = ValidateEntries(template);
         string buttonMessage = "Save/export to NEW card to Codex";
@@ -171,6 +168,19 @@ public class CardEditorPanel : EditorWindow
         if (valid && GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), buttonMessage, style))
         {
             GenerateCard(template, editMode);
+        }
+    }
+
+    private void ApplyCorrections(CardTemplate template)
+    {
+        if (template.frontScale.x < 0)
+        {
+            template.frontScale *= -1;
+            this.flipHorizontal = true;
+        }
+        else
+        {
+            this.flipHorizontal = false;
         }
     }
 
@@ -321,7 +331,7 @@ public class CardEditorPanel : EditorWindow
             if (this.backgroundTexture != null)
             {
                 float verticalSize = CardEditorPanel.imageHeight * 1 / template.backScale.y;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 370 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 370 - 25 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
                                                       CardEditorPanel.imageWidth * 1 / template.backScale.x, verticalSize),
                                                       this.backgroundTexture, backMat);
             }
@@ -332,7 +342,7 @@ public class CardEditorPanel : EditorWindow
             if (this.mainTexture != null)
             {
                 float verticalSize = CardEditorPanel.imageHeight * 1 / template.frontScale.y;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 370 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 370 - 25 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
                                                       CardEditorPanel.imageWidth * 1 / template.frontScale.x, verticalSize),
                                                       this.mainTexture, frontMat);
             }
