@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114582806519411696}
   - component: {fileID: 114178164248928134}
   - component: {fileID: 114114484920546812}
+  - component: {fileID: 114078224271261226}
   m_Layer: 0
   m_Name: GameSparks
   m_TagString: Untagged
@@ -42,6 +43,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114078224271261226
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1976645980449316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 743f72bbae0c24e72be1efdab41d20f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114114484920546812
 MonoBehaviour:
   m_ObjectHideFlags: 1

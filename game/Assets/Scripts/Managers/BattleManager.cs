@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.IO;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -39,9 +38,6 @@ public class BattleManager : MonoBehaviour
 
     public CurvedLineRenderer attackCommand;
 
-    private Dictionary<string, CardTemplate> cardTemplates;
-    public Dictionary<string, CardTemplate> CardNameToTemplate => cardTemplates;
-
     private int mode;
 
     private const int BATTLE_STATE_NORMAL_MODE = 0;
@@ -56,6 +52,16 @@ public class BattleManager : MonoBehaviour
     private List<ChallengeMove> serverMoveQueue;
     private List<ChallengeMove> deviceMoveQueue;
 
+    // Cached transforms.
+    [SerializeField]
+    private Transform enemyPlayCardFixedTransform;
+
+    [SerializeField]
+    private Transform enemyDrawCardFixedTransform;
+
+    [SerializeField]
+    private Transform playerDrawCardFixedTransform;
+
     public static BattleManager Instance { get; private set; }
 
     public Player GetPlayerById(string playerId)
@@ -66,9 +72,6 @@ public class BattleManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
-        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
-        this.cardTemplates = CodexHelper.ParseFile(codexPath);
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
@@ -618,13 +621,25 @@ public class BattleManager : MonoBehaviour
         battleCardObject.transform.rotation = deckObject.transform.rotation;
         //done initializing to match deck orientation
 
-        string fixedPointName = String.Format("{0}DrawCardFixed", player.Name);
-        GameObject fixedPoint = GameObject.Find(fixedPointName);
+        Transform pivotPoint;
 
-        LeanTween.rotate(battleCardObject.gameObject, fixedPoint.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        if (player.Id == this.you.Id)
+        {
+            pivotPoint = this.playerDrawCardFixedTransform;
+        }
+        else
+        {
+            pivotPoint = this.enemyDrawCardFixedTransform;
+        }
+
+        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
 
         battleCardObject.noInteraction = true;  //to-do: try to streamline this if possible
-        LeanTween.move(battleCardObject.gameObject, fixedPoint.transform.position, CardTween.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.move(
+            battleCardObject.gameObject,
+            pivotPoint.position,
+            CardTween.TWEEN_DURATION
+        ).setEaseInQuad();
         yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
         //card stops to show what it is
         yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
@@ -936,14 +951,6 @@ public class BattleManager : MonoBehaviour
         UseCard(battleCardObject.Owner, battleCardObject);
     }
 
-    ///*
-    // * Play untargeted spell card after receiving play card move from server. 
-    // */
-    //public void PlayUntargetedSpell(BattleCardObject battleCardObject)
-    //{
-
-    //}
-
     public void UseCard(Player player, BattleCardObject battleCardObject)
     {
         GameObject.Destroy(battleCardObject.gameObject);
@@ -1246,7 +1253,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD)
         {
-            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
             Card card = serverMove.Attributes.Card.GetCard();
 
             ReceiveMoveDrawCard(
@@ -1260,7 +1266,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
         {
-            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
             Card card = serverMove.Attributes.Card.GetCard();
 
             if (card.GetType() == typeof(CreatureCard))
@@ -1280,7 +1285,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
         {
-            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
             Card card = serverMove.Attributes.Card.GetCard();
 
             if (card.GetType() == typeof(SpellCard))
@@ -1299,7 +1303,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
         {
-            Player owner = BattleManager.Instance.PlayerIdToPlayer[serverMove.PlayerId];
             Card card = serverMove.Attributes.Card.GetCard();
 
             if (card.GetType() == typeof(SpellCard))
@@ -1387,7 +1390,7 @@ public class BattleManager : MonoBehaviour
         BattleCardObject battleCardObject = (BattleCardObject)args[0];
         int fieldIndex = (int)args[1];
 
-        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+        Transform pivotPoint = this.enemyPlayCardFixedTransform;
 
         CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
@@ -1404,7 +1407,7 @@ public class BattleManager : MonoBehaviour
         BattleCardObject battleCardObject = (BattleCardObject)args[0];
         BoardCreature targetedCreature = (BoardCreature)args[1];
 
-        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+        Transform pivotPoint = this.enemyPlayCardFixedTransform;
 
         CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
@@ -1420,7 +1423,7 @@ public class BattleManager : MonoBehaviour
     {
         BattleCardObject battleCardObject = (BattleCardObject)args[0];
 
-        Transform pivotPoint = GameObject.Find("EnemyPlayCardFixed").transform;
+        Transform pivotPoint = this.enemyPlayCardFixedTransform;
 
         CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
