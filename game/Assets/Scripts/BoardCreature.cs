@@ -48,6 +48,8 @@ public class BoardCreature : Targetable
 
     [SerializeField]
     private List<string> abilities;
+    public List<string> Abilities => abilities;
+
     private Dictionary<string, GameObject> abilitiesFX;
 
     private bool silenced;
@@ -70,7 +72,7 @@ public class BoardCreature : Targetable
     private AudioSource[] audioSources;
 
     private int spawnRank;
-    public int SpawnRank;
+    public int SpawnRank => spawnRank;
 
     public void Initialize(BattleCardObject battleCardObject, int spawnRank)
     {
@@ -106,6 +108,8 @@ public class BoardCreature : Targetable
 
         this.isFrozen = 0;
 
+        this.spawnRank = spawnRank;
+
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
@@ -129,8 +133,6 @@ public class BoardCreature : Targetable
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
 
         this.buffs = new List<string>();
-
-        this.spawnRank = spawnRank;
     }
 
     public void InitializeFromChallengeCard(BattleCardObject battleCardObject, PlayerState.ChallengeCard challengeCard)
@@ -142,30 +144,16 @@ public class BoardCreature : Targetable
         this.attack = challengeCard.Attack;
         this.health = challengeCard.Health;
         this.maxHealth = challengeCard.HealthMax;
-        this.abilities = challengeCard.Abilities;
-
-        if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
-        {
-            this.canAttack = 1;
-        }
-        else
-        {
-            this.canAttack = 0;
-        }
+        this.abilities = challengeCard.GetAbilities();
+        this.canAttack = challengeCard.CanAttack;
 
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
 
-        if (this.abilities.Contains(Card.CARD_ABILITY_SHIELD))
-        {
-            this.hasShield = true;
-        }
-        else
-        {
-            this.hasShield = false;
-        }
+        this.hasShield = challengeCard.HasShield == 1;
+        this.isFrozen = challengeCard.IsFrozen;
 
-        this.isFrozen = 0;
+        this.spawnRank = challengeCard.SpawnRank;
 
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
@@ -190,8 +178,6 @@ public class BoardCreature : Targetable
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
 
         this.buffs = new List<string>();
-
-        this.spawnRank = challengeCard.SpawnRank;
     }
 
     private void RepurposeCardVisual()

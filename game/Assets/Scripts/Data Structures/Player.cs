@@ -539,8 +539,9 @@ public class Player
                 challengeCard.SetAttackStart(boardCreature.CreatureCard.GetAttack());
                 challengeCard.SetCanAttack(boardCreature.CanAttack);
                 challengeCard.SetHasShield(boardCreature.HasShield ? 1 : 0);
+                challengeCard.SetIsFrozen(boardCreature.IsFrozen);
                 challengeCard.SetSpawnRank(boardCreature.SpawnRank);
-                // abilities
+                challengeCard.SetAbilities(boardCreature.Abilities);
             }
 
             fieldCards.SetValue(challengeCard, i);
