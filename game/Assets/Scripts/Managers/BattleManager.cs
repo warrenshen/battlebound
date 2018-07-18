@@ -189,6 +189,9 @@ public class BattleManager : MonoBehaviour
             {
                 HideMulliganOverlay(this.you);
                 HideMulliganOverlay(this.opponent);
+
+
+                // TODO: render mana for other player.
                 activePlayer.RenderTurnStart();
             }
         }

@@ -275,8 +275,11 @@ public class PlayerState
         public int HasShield => hasShield;
 
         [SerializeField]
+        private int isFrozen;
+        public int IsFrozen => isFrozen;
+
+        [SerializeField]
         private List<string> abilities;
-        public List<string> Abilities => abilities;
 
         [SerializeField]
         private int spawnRank;
@@ -357,6 +360,11 @@ public class PlayerState
             this.hasShield = hasShield;
         }
 
+        public void SetIsFrozen(int isFrozen)
+        {
+            this.isFrozen = isFrozen;
+        }
+
         public void SetAbilities(List<string> abilities)
         {
             this.abilities = abilities;
@@ -365,6 +373,11 @@ public class PlayerState
         public void SetSpawnRank(int spawnRank)
         {
             this.spawnRank = spawnRank;
+        }
+
+        public List<string> GetAbilities()
+        {
+            return Card.GetAbilityStringsByCodes(this.abilities);
         }
 
         public bool Equals(ChallengeCard other)
@@ -426,9 +439,12 @@ public class PlayerState
             {
                 return string.Format("HasShield: {0} vs {1}", this.hasShield, other.HasShield);
             }
+            else if (this.isFrozen != other.IsFrozen)
+            {
+                return string.Format("IsFrozen: {0} vs {1}", this.isFrozen, other.IsFrozen);
+            }
             else if (this.spawnRank != other.SpawnRank)
             {
-                Debug.Log("Spawn rank mismatch");
                 return string.Format("SpawnRank: {0} vs {1}", this.spawnRank, other.SpawnRank);
             }
 
