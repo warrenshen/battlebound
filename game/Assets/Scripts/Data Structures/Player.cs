@@ -561,7 +561,7 @@ public class Player
         cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
         cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1));
         cards.Add(new SpellCard("C4", "Unstable Power", 4));
-        cards.Add(new CreatureCard("C5", "Pyre Dancer", 1));
+        cards.Add(new CreatureCard("C5", "Bombshell Bombadier", 1));
         cards.Add(new CreatureCard("C6", "Firebug Catelyn", 1));
         cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1));
         cards.Add(new CreatureCard("C8", "Taji the Fearless", 1));
@@ -575,7 +575,6 @@ public class Player
         cards.Add(new CreatureCard("C16", "Wave Charmer", 1));
         cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1));
         cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1));
-        cards.Add(new CreatureCard("C19", "Bombshell Bombadier", 1));
         cards.Add(new SpellCard("C20", "Touch of Zeus", 1));
         cards.Add(new SpellCard("C21", "Raze to Ashes", 1));
         cards.Add(new SpellCard("C22", "Deep Freeze", 1));

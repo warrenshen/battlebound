@@ -62,6 +62,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private Transform playerDrawCardFixedTransform;
 
+    [SerializeField]
+    private GameObject cardPrefab;
+    public GameObject CardPrefab => cardPrefab;
+
     public static BattleManager Instance { get; private set; }
 
     public Player GetPlayerById(string playerId)

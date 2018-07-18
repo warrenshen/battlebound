@@ -980,10 +980,21 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellTargetedFreeze(string playerId, BoardCreature targetedCreature)
     {
-        targetedCreature.Freeze(1);
+        List<Effect> effects = new List<Effect>();
 
-        // No triggered effects on freeze for now.
-        return new List<Effect>();
+        int damageTaken = targetedCreature.TakeDamage(10);
+        effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+
+        if (targetedCreature.Health <= 0)
+        {
+            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
+        }
+        else
+        {
+            targetedCreature.Freeze(1);
+        }
+
+        return effects;
     }
 
     private List<Effect> SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)

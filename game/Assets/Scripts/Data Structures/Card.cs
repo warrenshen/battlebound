@@ -166,6 +166,16 @@ public abstract class Card
         return this.cardTemplate.backOffset;
     }
 
+    public Texture2D GetFrontImageTexture()
+    {
+        return ResourceSingleton.Instance.GetImageTextureByName(GetFrontImage());
+    }
+
+    public Texture2D GetBackImageTexture()
+    {
+        return ResourceSingleton.Instance.GetImageTextureByName(GetBackImage());
+    }
+
     protected void LoadCodex()
     {
         if (this.name == null)
