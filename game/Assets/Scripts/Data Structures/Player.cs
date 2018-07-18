@@ -580,6 +580,7 @@ public class Player
         cards.Add(new SpellCard("C22", "Deep Freeze", 1));
         cards.Add(new SpellCard("C23", "Brr Brr Blizzard", 1));
         cards.Add(new SpellCard("C24", "Riot Up", 1));
+        cards.Add(new SpellCard("C25", "Widespread Frostbite", 1));
 
         Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;

@@ -8,23 +8,59 @@ public class BasicButton : ObjectUI
     private GameObject target;
     [SerializeField]
     private string functionName;
+    [SerializeField]
+    private GameObject labelObject;
 
+    [SerializeField]
+    private bool activeState;
+
+    private SpriteRenderer spriteRenderer;
+
+    [SerializeField]
+    private Texture2D activeImage;
+    private Sprite activeSprite;
+
+    [SerializeField]
+    private Texture2D inactiveImage;
+    private Sprite inactiveSprite;
 
     // Use this for initialization
     void Start()
     {
         base.Initialize();
         this.scalingFactor = 1.10f;
+        this.activeState = true;
+        this.spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+
+        if (this.activeImage)
+        {
+            this.activeSprite = Sprite.Create(this.activeImage, new Rect(0.0f, 0.0f, this.activeImage.width, this.activeImage.height), new Vector2(0.5f, 0.5f), 100.0f);
+            this.spriteRenderer.sprite = this.activeSprite;
+        }
+        if (this.inactiveImage)
+        {
+            this.inactiveSprite = Sprite.Create(this.inactiveImage, new Rect(0.0f, 0.0f, this.inactiveImage.width, this.inactiveImage.height), new Vector2(0.5f, 0.5f), 100.0f);
+        }
+        if (BattleManager.Instance != null && BattleManager.Instance.ActivePlayer != BattleManager.Instance.You)
+        {
+            this.ToggleState();
+        }
     }
 
     public override void EnterHover()
     {
+        if (!this.activeState)
+            return;
+
         base.EnterHover();
         ActionManager.Instance.SetCursor(1);
     }
 
     public override void ExitHover()
     {
+        if (!this.activeState)
+            return;
+
         base.ExitHover();
         if (BattleManager.Instance != null)
         {
@@ -34,8 +70,26 @@ public class BasicButton : ObjectUI
 
     public override void MouseUp()
     {
+        //to-do: make uninteractable when not your turn
         base.MouseUp();
         if (target != null)
             target.SendMessage(functionName);
+    }
+
+    public void ToggleState()
+    {
+        this.activeState = !this.activeState;
+        if (this.activeState)
+        {
+            if (activeImage != null)
+                this.spriteRenderer.sprite = this.activeSprite;
+        }
+        else
+        {
+            if (inactiveImage != null)
+                this.spriteRenderer.sprite = this.inactiveSprite;
+        }
+        if (this.labelObject != null)
+            this.labelObject.SetActive(this.activeState);
     }
 }

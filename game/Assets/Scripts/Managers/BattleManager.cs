@@ -15,7 +15,9 @@ public class BattleManager : MonoBehaviour
     public bool Initialized => initialized;
 
     private Player you;
+    public Player You => you;
     private Player opponent;
+    public Player Opponent => opponent;
 
     [SerializeField]
     private Player activePlayer;
@@ -55,12 +57,12 @@ public class BattleManager : MonoBehaviour
     // Cached transforms.
     [SerializeField]
     private Transform enemyPlayCardFixedTransform;
-
     [SerializeField]
     private Transform enemyDrawCardFixedTransform;
-
     [SerializeField]
     private Transform playerDrawCardFixedTransform;
+    [SerializeField]
+    private BasicButton endTurnButton;
 
     [SerializeField]
     private GameObject cardPrefab;
@@ -345,6 +347,7 @@ public class BattleManager : MonoBehaviour
     private void NextTurn()
     {
         activePlayer.EndTurn();
+        endTurnButton.ToggleState();
 
         EffectManager.Instance.OnEndTurn(
             activePlayer.Id,
