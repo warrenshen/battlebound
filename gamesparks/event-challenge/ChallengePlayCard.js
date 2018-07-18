@@ -65,7 +65,7 @@ if (attributesJson.fieldIndex != null) {
     attributes = attributesJson;
 } else {
     attributes = JSON.parse(attributesString);
-    if (!attributes.fieldIndex) {
+    if (attributes.fieldIndex == null) {
         setScriptError("Invalid attributesJson or attributesString parameter");
     }
 }

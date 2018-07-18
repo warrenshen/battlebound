@@ -79,6 +79,11 @@ function hasCardAbilityOrBuff(card, abilityOrBuff) {
 }
 
 function addToQueues(newEffects) {
+    if (!Array.isArray(newEffects)) {
+        setScriptError("New effects param is not an array.");
+        setScriptData("newEffects", newEffects);
+    }
+    
     newEffects.forEach(function(effect) {
         if (effect.spawnRank == null || effect.spawnRank < 0) {
             setScriptError("Effect with invalid spawn rank found.");
@@ -342,7 +347,7 @@ function processLQueue(challengeStateData, effect) {
             break;
         case CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
             newEffects = abilityDeathRattleAttackRandomThree(challengeStateData, effect);
-        break;
+            break;
         case CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
             newEffects = abilityDeathRattleDrawCard(challengeStateData, effect);
             break;
@@ -359,7 +364,7 @@ function processLQueue(challengeStateData, effect) {
             setScriptError("Effect not supported.");
             break;
     }
-
+    
     return newEffects;
 }
 
@@ -399,11 +404,10 @@ function abilityAttackInFront(challengeStateData, effect, amount) {
     var newEffects = [];
     
     if (defendingCard.id === "EMPTY") {
-        return;
+        return newEffects;
     };
     
-    const damageDone = damageCard(defendingCard, amount);
-    newEffects = newEffects.concat(getEffectsOnCardDamageDealt(playerId, attackingCard, damageDone));
+    const damageTaken = damageCard(defendingCard, amount);
     newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, defendingCard, damageTaken));
     
     if (defendingCard.health <= 0) {
@@ -749,6 +753,9 @@ function processSpellTargetedPlay(challengeStateData, playerId, playedCard, fiel
 }
 
 function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedCard, fieldId, targetId) {
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+        
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     const opponentState = challengeStateData.current[opponentId];
     const opponentField = opponentState.field;
@@ -757,39 +764,56 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
         setScriptError("Invalid fieldId parameter.");
     }
     
-    // Find index of defending card in player field.
-    const defendingIndex = opponentField.findIndex(function(card) { return card.id === targetId });
-    if (defendingIndex < 0) {
+    // Find index of opponent card in opponent field.
+    const opponentIndex = opponentField.findIndex(function(card) { return card.id === targetId });
+    if (opponentIndex < 0) {
         setScriptError("Invalid targetId parameter - card does not exist.");
     }
     
-    const defendingCard = opponentField[defendingIndex];
+    const opponentCard = opponentField[opponentIndex];
     
     var damageDone;
     const newEffects = [];
     
     if (playedCard.name === SPELL_NAME_TOUCH_OF_ZEUS) {
-        damageDone = damageCard(defendingCard, 20);
+        damageDone = damageCard(opponentCard, 20);
         
-        newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, defendingCard, damageDone));
+        newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, opponentCard, damageDone));
         
-        if (defendingCard.health <= 0) {
-            newEffects = newEffects.concat(getEffectsOnCardDeath(opponentId, defendingCard));
+        if (opponentCard.health <= 0) {
+            newEffects = newEffects.concat(getEffectsOnCardDeath(opponentId, opponentCard));
         }
     } else if (playedCard.name === SPELL_NAME_FREEZE) {
-        damageDone = damageCard(defendingCard, 10);
+        damageDone = damageCard(opponentCard, 10);
         
-        newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, defendingCard, damageDone));
+        newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, opponentCard, damageDone));
         
-        if (defendingCard.health <= 0) {
-            newEffects = newEffects.concat(getEffectsOnCardDeath(opponentId, defendingCard));
+        if (opponentCard.health <= 0) {
+            newEffects = newEffects.concat(getEffectsOnCardDeath(opponentId, opponentCard));
         } else {
-            defendingCard.isFrozen = 1;
+            opponentCard.isFrozen = 1;
         }
     } else if (playedCard.name === SPELL_NAME_WIDESPREAD_FROSTBITE) {
-        defendingCard.isFrozen = 2;
-        // Freeze opposite and adjacent cards.
-        setScriptError("Not done yet.");
+        opponentCard.isFrozen = 2;
+        
+        const playerIndex = 5 - opponentIndex;
+        const oppositeCard = playerField[playerIndex];
+        if (oppositeCard.id != "EMPTY") {
+            oppositeCard.isFrozen = 2;
+        }
+        
+        if (opponentIndex > 0) {
+            const leftCard = opponentField[opponentIndex - 1];
+            if (leftCard.id != "EMPTY") {
+                leftCard.isFrozen = 1;
+            }
+        }
+        if (opponentIndex < 5) {
+            const rightCard = opponentField[opponentIndex + 1];
+            if (rightCard.id != "EMPTY") {
+                rightCard.isFrozen = 1;
+            }
+        }
     } else {
         setScriptError("Unrecognized spell card name.");
     }
