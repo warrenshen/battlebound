@@ -115,42 +115,7 @@ public class PlayerState
 
     public bool Equals(PlayerState other)
     {
-        if (this.field.Length != other.Field.Length)
-        {
-            return false;
-        }
-        if (this.hand.Count != other.Hand.Count)
-        {
-            return false;
-        }
-
-        bool areHandsEqual = true;
-        bool areFieldsEqual = true;
-
-        for (int i = 0; i < this.hand.Count; i += 1)
-        {
-            areHandsEqual &= this.hand.ElementAt(i).Equals(other.Hand.ElementAt(i));
-        }
-        for (int i = 0; i < this.field.Length; i += 1)
-        {
-            areFieldsEqual &= this.field.ElementAt(i).Equals(other.Field.ElementAt(i));
-        }
-
-        if (!areHandsEqual || !areFieldsEqual)
-        {
-            return false;
-        }
-
-        // TODO: mulliganCards
-        return this.id == other.Id &&
-               this.hasTurn == other.HasTurn &&
-               this.manaCurrent == other.ManaCurrent &&
-               this.manaMax == other.ManaMax &&
-               this.health == other.Health &&
-               this.healthMax == other.HealthMax &&
-               this.armor == other.Armor &&
-               this.deckSize == other.DeckSize &&
-               this.mode == other.Mode;
+        return FirstDiff(other) == null;
     }
 
     /*
@@ -268,10 +233,6 @@ public class PlayerState
         [SerializeField]
         private string description;
         public string Description => description;
-
-        [SerializeField]
-        private string image;
-        public string Image => image;
 
         [SerializeField]
         private int level;
@@ -467,6 +428,7 @@ public class PlayerState
             }
             else if (this.spawnRank != other.SpawnRank)
             {
+                Debug.Log("Spawn rank mismatch");
                 return string.Format("SpawnRank: {0} vs {1}", this.spawnRank, other.SpawnRank);
             }
 
