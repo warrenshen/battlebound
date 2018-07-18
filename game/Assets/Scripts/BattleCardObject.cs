@@ -14,7 +14,6 @@ public class BattleCardObject : CardObject
     public void Initialize(Player player, Card card)
     {
         this.owner = player;
-        //does the visual stuff using templateData
         base.Initialize(card);
     }
 

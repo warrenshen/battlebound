@@ -240,28 +240,6 @@ public class PlayerState
         return cards;
     }
 
-    public Card[] GetCardsField()
-    {
-        Card[] cards = new Card[6];
-        for (int i = 0; i < 6; i += 1)
-        {
-            ChallengeCard challengeCard = this.field[i];
-            cards[i] = challengeCard.GetCard();
-        }
-        return cards;
-    }
-
-    public int[] GetSpawnRanks()
-    {
-        int[] spawnRanks = new int[6];
-        for (int i = 0; i < 6; i += 1)
-        {
-            ChallengeCard challengeCard = this.field[i];
-            spawnRanks[i] = challengeCard.SpawnRank;
-        }
-        return spawnRanks;
-    }
-
     public List<Card> GetCardsMulligan()
     {
         List<Card> cards = new List<Card>();
@@ -492,26 +470,37 @@ public class PlayerState
                 return string.Format("SpawnRank: {0} vs {1}", this.spawnRank, other.SpawnRank);
             }
 
-            if (this.abilities == null && other.abilities != null)
+            string abilitiesDiff = GetAbilitiesDiff(this.abilities, other.abilities);
+            if (abilitiesDiff != null)
             {
-                return string.Format("Abilities existence: {0} vs {1}", this.abilities != null, other.abilities != null);
+                return abilitiesDiff;
             }
-            if (this.abilities != null && other.abilities == null)
+
+            return null;
+        }
+
+        private static string GetAbilitiesDiff(List<string> abilitiesOne, List<string> abilitiesTwo)
+        {
+            if (abilitiesOne == null && abilitiesTwo != null)
             {
-                return string.Format("Abilities existence: {0} vs {1}", this.abilities != null, other.abilities != null);
+                return string.Format("Abilities existence: {0} vs {1}", abilitiesOne != null, abilitiesTwo != null);
+            }
+            if (abilitiesOne != null && abilitiesTwo == null)
+            {
+                return string.Format("Abilities existence: {0} vs {1}", abilitiesOne != null, abilitiesTwo != null);
             }
 
             if (
-                this.abilities != null &&
-                other.abilities != null
+                abilitiesOne != null &&
+                abilitiesTwo != null
             )
             {
-                if (this.abilities.Count != other.abilities.Count)
+                List<string> exceptAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
+                if (exceptAbilities.Count > 0)
                 {
-                    return string.Format("Abilities length: {0} vs {1}", this.abilities.Count, other.abilities.Count);
+                    return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
                 }
-
-                List<string> exceptAbilities = this.abilities.Except(other.abilities).ToList();
+                exceptAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
                 if (exceptAbilities.Count > 0)
                 {
                     return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
@@ -521,15 +510,66 @@ public class PlayerState
             return null;
         }
 
-        public Card GetCard()
+        public Card GetCard(bool shouldCompare = true)
         {
             if (this.category == Card.CARD_CATEGORY_MINION)
             {
-                return new CreatureCard(
+                CreatureCard creatureCard = new CreatureCard(
                     this.id,
                     this.name,
                     this.level
                 );
+
+                if (shouldCompare)
+                {
+                    if (this.cost != creatureCard.GetCost())
+                    {
+                        Debug.LogWarning(
+                            string.Format(
+                                "Server db vs device codex {0} cost mismatch: {1} vs {2}",
+                                this.name,
+                                this.cost,
+                                creatureCard.GetCost()
+                            )
+                        );
+                    }
+                    if (this.attackStart != creatureCard.GetAttack())
+                    {
+                        Debug.LogWarning(
+                            string.Format(
+                                "Server db vs device codex {0} attack mismatch: {1} vs {2}",
+                                this.name,
+                                this.attack,
+                                creatureCard.GetAttack()
+                            )
+                        );
+                    }
+                    if (this.healthStart != creatureCard.GetHealth())
+                    {
+                        Debug.LogWarning(
+                            string.Format(
+                                "Server db vs device codex {0} health mismatch: {1} vs {2}",
+                                this.name,
+                                this.health,
+                                creatureCard.GetAttack()
+                            )
+                        );
+                    }
+
+                    string abilitiesDiff = GetAbilitiesDiff(this.abilities, creatureCard.GetAbilities());
+                    if (abilitiesDiff != null)
+                    {
+                        Debug.LogWarning(
+                            string.Format(
+                                "Server db vs device codex {0} abilities mismatch: {1}",
+                                this.name,
+                                abilitiesDiff
+                            )
+                        );
+                    }
+                }
+
+                return creatureCard;
             }
             else
             {

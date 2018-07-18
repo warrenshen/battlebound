@@ -83,13 +83,9 @@ public class Player
 
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this, playerState);
-
-        Card[] fieldCards = playerState.GetCardsField();
-        int[] spawnRanks = playerState.GetSpawnRanks();
-
         this.mode = playerState.Mode;
 
-        Board.Instance.RegisterPlayer(this, fieldCards, spawnRanks);
+        Board.Instance.RegisterPlayer(this, playerState.Field);
     }
 
     public void Initialize(PlayerState playerState)

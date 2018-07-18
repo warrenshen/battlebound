@@ -64,7 +64,6 @@ public class BoardCreature : Targetable
     private HyperCard.Card visual;
     private const float BOARD_GROW_FACTOR = 1.25f;
 
-    private string summonPrefabPath;
     private Animation summonAnimation;
     private List<AnimationState> summonAnimStates;
 
@@ -75,12 +74,12 @@ public class BoardCreature : Targetable
     {
         //data structure stuff
         this.creatureCard = battleCardObject.Card as CreatureCard;
+
         this.cost = this.creatureCard.GetCost();
         this.attack = this.creatureCard.GetAttack();
         this.health = this.creatureCard.GetHealth();
         this.maxHealth = this.creatureCard.GetHealth();
         this.abilities = this.creatureCard.GetAbilities();
-        this.summonPrefabPath = this.creatureCard.GetSummonPrefab();
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
         {
@@ -132,6 +131,67 @@ public class BoardCreature : Targetable
         this.spawnRank = spawnRank;
     }
 
+    public void InitializeFromChallengeCard(BattleCardObject battleCardObject, PlayerState.ChallengeCard challengeCard)
+    {
+        this.creatureCard = battleCardObject.Card as CreatureCard;
+
+        // Use challenge card stats.
+        this.cost = challengeCard.Cost;
+        this.attack = challengeCard.Attack;
+        this.health = challengeCard.Health;
+        this.maxHealth = challengeCard.HealthMax;
+        this.abilities = challengeCard.Abilities;
+
+        if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
+        {
+            this.canAttack = 1;
+        }
+        else
+        {
+            this.canAttack = 0;
+        }
+
+        this.maxAttacks = 1;
+        this.attacksThisTurn = 0;
+
+        if (this.abilities.Contains(Card.CARD_ABILITY_SHIELD))
+        {
+            this.hasShield = true;
+        }
+        else
+        {
+            this.hasShield = false;
+        }
+
+        this.isFrozen = 0;
+
+        this.owner = battleCardObject.Owner;
+        this.gameObject.layer = 9;
+
+        this.abilitiesFX = new Dictionary<string, GameObject>();
+
+        BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
+        newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
+        newCollider.size *= BOARD_GROW_FACTOR;
+        newCollider.center = oldCollider.center;
+
+        this.visual = battleCardObject.visual;
+        this.RepurposeCardVisual();
+        this.SummonCreature();
+
+        //method calls
+        this.Redraw();
+
+        //post-collider-construction visuals
+        transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
+
+        this.buffs = new List<string>();
+
+        this.spawnRank = challengeCard.SpawnRank;
+    }
+
     private void RepurposeCardVisual()
     {
         this.visual.gameObject.SetLayer(9);
@@ -153,7 +213,9 @@ public class BoardCreature : Targetable
     {
         SoundManager.Instance.PlaySound("SummonSFX", transform.position);
 
-        GameObject created = Instantiate(Resources.Load(this.summonPrefabPath)) as GameObject;
+        GameObject prefab = ResourceSingleton.Instance.GetCreaturePrefabByName(this.name);
+
+        GameObject created = Instantiate(prefab) as GameObject;
         created.transform.parent = this.transform;
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
         created.transform.Rotate(-15, 0, 0, Space.Self);

@@ -4476,6 +4476,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114178164248928134, guid: 75d4ebb0d026d474086a3ca7f396588d,
+        type: 2}
+      propertyPath: username
+      value: warren
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 75d4ebb0d026d474086a3ca7f396588d, type: 2}
   m_IsPrefabParent: 0
@@ -27073,6 +27078,9 @@ MonoBehaviour:
   boardOrBattleLayer: 0
   mouseDownTargetable: {fileID: 0}
   attackCommand: {fileID: 490075135}
+  enemyPlayCardFixedTransform: {fileID: 702672019}
+  enemyDrawCardFixedTransform: {fileID: 1217530749}
+  playerDrawCardFixedTransform: {fileID: 417002949}
 --- !u!114 &1237661228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42499,6 +42507,22 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!1 &2110465011 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1976645980449316, guid: 75d4ebb0d026d474086a3ca7f396588d,
+    type: 2}
+  m_PrefabInternal: {fileID: 351589221}
+--- !u!114 &2110465016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2110465011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 743f72bbae0c24e72be1efdab41d20f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2117646062
 GameObject:
   m_ObjectHideFlags: 0

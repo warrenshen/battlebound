@@ -6,6 +6,45 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Card
 {
+    public const string CARD_NAME_FIREBUG_CATELYN = "Firebug Catelyn";
+    public const string CARD_NAME_MARSHWATER_SQUEALER = "Marshwater Squealer";
+    public const string CARD_NAME_WATERBORNE_RAZORBACK = "Waterborne Razorback";
+    public const string CARD_NAME_BLESSED_NEWBORN = "Blessed Newborn";
+    public const string CARD_NAME_YOUNG_KYO = "Young Kyo";
+    public const string CARD_NAME_WAVE_CHARMER = "Wave Charmer";
+    public const string CARD_NAME_POSEIDONS_HANDMAIDEN = "Poseidon's Handmaiden";
+    public const string CARD_NAME_EMBERKITTY = "Emberkitty";
+    public const string CARD_NAME_FIRESTRIDED_TIGRESS = "Firestrided Tigress";
+    public const string CARD_NAME_TEMPLE_GUARDIAN = "Temple Guardian";
+    public const string CARD_NAME_BOMBSHELL_BOMBADIER = "Bombshell Bombadier";
+    public const string CARD_NAME_TAJI_THE_FEARLESS = "Taji the Fearless";
+    public const string CARD_NAME_UNKINDLED_JUNIOR = "Unkindled Junior";
+    public const string CARD_NAME_FLAMEBELCHER = "Flamebelcher";
+    public const string CARD_NAME_FIREBORN_MENACE = "Fireborn Menace";
+    public const string CARD_NAME_TEA_GREENLEAF = "Te'a Greenleaf";
+    public const string CARD_NAME_NESSA_NATURES_CHAMPION = "Nessa, Nature's Champion";
+
+    public static readonly List<string> CREATURE_CARD_NAMES = new List<string>
+    {
+        CARD_NAME_FIREBUG_CATELYN,
+        CARD_NAME_MARSHWATER_SQUEALER,
+        CARD_NAME_WATERBORNE_RAZORBACK,
+        CARD_NAME_BLESSED_NEWBORN,
+        CARD_NAME_YOUNG_KYO,
+        CARD_NAME_WAVE_CHARMER,
+        CARD_NAME_POSEIDONS_HANDMAIDEN,
+        CARD_NAME_EMBERKITTY,
+        CARD_NAME_FIRESTRIDED_TIGRESS,
+        CARD_NAME_TEMPLE_GUARDIAN,
+        CARD_NAME_BOMBSHELL_BOMBADIER,
+        CARD_NAME_TAJI_THE_FEARLESS,
+        CARD_NAME_UNKINDLED_JUNIOR,
+        CARD_NAME_FLAMEBELCHER,
+        CARD_NAME_FIREBORN_MENACE,
+        CARD_NAME_TEA_GREENLEAF,
+        CARD_NAME_NESSA_NATURES_CHAMPION,
+    };
+
     public enum RarityType { Common, Uncommon, Rare, Epic, Legendary, Cosmic }
 
     public const string CARD_EMPTY_ABILITY = "EMPTY";
@@ -132,15 +171,17 @@ public abstract class Card
         if (this.name == null)
         {
             this.cardTemplate = new CardTemplate();
+            return;
         }
-        else if (!BattleManager.Instance.CardNameToTemplate.ContainsKey(this.name))
+
+        CardTemplate template = ResourceSingleton.Instance.GetCardTemplateByName(this.name);
+        if (template == null)
         {
-            Debug.LogError(string.Format("Card {0} does not exist in codex.", this.Name));
             this.cardTemplate = new CardTemplate();
         }
         else
         {
-            this.cardTemplate = BattleManager.Instance.CardNameToTemplate[this.name];
+            this.cardTemplate = template;
         }
     }
 }
@@ -195,6 +236,7 @@ public class CreatureCard : Card
         challengeCard.SetHealthMax(this.GetHealth());
         challengeCard.SetAttack(this.GetAttack());
         challengeCard.SetAttackStart(this.GetAttack());
+        challengeCard.SetAbilities(this.GetAbilities());
 
         return challengeCard;
     }
@@ -300,6 +342,7 @@ public class SpellCard : Card
         SPELL_NAME_DEEP_FREEZE,
         SPELL_NAME_RIOT_UP,
         SPELL_NAME_BRR_BRR_BLIZZARD,
+        SPELL_NAME_RAZE_TO_ASHES,
     };
 
     public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
@@ -314,6 +357,7 @@ public class SpellCard : Card
     {
         SPELL_NAME_RIOT_UP,
         SPELL_NAME_BRR_BRR_BLIZZARD,
+        SPELL_NAME_RAZE_TO_ASHES,
     };
 
     private static Dictionary<string, string> spellToMethod;

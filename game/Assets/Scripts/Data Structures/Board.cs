@@ -16,9 +16,6 @@ public class Board : MonoBehaviour
     [SerializeField]
     private Dictionary<string, PlayerAvatar> playerIdToAvatar;
 
-    [SerializeField]
-    private Dictionary<string, Dictionary<int, Transform>> playerIdToIndexToBoardPlace;
-
     public static Board Instance { get; private set; }
 
     private void Awake()
@@ -28,38 +25,20 @@ public class Board : MonoBehaviour
         this.playerIdToOpponentId = new Dictionary<string, string>();
         this.playerIdToField = new Dictionary<string, PlayingField>();
         this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
-        this.playerIdToIndexToBoardPlace = new Dictionary<string, Dictionary<int, Transform>>();
     }
 
     public void RegisterPlayer(Player player)
     {
-        CacheBoardPlaces(player);
-
         PlayingField playingField = new PlayingField(player);
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
-    public void RegisterPlayer(Player player, Card[] fieldCards, int[] spawnRanks)
+    public void RegisterPlayer(Player player, PlayerState.ChallengeCard[] fieldCards)
     {
-        CacheBoardPlaces(player);
-
-        PlayingField playingField = new PlayingField(player, fieldCards, spawnRanks);
+        PlayingField playingField = new PlayingField(player, fieldCards);
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
-    }
-
-    private void CacheBoardPlaces(Player player)
-    {
-        this.playerIdToIndexToBoardPlace[player.Id] = new Dictionary<int, Transform>();
-
-        for (int i = 0; i < 6; i += 1)
-        {
-            Transform boardPlace = GameObject.Find(
-                String.Format("{0} {1}", player.Name, i)
-            ).transform;
-            this.playerIdToIndexToBoardPlace[player.Id][i] = boardPlace;
-        }
     }
 
     public void RegisterPlayerOpponent(string playerId, string opponentId)
@@ -74,18 +53,17 @@ public class Board : MonoBehaviour
     }
 
     /*
-     * @param bool isInit - if true, function will not invoke onCreaturePlay in EffectManager
+     * Do NOT use to spawn creatures when resuming games.
      */
     public void CreateAndPlaceCreature(
         BattleCardObject battleCardObject,
         int index,
-        int spawnRank,
-        bool isInit = false
+        int spawnRank
     )
     {
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
-            new object[4] { battleCardObject, index, spawnRank, isInit }
+            new object[3] { battleCardObject, index, spawnRank }
         );
     }
 
@@ -94,9 +72,9 @@ public class Board : MonoBehaviour
         BattleCardObject battleCardObject = args[0] as BattleCardObject;
         int index = (int)args[1];
         int spawnRank = (int)args[2];
-        bool isInit = (bool)args[3];
 
-        Transform boardPlace = this.playerIdToIndexToBoardPlace[battleCardObject.Owner.Id][index];
+        PlayingField playingField = this.playerIdToField[battleCardObject.Owner.Id];
+        Transform boardPlace = playingField.GetBoardPlaceByIndex(index);
 
         FXPoolManager.Instance.PlayEffect("SpawnVFX", boardPlace.position + new Vector3(0f, 0f, -0.1f));
 
@@ -109,16 +87,12 @@ public class Board : MonoBehaviour
 
         Destroy(battleCardObject.gameObject);
 
-        PlayingField playingField = this.playerIdToField[boardCreature.Owner.Id];
         playingField.Place(boardCreature, index);
 
-        if (!isInit)
-        {
-            EffectManager.Instance.OnCreaturePlay(
-                boardCreature.Owner.Id,
-                boardCreature.GetCardId()
-            );
-        }
+        EffectManager.Instance.OnCreaturePlay(
+            boardCreature.Owner.Id,
+            boardCreature.GetCardId()
+        );
     }
 
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
@@ -232,39 +206,73 @@ public class Board : MonoBehaviour
         {
             this.playerId = player.Id;
             this.creatures = new BoardCreature[6];
+            this.indexToBoardPlace = new Dictionary<int, Transform>();
+
+            CacheBoardPlaces(player);
         }
 
-        public PlayingField(Player player, Card[] cards, int[] spawnRanks)
+        public PlayingField(Player player, PlayerState.ChallengeCard[] fieldCards)
         {
             this.playerId = player.Id;
             this.creatures = new BoardCreature[6];
+            this.indexToBoardPlace = new Dictionary<int, Transform>();
 
-            SpawnCards(player, cards, spawnRanks);
+            CacheBoardPlaces(player);
+            SpawnCardsFromChallengeState(player, fieldCards);
         }
 
-        private void SpawnCards(Player player, Card[] cards, int[] spawnRanks)
+        private void CacheBoardPlaces(Player player)
         {
             for (int i = 0; i < 6; i += 1)
             {
-                Card card = cards[i];
-                int spawnRank = spawnRanks[i];
+                Transform boardPlace = GameObject.Find(
+                    String.Format("{0} {1}", player.Name, i)
+                ).transform;
+                this.indexToBoardPlace[i] = boardPlace;
+            }
+        }
 
-                if (card.Id == "EMPTY")
+        private void SpawnCardsFromChallengeState(Player player, PlayerState.ChallengeCard[] fieldCards)
+        {
+            for (int i = 0; i < 6; i += 1)
+            {
+                PlayerState.ChallengeCard challengeCard = fieldCards[i];
+
+                if (challengeCard.Id == "EMPTY")
                 {
                     continue;
                 }
 
-                GameObject created = new GameObject(card.Name);
-                BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
-                battleCardObject.Initialize(player, card);
-
-                Board.Instance.CreateAndPlaceCreature(
-                    battleCardObject,
-                    i,
-                    spawnRank,
-                    true
+                SpawnCreatureFromChallengeCard(
+                    player,
+                    challengeCard,
+                    i
                 );
             }
+        }
+
+        private void SpawnCreatureFromChallengeCard(
+            Player player,
+            PlayerState.ChallengeCard challengeCard,
+            int index
+        )
+        {
+            Transform boardPlace = GetBoardPlaceByIndex(index);
+
+            CreatureCard creatureCard = challengeCard.GetCard(false) as CreatureCard;
+
+            GameObject created = new GameObject(creatureCard.Name);
+            BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+            battleCardObject.Initialize(player, creatureCard);
+
+            GameObject boardCreatureObject = new GameObject(battleCardObject.Card.Name);
+            boardCreatureObject.transform.position = boardPlace.position;
+            BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
+            boardCreature.InitializeFromChallengeCard(battleCardObject, challengeCard);
+
+            Destroy(battleCardObject.gameObject);
+
+            Place(boardCreature, index);
         }
 
         public bool Place(BoardCreature creature, int index)
@@ -279,6 +287,11 @@ public class Board : MonoBehaviour
                 creatures[index] = creature;
                 return true;
             }
+        }
+
+        public Transform GetBoardPlaceByIndex(int index)
+        {
+            return this.indexToBoardPlace[index];
         }
 
         public bool IsPlaceEmpty(int index)
