@@ -67,6 +67,8 @@ public class BoardCreature : Targetable
     private Animation summonAnimation;
     private List<AnimationState> summonAnimStates;
 
+    private AudioSource[] audioSources;
+
     private int spawnRank;
     public int SpawnRank;
 
@@ -220,6 +222,8 @@ public class BoardCreature : Targetable
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
         created.transform.Rotate(-15, 0, 0, Space.Self);
 
+        this.audioSources = created.GetComponents<AudioSource>();
+
         this.summonAnimation = created.transform.GetChild(0).GetComponent<Animation>();
         this.summonAnimStates = new List<AnimationState>();
         foreach (AnimationState state in this.summonAnimation)
@@ -257,6 +261,8 @@ public class BoardCreature : Targetable
 
     public void FightWithCallback(Targetable other, UnityAction<int> onFightFinish)
     {
+        this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
+
         this.summonAnimation.Play(summonAnimStates[0].name);
         this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);     //should group with sound as a method
         //move/animate
@@ -335,6 +341,7 @@ public class BoardCreature : Targetable
             int healthBefore = this.health;
             this.health -= amount;
             this.health = Math.Max(this.health, 0);
+            this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
 
             Redraw();
             return Math.Min(healthBefore, amount);
