@@ -479,32 +479,22 @@ public class PlayerState
             return null;
         }
 
-        private static string GetAbilitiesDiff(List<string> abilitiesOne, List<string> abilitiesTwo)
+        private static string GetAbilitiesDiff(List<string> abilityCodes, List<string> abilitiesTwo)
         {
-            if (abilitiesOne == null && abilitiesTwo != null)
+            if (abilityCodes == null)
             {
-                return string.Format("Abilities existence: {0} vs {1}", abilitiesOne != null, abilitiesTwo != null);
-            }
-            if (abilitiesOne != null && abilitiesTwo == null)
-            {
-                return string.Format("Abilities existence: {0} vs {1}", abilitiesOne != null, abilitiesTwo != null);
+                abilityCodes = new List<string>();
             }
 
-            if (
-                abilitiesOne != null &&
-                abilitiesTwo != null
-            )
+            List<string> abilitiesOne = Card.GetAbilityStringsByCodes(abilityCodes);
+
+            abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
+            abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
+
+            List<string> exceptAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
+            if (exceptAbilities.Count > 0)
             {
-                List<string> exceptAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
-                if (exceptAbilities.Count > 0)
-                {
-                    return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
-                }
-                exceptAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
-                if (exceptAbilities.Count > 0)
-                {
-                    return string.Format("Abilities: {0}", string.Join(",", exceptAbilities));
-                }
+                return string.Format("Abilities: {0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
             }
 
             return null;

@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //removed abstract so that card is serialized and attributes are visible from inspector
@@ -88,6 +89,28 @@ public abstract class Card
         CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+    };
+
+    public static readonly Dictionary<int, string> ABILITY_CODE_TO_STRING = new Dictionary<int, string>
+    {
+        { 0, CARD_ABILITY_CHARGE },
+        { 1, CARD_ABILITY_TAUNT },
+        { 2, CARD_ABILITY_SHIELD },
+        { 3, CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN },
+        { 4, CARD_ABILITY_BATTLE_CRY_DRAW_CARD },
+        { 5, CARD_ABILITY_LIFE_STEAL },
+        { 6, CARD_ABILITY_DEATH_RATTLE_DRAW_CARD },
+        { 7, CARD_ABILITY_END_TURN_HEAL_TEN },
+        { 8, CARD_ABILITY_END_TURN_HEAL_TWENTY },
+        { 9, CARD_ABILITY_END_TURN_DRAW_CARD },
+        { 10, CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY },
+        { 11, CARD_ABILITY_EACH_KILL_DRAW_CARD },
+        { 12, CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY },
+        { 13, CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN },
+        { 14, CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY },
+        { 15, CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN },
+        { 16, CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY },
+        { 17, CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY },
     };
 
     public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
@@ -193,6 +216,17 @@ public abstract class Card
         {
             this.cardTemplate = template;
         }
+    }
+
+    public static List<string> GetAbilityStringsByCodes(List<string> abilityCodes)
+    {
+        List<string> abilityStrings = new List<string>();
+        foreach (string abilityCode in abilityCodes)
+        {
+            int abilityInt = Int32.Parse(abilityCode);
+            abilityStrings.Add(ABILITY_CODE_TO_STRING[abilityInt]);
+        }
+        return abilityStrings;
     }
 }
 
