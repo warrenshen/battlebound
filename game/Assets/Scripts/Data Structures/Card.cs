@@ -160,6 +160,11 @@ public abstract class Card
         return this.cardTemplate.cost;
     }
 
+    public RarityType GetRarity()
+    {
+        return this.cardTemplate.rarity;
+    }
+
     public string GetFrontImage()
     {
         return this.cardTemplate.frontImage;

@@ -1401,10 +1401,9 @@ public class BattleManager : MonoBehaviour
         CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
         yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-
+        battleCardObject.noInteraction = true; //will get destroyed and replaced by boardcreature anyways
         //flash or something
         yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
-
         PlayCardToBoard(battleCardObject, fieldIndex);
     }
 

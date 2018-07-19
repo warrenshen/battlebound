@@ -121,6 +121,28 @@ public abstract class CardObject : MouseWatchable
         cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
         cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
 
+        switch (card.GetRarity())
+        {
+            case Card.RarityType.Common:
+                cardVisual.SetTextFieldWithKey("Rarity", "C");
+                break;
+            case Card.RarityType.Uncommon:
+                cardVisual.SetTextFieldWithKey("Rarity", "UC");
+                break;
+            case Card.RarityType.Rare:
+                cardVisual.SetTextFieldWithKey("Rarity", "R");
+                break;
+            case Card.RarityType.Epic:
+                cardVisual.SetTextFieldWithKey("Rarity", "EP");
+                break;
+            case Card.RarityType.Legendary:
+                cardVisual.SetTextFieldWithKey("Rarity", "LD");
+                break;
+            case Card.RarityType.Cosmic:
+                cardVisual.SetTextFieldWithKey("Rarity", "CS");
+                break;
+        }
+
         bool isCreature = card.GetType() == typeof(CreatureCard);
         if (isCreature)
         {
