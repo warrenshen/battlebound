@@ -1002,21 +1002,21 @@ public class BattleManager : MonoBehaviour
 
         if (InspectorControlPanel.Instance.DevelopmentMode)
         {
-            BattleCardObject target = opponent.Hand.GetCardObjectByIndex(handIndex);
-            target.Initialize(opponent, card);
-            opponent.PlayCard(target);
-            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(handIndex);
+            battleCardObject.Reinitialize(card);
+            opponent.PlayCard(battleCardObject);
+            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { battleCardObject, fieldIndex });
         }
         else
         {
-            BattleCardObject target = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (target == null)
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
+            if (battleCardObject == null)
             {
                 Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
                 return;
             }
-            opponent.PlayCard(target);
-            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { target, fieldIndex });
+            opponent.PlayCard(battleCardObject);
+            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { battleCardObject, fieldIndex });
         }
     }
 
@@ -1041,7 +1041,7 @@ public class BattleManager : MonoBehaviour
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            battleCardObject.Initialize(opponent, card);
+            battleCardObject.Reinitialize(card);
 
             opponent.PlayCard(battleCardObject);
             StartCoroutine(
@@ -1083,7 +1083,7 @@ public class BattleManager : MonoBehaviour
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            battleCardObject.Initialize(opponent, card);
+            battleCardObject.Reinitialize(card);
 
             opponent.PlayCard(battleCardObject);
             StartCoroutine(
