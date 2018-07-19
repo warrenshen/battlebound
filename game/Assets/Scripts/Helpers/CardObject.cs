@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public abstract class CardObject : MouseWatchable
@@ -46,45 +44,26 @@ public abstract class CardObject : MouseWatchable
         colliderBox.size = CardObject.CARD_BOUNDS;
     }
 
+    public void Reinitialize(Card card)
+    {
+        this.card = card;
+        card.wrapper = this;
+        this.LoadCardArtwork();
+
+        if (this.visual == null)
+        {
+            Debug.LogError("Reinitialize called on card object without card visual.");
+            return;
+        }
+
+        CardObject.SetHyperCardFromData(this.visual, this.card);
+        CardObject.SetHyperCardArtwork(this.visual, this.card);
+    }
+
     protected virtual void LoadCardArtwork()
     {
         this.frontImage = this.card.GetFrontImageTexture();
         this.backImage = this.card.GetBackImageTexture();
-    }
-
-    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, Card card)
-    {
-        cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
-        cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
-        cardVisual.SetCardArtwork(
-            card.GetFrontImageTexture(),
-            card.GetBackImageTexture()
-        );
-
-        cardVisual.Stencil = ActionManager.Instance.stencilCount;
-        ActionManager.Instance.stencilCount += 3 % 255;
-    }
-
-    protected static void SetHyperCardFromData(HyperCard.Card cardVisual, Card card)
-    {
-        //set sprites and set textmeshpro labels using TmpTextObjects (?)
-        cardVisual.SetTextFieldWithKey("Title", card.GetName());
-        cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
-        cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
-
-        bool isCreature = card.GetType() == typeof(CreatureCard);
-        if (isCreature)
-        {
-            CreatureCard creatureCard = card as CreatureCard;
-            cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
-            cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
-        }
-        else
-        {
-            cardVisual.GetTextFieldWithKey("Attack").TmpObject.enabled = false;
-            cardVisual.GetTextFieldWithKey("Health").TmpObject.enabled = false;
-        }
-        cardVisual.Redraw();
     }
 
     protected HyperCard.Card VisualizeCard()
@@ -120,5 +99,40 @@ public abstract class CardObject : MouseWatchable
     public virtual void Release()
     {
 
+    }
+
+    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, Card card)
+    {
+        cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
+        cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
+        cardVisual.SetCardArtwork(
+            card.GetFrontImageTexture(),
+            card.GetBackImageTexture()
+        );
+
+        cardVisual.Stencil = ActionManager.Instance.stencilCount;
+        ActionManager.Instance.stencilCount += 3 % 255;
+    }
+
+    protected static void SetHyperCardFromData(HyperCard.Card cardVisual, Card card)
+    {
+        //set sprites and set textmeshpro labels using TmpTextObjects (?)
+        cardVisual.SetTextFieldWithKey("Title", card.GetName());
+        cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
+        cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
+
+        bool isCreature = card.GetType() == typeof(CreatureCard);
+        if (isCreature)
+        {
+            CreatureCard creatureCard = card as CreatureCard;
+            cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
+            cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
+        }
+        else
+        {
+            cardVisual.GetTextFieldWithKey("Attack").TmpObject.enabled = false;
+            cardVisual.GetTextFieldWithKey("Health").TmpObject.enabled = false;
+        }
+        cardVisual.Redraw();
     }
 }
