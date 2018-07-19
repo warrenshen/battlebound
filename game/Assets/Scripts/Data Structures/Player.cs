@@ -177,7 +177,7 @@ public class Player
             challengeMove.SetMoveAttributes(challengeMoveAttributes);
         }
 
-        BattleSingleton.Instance.EmitChallengeMove(challengeMove);
+        BattleManager.Instance.ReceiveChallengeMove(challengeMove);
     }
 
     public void DrawCards(int amount)

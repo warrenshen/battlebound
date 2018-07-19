@@ -168,6 +168,6 @@ public class MockMovesPanel : MonoBehaviour
         challengeMove.SetMoveAttributes(attributes);
         challengeMoves.Add(challengeMove);
 
-        BattleSingleton.Instance.EmitChallengeMoves(challengeMoves);
+        BattleSingleton.Instance.QueueChallengeMoves(challengeMoves);
     }
 }
