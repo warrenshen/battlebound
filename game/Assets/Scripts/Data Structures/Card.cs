@@ -119,10 +119,10 @@ public abstract class Card
         BUFF_CATEGORY_UNSTABLE_POWER,
     };
 
-    public static int CARD_CATEGORY_MINION = 0;
-    public static int CARD_CATEGORY_SPELL = 1;
-    public static int CARD_CATEGORY_STRUCTURE = 2;
-    public static int CARD_CATEGORY_WEAPON = 3;
+    public const int CARD_CATEGORY_MINION = 0;
+    public const int CARD_CATEGORY_SPELL = 1;
+    public const int CARD_CATEGORY_STRUCTURE = 2;
+    public const int CARD_CATEGORY_WEAPON = 3;
 
     [SerializeField]
     protected string id;
@@ -291,6 +291,13 @@ public class CreatureCard : Card
 
         return challengeCard;
     }
+
+    public static CreatureCard GetFromJson(string json)
+    {
+        CreatureCard creatureCard = JsonUtility.FromJson<CreatureCard>(json);
+        creatureCard.LoadCodex();
+        return creatureCard;
+    }
 }
 
 [System.Serializable]
@@ -337,6 +344,13 @@ public class WeaponCard : Card
 
         return challengeCard;
     }
+
+    public static WeaponCard GetFromJson(string json)
+    {
+        WeaponCard weaponCard = JsonUtility.FromJson<WeaponCard>(json);
+        weaponCard.LoadCodex();
+        return weaponCard;
+    }
 }
 
 [System.Serializable]
@@ -369,6 +383,13 @@ public class StructureCard : Card
         challengeCard.SetCostStart(this.GetCost());
 
         return challengeCard;
+    }
+
+    public static StructureCard GetFromJson(string json)
+    {
+        StructureCard structureCard = JsonUtility.FromJson<StructureCard>(json);
+        structureCard.LoadCodex();
+        return structureCard;
     }
 }
 
@@ -454,5 +475,12 @@ public class SpellCard : Card
         challengeCard.SetCostStart(this.GetCost());
 
         return challengeCard;
+    }
+
+    public static SpellCard GetFromJson(string json)
+    {
+        SpellCard spellCard = JsonUtility.FromJson<SpellCard>(json);
+        spellCard.LoadCodex();
+        return spellCard;
     }
 }

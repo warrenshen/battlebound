@@ -64,10 +64,6 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private BasicButton endTurnButton;
 
-    [SerializeField]
-    private GameObject cardPrefab;
-    public GameObject CardPrefab => cardPrefab;
-
     public static BattleManager Instance { get; private set; }
 
     public Player GetPlayerById(string playerId)

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ResourceSingleton : Singleton<ResourceSingleton>
 {
+    private GameObject cardPrefab;
+
     private Dictionary<string, GameObject> creatureNameToPrefab;
 
     private Dictionary<string, CardTemplate> cardNametoTemplate;
@@ -13,6 +15,8 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
     private void Awake()
     {
         base.Awake();
+
+        this.cardPrefab = Resources.Load("Prefabs/Card") as GameObject;
 
         this.creatureNameToPrefab = new Dictionary<string, GameObject>();
 
@@ -75,5 +79,10 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         }
 
         return this.imageNameToTexture[imageName];
+    }
+
+    public GameObject GetCardPrefab()
+    {
+        return this.cardPrefab;
     }
 }

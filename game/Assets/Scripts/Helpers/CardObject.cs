@@ -37,7 +37,6 @@ public abstract class CardObject : MouseWatchable
         //make render changes according to card class here
         this.LoadCardArtwork();
         this.visual = this.VisualizeCard();
-        Debug.Log("Initializing");
 
         this.SetThisResetValues();
         this.SetVisualResetValues();
@@ -90,8 +89,9 @@ public abstract class CardObject : MouseWatchable
 
     protected HyperCard.Card VisualizeCard()
     {
-        GameObject visualPrefab = BattleManager.Instance.CardPrefab as GameObject;
-        Transform created = Instantiate(visualPrefab, this.transform).transform as Transform;
+        GameObject cardPrefab = ResourceSingleton.Instance.GetCardPrefab();
+
+        Transform created = Instantiate(cardPrefab, this.transform).transform as Transform;
         created.localPosition = Vector3.zero;
         created.localRotation = Quaternion.identity;
         created.Rotate(0, 180, 0, Space.Self);
