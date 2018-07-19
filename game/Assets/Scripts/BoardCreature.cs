@@ -8,12 +8,9 @@ using TMPro;
 [System.Serializable]
 public class BoardCreature : Targetable
 {
-    void HandleAction()
-    {
-    }
-
-
+    public const float UPDATE_STATS_GROWTH_FACTOR = 1.2F;
     public const float ATTACK_DELAY = 0.66F;
+    private static Vector3 BOARD_CARD_SIZE = new Vector3(5, 3.7F, 1);
 
     [SerializeField]
     private int cost;           //cost retained for conditional removal cards
@@ -31,13 +28,7 @@ public class BoardCreature : Targetable
     protected int maxHealth;
     public int MaxHealth => maxHealth;
 
-    //removed "image" field because this reuses BattleCardObject initialized visuals
-
-    //int canAttack / CanAttack in Targetable class
-    //int maxAttacks in Targetable class
-
     private int attacksThisTurn;
-
     //Player owner / Owner exists in Targetable class
 
     private CreatureCard creatureCard;
@@ -50,7 +41,7 @@ public class BoardCreature : Targetable
     private List<string> abilities;
     public List<string> Abilities => abilities;
 
-    private Dictionary<string, GameObject> abilitiesFX;
+    private Dictionary<string, GameObject> abilitiesVFX;
 
     private bool silenced;
     public bool Silenced => silenced;
@@ -113,7 +104,7 @@ public class BoardCreature : Targetable
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
-        this.abilitiesFX = new Dictionary<string, GameObject>();
+        this.abilitiesVFX = new Dictionary<string, GameObject>();
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
         BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
@@ -158,7 +149,7 @@ public class BoardCreature : Targetable
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
-        this.abilitiesFX = new Dictionary<string, GameObject>();
+        this.abilitiesVFX = new Dictionary<string, GameObject>();
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
         BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
@@ -188,10 +179,8 @@ public class BoardCreature : Targetable
         this.visual.transform.localPosition = Vector3.zero;
         this.visual.transform.localRotation = Quaternion.identity;
         this.visual.transform.Rotate(0, 180, 0, Space.Self);
-        this.visual.transform.localScale = this.visual.reset.scale * BOARD_GROW_FACTOR;
+        this.visual.transform.localScale = BOARD_CARD_SIZE;
 
-        //this.visual.TmpTextObjects[0].TmpObject.enabled = false;
-        //this.visual.TmpTextObjects[1].TmpObject.enabled = false;
         this.visual.SetOpacity(0.8f);
         this.visual.SetBlackAndWhite(true);
         this.visual.Renderer.enabled = true;
@@ -437,14 +426,19 @@ public class BoardCreature : Targetable
 
     private void UpdateStatText()
     {
+        if (this.visual.GetTextFieldWithKey("Title").Value != this.name)
+            LeanTween.scale(this.visual.GetTextFieldWithKey("Title").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        if (this.visual.GetTextFieldWithKey("Cost").Value != this.name)
+            LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        if (this.visual.GetTextFieldWithKey("Attack").Value != this.name)
+            LeanTween.scale(this.visual.GetTextFieldWithKey("Attack").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        if (this.visual.GetTextFieldWithKey("Health").Value != this.name)
+            LeanTween.scale(this.visual.GetTextFieldWithKey("Health").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+
         this.visual.SetTextFieldWithKey("Title", this.name);
         this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
         this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
         this.visual.SetTextFieldWithKey("Health", this.health.ToString());
-
-        //to-do:
-        //float scaleFactor = 1.3f;
-        //LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
     }
 
     private void RenderAbilitiesAndBuffs()
@@ -452,12 +446,7 @@ public class BoardCreature : Targetable
         //doing additions
         foreach (string ability in this.abilities)
         {
-            if (ability == Card.CARD_ABILITY_SHIELD)
-            {
-                continue;
-            }
-
-            if (abilitiesFX.ContainsKey(ability))
+            if (abilitiesVFX.ContainsKey(ability))
             {
                 continue;
             }
@@ -466,37 +455,20 @@ public class BoardCreature : Targetable
                 continue;
             }
 
-            abilitiesFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
+            abilitiesVFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
         }
 
         //do removals
-        foreach (string key in this.abilitiesFX.Keys)
+        foreach (string key in this.abilitiesVFX.Keys)
         {
-            if (key == Card.CARD_ABILITY_SHIELD)
-            {
-                continue;
-            }
-
             if (abilities.Contains(key))
             {
                 continue;
             }
 
             //if not continue, needs removal
-            GameObject effect = abilitiesFX[key];
+            GameObject effect = abilitiesVFX[key];
             FXPoolManager.Instance.UnassignEffect(key, effect, this.transform);
-        }
-
-        if (this.hasShield)
-        {
-            //this.shieldObject.SetActive(true);
-            //this.abilitiesFX[Card.CARD_ABILITY_SHIELD] = FXPoolManager.Instance.AssignEffect(Card.CARD_ABILITY_SHIELD, this.transform).gameObject;
-        }
-        else
-        {
-            //this.shieldObject.SetActive(false);
-            //GameObject effect = abilitiesFX[Card.CARD_ABILITY_SHIELD];
-            //FXPoolManager.Instance.UnassignEffect(Card.CARD_ABILITY_SHIELD, effect, this.transform);
         }
     }
 

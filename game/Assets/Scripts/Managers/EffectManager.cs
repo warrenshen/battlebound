@@ -478,6 +478,9 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
         // TODO: animate.
+        GameObject effectVFX = Instantiate(ResourceSingleton.Instance.GetEffectPrefabByName(attackingCreature.CreatureCard.GetEffectPrefab()),
+                                        attackingCreature.transform.position,
+                                        Quaternion.identity);
 
         if (defendingCreature != null)
         {

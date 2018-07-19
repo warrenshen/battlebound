@@ -124,10 +124,10 @@ public abstract class CardObject : MouseWatchable
         switch (card.GetRarity())
         {
             case Card.RarityType.Common:
-                cardVisual.SetTextFieldWithKey("Rarity", "C");
+                cardVisual.SetTextFieldWithKey("Rarity", "N");
                 break;
             case Card.RarityType.Uncommon:
-                cardVisual.SetTextFieldWithKey("Rarity", "UC");
+                cardVisual.SetTextFieldWithKey("Rarity", "UN");
                 break;
             case Card.RarityType.Rare:
                 cardVisual.SetTextFieldWithKey("Rarity", "R");
@@ -136,10 +136,10 @@ public abstract class CardObject : MouseWatchable
                 cardVisual.SetTextFieldWithKey("Rarity", "EP");
                 break;
             case Card.RarityType.Legendary:
-                cardVisual.SetTextFieldWithKey("Rarity", "LD");
+                cardVisual.SetTextFieldWithKey("Rarity", "LG");
                 break;
             case Card.RarityType.Cosmic:
-                cardVisual.SetTextFieldWithKey("Rarity", "CS");
+                cardVisual.SetTextFieldWithKey("Rarity", "CL");
                 break;
         }
 
