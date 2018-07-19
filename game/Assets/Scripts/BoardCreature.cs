@@ -46,9 +46,6 @@ public class BoardCreature : Targetable
     private bool silenced;
     public bool Silenced => silenced;
 
-    private bool hasShield;
-    public bool HasShield => hasShield;
-
     private int isFrozen;
     public int IsFrozen => isFrozen;
 
@@ -87,15 +84,6 @@ public class BoardCreature : Targetable
 
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
-
-        if (this.abilities.Contains(Card.CARD_ABILITY_SHIELD))
-        {
-            this.hasShield = true;
-        }
-        else
-        {
-            this.hasShield = false;
-        }
 
         this.isFrozen = 0;
 
@@ -141,7 +129,6 @@ public class BoardCreature : Targetable
         this.maxAttacks = 1;
         this.attacksThisTurn = 0;
 
-        this.hasShield = challengeCard.HasShield == 1;
         this.isFrozen = challengeCard.IsFrozen;
 
         this.spawnRank = challengeCard.SpawnRank;
@@ -302,9 +289,9 @@ public class BoardCreature : Targetable
      */
     public override int TakeDamage(int amount)
     {
-        if (this.hasShield)
+        if (HasAbility(Card.CARD_ABILITY_SHIELD))
         {
-            this.hasShield = false;
+            RemoveShield();
             return 0;
         }
         else
@@ -398,11 +385,22 @@ public class BoardCreature : Targetable
 
     public void GrantShield()
     {
-        if (!this.hasShield)
+        if (!HasAbility(Card.CARD_ABILITY_SHIELD))
         {
-            this.hasShield = true;
+            this.abilities.Add(Card.CARD_ABILITY_SHIELD);
             Redraw();
         }
+    }
+
+    private void RemoveShield()
+    {
+        if (!HasAbility(Card.CARD_ABILITY_SHIELD))
+        {
+            Debug.LogError("Remove shield called on creature without shield.");
+            return;
+        }
+
+        this.abilities.Remove(Card.CARD_ABILITY_SHIELD);
     }
 
     public void Freeze(int amount)
