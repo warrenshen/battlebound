@@ -340,6 +340,10 @@ public class BattleManager : MonoBehaviour
                 BattleSingleton.Instance.SendChallengeEndTurnRequest();
                 NextTurn();
             }
+            else
+            {
+                Debug.LogError("End turn clicked during opponent's turn in connected mode.");
+            }
         }
         else
         {
@@ -999,6 +1003,7 @@ public class BattleManager : MonoBehaviour
     {
         Player player = GetPlayerById(playerId);
         player.AddDrawnCard(card);
+        //ComparePlayerStates(); // We cannot call this directly since EffectManager may still be processing after end turn.
     }
 
     private void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
