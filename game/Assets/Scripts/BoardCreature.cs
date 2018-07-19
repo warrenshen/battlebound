@@ -184,7 +184,7 @@ public class BoardCreature : Targetable
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
         created.transform.Rotate(-15, 0, 0, Space.Self);
 
-        if (this.Owner != BattleManager.Instance.You)
+        if (this.Owner.Id != BattleManager.Instance.You.Id)
             created.transform.Rotate(30, 180, 0, Space.Self);
 
         this.audioSources = created.GetComponents<AudioSource>();

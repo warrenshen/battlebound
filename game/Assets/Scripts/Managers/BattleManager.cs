@@ -306,7 +306,7 @@ public class BattleManager : MonoBehaviour
 
     public void SetPassiveCursor()
     {
-        if (this.activePlayer == this.you)
+        if (this.activePlayer.Id == this.you.Id)
         {
             ActionManager.Instance.SetCursor(0);
         }
