@@ -40,7 +40,6 @@ public class CollectionManager : MonoBehaviour
 
     public static CollectionManager Instance { get; private set; }
 
-
     private void Awake()
     {
         Instance = this;
@@ -98,17 +97,17 @@ public class CollectionManager : MonoBehaviour
             Card newCard;
             switch (category)
             {
-                case 0: //creature
-                    newCard = JsonUtility.FromJson<CreatureCard>(elem.JSON);
+                case Card.CARD_CATEGORY_MINION: //creature
+                    newCard = CreatureCard.GetFromJson(elem.JSON);
                     break;
-                case 1:  //spell
-                    newCard = JsonUtility.FromJson<SpellCard>(elem.JSON);
+                case Card.CARD_CATEGORY_SPELL:  //spell
+                    newCard = SpellCard.GetFromJson(elem.JSON);
                     break;
-                case 2:  //weapon
-                    newCard = JsonUtility.FromJson<WeaponCard>(elem.JSON);
+                case Card.CARD_CATEGORY_WEAPON:  //weapon
+                    newCard = WeaponCard.GetFromJson(elem.JSON);
                     break;
-                case 3:  //structure
-                    newCard = JsonUtility.FromJson<StructureCard>(elem.JSON);
+                case Card.CARD_CATEGORY_STRUCTURE:  //structure
+                    newCard = StructureCard.GetFromJson(elem.JSON);
                     break;
                 default:
                     newCard = null;
