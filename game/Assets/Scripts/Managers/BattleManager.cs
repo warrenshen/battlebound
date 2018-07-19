@@ -1456,4 +1456,9 @@ public class BattleManager : MonoBehaviour
         this.serverMoveCount += 1;
         return rank;
     }
+
+    public bool CanReceiveChallengeMove()
+    {
+        return true;
+    }
 }

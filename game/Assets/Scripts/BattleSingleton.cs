@@ -28,6 +28,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private int spawnCount;
     public int SpawnCount => spawnCount;
 
+    // List of moves waiting to be sent to BattleManager.
+    private List<ChallengeMove> moveQueue;
+
     private void Awake()
     {
         base.Awake();
@@ -42,6 +45,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
         this.moveCount = 0;
         this.spawnCount = 0;
 
+        this.moveQueue = new List<ChallengeMove>();
+
         ChallengeIssuedMessage.Listener = ChallengeIssuedMessageHandler;
         ChallengeStartedMessage.Listener = ChallengeStartedMessageHandler;
         ChallengeTurnTakenMessage.Listener = ChallengeTurnTakenMessageHandler;
@@ -49,6 +54,14 @@ public class BattleSingleton : Singleton<BattleSingleton>
         ChallengeLostMessage.Listener = ChallengeLostMessageHandler;
         ScriptMessage_ChallengeTimeRunningOutMessage.Listener = ChallengeTimeRunningOutMessageHandler;
         ScriptMessage_ChallengePlayMulliganMessage.Listener = ChallengePlayMulliganMessageHandler;
+    }
+
+    private void Update()
+    {
+        if (this.moveQueue.Count > 0)
+        {
+            EmitChallengeMove();
+        }
     }
 
     private void ChallengeIssuedMessageHandler(ChallengeIssuedMessage message)
@@ -138,7 +151,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void ProcessChallengeScriptData(
         GSData scriptData,
-        bool shouldEmitMoves = true
+        bool shouldQueueMoves = true
     )
     {
         int messageNonce = (int)scriptData.GetInt("nonce");
@@ -186,9 +199,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
             challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
         }
 
-        if (shouldEmitMoves)
+        if (shouldQueueMoves)
         {
-            EmitChallengeMoves(challengeMoves);
+            QueueChallengeMoves(challengeMoves);
         }
     }
 
@@ -204,17 +217,19 @@ public class BattleSingleton : Singleton<BattleSingleton>
         }
     }
 
-    public void EmitChallengeMove(ChallengeMove challengeMove)
+    public void EmitChallengeMove()
     {
-        BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        if (BattleManager.Instance.CanReceiveChallengeMove())
+        {
+            ChallengeMove challengeMove = this.moveQueue[0];
+            this.moveQueue.RemoveAt(0);
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
     }
 
-    public void EmitChallengeMoves(List<ChallengeMove> challengeMoves)
+    public void QueueChallengeMoves(List<ChallengeMove> challengeMoves)
     {
-        foreach (ChallengeMove challengeMove in challengeMoves)
-        {
-            EmitChallengeMove(challengeMove);
-        }
+        this.moveQueue.AddRange(challengeMoves);
     }
 
     public void SendChallengeEndTurnRequest()
