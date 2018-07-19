@@ -278,6 +278,11 @@ public class CreatureCard : Card
         return this.cardTemplate.summonPrefab;
     }
 
+    public string GetEffectPrefab()
+    {
+        return this.cardTemplate.effectPrefab;
+    }
+
     public override PlayerState.ChallengeCard GetChallengeCard()
     {
         PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();

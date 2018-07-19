@@ -7,6 +7,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
     private GameObject cardPrefab;
 
     private Dictionary<string, GameObject> creatureNameToPrefab;
+    private Dictionary<string, GameObject> effectNameToPrefab;
 
     private Dictionary<string, CardTemplate> cardNametoTemplate;
 
@@ -30,8 +31,10 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             CardTemplate cardTemplate = this.cardNametoTemplate[cardName];
             string frontImage = cardTemplate.frontImage;
             string backImage = cardTemplate.backImage;
+            string effectName = cardTemplate.effectPrefab;
             this.imageNameToTexture[frontImage] = Resources.Load(frontImage) as Texture2D;
             this.imageNameToTexture[backImage] = Resources.Load(backImage) as Texture2D;
+            this.effectNameToPrefab[effectName] = Resources.Load(effectName) as GameObject;
         }
 
         foreach (string creatureName in Card.CREATURE_CARD_NAMES)
@@ -52,6 +55,17 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         }
 
         return this.creatureNameToPrefab[creatureName];
+    }
+
+    public GameObject GetEffectPrefabByName(string effectName)
+    {
+        if (!this.effectNameToPrefab.ContainsKey(effectName))
+        {
+            Debug.LogError(string.Format("Effect name {0} does not exist in resource cache.", effectName));
+            return null;
+        }
+
+        return this.effectNameToPrefab[effectName];
     }
 
     public CardTemplate GetCardTemplateByName(string cardName)
