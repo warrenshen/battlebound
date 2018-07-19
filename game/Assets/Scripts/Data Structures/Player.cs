@@ -246,7 +246,7 @@ public class Player
      */
     public void ResumeMulligan(List<Card> mulliganCards)
     {
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             Debug.LogError("Resume mulligan called when not in connected mode.");
             return;
@@ -310,7 +310,7 @@ public class Player
             cardIds.Add(keptCard.Id);
         }
 
-        if (InspectorControlPanel.Instance.DevelopmentMode)
+        if (DeveloperPanel.IsServerEnabled())
         {
             BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
         }
@@ -357,11 +357,6 @@ public class Player
             return;
         }
 
-        if (replacedCardIndices == null)
-        {
-            replacedCardIndices = new List<int>();
-        }
-
         // It is very important that we iterate downwards,
         // since the ReplaceCardByMulligan call removes cards from hand by index.
         for (int i = this.keptMulliganCards.Count - 1; i >= 0; i -= 1)
@@ -396,7 +391,7 @@ public class Player
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             DrawCard();
         }
@@ -414,7 +409,7 @@ public class Player
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             DrawCard();
         }
@@ -473,7 +468,7 @@ public class Player
 
     public void ReturnCardToDeck(Card card)
     {
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             this.deck.AddCard(card);
         }

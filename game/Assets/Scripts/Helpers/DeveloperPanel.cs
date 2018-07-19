@@ -8,7 +8,10 @@ public class DeveloperPanel : EditorWindow
 {
     private bool flagsFoldout;
     private bool useServer;
-    public const string USE_SERVER_FLAG = "Use Server";
+    private bool logVerbose;
+
+    public const string FLAG_USE_SERVER = "FLAG_USE_SERVER";
+    public const string FLAG_LOG_VERBOSE = "FLAG_LOG_VERBOSE";
 
     [MenuItem("Custom/Developer Panel")]
     static void Init()
@@ -17,7 +20,8 @@ public class DeveloperPanel : EditorWindow
         DeveloperPanel window = EditorWindow.GetWindow(typeof(DeveloperPanel)) as DeveloperPanel;
         window.minSize = new Vector2(100, 100);
         window.flagsFoldout = true;
-        window.useServer = DeveloperPanel.GetFlag(DeveloperPanel.USE_SERVER_FLAG);
+        window.useServer = DeveloperPanel.GetFlag(DeveloperPanel.FLAG_USE_SERVER);
+        window.logVerbose = DeveloperPanel.GetFlag(DeveloperPanel.FLAG_LOG_VERBOSE);
         window.Show();
     }
 
@@ -28,7 +32,8 @@ public class DeveloperPanel : EditorWindow
         this.flagsFoldout = EditorGUILayout.Foldout(this.flagsFoldout, "Development Flags");
         if (flagsFoldout)
         {
-            this.useServer = EditorGUILayout.Toggle("Use Server", this.useServer);
+            this.useServer = EditorGUILayout.Toggle("Use server", this.useServer);
+            this.logVerbose = EditorGUILayout.Toggle("Log verbose", this.logVerbose);
         }
 
 
@@ -43,7 +48,10 @@ public class DeveloperPanel : EditorWindow
     private void SaveSettings()
     {
         int useServerValue = this.useServer ? 1 : 0;
-        PlayerPrefs.SetInt(USE_SERVER_FLAG, useServerValue);
+        int logVerboseValue = this.logVerbose ? 1 : 0;
+
+        PlayerPrefs.SetInt(FLAG_USE_SERVER, useServerValue);
+        PlayerPrefs.SetInt(FLAG_LOG_VERBOSE, logVerboseValue);
 
         //done getting values, now save
         PlayerPrefs.Save();
@@ -53,5 +61,15 @@ public class DeveloperPanel : EditorWindow
     {
         int value = PlayerPrefs.GetInt(flag);
         return value == 1;
+    }
+
+    public static bool IsServerEnabled()
+    {
+        return GetFlag(FLAG_USE_SERVER);
+    }
+
+    public static bool IsLogVerbose()
+    {
+        return GetFlag(FLAG_LOG_VERBOSE);
     }
 }
