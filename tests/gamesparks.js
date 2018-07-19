@@ -1577,3 +1577,253 @@ describe("challenge events", function() {
     });
   });
 });
+
+describe("divine shield", function() {
+  it("should pop shield on take damage", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C9-5b0b017502bd4e052f08a28d-9",
+              "level": 0,
+              "category": 0,
+              "attack": 40,
+              "health": 60,
+              "cost": 60,
+              "name": "Temple Guardian",
+              "description": "Charge; Shield",
+              "abilities": [
+                1,
+                2
+              ],
+              "baseId": "C9",
+              "attackStart": 40,
+              "costStart": 60,
+              "healthStart": 60,
+              "healthMax": 60,
+              "buffs": [],
+              "canAttack": 0,
+              "hasShield": 1,
+              "isFrozen": 0,
+              "spawnRank": 7
+            },
+            {
+              "id": "C1-5b0b017502bd4e052f08a28d-1",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 50,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C1",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 60,
+              "healthMax": 60,
+              "buffs": [],
+              "canAttack": 0,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 5
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C7-5b0b012e7486050526c9c1a8-7",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 40,
+              "cost": 30,
+              "name": "Emberkitty",
+              "description": "Deal 10 damage to any opponent in front on end turn",
+              "abilities": [
+                13
+              ],
+              "baseId": "C7",
+              "attackStart": 30,
+              "costStart": 30,
+              "healthStart": 40,
+              "healthMax": 40,
+              "buffs": [],
+              "canAttack": 1,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 8
+            },
+            {
+              "id": "C4-5b0b012e7486050526c9c1a8-4",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 10,
+              "cost": 20,
+              "name": "Young Kyo",
+              "description": "",
+              "abilities": [],
+              "baseId": "C4",
+              "attackStart": 30,
+              "costStart": 20,
+              "healthStart": 20,
+              "healthMax": 20,
+              "buffs": [],
+              "canAttack": 1,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 2
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 1,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    return new Promise((resolve) => {
+      gamesparks.sendWithData(
+        "LogEventRequest",
+        {
+          eventKey: "TestChallengeCardAttackCard",
+          challengeStateString: JSON.stringify(challengeStateData),
+          challengePlayerId: "ID_PLAYER",
+          cardId: "C4-5b0b012e7486050526c9c1a8-4",
+          attributesJson: {
+            fieldId: "ID_OPPONENT",
+            targetId: "C9-5b0b017502bd4e052f08a28d-9",
+          },
+        },
+        function(response) {
+          console.log(response);
+          const challengeStateData = response.scriptData.challengeStateData;
+
+          const lastMoves = challengeStateData.lastMoves;
+          assert.equal(lastMoves.length, 1);
+          assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+
+          const playerState = challengeStateData.current["ID_PLAYER"];
+          const playerField = playerState.field;
+          assert.equal(playerField[4].id, "EMPTY");
+
+          const opponentState = challengeStateData.current["ID_OPPONENT"];
+          const opponentField = opponentState.field;
+          assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
+          assert.equal(opponentField[2].hasShield, 0);
+
+          assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+          assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+
+          // Follow up attack after shield is popped.
+          gamesparks.sendWithData(
+            "LogEventRequest",
+            {
+              eventKey: "TestChallengeCardAttackCard",
+              challengeStateString: JSON.stringify(challengeStateData),
+              challengePlayerId: "ID_PLAYER",
+              cardId: "C7-5b0b012e7486050526c9c1a8-7",
+              attributesJson: {
+                fieldId: "ID_OPPONENT",
+                targetId: "C9-5b0b017502bd4e052f08a28d-9",
+              },
+            },
+            function(response) {
+              const challengeStateData = response.scriptData.challengeStateData;
+
+              const lastMoves = challengeStateData.lastMoves;
+              assert.equal(lastMoves.length, 1);
+              assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+
+              const playerState = challengeStateData.current["ID_PLAYER"];
+              const playerField = playerState.field;
+              assert.equal(playerField[3].id, "EMPTY");
+
+              const opponentState = challengeStateData.current["ID_OPPONENT"];
+              const opponentField = opponentState.field;
+
+              assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
+              assert.equal(opponentField[2].health, 30);
+              assert.equal(opponentField[2].hasShield, 0);
+
+              assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+              assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+
+              resolve();
+            }
+          );
+        }
+      );
+    });
+  });
+});
