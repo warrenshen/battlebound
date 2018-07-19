@@ -23,13 +23,9 @@ public class BattleCardObject : CardObject
             return;
         }
 
-        if (InspectorControlPanel.Instance.DevelopmentMode)
+        if (InspectorControlPanel.Instance.DevelopmentMode && this.owner.Id != BattleManager.Instance.You.Id)
         {
-            // Do not do anything when hovering over opponent card.
-            if (this.owner.Id != BattleManager.Instance.You.Id)
-            {
-                return;
-            }
+            return;
         }
         else if (!this.owner.HasTurn)
         {
