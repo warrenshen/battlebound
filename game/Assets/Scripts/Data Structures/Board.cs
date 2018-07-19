@@ -78,16 +78,17 @@ public class Board : MonoBehaviour
 
         FXPoolManager.Instance.PlayEffect("SpawnVFX", boardPlace.position + new Vector3(0f, 0f, -0.1f));
 
-        yield return new WaitForSeconds(0.2f);
-
         GameObject boardCreatureObject = new GameObject(battleCardObject.Card.Name);
         boardCreatureObject.transform.position = boardPlace.position;
         BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
+
+        playingField.Place(boardCreature, index);
+
+        yield return new WaitForSeconds(0.2f);
+
         boardCreature.Initialize(battleCardObject, spawnRank);
 
         Destroy(battleCardObject.gameObject);
-
-        playingField.Place(boardCreature, index);
 
         EffectManager.Instance.OnCreaturePlay(
             boardCreature.Owner.Id,
@@ -110,6 +111,11 @@ public class Board : MonoBehaviour
     public PlayingField GetFieldByPlayerId(string playerId)
     {
         return this.playerIdToField[playerId];
+    }
+
+    public Transform GetBoardPlaceByPlayerIdAndIndex(string playerId, int index)
+    {
+        return GetFieldByPlayerId(playerId).GetBoardPlaceByIndex(index);
     }
 
     public List<BoardCreature> GetAliveCreaturesByPlayerId(string playerId)

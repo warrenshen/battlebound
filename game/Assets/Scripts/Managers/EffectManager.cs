@@ -974,6 +974,8 @@ public class EffectManager : MonoBehaviour
         int damageTaken = targetedCreature.TakeDamage(30);
         effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
 
+        targetedCreature.Redraw();
+
         if (targetedCreature.Health <= 0)
         {
             effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
