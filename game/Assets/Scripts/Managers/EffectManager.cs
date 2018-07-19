@@ -11,6 +11,7 @@ public class EffectManager : MonoBehaviour
     private List<Effect> lQueue; // Low priority.
 
     private bool isWaiting;
+    private bool isDirty;
 
     private UnityAction callback;
 
@@ -163,9 +164,18 @@ public class EffectManager : MonoBehaviour
         {
             if (this.callback != null)
             {
+                // TODO: callback should check dirty.
                 UnityAction action = this.callback;
                 this.callback = null;
                 action();
+            }
+            else
+            {
+                if (this.isDirty)
+                {
+                    BattleManager.Instance.ComparePlayerStates();
+                    this.isDirty = false;
+                }
             }
 
             BattleManager.Instance.ProcessMoveQueue();
@@ -617,6 +627,8 @@ public class EffectManager : MonoBehaviour
 
     public void OnStartTurn(string playerId)
     {
+        this.isDirty = true;
+
         Player player = BattleManager.Instance.GetPlayerById(playerId);
 
         if (!DeveloperPanel.IsServerEnabled())
@@ -655,6 +667,10 @@ public class EffectManager : MonoBehaviour
 
     public void OnEndTurn(string playerId, UnityAction callback)
     {
+        // We do not set isDirty here because the susbequent
+        // call to OnStartTurn will set it.
+        //this.isDirty = true; 
+
         this.callback = callback;
 
         Player player = BattleManager.Instance.GetPlayerById(playerId);
@@ -690,6 +706,8 @@ public class EffectManager : MonoBehaviour
 
     public void OnCreaturePlay(string playerId, string cardId)
     {
+        this.isDirty = true;
+
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
             playerId,
             cardId
@@ -726,6 +744,8 @@ public class EffectManager : MonoBehaviour
         Targetable defendingTargetable
     )
     {
+        this.isDirty = true;
+
         if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
             defendingTargetable.GetType() == typeof(BoardCreature)
@@ -863,6 +883,8 @@ public class EffectManager : MonoBehaviour
         Targetable defendingTargetable
     )
     {
+        this.isDirty = true;
+
         if (attackingTargetable.GetType() == typeof(PlayerAvatar))
         {
             Debug.LogError("Player avatar cannot have death rattle.");
@@ -940,6 +962,8 @@ public class EffectManager : MonoBehaviour
         BoardCreature targetedCreature
     )
     {
+        this.isDirty = true;
+
         string playerId = battleCardObject.Owner.Id;
 
         SpellCard spellCard = battleCardObject.Card as SpellCard;
@@ -1047,6 +1071,8 @@ public class EffectManager : MonoBehaviour
 
     public void OnSpellUntargetedPlay(BattleCardObject battleCardObject)
     {
+        this.isDirty = true;
+
         string playerId = battleCardObject.Owner.Id;
 
         SpellCard spellCard = battleCardObject.Card as SpellCard;
