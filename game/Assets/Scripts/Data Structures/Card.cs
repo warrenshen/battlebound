@@ -408,8 +408,8 @@ public class SpellCard : Card
 {
     public const string SPELL_NAME_LIGHTNING_BOLT = "Touch of Zeus";
     public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
-    public const string SPELL_NAME_FREEZE = "Freeze";
     public const string SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
+    public const string SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
 
     public const string SPELL_NAME_RIOT_UP = "Riot Up";
     public const string SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
@@ -420,8 +420,8 @@ public class SpellCard : Card
     {
         SPELL_NAME_LIGHTNING_BOLT,
         SPELL_NAME_UNSTABLE_POWER,
-        SPELL_NAME_FREEZE,
         SPELL_NAME_DEEP_FREEZE,
+        SPELL_NAME_WIDESPREAD_FROSTBITE,
         SPELL_NAME_RIOT_UP,
         SPELL_NAME_BRR_BRR_BLIZZARD,
         SPELL_NAME_RAZE_TO_ASHES,
@@ -431,8 +431,8 @@ public class SpellCard : Card
     {
         SPELL_NAME_LIGHTNING_BOLT,
         SPELL_NAME_UNSTABLE_POWER,
-        SPELL_NAME_FREEZE,
         SPELL_NAME_DEEP_FREEZE,
+        SPELL_NAME_WIDESPREAD_FROSTBITE,
     };
 
     public static readonly List<string> UNTARGETED_SPELL_NAMES = new List<string>

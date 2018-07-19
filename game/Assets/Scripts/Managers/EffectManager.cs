@@ -398,7 +398,7 @@ public class EffectManager : MonoBehaviour
                 this.isWaiting = true;
                 StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
 
-                if (!InspectorControlPanel.Instance.DevelopmentMode)
+                if (!DeveloperPanel.IsServerEnabled())
                 {
                     boardCreature.Owner.DrawCards(1);
                 }
@@ -423,7 +423,7 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = true;
         StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
 
@@ -570,7 +570,7 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = true;
         StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             boardCreature.Owner.DrawCards(1);
         }
@@ -607,7 +607,7 @@ public class EffectManager : MonoBehaviour
     {
         Player player = BattleManager.Instance.GetPlayerById(playerId);
 
-        if (!InspectorControlPanel.Instance.DevelopmentMode)
+        if (!DeveloperPanel.IsServerEnabled())
         {
             player.DrawCards(1);
         }
@@ -942,11 +942,11 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_UNSTABLE_POWER:
                 effects = SpellTargetedUnstablePower(playerId, targetedCreature);
                 break;
-            case SpellCard.SPELL_NAME_FREEZE:
-                effects = SpellTargetedFreeze(playerId, targetedCreature);
-                break;
             case SpellCard.SPELL_NAME_DEEP_FREEZE:
                 effects = SpellTargetedDeepFreeze(playerId, targetedCreature);
+                break;
+            case SpellCard.SPELL_NAME_WIDESPREAD_FROSTBITE:
+                effects = SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
@@ -983,7 +983,7 @@ public class EffectManager : MonoBehaviour
         return new List<Effect>();
     }
 
-    private List<Effect> SpellTargetedFreeze(string playerId, BoardCreature targetedCreature)
+    private List<Effect> SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)
     {
         List<Effect> effects = new List<Effect>();
 
@@ -1002,7 +1002,7 @@ public class EffectManager : MonoBehaviour
         return effects;
     }
 
-    private List<Effect> SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)
+    private List<Effect> SpellTargetedWidespreadFrostbite(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.Freeze(2);
 

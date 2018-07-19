@@ -23,7 +23,7 @@ public class BattleCardObject : CardObject
             return;
         }
 
-        if (InspectorControlPanel.Instance.DevelopmentMode && this.owner.Id != BattleManager.Instance.You.Id)
+        if (DeveloperPanel.IsServerEnabled() && this.owner.Id != BattleManager.Instance.You.Id)
         {
             return;
         }
