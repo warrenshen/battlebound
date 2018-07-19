@@ -477,10 +477,18 @@ public class EffectManager : MonoBehaviour
         );
 
         List<Effect> effects = new List<Effect>();
-        // TODO: animate.
-        GameObject effectVFX = Instantiate(ResourceSingleton.Instance.GetEffectPrefabByName(attackingCreature.CreatureCard.GetEffectPrefab()),
+        // TODO: use pooling so don't instantiate?
+        string effectName = "VFX/FanMeteorsVFX"; //attackingCreature.CreatureCard.GetEffectPrefab();
+        GameObject effectVFX = Instantiate(ResourceSingleton.Instance.GetEffectPrefabByName(effectName),
                                         attackingCreature.transform.position,
                                         Quaternion.identity);
+        effectVFX.transform.Translate(Vector3.back * 2 + Vector3.up * 1);
+        effectVFX.transform.Rotate(new Vector3(-90, 0, 0));
+
+        if (effectVFX == null)
+        {
+            Debug.LogError("Should render attack in front effect.");
+        }
 
         if (defendingCreature != null)
         {
