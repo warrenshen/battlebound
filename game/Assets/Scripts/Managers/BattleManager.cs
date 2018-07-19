@@ -129,6 +129,8 @@ public class BattleManager : MonoBehaviour
                 this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
                 this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
 
+                Board.Instance.RegisterPlayer(this.you, BattleSingleton.Instance.PlayerState.Field);
+                Board.Instance.RegisterPlayer(this.opponent, BattleSingleton.Instance.OpponentState.Field);
                 Board.Instance.RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
                 Board.Instance.RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
 
@@ -151,6 +153,8 @@ public class BattleManager : MonoBehaviour
             this.you = new Player("Player", "Player");
             this.opponent = new Player("Enemy", "Enemy");
 
+            Board.Instance.RegisterPlayer(this.you);
+            Board.Instance.RegisterPlayer(this.opponent);
             Board.Instance.RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
             Board.Instance.RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
 
