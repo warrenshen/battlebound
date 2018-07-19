@@ -669,8 +669,7 @@ public class EffectManager : MonoBehaviour
     {
         // We do not set isDirty here because the susbequent
         // call to OnStartTurn will set it.
-        //this.isDirty = true; 
-
+        //this.isDirty = true;
         this.callback = callback;
 
         Player player = BattleManager.Instance.GetPlayerById(playerId);
