@@ -482,8 +482,12 @@ public class EffectManager : MonoBehaviour
         GameObject effectVFX = Instantiate(ResourceSingleton.Instance.GetEffectPrefabByName(effectName),
                                         attackingCreature.transform.position,
                                         Quaternion.identity);
-        effectVFX.transform.Translate(Vector3.back * 2 + Vector3.up * 1);
-        effectVFX.transform.Rotate(new Vector3(-90, 0, 0));
+        effectVFX.transform.parent = attackingCreature.transform;
+        effectVFX.transform.Translate(Vector3.back * 1 + Vector3.up * 1, Space.Self);
+        if (defendingCreature)
+        {
+            effectVFX.transform.LookAt(defendingCreature.transform);  // TODO: show effect even if defending creature doesnt exist
+        }
 
         if (effectVFX == null)
         {
