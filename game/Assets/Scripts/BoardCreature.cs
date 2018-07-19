@@ -269,16 +269,6 @@ public class BoardCreature : Targetable
         }
     }
 
-    //private int DamageLogic(Targetable other)
-    //{
-    //    if (!other.IsAvatar)
-    //    {
-    //        BoardCreature otherCreature = other as BoardCreature;
-    //        this.TakeDamage(otherCreature.Attack);
-    //    }
-    //    return other.TakeDamage(this.attack);
-    //}
-
     IEnumerator PlayVFXWithDelay(object[] args)
     {
         string VFXName = (string)args[0];
@@ -426,13 +416,13 @@ public class BoardCreature : Targetable
 
     private void UpdateStatText()
     {
-        if (this.visual.GetTextFieldWithKey("Title").Value != this.name)
+        if (!this.visual.GetTextFieldWithKey("Title").Value.Equals(this.name))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Title").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        if (this.visual.GetTextFieldWithKey("Cost").Value != this.name)
+        if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        if (this.visual.GetTextFieldWithKey("Attack").Value != this.name)
+        if (!this.visual.GetTextFieldWithKey("Attack").Value.Equals(this.attack.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Attack").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        if (this.visual.GetTextFieldWithKey("Health").Value != this.name)
+        if (!this.visual.GetTextFieldWithKey("Health").Value.Equals(this.health.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Health").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
 
         this.visual.SetTextFieldWithKey("Title", this.name);

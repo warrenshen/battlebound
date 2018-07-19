@@ -20,6 +20,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         this.cardPrefab = Resources.Load("Prefabs/Card") as GameObject;
 
         this.creatureNameToPrefab = new Dictionary<string, GameObject>();
+        this.effectNameToPrefab = new Dictionary<string, GameObject>();
 
         string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
         this.cardNametoTemplate = CodexHelper.ParseFile(codexPath);
