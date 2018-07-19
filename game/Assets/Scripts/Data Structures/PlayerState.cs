@@ -182,7 +182,7 @@ public class PlayerState
         }
         else
         {
-            for (int i = 0; i < this.hand.Count; i += 1)
+            for (int i = 0; i < this.field.Length; i += 1)
             {
                 string firstDiff = this.field.ElementAt(i).FirstDiff(other.Field.ElementAt(i));
                 if (firstDiff != null)

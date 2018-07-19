@@ -1361,48 +1361,6 @@ public class BattleManager : MonoBehaviour
             );
         }
 
-        if (this.deviceMoveQueue.Count <= 0 && this.deviceMoveQueue.Count <= 0)
-        {
-            PlayerState devicePlayerState = GetPlayerState();
-            PlayerState deviceOpponentState = GetOpponentState();
-            PlayerState serverPlayerState = BattleSingleton.Instance.PlayerState;
-            PlayerState serverOpponentState = BattleSingleton.Instance.OpponentState;
-
-            if (DeveloperPanel.IsServerEnabled())
-            {
-                if (!serverPlayerState.Equals(devicePlayerState))
-                {
-                    Debug.LogWarning("Server vs device player state mismatch.");
-                    Debug.LogWarning("Server: " + JsonUtility.ToJson(serverPlayerState));
-                    Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
-                    Debug.LogWarning("First diff: " + serverPlayerState.FirstDiff(devicePlayerState));
-                }
-                else
-                {
-                    Debug.Log("Server vs device player state match.");
-                    Debug.Log("State: " + JsonUtility.ToJson(serverPlayerState));
-                }
-
-                if (!serverOpponentState.Equals(deviceOpponentState))
-                {
-                    Debug.LogWarning("Server vs device opponent state mismatch.");
-                    Debug.LogWarning("Server: " + JsonUtility.ToJson(serverOpponentState));
-                    Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
-                    Debug.LogWarning("First diff: " + serverOpponentState.FirstDiff(deviceOpponentState));
-                }
-                else
-                {
-                    Debug.Log("Server vs device opponent state match.");
-                    Debug.Log("State: " + JsonUtility.ToJson(serverOpponentState));
-                }
-            }
-            else
-            {
-                //Debug.Log("Player state: " + JsonUtility.ToJson(devicePlayerState));
-                //Debug.Log("Opponent state: " + JsonUtility.ToJson(deviceOpponentState));
-            }
-        }
-
         return serverMove.Rank;
     }
 
@@ -1463,6 +1421,21 @@ public class BattleManager : MonoBehaviour
     public PlayerState GetOpponentState()
     {
         return this.opponent.GeneratePlayerState();
+    }
+
+    public void ComparePlayerStates()
+    {
+        PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
+        PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+
+        if (DeveloperPanel.IsServerEnabled())
+        {
+            BattleSingleton.Instance.ComparePlayerStates(
+                devicePlayerState,
+                deviceOpponentState,
+                this.deviceMoveCount
+            );
+        }
     }
 
     public int GetDeviceMoveRank()
