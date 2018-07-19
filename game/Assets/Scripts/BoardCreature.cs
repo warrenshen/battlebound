@@ -8,7 +8,7 @@ using TMPro;
 [System.Serializable]
 public class BoardCreature : Targetable
 {
-    public const float UPDATE_STATS_GROWTH_FACTOR = 1.2F;
+    public const float UPDATE_STATS_GROWTH_FACTOR = 1.4F;
     public const float ATTACK_DELAY = 0.66F;
     private static Vector3 BOARD_CARD_SIZE = new Vector3(5, 3.7F, 1);
 
@@ -197,6 +197,9 @@ public class BoardCreature : Targetable
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
         created.transform.Rotate(-15, 0, 0, Space.Self);
 
+        if (this.Owner != BattleManager.Instance.You)
+            created.transform.Rotate(30, 180, 0, Space.Self);
+
         this.audioSources = created.GetComponents<AudioSource>();
 
         this.summonAnimation = created.transform.GetChild(0).GetComponent<Animation>();
@@ -254,6 +257,11 @@ public class BoardCreature : Targetable
                         .move(this.gameObject, originalPosition, 0.3F)
                         .setEaseInCubic();
                     onFightFinish();
+                    BoardCreature boardCreature = other as BoardCreature;
+                    if (boardCreature != null)
+                    {
+                        boardCreature.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
+                    }
                 }
         );
 
@@ -303,11 +311,10 @@ public class BoardCreature : Targetable
         {
             int healthBefore = this.health;
             this.health -= amount;
-            //this.health = Math.Max(this.health, 0);
-            this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
 
             return Math.Min(healthBefore, amount);
         }
+        this.UpdateStatText();
     }
 
     /*
