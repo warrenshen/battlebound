@@ -166,7 +166,7 @@ public class Player
         challengeMove.SetPlayerId(this.id);
         challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
-        if (this.deck.Cards.Count <= 0)
+        if (this.deckSize <= 0)
         {
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY);
         }

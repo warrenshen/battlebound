@@ -381,7 +381,11 @@ public class BattleManager : MonoBehaviour
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(activePlayer.Id);
 
-        if (activePlayer.DeckSize > 0)
+        if (activePlayer.DeckSize <= 0)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY);
+        }
+        else
         {
             if (activePlayer.Hand.IsFull())
             {
@@ -391,10 +395,6 @@ public class BattleManager : MonoBehaviour
             {
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
             }
-        }
-        else
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY);
         }
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
