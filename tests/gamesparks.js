@@ -989,9 +989,9 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 4);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
-            assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
@@ -1172,9 +1172,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 7);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
 
-            assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
@@ -1182,9 +1182,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[2].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
             assert.equal(lastMoves[3].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
 
-            assert.equal(lastMoves[4].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[5].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[6].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[4].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[5].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[6].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
             assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[5].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[6].playerId, "ID_OPPONENT");
