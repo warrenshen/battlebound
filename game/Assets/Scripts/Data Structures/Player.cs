@@ -168,7 +168,7 @@ public class Player
 
         if (this.deck.Cards.Count <= 0)
         {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY);
         }
         else
         {
@@ -179,6 +179,10 @@ public class Player
             if (isMulligan)
             {
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN);
+            }
+            else if (this.hand.IsFull())
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_HAND_FULL);
             }
             else
             {
@@ -452,6 +456,14 @@ public class Player
         this.replaceMulliganCards.Add(card);
     }
 
+    public void AddDrawnCardHandFull(Card card)
+    {
+        // TODO:: animate and take out debug????
+        Debug.Log("Add drawn card hand full");
+
+        this.deckSize -= 1;
+    }
+
     /*
      * @param bool isInit - do not decrement deck size if true
      */
@@ -470,7 +482,7 @@ public class Player
             this.deckSize -= 1;
         }
 
-        this.Hand.AddCardObject(createdBattleCard);
+        this.hand.AddCardObject(createdBattleCard);
 
         if (reposition)
         {
@@ -506,7 +518,7 @@ public class Player
 
     public int GetOpponentHandIndex(int handIndex)
     {
-        return this.Hand.Size() - 1 - handIndex;
+        return this.hand.Size() - 1 - handIndex;
     }
 
     public PlayerState GeneratePlayerState()

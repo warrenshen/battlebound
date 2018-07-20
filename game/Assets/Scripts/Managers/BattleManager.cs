@@ -383,11 +383,18 @@ public class BattleManager : MonoBehaviour
 
         if (activePlayer.DeckSize > 0)
         {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+            if (activePlayer.Hand.IsFull())
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_HAND_FULL);
+            }
+            else
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+            }
         }
         else
         {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY);
         }
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
@@ -1011,6 +1018,19 @@ public class BattleManager : MonoBehaviour
         //ComparePlayerStates(); // We cannot call this directly since EffectManager may still be processing after end turn.
     }
 
+    private void ReceiveMoveDrawCardHandFull(string playerId, Card card)
+    {
+        Player player = GetPlayerById(playerId);
+        player.AddDrawnCardHandFull(card);
+    }
+
+    private void ReceiveMoveDrawCardDeckEmpty(string playerId)
+    {
+        Player player = GetPlayerById(playerId);
+        // TODO: animate and remove debug.
+        Debug.Log("Receive move draw card deck empty");
+    }
+
     private void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
     {
         if (this.activePlayer.Id != playerId)
@@ -1306,7 +1326,22 @@ public class BattleManager : MonoBehaviour
                 card
             );
         }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_FAILURE)
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_HAND_FULL)
+        {
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            ReceiveMoveDrawCardHandFull(
+                serverMove.PlayerId,
+                card
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY)
+        {
+            ReceiveMoveDrawCardDeckEmpty(
+                serverMove.PlayerId
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY)
         {
             Debug.LogError("Not supported.");
         }
