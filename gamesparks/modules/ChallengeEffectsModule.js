@@ -273,7 +273,7 @@ function effectDeathRattleAttackRandom(challengeStateData, effect) {
 
     const move = {
         playerId: playerId,
-        category: EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
+        category: MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET,
         attributes: {
             cardId: cardId,
             fieldId: opponentId,
@@ -288,6 +288,9 @@ function effectDeathRattleAttackRandom(challengeStateData, effect) {
         damageDone = damageFace(opponentState, 20);
     } else {
         const defendingCard = opponentField.find(function(fieldCard) { return fieldCard.id === randomOpponentTargetableId });
+        if (defendingCard == null) {
+            setScriptError("Defending card with card ID " + randomOpponentTargetableId + " does not exist.")
+        }
         damageDone = damageCard(defendingCard, 20);
         
         newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, defendingCard, damageDone));
@@ -462,9 +465,10 @@ function abilityDeathRattleAttackRandomThree(challengeStateData, effect) {
 }
 
 function _getRandomTargetableId(playerField) {
-    const targetableIds = playerField.filter(function(fieldCard) {
+    const targetableCards = playerField.filter(function(fieldCard) {
         return fieldCard.id != "EMPTY" && fieldCard.health > 0;
     });
+    const targetableIds = targetableCards.map(function(card) { return card.id });
     targetableIds.push(TARGET_ID_FACE);
     const randomInt = Math.floor(Math.random() * targetableIds.length);
     return targetableIds[randomInt];
@@ -869,7 +873,9 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 return;
             }
             
-            fieldCard.hasShield = 1;
+            if (fieldCard.abilities.indexOf(CARD_ABILITY_SHIELD) < 0) {
+                fieldCard.abilities.push(CARD_ABILITY_SHIELD);
+            }
         });
     } else if (playedCard.name === SPELL_NAME_RAZE_TO_ASHES) {
         opponentField.forEach(function(fieldCard) {

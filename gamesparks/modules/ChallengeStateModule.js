@@ -68,7 +68,13 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
         if (move === null) {
             setScriptError("Move is null - did you remember to set move to something?");
         }
-        if (move.playerId === opponentId && move.category === MOVE_CATEGORY_DRAW_CARD) {
+        if (
+            move.playerId === opponentId && 
+            (
+                move.category === MOVE_CATEGORY_DRAW_CARD ||
+                move.category === MOVE_CATEGORY_DRAW_CARD_MULLIGAN
+            ) 
+        ) {
             return {
                 playerId: move.playerId,
                 category: move.category,
@@ -81,6 +87,9 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
             return move;
         }
     });
+    // const filteredMoves = obfuscatedMoves.filter(function(move) {
+    //     return !(move.playerId !== playerId && move.category === MOVE_CATEGORY_PLAY_MULLIGAN);
+    // });
     
     return {
         nonce: challengeStateData.nonce,
