@@ -481,10 +481,6 @@ public class EffectManager : MonoBehaviour
             effect.PlayerId,
             effect.CardId
         );
-        BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
-            effect.PlayerId,
-            effect.CardId
-        );
 
         List<Effect> effects = new List<Effect>();
         // TODO: use pooling so don't instantiate?
@@ -511,11 +507,18 @@ public class EffectManager : MonoBehaviour
             Debug.LogError("Should render attack in front effect.");
         }
 
+        BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+
         if (defendingCreature != null)
         {
             int damageDone = defendingCreature.TakeDamage(amount);
             effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+            defendingCreature.Redraw();
 
             if (defendingCreature.Health <= 0)
             {
@@ -1038,6 +1041,8 @@ public class EffectManager : MonoBehaviour
         {
             targetedCreature.Freeze(1);
         }
+
+        targetedCreature.Redraw();
 
         return effects;
     }
