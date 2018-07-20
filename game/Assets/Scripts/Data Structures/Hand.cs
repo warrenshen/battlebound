@@ -122,9 +122,14 @@ public class Hand
     private void RedrawOutline(BattleCardObject battleCardObject)
     {
         Player player = BattleManager.Instance.GetPlayerById(this.playerId);
-        battleCardObject.visual.SetOutline(
-            player.HasTurn && player.Mana >= battleCardObject.Card.GetCost()
-        );
+
+        bool shouldSetOutline = player.HasTurn && player.Mana >= battleCardObject.Card.GetCost();
+        if (DeveloperPanel.IsServerEnabled())
+        {
+            shouldSetOutline = shouldSetOutline && player.Id == BattleManager.Instance.You.Id;
+        }
+
+        battleCardObject.visual.SetOutline(shouldSetOutline);
         battleCardObject.visual.Redraw();
     }
 }
