@@ -5,14 +5,12 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-const TARGET_ID_FACE = "TARGET_ID_FACE";
-
 /**
  * @return int - damage done to card
  **/
 function damageCard(card, damage) {
-    if (card.hasShield) {
-        card.hasShield = 0;
+    if (card.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
+        card.abilities = card.abilities.filter(function(ability) { ability != CARD_ABILITY_SHIELD });
         return 0;
     } else {
         const initialHealth = card.health;
@@ -129,6 +127,39 @@ function drawCards(deck, count) {
     }
     
     return [drawnCards, deck];
+}
+
+/**
+ * Draw a card to replace mulligan card. Do NOT use for regular draw card.
+ * 
+ * @return object - draw card move object for drawn card
+ **/
+function drawCardMulliganForPlayer(playerId, playerState) {
+    const playerDeck = playerState.deck;
+    
+    if (playerDeck.length > 0) {
+        const drawCardResponse = drawCard(playerDeck);
+        const drawnCard = drawCardResponse[0];
+        const newDeck = drawCardResponse[1];
+        
+        playerState.deck = newDeck;
+        playerState.deckSize = newDeck.length;
+        
+        playerState.hand.push(drawnCard);
+        
+        return {
+            playerId: playerId,
+            category: MOVE_CATEGORY_DRAW_CARD_MULLIGAN,
+            attributes: {
+                card: drawnCard,
+            },
+        };
+    } else {
+        return {
+            playerId: playerId,
+            category: MOVE_CATEGORY_DRAW_CARD_FAILURE,
+        };
+    }
 }
 
 /**

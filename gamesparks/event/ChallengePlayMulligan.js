@@ -6,7 +6,6 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
 require("ChallengeStateModule");
@@ -76,7 +75,7 @@ addChallengeMove(challengeStateData, move);
 mulliganCards.forEach(function(mulliganCard, index) {
     const isDeck = cardIds.indexOf(mulliganCard.id) < 0;
     if (isDeck) {
-        const move = drawCardForPlayer(playerId, playerState);
+        const move = drawCardMulliganForPlayer(playerId, playerState);
         addChallengeMove(challengeStateData, move);
     }
 });
@@ -90,6 +89,13 @@ if (opponentState.mode === PLAYER_STATE_MODE_MULLIGAN_WAITING) {
     playerState.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
 }
 playerState.mulliganCards = [];
+
+if (playerState.mode === PLAYER_STATE_MODE_NORMAL) {
+    move = {
+        category: MOVE_CATEGORY_FINISH_MULLIGAN,
+    };
+    addChallengeMove(challengeStateData, move);
+}
 
 require("PersistChallengeStateModule");
 

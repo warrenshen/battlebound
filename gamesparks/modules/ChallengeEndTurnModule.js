@@ -5,13 +5,12 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-require("CardAbilitiesModule");
 require("CancelScheduledTimeEventsModule");
 require("ChallengeMovesModule");
 require("AttackModule");
 require("ChallengeEffectsModule");
 
-function handleChallengeEndTurnEvent(challengeStateData, playerId) {
+function handleChallengeEndTurn(challengeStateData, playerId) {
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     
     // PLAYER STATE UPDATES //
@@ -61,7 +60,7 @@ function handleChallengeEndTurnEvent(challengeStateData, playerId) {
         }
         
         if (fieldCard.health <= 0) {
-            continue;
+            setScriptError("Creature on opponent field that is dead at start turn.");
         }
         
         // TODO: maybe should not set to 1 for all cards.

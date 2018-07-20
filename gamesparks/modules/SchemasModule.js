@@ -72,7 +72,6 @@
  *   attack: int,
  *   attackStart: int, // The initial value of attack.
  *   canAttack: int, // Number of attacks left this turn - field probably not set until card is played.
- *   hasShield: bool (int), // Whether card has shield or not - field probably not set until card is played.
  *   isFrozen: int, // Number of turns stuck frozen - field not set until card is played.
  *   spawnRank: int, // Number of cards played before this card - not set until card is played on field.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.

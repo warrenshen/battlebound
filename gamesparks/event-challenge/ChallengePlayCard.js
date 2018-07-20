@@ -19,7 +19,6 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
-require("CardAbilitiesModule");
 require("AttackModule");
 require("ChallengeMovesModule");
 require("ChallengeEffectsModule");
@@ -96,11 +95,6 @@ if (playedCard.abilities.indexOf(CARD_ABILITY_CHARGE) >= 0) {
     playedCard.canAttack = 1;
 } else {
     playedCard.canAttack = 0;
-}
-if (playedCard.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
-    playedCard.hasShield = 1;
-} else {
-    playedCard.hasShield = 0;
 }
 playedCard.isFrozen = 0;
 
