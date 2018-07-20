@@ -245,6 +245,11 @@ public class BattleManager : MonoBehaviour
                 return;
             }
 
+            if (DeveloperPanel.IsServerEnabled() && mouseDownTargetable.Owner.Id != this.you.Id)
+            {
+                return;
+            }
+
             if (!mouseDownTargetable.CanAttackNow())
             {
                 return;
