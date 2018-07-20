@@ -50,6 +50,8 @@ public class Player
     private List<Card> removedMulliganCards;
     public List<Card> RemovedMulliganCards => removedMulliganCards;
 
+    private List<Card> replaceMulliganCards;
+
     public Player(string id, string name)
     {
         this.id = id;
@@ -66,6 +68,8 @@ public class Player
 
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this);
+
+        this.replaceMulliganCards = new List<Card>();
     }
 
     public Player(PlayerState playerState, string name)
@@ -82,6 +86,8 @@ public class Player
         this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
         this.avatar.Initialize(this, playerState);
         this.mode = playerState.Mode;
+
+        this.replaceMulliganCards = new List<Card>();
     }
 
     public void Initialize(PlayerState playerState)
@@ -154,7 +160,7 @@ public class Player
         this.hand.RepositionCards();
     }
 
-    private void DrawCard()
+    private void DrawCard(bool isMulligan = false)
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
@@ -170,7 +176,14 @@ public class Player
             Card drawnCard = this.deck.Cards[randomIndex];
             this.deck.Cards.RemoveAt(randomIndex);
 
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+            if (isMulligan)
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN);
+            }
+            else
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+            }
 
             ChallengeMove.ChallengeMoveAttributes challengeMoveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             challengeMoveAttributes.SetCard(drawnCard.GetChallengeCard());
@@ -324,32 +337,43 @@ public class Player
             ReplaceCardByMulligan(removedCard);
         }
 
-        if (opponentMode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
-        {
-            this.mode = PLAYER_STATE_MODE_NORMAL;
-        }
-        else if (opponentMode == PLAYER_STATE_MODE_MULLIGAN)
-        {
-            this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
-            BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
-        }
+        this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+        BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
 
-        EndMulligan();
+        // If not in connected mode, automatically perform mulligan for opponent.
+        if (!DeveloperPanel.IsServerEnabled())
+        {
+            string opponentId = Board.Instance.GetOpponentIdByPlayerId(this.id);
+
+            ChallengeMove challengeMove = new ChallengeMove();
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(opponentId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetDeckCardIndices(new List<int>());
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(opponentId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
     }
 
     /*
      * Function called on opponent player.
      */
-    public void PlayMulliganByIndices(List<int> replacedCardIndices, int opponentMode)
+    public void PlayMulliganByIndices(List<int> replacedCardIndices)
     {
         if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
             Debug.LogError("Player not in mulligan mode but received play mulligan.");
-            return;
-        }
-        else if (opponentMode == PLAYER_STATE_MODE_NORMAL)
-        {
-            Debug.LogError("Opponent in normal mode but received play mulligan.");
             return;
         }
 
@@ -359,65 +383,73 @@ public class Player
         {
             if (replacedCardIndices.Contains(i))
             {
-                ReplaceCardByMulligan(this.keptMulliganCards[i], i);
+                Card removeCard = this.keptMulliganCards[i];
+                this.keptMulliganCards.RemoveAt(i);
+
+                ReplaceCardByMulligan(removeCard, i);
             }
         }
 
-        if (opponentMode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
+        this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+    }
+
+    /*
+     * Function called on player "you".
+     */
+    public void FinishMulligan()
+    {
+        if (this.mode != PLAYER_STATE_MODE_MULLIGAN_WAITING)
         {
-            this.mode = PLAYER_STATE_MODE_NORMAL;
-        }
-        else if (opponentMode == PLAYER_STATE_MODE_MULLIGAN)
-        {
-            this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+            Debug.LogError("Finish mulligan called when player not in mulligan waiting mode");
+            return;
         }
 
-        EndMulligan();
+        this.keptMulliganCards = new List<Card>();
+        this.removedMulliganCards = new List<Card>();
+
+        foreach (Card card in this.replaceMulliganCards)
+        {
+            AddDrawnCard(card);
+        }
+
+        this.replaceMulliganCards = new List<Card>();
+
+        this.mode = PLAYER_STATE_MODE_NORMAL;
+
+        BattleManager.Instance.HideMulliganOverlay(this);
+
+        RenderTurnStart();
     }
 
     private void ReplaceCardByMulligan(Card card)
     {
         this.hand.RemoveByCardId(card.Id);
-        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
         ReturnCardToDeck(card);
-
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(this.id);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            DrawCard();
+            DrawCard(true);
         }
+
+        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
     }
 
     private void ReplaceCardByMulligan(Card card, int index)
     {
         this.hand.RemoveByIndex(index);
-        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
         ReturnCardToDeck(card);
-
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(this.id);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            DrawCard();
+            DrawCard(true);
         }
+        Debug.Log(this.deckSize);
+        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
     }
 
-    private void EndMulligan()
+    public void AddDrawnCardMulligan(Card card)
     {
-        this.keptMulliganCards = new List<Card>();
-        this.removedMulliganCards = new List<Card>();
-
-        RenderTurnStart();
-        BattleManager.Instance.HideMulliganOverlay(this);
+        this.replaceMulliganCards.Add(card);
     }
 
     /*

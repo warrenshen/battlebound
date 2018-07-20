@@ -634,8 +634,6 @@ public class EffectManager : MonoBehaviour
 
     public void OnStartTurn(string playerId)
     {
-        this.isDirty = true;
-
         Player player = BattleManager.Instance.GetPlayerById(playerId);
 
         if (!DeveloperPanel.IsServerEnabled())
@@ -670,6 +668,7 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
+        this.isDirty = true;
     }
 
     public void OnEndTurn(string playerId, UnityAction callback)
@@ -712,8 +711,6 @@ public class EffectManager : MonoBehaviour
 
     public void OnCreaturePlay(string playerId, string cardId)
     {
-        this.isDirty = true;
-
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
             playerId,
             cardId
@@ -743,6 +740,7 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
+        this.isDirty = true;
     }
 
     public void OnCreatureAttack(
@@ -750,8 +748,6 @@ public class EffectManager : MonoBehaviour
         Targetable defendingTargetable
     )
     {
-        this.isDirty = true;
-
         if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
             defendingTargetable.GetType() == typeof(BoardCreature)
@@ -803,6 +799,7 @@ public class EffectManager : MonoBehaviour
 
                     AddToQueues(effects);
                     this.isWaiting = false;
+                    this.isDirty = true;
                 }
             ));
         }
@@ -875,6 +872,7 @@ public class EffectManager : MonoBehaviour
 
                     AddToQueues(effects);
                     this.isWaiting = false;
+                    this.isDirty = true;
                 }
             ));
         }
@@ -889,8 +887,6 @@ public class EffectManager : MonoBehaviour
         Targetable defendingTargetable
     )
     {
-        this.isDirty = true;
-
         if (attackingTargetable.GetType() == typeof(PlayerAvatar))
         {
             Debug.LogError("Player avatar cannot have death rattle.");
@@ -956,6 +952,7 @@ public class EffectManager : MonoBehaviour
             }
 
             AddToQueues(effects);
+            this.isDirty = true;
         }
         else
         {
@@ -968,8 +965,6 @@ public class EffectManager : MonoBehaviour
         BoardCreature targetedCreature
     )
     {
-        this.isDirty = true;
-
         string playerId = battleCardObject.Owner.Id;
 
         SpellCard spellCard = battleCardObject.Card as SpellCard;
@@ -996,6 +991,7 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
+        this.isDirty = true;
     }
 
     private List<Effect> SpellTargetedLightningBolt(string playerId, BoardCreature targetedCreature)
@@ -1077,13 +1073,11 @@ public class EffectManager : MonoBehaviour
 
     public void OnSpellUntargetedPlay(BattleCardObject battleCardObject)
     {
-        this.isDirty = true;
-
         string playerId = battleCardObject.Owner.Id;
 
         SpellCard spellCard = battleCardObject.Card as SpellCard;
 
-        List<Effect> effects;
+        List<Effect> effects = new List<Effect>();
 
         switch (spellCard.Name)
         {
@@ -1097,6 +1091,9 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
                 break;
         }
+
+        AddToQueues(effects);
+        this.isDirty = true;
     }
 
     private List<Effect> SpellUntargetedRiotUp(string playerId)
