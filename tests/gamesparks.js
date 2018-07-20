@@ -832,183 +832,6 @@ describe("challenge events", function() {
         );
       });
     });
-
-    it("should run Bombshell Bombadier's deathrattle", function() {
-      const challengeStateData = {
-        "current": {
-          "ID_OPPONENT": {
-            "hasTurn": 0,
-            "manaCurrent": 0,
-            "manaMax": 70,
-            "health": 100,
-            "healthMax": 100,
-            "armor": 0,
-            "field": [
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "C10-5b0b012e7486050526c9c1a8-5",
-                "level": 0,
-                "category": 0,
-                "attack": 50,
-                "health": 10,
-                "cost": 70,
-                "name": "Bombshell Bombadier",
-                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
-                "abilities": [
-                  0,
-                  12
-                ],
-                "baseId": "C10",
-                "attackStart": 50,
-                "costStart": 70,
-                "healthStart": 30,
-                "healthMax": 30,
-                "buffs": [],
-                "canAttack": 1,
-                "hasShield": 0,
-                "isFrozen": 0,
-                "spawnRank": 2
-              },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              }
-            ],
-            "hand": [],
-            "deckSize": 0,
-            "cardCount": 6,
-            "mode": 0,
-            "mulliganCards": [],
-            "id": "5b0b012e7486050526c9c1a8",
-            "expiredStreak": 0
-          },
-          "ID_PLAYER": {
-            "hasTurn": 1,
-            "manaCurrent": 70,
-            "manaMax": 70,
-            "health": 100,
-            "healthMax": 100,
-            "armor": 0,
-            "field": [
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "C2-5b0b017502bd4e052f08a28d-2",
-                "level": 0,
-                "category": 0,
-                "attack": 30,
-                "health": 30,
-                "cost": 40,
-                "name": "Waterborne Razorback",
-                "description": "Charge; At the end of each turn, recover 20 health",
-                "abilities": [
-                  0,
-                  8
-                ],
-                "baseId": "C2",
-                "attackStart": 30,
-                "costStart": 40,
-                "healthStart": 50,
-                "healthMax": 50,
-                "buffs": [],
-                "canAttack": 1,
-                "hasShield": 0,
-                "isFrozen": 0,
-                "spawnRank": 1
-              },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              }
-            ],
-            "hand": [],
-            "deckSize": 1,
-            "cardCount": 8,
-            "mode": 0,
-            "mulliganCards": [],
-            "id": "5b0b017502bd4e052f08a28d",
-            "expiredStreak": 0
-          },
-        },
-        "opponentIdByPlayerId": {
-          "ID_PLAYER": "ID_OPPONENT",
-          "ID_OPPONENT": "ID_PLAYER",
-        },
-        "lastMoves": [],
-        "moves": [],
-        "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
-        "expiredStreakByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
-        "spawnCount": 2,
-        "nonce": 14
-      };
-
-      return new Promise((resolve) => {
-        gamesparks.sendWithData(
-          "LogEventRequest",
-          {
-            eventKey: "TestChallengeCardAttackCard",
-            challengeStateString: JSON.stringify(challengeStateData),
-            challengePlayerId: "ID_PLAYER",
-            cardId: "C2-5b0b017502bd4e052f08a28d-2",
-            attributesJson: {
-              fieldId: "ID_OPPONENT",
-              targetId: "C10-5b0b012e7486050526c9c1a8-5",
-            },
-          },
-          function(response) {
-            const challengeStateData = response.scriptData.challengeStateData;
-
-            const lastMoves = challengeStateData.lastMoves;
-            assert.equal(lastMoves.length, 4);
-            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
-            assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-            assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
-
-            const playerState = challengeStateData.current["ID_PLAYER"];
-            const playerField = playerState.field;
-            assert.equal(playerField[1].id, "EMPTY");
-
-            assert.equal(playerState.healthMax, 100);
-            assert.equal(playerState.health, 40);
-
-            const opponentState = challengeStateData.current["ID_OPPONENT"];
-            const opponentField = opponentState.field;
-            assert.equal(opponentField[2].id, "EMPTY");
-
-            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
-            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
-            resolve();
-          }
-        );
-      });
-    });
   });
 
   describe("dying breath", function() {
@@ -1169,6 +992,12 @@ describe("challenge events", function() {
             assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
             assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
             assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[2].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[3].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
@@ -1180,6 +1009,202 @@ describe("challenge events", function() {
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
             assert.equal(opponentField[2].id, "EMPTY");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should run both Bombshell Bombadier's dying breaths", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 0,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C10-5b0b012e7486050526c9c1a8-5",
+                "level": 0,
+                "category": 0,
+                "attack": 50,
+                "health": 10,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  0,
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 1,
+                "hasShield": 0,
+                "isFrozen": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 6,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b012e7486050526c9c1a8",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 70,
+            "manaMax": 70,
+            "health": 90,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C10-5b0b017502bd4e052f08a28d-10",
+                "level": 0,
+                "category": 0,
+                "attack": 50,
+                "health": 40,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 40,
+                "healthMax": 40,
+                "buffs": [],
+                "canAttack": 1,
+                "hasShield": 0,
+                "isFrozen": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 1,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b017502bd4e052f08a28d",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C10-5b0b017502bd4e052f08a28d-10",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 7);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+
+            assert.equal(lastMoves[1].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[2].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[3].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[3].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
+            assert.equal(lastMoves[2].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
+            assert.equal(lastMoves[3].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
+
+            assert.equal(lastMoves[4].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[5].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[6].category, "EFFECT_DEATH_RATTLE_ATTACK_RANDOM");
+            assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[5].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[6].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[4].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[5].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[6].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "EMPTY");
+
+            assert.equal(playerState.healthMax, 100);
+            assert.equal(playerState.health, 30);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[2].id, "EMPTY");
+
+            assert.equal(opponentState.healthMax, 100);
+            assert.equal(opponentState.health, 40);
 
             assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
             assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
@@ -1766,7 +1791,6 @@ describe("divine shield", function() {
           },
         },
         function(response) {
-          console.log(response);
           const challengeStateData = response.scriptData.challengeStateData;
 
           const lastMoves = challengeStateData.lastMoves;
