@@ -560,6 +560,12 @@ public class Player
             }
             else
             {
+                if (boardCreature.CreatureCard == null)
+                {
+                    Debug.LogError("Board creature card is null!");
+                    Debug.Log(i);
+                }
+
                 challengeCard.SetId(boardCreature.CreatureCard.Id);
                 challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
                 challengeCard.SetName(boardCreature.CreatureCard.Name);
@@ -594,7 +600,7 @@ public class Player
         List<Card> cards = new List<Card>();
         cards.Add(new CreatureCard("C0", "Blessed Newborn", 2));
         cards.Add(new CreatureCard("C1", "Temple Guardian", 1));
-        cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
+        //cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
         cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1));
         cards.Add(new SpellCard("C4", "Unstable Power", 4));
         cards.Add(new CreatureCard("C5", "Bombshell Bombadier", 1));
