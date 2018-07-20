@@ -22,13 +22,13 @@ GameObject:
   - component: {fileID: 198858562690846188}
   - component: {fileID: 199240645737875422}
   - component: {fileID: 82621144769199160}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DivineShield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4299952606933750
 Transform:
   m_ObjectHideFlags: 1
@@ -385,7 +385,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4
+      scalar: 3.33
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1010,13 +1010,13 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.6938782
-          inSlope: 0.9534121
-          outSlope: 0.9534121
+          value: 0.75510406
+          inSlope: 0.88402545
+          outSlope: 0.88402545
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.14983714
+          outWeight: 0.16929133
         - serializedVersion: 3
           time: 1
           value: 1
@@ -1161,7 +1161,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   RotationModule:
-    enabled: 0
+    enabled: 1
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -1271,7 +1271,7 @@ ParticleSystem:
     curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.7853982
+      scalar: 0
       minScalar: 0.7853982
       maxCurve:
         serializedVersion: 2
@@ -1321,7 +1321,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    separateAxes: 0
+    separateAxes: 1
   ColorModule:
     enabled: 1
     gradient:
