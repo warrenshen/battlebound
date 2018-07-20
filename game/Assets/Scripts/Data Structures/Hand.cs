@@ -61,6 +61,13 @@ public class Hand
     public void RemoveByCardId(string cardId)
     {
         int removeIndex = this.battleCardObjects.FindIndex(element => element.Card.Id == cardId);
+
+        if (removeIndex < 0)
+        {
+            Debug.LogError(string.Format("Failed to remove card from hand with card ID: {0}", cardId));
+            return;
+        }
+
         this.battleCardObjects.RemoveAt(removeIndex);
     }
 

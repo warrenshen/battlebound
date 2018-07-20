@@ -322,8 +322,9 @@ public class BattleManager : MonoBehaviour
 
     private void OnEndTurnClick()
     {
-        if (this.you.Mode != Player.PLAYER_STATE_MODE_NORMAL)   //dont allow end turn button click in mulligan or non-normal state
+        if (this.activePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)   // dont allow end turn button click in non-normal state
         {
+            Debug.Log(this.activePlayer.Mode);
             return;
         }
 
@@ -676,21 +677,6 @@ public class BattleManager : MonoBehaviour
 
     public void HideMulliganOverlay(Player player)
     {
-        // If not in connected mode, automatically perform mulligan for opponent.
-        if (!DeveloperPanel.IsServerEnabled() && player.Id == this.you.Id)
-        {
-            ChallengeMove challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(this.opponent.Id);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetDeckCardIndices(new List<int>());
-            challengeMove.SetMoveAttributes(moveAttributes);
-
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
-        }
-
         StartCoroutine("AnimateHideMulliganOverlay", player);
     }
 
@@ -701,14 +687,12 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
         overlay.SetActive(false);
 
-        if (!player.IsModeMulligan())
-        {
-            //do some turn transition render
-            SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
-            SetPassiveCursor();
-            this.activePlayer.MulliganNewTurn();
-            this.mode = BATTLE_STATE_NORMAL_MODE;
-        }
+        //do some turn transition render
+        SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
+        SetPassiveCursor();
+        // This is being called twice even though it doesn't need to be
+        this.activePlayer.MulliganNewTurn();
+        this.mode = BATTLE_STATE_NORMAL_MODE;
     }
 
     public void ToggleMulliganCard(BattleCardObject battleCardObject)
@@ -741,7 +725,6 @@ public class BattleManager : MonoBehaviour
         AddDeviceMove(challengeMove);
 
         this.you.PlayMulligan(this.opponent.Mode);
-        this.opponent.AdvanceMulliganState();
     }
 
     public bool CanPlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
@@ -976,6 +959,9 @@ public class BattleManager : MonoBehaviour
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
     }
 
+    /*
+     * @param List<int> deckCardIndices - indices of cards opponent chose to put back in deck
+     */
     private void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
         if (playerId != this.opponent.Id)
@@ -984,8 +970,14 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        this.opponent.PlayMulliganByIndices(deckCardIndices, this.you.Mode);
-        this.you.AdvanceMulliganState();
+        this.opponent.PlayMulliganByIndices(deckCardIndices);
+    }
+
+    private void ReceiveMoveFinishMulligan()
+    {
+        this.you.FinishMulligan();
+        this.opponent.FinishMulligan();
+        ComparePlayerStates(); // Compare state at the end of mulligan.
     }
 
     private void ReceiveMoveEndTurn(string playerId)
@@ -1003,6 +995,13 @@ public class BattleManager : MonoBehaviour
     {
         Player player = GetPlayerById(playerId);
         player.AddDrawnCard(card);
+        //ComparePlayerStates(); // We cannot call this directly since EffectManager may still be processing after end turn.
+    }
+
+    private void ReceiveMoveDrawCardMulligan(string playerId, Card card)
+    {
+        Player player = GetPlayerById(playerId);
+        player.AddDrawnCardMulligan(card);
         //ComparePlayerStates(); // We cannot call this directly since EffectManager may still be processing after end turn.
     }
 
@@ -1190,6 +1189,8 @@ public class BattleManager : MonoBehaviour
     private static List<string> OPPONENT_SERVER_CHALLENGE_MOVES = new List<string>
     {
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
+        ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN,
+        ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN,
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
         ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
@@ -1221,7 +1222,7 @@ public class BattleManager : MonoBehaviour
         ChallengeMove serverMove = this.serverMoveQueue[0];
 
         if (
-            serverMove.PlayerId == this.opponent.Id &&
+            (serverMove.PlayerId == this.opponent.Id || serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN || serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN) &&
             OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
         )
         {
@@ -1271,6 +1272,10 @@ public class BattleManager : MonoBehaviour
                 serverMove.Attributes.DeckCardIndices
             );
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN)
+        {
+            ReceiveMoveFinishMulligan();
+        }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
         {
             ReceiveMoveEndTurn(
@@ -1282,6 +1287,15 @@ public class BattleManager : MonoBehaviour
             Card card = serverMove.Attributes.Card.GetCard();
 
             ReceiveMoveDrawCard(
+                serverMove.PlayerId,
+                card
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN)
+        {
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            ReceiveMoveDrawCardMulligan(
                 serverMove.PlayerId,
                 card
             );
