@@ -2,6 +2,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+
+using TMPro;
+
 using Nethereum.Web3.Accounts;
 
 public class BuyableCardListItem : MonoBehaviour
@@ -9,7 +12,7 @@ public class BuyableCardListItem : MonoBehaviour
     [SerializeField]
     private Image cardImage;
     [SerializeField]
-    private Text priceText;
+    private TextMeshProUGUI priceText;
     [SerializeField]
     private Button bidAuctionButton;
 

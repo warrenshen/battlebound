@@ -128,7 +128,7 @@ public class CollectionManager : MonoBehaviour
 
     private void ScrollToPan(Vector3 axes)
     {
-        collectionObject.transform.Translate(axes * Input.mouseScrollDelta.y * 0.1F);
+        collectionObject.transform.Translate(axes * Input.mouseScrollDelta.y * -0.1F);
     }
 
     private void RaycastMouse()
