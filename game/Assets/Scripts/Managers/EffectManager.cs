@@ -518,8 +518,6 @@ public class EffectManager : MonoBehaviour
             effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-            defendingCreature.Redraw();
-
             if (defendingCreature.Health <= 0)
             {
                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
@@ -788,9 +786,6 @@ public class EffectManager : MonoBehaviour
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
 
-                    defendingCreature.Redraw();
-                    attackingCreature.Redraw();
-
                     if (attackingCreature.Health <= 0)
                     {
                         effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
@@ -844,9 +839,6 @@ public class EffectManager : MonoBehaviour
                     //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
                     //effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
                     //effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
-
-                    defendingAvatar.Redraw();
-                    attackingCreature.Redraw();
 
                     //if (attackingCreature.Health <= 0)
                     //{
@@ -903,7 +895,6 @@ public class EffectManager : MonoBehaviour
             return;
         }
 
-
         if (defendingTargetable.GetType() == typeof(BoardCreature))
         {
             BoardCreature defendingCreature = defendingTargetable as BoardCreature;
@@ -915,9 +906,6 @@ public class EffectManager : MonoBehaviour
             int damageDone = defendingCreature.TakeDamage(20);
 
             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
-
-            defendingCreature.Redraw();
-            attackingCreature.Redraw();
 
             if (defendingCreature.Health <= 0)
             {
@@ -938,9 +926,6 @@ public class EffectManager : MonoBehaviour
 
             int damageDone = defendingAvatar.TakeDamage(20);
             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
-
-            defendingAvatar.Redraw();
-            attackingCreature.Redraw();
 
             if (defendingAvatar.Health <= 0)
             {
@@ -1007,8 +992,6 @@ public class EffectManager : MonoBehaviour
         int damageTaken = targetedCreature.TakeDamage(30);
         effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
 
-        targetedCreature.Redraw();
-
         if (targetedCreature.Health <= 0)
         {
             effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
@@ -1041,8 +1024,6 @@ public class EffectManager : MonoBehaviour
         {
             targetedCreature.Freeze(1);
         }
-
-        targetedCreature.Redraw();
 
         return effects;
     }
@@ -1092,6 +1073,9 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_BRR_BRR_BLIZZARD:
                 effects = SpellUntargetedBrrBrrBlizzard(playerId);
                 break;
+            case SpellCard.SPELL_NAME_RAZE_TO_ASHES:
+                effects = SpellUntargetedRazeToAshes(playerId);
+                break;
             default:
                 Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
                 break;
@@ -1125,6 +1109,27 @@ public class EffectManager : MonoBehaviour
 
         // No triggered effects on freeze for now.
         return new List<Effect>();
+    }
+
+    private List<Effect> SpellUntargetedRazeToAshes(string playerId)
+    {
+        List<BoardCreature> opponentAliveCreatures =
+            Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        List<Effect> effects = new List<Effect>();
+
+        foreach (BoardCreature targetedCreature in opponentAliveCreatures)
+        {
+            int damageTaken = targetedCreature.TakeDamage(50);
+            effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+
+            if (targetedCreature.Health <= 0)
+            {
+                effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
+            }
+        }
+
+        return effects;
     }
 
     private List<Effect> GetEffectsOnCreatureDamageDealt(

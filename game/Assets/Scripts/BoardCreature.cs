@@ -251,11 +251,6 @@ public class BoardCreature : Targetable
                         .move(this.gameObject, originalPosition, 0.3F)
                         .setEaseInCubic();
                     onFightFinish();
-                    BoardCreature boardCreature = other as BoardCreature;
-                    if (boardCreature != null)
-                    {
-                        boardCreature.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
-                    }
                 }
         );
 
@@ -296,19 +291,25 @@ public class BoardCreature : Targetable
      */
     public override int TakeDamage(int amount)
     {
+        int damageTaken = 0;
+
         if (HasAbility(Card.CARD_ABILITY_SHIELD))
         {
+            // TODO: play shield pop sound.
             RemoveShield();
-            return 0;
         }
         else
         {
             int healthBefore = this.health;
             this.health -= amount;
 
-            return Math.Min(healthBefore, amount);
+            this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
+
+            damageTaken = Math.Min(healthBefore, amount);
         }
-        this.UpdateStatText();
+
+        Redraw();
+        return damageTaken;
     }
 
     /*
