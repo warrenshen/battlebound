@@ -140,6 +140,7 @@ public class BoardCreature : Targetable
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
+        this.statusVFX = new Dictionary<string, GameObject>();
         this.abilitiesVFX = new Dictionary<string, GameObject>();
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
@@ -455,20 +456,29 @@ public class BoardCreature : Targetable
                 this.summonAnimation.Stop();
                 this.statusVFX[BoardCreature.FROZEN_STATUS] = FXPoolManager.Instance.AssignEffect(BoardCreature.FROZEN_STATUS, this.transform).gameObject;
                 this.statusVFX[BoardCreature.FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
-                LeanTween.scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION).setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY)).setEaseOutCubic();
+                LeanTween
+                    .scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
+                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+                    .setEaseOutCubic();
             }
         }
         else
         {
             if (this.statusVFX.ContainsKey(BoardCreature.FROZEN_STATUS))
             {
-                LeanTween.scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.zero, ActionManager.TWEEN_DURATION).setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY)).setEaseInCubic().setOnComplete(() =>
-                {
-                    FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
-                    FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS], this.transform);
-                    this.summonAnimation.Play(summonAnimStates[1].name);
-                    statusVFX[BoardCreature.FROZEN_STATUS] = null;
-                });
+                LeanTween
+                    .scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.zero, ActionManager.TWEEN_DURATION)
+                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+                    .setEaseInCubic()
+                    .setOnComplete(
+                        () =>
+                        {
+                            FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
+                            FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS], this.transform);
+                            this.summonAnimation.Play(this.summonAnimStates[1].name);
+                            statusVFX.Remove(BoardCreature.FROZEN_STATUS);
+                        }
+                    );
             }
         }
     }
@@ -491,7 +501,7 @@ public class BoardCreature : Targetable
         }
 
         //do removals
-        foreach (string ability in this.abilitiesVFX.Keys)
+        foreach (string ability in new List<string>(this.abilitiesVFX.Keys))
         {
             if (abilities.Contains(ability))
             {
@@ -501,7 +511,7 @@ public class BoardCreature : Targetable
             //if not continue, needs removal
             GameObject effect = abilitiesVFX[ability];
             FXPoolManager.Instance.UnassignEffect(ability, effect, this.transform);
-            abilitiesVFX[ability] = null;
+            abilitiesVFX.Remove(ability);
         }
     }
 
