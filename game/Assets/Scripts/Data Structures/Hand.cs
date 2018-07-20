@@ -24,6 +24,11 @@ public class Hand
         return battleCardObjects.Count;
     }
 
+    public bool IsFull()
+    {
+        return Size() >= 10;
+    }
+
     public BattleCardObject GetCardObjectByCardId(string cardId)
     {
         foreach (BattleCardObject battleCardObject in this.battleCardObjects)
