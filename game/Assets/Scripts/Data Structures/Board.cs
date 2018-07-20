@@ -46,6 +46,11 @@ public class Board : MonoBehaviour
         this.playerIdToOpponentId[playerId] = opponentId;
     }
 
+    public string GetOpponentIdByPlayerId(string playerId)
+    {
+        return this.playerIdToOpponentId[playerId];
+    }
+
     public bool IsBoardPlaceOpen(string playerId, int index)
     {
         PlayingField playingField = this.playerIdToField[playerId];
@@ -148,6 +153,14 @@ public class Board : MonoBehaviour
         int playerIndex = playingField.GetIndexByCardId(cardId);
         int opponentIndex = 5 - playerIndex;
         return GetCreatureByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
+    }
+
+    public Transform GetInFrontBoardPlaceByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        int playerIndex = playingField.GetIndexByCardId(cardId);
+        int opponentIndex = 5 - playerIndex;
+        return GetBoardPlaceByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
     }
 
     /*
