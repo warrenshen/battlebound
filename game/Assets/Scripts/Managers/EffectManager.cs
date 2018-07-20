@@ -489,14 +489,21 @@ public class EffectManager : MonoBehaviour
         List<Effect> effects = new List<Effect>();
         // TODO: use pooling so don't instantiate?
         string effectName = "VFX/FanMeteorsVFX"; //attackingCreature.CreatureCard.GetEffectPrefab();
-        GameObject effectVFX = Instantiate(ResourceSingleton.Instance.GetEffectPrefabByName(effectName),
-                                        attackingCreature.transform.position,
-                                        Quaternion.identity);
+        GameObject effectVFX = Instantiate(
+            ResourceSingleton.Instance.GetEffectPrefabByName(effectName),
+            attackingCreature.transform.position,
+            Quaternion.identity
+        );
         effectVFX.transform.parent = attackingCreature.transform;
         effectVFX.transform.Translate(Vector3.back * 1 + Vector3.up * 1, Space.Self);
-        if (defendingCreature)
+
+        Transform defendingTransform = Board.Instance.GetInFrontBoardPlaceByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+        if (defendingTransform)
         {
-            effectVFX.transform.LookAt(defendingCreature.transform);  // TODO: show effect even if defending creature doesnt exist
+            effectVFX.transform.LookAt(defendingTransform);
         }
 
         if (effectVFX == null)
