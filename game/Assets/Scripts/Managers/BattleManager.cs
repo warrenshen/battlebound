@@ -329,7 +329,6 @@ public class BattleManager : MonoBehaviour
     {
         if (this.activePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)   // dont allow end turn button click in non-normal state
         {
-            Debug.Log(this.activePlayer.Mode);
             return;
         }
 
