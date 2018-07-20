@@ -138,6 +138,10 @@ public class MarketplaceManager : MonoBehaviour
     private void OnGetCardAuctionsSuccess(LogEventResponse response)
     {
         // JSON list of card auctions.
+        string address = response.ScriptData.GetString("address");
+        int balance = (int)response.ScriptData.GetInt("balance");
+        Debug.Log(address);
+        Debug.Log(balance);
         List<GSData> dataList = response.ScriptData.GetGSDataList("auctions");
         Debug.Log(dataList.Count + " auctions found.");
 
