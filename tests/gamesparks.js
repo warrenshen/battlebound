@@ -872,7 +872,6 @@ describe("challenge events", function() {
                 "healthMax": 30,
                 "buffs": [],
                 "canAttack": 1,
-                "hasShield": 0,
                 "isFrozen": 0,
                 "spawnRank": 2
               },
@@ -925,7 +924,6 @@ describe("challenge events", function() {
                 "healthMax": 50,
                 "buffs": [],
                 "canAttack": 1,
-                "hasShield": 0,
                 "isFrozen": 0,
                 "spawnRank": 1
               },
@@ -1055,7 +1053,6 @@ describe("challenge events", function() {
                 "healthMax": 30,
                 "buffs": [],
                 "canAttack": 1,
-                "hasShield": 0,
                 "isFrozen": 0,
                 "spawnRank": 2
               },
@@ -1107,7 +1104,6 @@ describe("challenge events", function() {
                 "healthMax": 40,
                 "buffs": [],
                 "canAttack": 1,
-                "hasShield": 0,
                 "isFrozen": 0,
                 "spawnRank": 1
               },
@@ -1243,7 +1239,6 @@ describe("challenge events", function() {
               "healthMax": 30,
               "buffs": [],
               "canAttack": 1,
-              "hasShield": 0,
               "isFrozen": 0,
               "spawnRank": 2
             },
@@ -1264,7 +1259,6 @@ describe("challenge events", function() {
               "healthMax": 50,
               "buffs": [],
               "canAttack": 1,
-              "hasShield": 0,
               "isFrozen": 0,
               "spawnRank": 3
             },
@@ -1320,7 +1314,6 @@ describe("challenge events", function() {
               "healthMax": 50,
               "buffs": [],
               "canAttack": 1,
-              "hasShield": 0,
               "isFrozen": 0,
               "spawnRank": 1
             },
@@ -1344,7 +1337,6 @@ describe("challenge events", function() {
               "healthMax": 50,
               "buffs": [],
               "canAttack": 1,
-              "hasShield": 0,
               "isFrozen": 0,
               "spawnRank": 0
             },
@@ -1518,8 +1510,8 @@ describe("challenge events", function() {
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
-            assert.equal(playerField[1].hasShield, 1);
-            assert.equal(playerField[2].hasShield, 1);
+            assert.equal(playerField[1].abilities.indexOf(2) >= 0, true);
+            assert.equal(playerField[2].abilities.indexOf(2) >= 0, true);
 
             assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
             assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
@@ -1804,7 +1796,7 @@ describe("divine shield", function() {
           const opponentState = challengeStateData.current["ID_OPPONENT"];
           const opponentField = opponentState.field;
           assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
-          assert.equal(opponentField[2].hasShield, 0);
+          assert.equal(opponentField[2].abilities.indexOf(2) >= 0, false);
 
           assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
           assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
@@ -1838,7 +1830,7 @@ describe("divine shield", function() {
 
               assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
               assert.equal(opponentField[2].health, 30);
-              assert.equal(opponentField[2].hasShield, 0);
+              assert.equal(opponentField[2].abilities.indexOf(2) >= 0, false);
 
               assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
               assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
