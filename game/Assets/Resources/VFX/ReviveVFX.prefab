@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4613692929572574}
   - component: {fileID: 198198095944273186}
+  - component: {fileID: 114699906460958068}
   - component: {fileID: 199829073472480712}
   m_Layer: 0
   m_Name: ReviveVFX
@@ -227,6 +228,18 @@ Transform:
   m_Father: {fileID: 4613692929572574}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114699906460958068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1073411616906656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnlyDeactivate: 0
 --- !u!198 &198148886400694838
 ParticleSystem:
   m_ObjectHideFlags: 1

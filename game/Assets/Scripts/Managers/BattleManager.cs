@@ -665,13 +665,14 @@ public class BattleManager : MonoBehaviour
     public void AnimateDrawCardForMulligan(Player player, BattleCardObject battleCardObject, int position)
     {
         string targetPointName = String.Format("{0} Mulligan Holder {1}", player.Name, position);
-        GameObject targetPoint = GameObject.Find(targetPointName);
+        GameObject targetPoint = GameObject.Find(targetPointName);  //to-do cache this?
         battleCardObject.transform.position = targetPoint.transform.position;
         battleCardObject.transform.localScale = Vector3.zero;
 
         LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
         LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
         CardTween.move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION).setEaseInQuad();
+        battleCardObject.visual.SetOutline(true);
         battleCardObject.visual.Redraw();
     }
 

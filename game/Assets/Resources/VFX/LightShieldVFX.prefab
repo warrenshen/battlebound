@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 4929100748022740}
   - component: {fileID: 199184678351998246}
   - component: {fileID: 198487476971179754}
+  - component: {fileID: 114122518390002584}
   m_Layer: 0
   m_Name: LightShieldVFX
   m_TagString: Untagged
@@ -117,6 +118,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: {x: 70, y: 40, z: 90}
   relativeTo: 1
+--- !u!114 &114122518390002584
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1342243244770092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnlyDeactivate: 0
 --- !u!198 &198115584402660906
 ParticleSystem:
   m_ObjectHideFlags: 1

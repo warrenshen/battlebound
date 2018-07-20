@@ -54,13 +54,13 @@ public class ActionManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        this.stencilCount = 3;
     }
 
     private void Start()
     {
         cardAndUILayerMask = LayerMask.GetMask("Card", "UI");
         InitializeDragTilts();
-        this.stencilCount = 1;
     }
 
     // Update is called once per frame

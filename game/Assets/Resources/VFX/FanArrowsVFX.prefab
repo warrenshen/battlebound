@@ -54,6 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4288380179575984}
   - component: {fileID: 198648458470897236}
+  - component: {fileID: 114603156540995184}
   - component: {fileID: 199141773500299118}
   m_Layer: 0
   m_Name: FanArrowsVFX
@@ -103,6 +104,18 @@ Transform:
   m_Father: {fileID: 4288380179575984}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114603156540995184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1711759715337698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnlyDeactivate: 0
 --- !u!198 &198411145040381474
 ParticleSystem:
   m_ObjectHideFlags: 1

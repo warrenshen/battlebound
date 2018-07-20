@@ -111,7 +111,7 @@ public abstract class CardObject : MouseWatchable
         );
 
         cardVisual.Stencil = ActionManager.Instance.stencilCount;
-        ActionManager.Instance.stencilCount += 3 % 255;
+        ActionManager.Instance.stencilCount = Mathf.Max(ActionManager.Instance.stencilCount + 3 % 255, 2);
     }
 
     protected static void SetHyperCardFromData(HyperCard.Card cardVisual, Card card)

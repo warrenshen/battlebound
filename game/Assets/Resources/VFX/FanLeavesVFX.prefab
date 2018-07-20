@@ -71,6 +71,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4788443026162786}
   - component: {fileID: 198478231606465900}
+  - component: {fileID: 114531480643446374}
   - component: {fileID: 199249436062942168}
   m_Layer: 0
   m_Name: FanLeavesVFX
@@ -134,6 +135,18 @@ Transform:
   m_Father: {fileID: 4788443026162786}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114531480643446374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1683395062583424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnlyDeactivate: 0
 --- !u!198 &198241991152002898
 ParticleSystem:
   m_ObjectHideFlags: 1
