@@ -165,7 +165,7 @@ function getBCardsByBCardIds(bCardIds) {
             bCards.push(dataCursor.next().getData());
         }
     }
-    
+
     return bCards;
 }
 
@@ -193,7 +193,7 @@ function createBCardByBCardId(bCardId) {
         setScriptError(error);
     }
     
-    return cardDataItem;
+    return cardData;
 }
 
 function _getBCardIdsFromChainByPlayer(player) {
@@ -206,20 +206,21 @@ function _getBCardIdsFromChainByPlayer(player) {
     }
 }
 
-function _getBCardIdsByPlayer(player) {
+function _getBCardsByPlayer(player) {
     const bCardIds = _getBCardIdsFromChainByPlayer(player);
     const bCards = getBCardsByBCardIds(bCardIds);
-        
+
     if (bCardIds.length !== bCards.length) {
         const existingBCardIds = bCards.map(function(bCard) { return bCard.id });
         const missingBCardIds = bCardIds.filter(function(bCardId) { return existingBCardIds.indexOf(bCardId) < 0 });
         
         missingBCardIds.forEach(function(bCardId) {
-            createBCardByBCardId(bCardId);
+            var cardData = createBCardByBCardId(bCardId);
+            bCards.push(cardData);
         });
     }
 
-    return bCardIds;
+    return bCards;
 }
 
 /**
@@ -231,7 +232,7 @@ function _getBCardIdsByPlayer(player) {
  * as a result of the blockchain sync.
  * 
  * @param player - GS player
- * @return bool - whether player deck(s) have changed after sync
+ * @return PlayerDecksDataItem
  **/
 function syncPlayerDecksByPlayer(player) {
     const API = Spark.getGameDataService();
@@ -241,10 +242,11 @@ function syncPlayerDecksByPlayer(player) {
     
     const decksData = decksDataItem.getData();
     const cCardIds = Object.keys(decksData.cardByCardId);
-    const bCardIds = _getBCardIdsByPlayer(player);
     
+    const bCards = _getBCardsByPlayer(player);
+    const bCardIds = bCards.map(function(bCard) { return bCard.id });
     decksData.bCardIds = bCardIds;
-    var isChanged = false;
+
     // Filter out bad card IDs from player's decks.
     const deckByName = decksData.deckByName;
     Object.keys(deckByName).forEach(function(deckName) {
@@ -253,9 +255,6 @@ function syncPlayerDecksByPlayer(player) {
             return bCardIds.indexOf(cardId) >= 0 || cardId.indexOf("C") === 0;
         })
         deckByName[deckName] = newCardIds;
-        if (oldCardIds.length !== newCardIds.length) {
-            isChanged = true;
-        }
     });
     
     const error = decksDataItem.persistor().persist().error();
@@ -264,7 +263,7 @@ function syncPlayerDecksByPlayer(player) {
         Spark.exit();
     }
     
-    return isChanged;
+    return bCards;
 }
 
 /**
@@ -275,7 +274,7 @@ function syncPlayerDecksByPlayer(player) {
  **/
 function getCardsAndDecksByPlayer(player) {
     // The term instance = card + template combined.
-    const decksData = getPlayerDecksByPlayer(player);
+    const decksData = getPlayerDecksByPlayerId(player.getPlayerId());
     
     const deckByName = decksData.deckByName;
     const cardByCardId = decksData.cardByCardId;
@@ -283,7 +282,7 @@ function getCardsAndDecksByPlayer(player) {
     const bCardIds = decksData.bCardIds;
     const cCardIds = Object.keys(cardByCardId);
     
-    const bCards = getBCardsByBCardIds(bCardIds);
+    const bCards = syncPlayerDecksByPlayer(player);
     const cCards = cCardIds.map(function(cardId) {
         return cardByCardId[cardId]; 
     });
@@ -303,15 +302,12 @@ function getCardsAndDecksByPlayer(player) {
     return [sortedInstances, deckByName];
 }
 
-function getPlayerDecksByPlayer(player) {
-    const isChanged = syncPlayerDecksByPlayer(player);
-    
+function getPlayerDecksByPlayerId(playerId) {
     const API = Spark.getGameDataService();
-    const playerId = player.getPlayerId();
-    
     const decksDataItem = API.getItem("PlayerDecks", playerId).document();
+    
     if (decksDataItem == null) {
-        setScriptErro("PlayerDecks instance does not exist for player.");
+        setScriptError("PlayerDecks does not exist.");
     }
     
     return decksDataItem.getData();
@@ -366,16 +362,7 @@ function getActiveDeckByPlayerId(playerId) {
  **/
 function getBCardsByPlayer(player) {
     // The term instance = card + template combined.
-    const API = Spark.getGameDataService();
-    const playerId = player.getPlayerId();
-    
-    const isChanged = syncPlayerDecksByPlayer(player);
-    
-    const decksDataItem = API.getItem("PlayerDecks", playerId).document();
-    const decksData = decksDataItem.getData();
-    
-    const bCardIds = decksData.bCardIds;
-    const bCards = getBCardsByBCardIds(bCardIds);
+    const bCards = syncPlayerDecksByPlayer(player);
     
     // Array of instances of all cards of player;
     const instances = _getCardAuctionsByBCards(bCards);

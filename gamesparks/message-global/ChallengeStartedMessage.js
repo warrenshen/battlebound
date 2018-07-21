@@ -10,6 +10,7 @@ require("ScriptDataModule");
 require("DeckModule");
 require("AttackModule");
 require("ChallengeMovesModule");
+require("CancelScheduledTimeEventsModule");
 
 const challengeId = Spark.getData().challenge.challengeId;
 const challenge = Spark.getChallenge(challengeId);
@@ -117,3 +118,5 @@ challengeState[challengerId] = challengerData;
 challengeState[challengedId] = challengedData;
 
 require("PersistChallengeStateModule");
+
+startMulliganTimeEvents(challengeId, [challengerId, challengedId]);

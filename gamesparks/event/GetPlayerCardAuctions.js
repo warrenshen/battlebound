@@ -11,7 +11,12 @@ require("AuctionModule");
 const player = Spark.getPlayer();
 const bCards = getBCardsByPlayer(player);
 
-const auctionedCards = findAuctionedCardsBySeller(player.getPrivateData("address"));
+const address = player.getPrivateData("address");
+if (!address) {
+    setScriptError("Player does not have an address.");
+}
+
+const auctionedCards = findAuctionsBySeller(address);
 
 Spark.setScriptData("auctionableCards", bCards);
 Spark.setScriptData("auctionedCards", auctionedCards);

@@ -60,7 +60,7 @@ ALL_TEMPLATE_IDS.forEach(function(templateId) {
     }
 });
 
-const decksData = getPlayerDecksByPlayer(player);
+const decksData = getPlayerDecksByPlayerId(player.getPlayerId());
 const cardByCardId = decksData.cardByCardId;
 const bCardIds = decksData.bCardIds;
 const cCardIds = Object.keys(cardByCardId);

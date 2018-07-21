@@ -14,3 +14,27 @@ function cancelScheduledTimeEvents(challengeId, playerId) {
     scheduler.cancel(runningKey);
     scheduler.cancel(expiredKey);
 }
+
+function startMulliganTimeEvents(challengeId, playerIds) {
+    const scheduler = Spark.getScheduler();
+    const runningKey = "TROM" + ":" + challengeId + ":" + "MULLIGAN";
+    const expiredKey = "TLEM" + ":" + challengeId + ":" + "MULLIGAN";
+    const data = {
+        category: TIME_LIMIT_CATEGORY_MULLIGAN,
+        challengeId: challengeId,
+        playerIds: playerIds,
+    };
+    var success;
+    success = scheduler.inSeconds("TimeRunningOutModule", 30, data, runningKey);
+    success = scheduler.inSeconds("TimeLimitExpiredModule", 45, data, expiredKey);
+}
+
+function cancelMulliganTimeEvents(challengeId) {
+    const scheduler = Spark.getScheduler();
+    // TROM = TimeRunningOutModule.
+    // TLEM = TimeLimitExpiredModule.
+    const runningKey = "TROM" + ":" + challengeId + ":" + "MULLIGAN";
+    const expiredKey = "TLEM" + ":" + challengeId + ":" + "MULLIGAN";
+    scheduler.cancel(runningKey);
+    scheduler.cancel(expiredKey);
+}

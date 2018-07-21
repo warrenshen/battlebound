@@ -35,7 +35,7 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
     
     CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
-    CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+    CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
     CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
     
     EFFECT_PLAYER_AVATAR_DIE,
@@ -61,7 +61,7 @@ const EFFECTS_BATTLE_CRY = [
 
 const EFFECTS_DEATH_RATTLE = [
     CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
-    CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+    CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
     CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 ];
 
@@ -345,8 +345,8 @@ function processLQueue(challengeStateData, effect) {
         case CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
             newEffects = abilityAttackInFront(challengeStateData, effect, 20);
             break;
-        case CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
-            newEffects = abilityDeathRattleAttackFace(challengeStateData, effect, 20);
+        case CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
+            newEffects = abilityDeathRattleAttackFace(challengeStateData, effect, 10);
             break;
         case CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
             newEffects = abilityDeathRattleAttackRandomThree(challengeStateData, effect);
