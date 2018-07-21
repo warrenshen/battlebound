@@ -130,7 +130,9 @@ public class MockMovesPanel : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(this.deckCardIndicesInputField.text))
             {
-                List<int> deckCardIndices = new List<int>(this.deckCardIndicesInputField.text.Split(',').Select(int.Parse));
+                List<int> deckCardIndices = new List<int>(
+                    this.deckCardIndicesInputField.text.Split(',').Select(int.Parse)
+                );
                 attributes.SetDeckCardIndices(deckCardIndices);
             }
             else
