@@ -307,6 +307,18 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    private void AbilityDamageTakenDamagePlayerFace(Effect effect, int amount)
+    {
+        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
+        player.TakeDamage(amount);
+    }
+
+    private void AbilityLifeSteal(Effect effect)
+    {
+        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
+        player.Heal(effect.Value);
+    }
+
     private void ProcessMQueue()
     {
         if (this.mQueue.Count <= 0)
@@ -340,81 +352,6 @@ public class EffectManager : MonoBehaviour
                     effect.CardId
                 );
                 boardCreature.Die();
-                break;
-            default:
-                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
-                break;
-        }
-    }
-
-    private void ProcessLQueue()
-    {
-        if (this.lQueue.Count <= 0)
-        {
-            Debug.LogError("Process queue called when queue is empty.");
-            return;
-        }
-
-        Effect effect = this.lQueue[0];
-        this.lQueue.RemoveAt(0);
-
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
-            effect.PlayerId,
-            effect.CardId
-        );
-
-        if (boardCreature == null)
-        {
-            Debug.LogError("Invalid effect - board creature does not exist.");
-            return;
-        }
-
-        switch (effect.Name)
-        {
-            case EFFECT_PLAYER_AVATAR_DIE:
-                Debug.LogWarning("Game over");
-                break;
-            case Card.CARD_ABILITY_END_TURN_HEAL_TEN:
-                boardCreature.Heal(10);
-                break;
-            case Card.CARD_ABILITY_END_TURN_HEAL_TWENTY:
-                boardCreature.Heal(20);
-                break;
-            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
-            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
-                AbilityAttackInFront(effect, 10);
-                break;
-            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY:
-            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
-                AbilityAttackInFront(effect, 20);
-                break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
-                AbilityDeathRattleAttackFace(effect, 10);
-                break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
-                AbilityDeathRattleAttackRandomThree(effect);
-                break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
-                AbilityDeathRattleDrawCard(effect);
-                break;
-            case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
-            case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
-                ChallengeMove challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(effect.PlayerId);
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-                challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-                BattleManager.Instance.AddDeviceMove(challengeMove);
-
-                this.isWaiting = true;
-                StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
-
-                if (!DeveloperPanel.IsServerEnabled())
-                {
-                    boardCreature.Owner.DrawCards(1);
-                }
-                break;
-            case Card.BUFF_CATEGORY_UNSTABLE_POWER:
-                BuffUnstablePower(effect);
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
@@ -463,16 +400,88 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = false;
     }
 
-    private void AbilityDamageTakenDamagePlayerFace(Effect effect, int amount)
+    private void ProcessLQueue()
     {
-        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
-        player.TakeDamage(amount);
+        if (this.lQueue.Count <= 0)
+        {
+            Debug.LogError("Process queue called when queue is empty.");
+            return;
+        }
+
+        Effect effect = this.lQueue[0];
+        this.lQueue.RemoveAt(0);
+
+        switch (effect.Name)
+        {
+            case EFFECT_PLAYER_AVATAR_DIE:
+                Debug.LogWarning("Game over");
+                break;
+            case Card.CARD_ABILITY_END_TURN_HEAL_TEN:
+                AbilityHeal(effect, 10);
+                break;
+            case Card.CARD_ABILITY_END_TURN_HEAL_TWENTY:
+                AbilityHeal(effect, 20);
+                break;
+            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
+                AbilityAttackInFront(effect, 10);
+                break;
+            case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
+                AbilityAttackInFront(effect, 20);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
+                AbilityDeathRattleAttackFace(effect, 10);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
+                AbilityDeathRattleAttackRandomThree(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
+                AbilityDeathRattleDrawCard(effect);
+                break;
+            case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
+            case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
+                AbilityDrawCard(effect);
+                break;
+            case Card.BUFF_CATEGORY_UNSTABLE_POWER:
+                BuffUnstablePower(effect);
+                break;
+            default:
+                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
+                break;
+        }
     }
 
-    private void AbilityLifeSteal(Effect effect)
+    private void AbilityHeal(Effect effect, int amount)
     {
-        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
-        player.Heal(effect.Value);
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+
+        boardCreature.Heal(amount);
+    }
+
+    private void AbilityDrawCard(Effect effect)
+    {
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(effect.PlayerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true;
+        StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
+
+        if (!DeveloperPanel.IsServerEnabled())
+        {
+            BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+                effect.PlayerId,
+                effect.CardId
+            );
+
+            boardCreature.Owner.DrawCards(1);
+        }
     }
 
     private void AbilityAttackInFront(Effect effect, int amount)
