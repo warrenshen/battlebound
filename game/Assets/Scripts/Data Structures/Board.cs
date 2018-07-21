@@ -51,6 +51,11 @@ public class Board : MonoBehaviour
         return this.playerIdToOpponentId[playerId];
     }
 
+    public Player GetOpponentByPlayerId(string playerId)
+    {
+        return BattleManager.Instance.GetPlayerById(GetOpponentIdByPlayerId(playerId));
+    }
+
     public bool IsBoardPlaceOpen(string playerId, int index)
     {
         PlayingField playingField = this.playerIdToField[playerId];

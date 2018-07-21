@@ -60,7 +60,7 @@ public class EffectManager : MonoBehaviour
 
         // Deathrattle.
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
-        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
         EFFECT_PLAYER_AVATAR_DIE,
@@ -89,7 +89,7 @@ public class EffectManager : MonoBehaviour
 
     private static readonly List<string> EFFECT_DEATH_RATTLE = new List<string>
     {
-        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
     };
@@ -388,8 +388,8 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
                 AbilityAttackInFront(effect, 20);
                 break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
-                AbilityDeathRattleAttackFace(effect, 20);
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
+                AbilityDeathRattleAttackFace(effect, 10);
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
                 AbilityDeathRattleAttackRandomThree(effect);
@@ -529,6 +529,12 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDeathRattleAttackFace(Effect effect, int amount)
     {
+        Player targetedPlayer = Board.Instance.GetOpponentByPlayerId(
+            effect.PlayerId
+        );
+
+        targetedPlayer.TakeDamage(amount);
+
         List<Effect> effects = new List<Effect>();
 
         effects.Add(
@@ -864,6 +870,9 @@ public class EffectManager : MonoBehaviour
                             )
                         );
                     }
+
+                    // Need to call redraw to update outline for can attack.
+                    attackingCreature.Redraw();
 
                     AddToQueues(effects);
                     this.isWaiting = false;
