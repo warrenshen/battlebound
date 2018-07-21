@@ -185,7 +185,10 @@ public class PlayerAvatar : Targetable
         }
 
         this.UpdateStatText();
-        return Math.Min(healthBefore, amount);
+        int damageTaken = Math.Min(healthBefore, amount);
+        TextManager.Instance.ShowTextAtTarget("Damage", this.transform, (0 - damageTaken).ToString());
+
+        return damageTaken;
     }
 
     public override int Heal(int amount)

@@ -305,6 +305,7 @@ public class BoardCreature : Targetable
             this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
 
             damageTaken = Math.Min(healthBefore, amount);
+            TextManager.Instance.ShowTextAtTarget("Damage", this.transform, (0 - damageTaken).ToString());
         }
 
         Redraw();

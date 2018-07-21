@@ -22,14 +22,14 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound(string name, Vector3 position, float pitchVariance = 0F, float pitchBias = 0F)
     {
-        GameObject root = GameObject.Find(name);
+        Transform root = transform.Find(name);
         if (root == null)
         {
             Debug.LogWarning("Could not play sound because no sound root found in pool.");
             return;
         }
 
-        Transform chosen = root.transform.GetChild(soundIndices[name]);
+        Transform chosen = root.GetChild(soundIndices[name]);
         chosen.position = position;
 
         AudioSource audioSource = chosen.GetComponent<AudioSource>();

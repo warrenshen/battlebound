@@ -37,24 +37,24 @@ public class FXPoolManager : MonoBehaviour
         return GetEffectPool(effect) != null;
     }
 
-    public GameObject GetEffectPool(string effect)
+    public Transform GetEffectPool(string effect)
     {
         effect = ResolveName(effect);
-        GameObject pool = GameObject.Find(effect);
+        Transform pool = transform.Find(effect);
         return pool;
     }
 
     private Transform GetEffect(string effect)
     {
         effect = ResolveName(effect);
-        GameObject pool = GetEffectPool(effect);
+        Transform pool = GetEffectPool(effect);
         if (pool == null)
         {
             Debug.LogError(string.Format("Effect {0} not found!", effect));
         }
 
-        Transform chosen = pool.transform.GetChild(effectIndices[effect]);
-        effectIndices[effect] = (effectIndices[effect] + 1) % pool.transform.childCount;
+        Transform chosen = pool.GetChild(effectIndices[effect]);
+        effectIndices[effect] = (effectIndices[effect] + 1) % pool.childCount;
         return chosen;
     }
 
