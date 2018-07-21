@@ -41,10 +41,20 @@ public class CreateAuctionModalPanel : MonoBehaviour
 
     public void ShowModalForCard(CardRaw card)
     {
-        this.card = card;
-        Texture2D image = Resources.Load(card.Image) as Texture2D;
-        cardImage.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-        this.gameObject.SetActive(true);
+        Card aCard;
+        if (card.Category == CardRaw.CardType.Creature)
+        {
+            aCard = new CreatureCard(card.Id, card.Name, 1);
+
+            this.card = card;
+            Texture2D image = ResourceSingleton.Instance.GetImageTextureByName(aCard.GetFrontImage());
+            cardImage.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
+            this.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("Only suppport creature cards now");
+        }
     }
 
     public void AuthorizeBidAuction()
