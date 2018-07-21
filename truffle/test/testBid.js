@@ -120,7 +120,10 @@ contract('CardAuction', function(accounts) {
 
     it ("should send leftover eth to buyer", async function() {
       const startingBalance = web3.eth.getBalance(buyer).toNumber();
-      const transaction = await auction.bid(tokenId, { from: buyer, gasPrice: 1, value: 1e+5 });
+      const transaction = await auction.bid(
+        tokenId,
+        { from: buyer, gasPrice: 1, value: 1e+5 }
+      );
       const gasUsed = transaction.receipt.gasUsed;
       const endingBalance = web3.eth.getBalance(buyer).toNumber();
 

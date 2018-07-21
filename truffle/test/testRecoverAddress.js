@@ -17,7 +17,6 @@ contract('CardTreasury', function(accounts) {
     const v = web3.toDecimal("0x" + signature.slice(128, 130));
 
     const address = await contract.recoverAddress.call(h, v, r, s);
-    console.log(address);
     assert.equal(address, "0x627306090abaB3A6e1400e9345bC60c78a8BEf57".toLowerCase(), "addresses should match");
   });
 

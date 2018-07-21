@@ -84,40 +84,4 @@ contract('CardAuction', function(accounts) {
       assert.equal(price, null, "price should not exist");
     });
   });
-
-  // describe ("shoulds", function() {
-  //   beforeEach(async function() {
-  //     treasury = await CardTreasury.new();
-  //     auction = await CardAuction.new(treasury.address, ownerCut);
-
-  //     await treasury.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
-  //     await treasury.mintCard(0, accounts[1], { from: accounts[0] });
-  //   });
-
-  //   it ("should allow owner of card to create an auction for card", async function() {
-  //     let transaction;
-
-  //     transaction = await treasury.approve(
-  //       auction.address,
-  //       tokenId,
-  //       { from: seller }
-  //     );
-
-  //     transaction = await auction.createAuction(
-  //       tokenId,
-  //       startingPrice,
-  //       endingPrice,
-  //       duration,
-  //       seller,
-  //       { from: treasury.address }
-  //     );
-
-  //     const log = transaction.logs[0];
-  //     assert.equal(log.event, "AuctionCreated", "expected an AuctionCreated event");
-  //     assert.equal(log.args.tokenId, tokenId, "token id is incorrect");
-  //     assert.equal(log.args.startingPrice, startingPrice, "starting price is incorrect");
-  //     assert.equal(log.args.endingPrice, endingPrice, "ending price is incorrect");
-  //     assert.equal(log.args.duration, duration, "duration is incorrect");
-  //   });
-  // });
 });
