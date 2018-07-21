@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -53,6 +54,26 @@ public class DeckStore
         }
     }
 
+    public List<CardRaw> GetCards()
+    {
+        return new List<CardRaw>(this.cardIdToCard.Values);
+    }
+
+    public List<string> GetDeckNames()
+    {
+        return new List<string>(this.deckNameToDeck.Keys);
+    }
+
+    public List<CardRaw> GetCardsByDeckName(string deckName)
+    {
+        return this.deckNameToDeck[deckName];
+    }
+
+    public List<string> GetCardIdsByDeckName(string deckName)
+    {
+        return new List<string>(this.deckNameToDeck[deckName].Select(cardRaw => cardRaw.Id));
+    }
+
     //public List<string> GetDeckMetadatas()
     //{
     //    List<string> deckNames = new List<string>(this.deckNameToDeck.Keys);
@@ -96,6 +117,37 @@ public class DeckStore
         return this.deckNameToDeck[deckName];
     }
 
+    public void CreateUpdatePlayerDeckWithCallback(
+        List<string> cardIds,
+        string previousName,
+        string name,
+        UnityAction callback
+    )
+    {
+        this.awaitingAction = callback;
+
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("CreateUpdatePlayerDeck");
+        request.SetEventAttribute("cardIds", cardIds);
+        request.SetEventAttribute("previousName", previousName);
+        request.SetEventAttribute("name", name);
+        request.Send(OnSaveCollectionSuccess, OnSaveCollectionError);
+    }
+
+    private void OnSaveCollectionSuccess(LogEventResponse response)
+    {
+        ResetStore();
+
+        ParseScriptData(response.ScriptData);
+
+        InvokeAwaitingAction();
+    }
+
+    private void OnSaveCollectionError(LogEventResponse response)
+    {
+        Debug.Log("Gamesparks Request Error!");
+    }
+
     private void SendGetCollectionRequest()
     {
         LogEventRequest request = new LogEventRequest();
@@ -107,29 +159,8 @@ public class DeckStore
     {
         ResetStore();
 
-        GSData decksData = response.ScriptData.GetGSData("decks");
+        ParseScriptData(response.ScriptData);
 
-        List<GSData> cardsData = response.ScriptData.GetGSDataList("cards");
-        foreach (GSData cardData in cardsData)
-        {
-            CardRaw card = JsonUtility.FromJson<CardRaw>(cardData.JSON);
-            this.cardIdToCard.Add(card.Id, card);
-        }
-
-        foreach (string deckName in decksData.BaseData.Keys)
-        {
-            List<string> cardIds = decksData.GetStringList(deckName);
-            List<CardRaw> deckCards = new List<CardRaw>();
-
-            foreach (string cardId in cardIds)
-            {
-                deckCards.Add(this.cardIdToCard[cardId]);
-            }
-
-            this.deckNameToDeck.Add(deckName, deckCards);
-        }
-
-        this.containsData = true;
         InvokeAwaitingAction();
     }
 
@@ -145,5 +176,32 @@ public class DeckStore
             this.awaitingAction.Invoke();
             this.awaitingAction = null;
         }
+    }
+
+    private void ParseScriptData(GSData scriptData)
+    {
+        GSData decksData = scriptData.GetGSData("decks");
+        List<GSData> cardsData = scriptData.GetGSDataList("cards");
+
+        foreach (GSData cardData in cardsData)
+        {
+            CardRaw card = JsonUtility.FromJson<CardRaw>(cardData.JSON);
+            this.cardIdToCard.Add(card.Id, card);
+        }
+
+        foreach (string deckName in new List<string>(decksData.BaseData.Keys))
+        {
+            List<string> cardIds = decksData.GetStringList(deckName);
+            List<CardRaw> deckCards = new List<CardRaw>();
+
+            foreach (string cardId in cardIds)
+            {
+                deckCards.Add(this.cardIdToCard[cardId]);
+            }
+
+            this.deckNameToDeck.Add(deckName, deckCards);
+        }
+
+        this.containsData = true;
     }
 }
