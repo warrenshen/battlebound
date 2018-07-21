@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 [System.Serializable]
 public class BattleCardObject : CardObject
@@ -100,5 +101,24 @@ public class BattleCardObject : CardObject
     public override void Release()
     {
 
+    }
+
+    public void Burn()
+    {
+        StartCoroutine("Dissolve", 1);  //called when overdraw
+    }
+
+    private IEnumerator Dissolve(float duration)
+    {
+        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
+
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(gameObject);
     }
 }

@@ -458,10 +458,24 @@ public class Player
 
     public void AddDrawnCardHandFull(Card card)
     {
-        // TODO:: animate and take out debug????
-        Debug.Log("Add drawn card hand full");
+        GameObject created = new GameObject(card.Name);
+        BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
+        createdBattleCard.Initialize(this, card);
+
+        created.transform.parent = GameObject.Find(
+            this.name + " Hand"
+        ).transform;
 
         this.deckSize -= 1;
+        BattleManager.Instance.AnimateDrawCard(this, createdBattleCard)
+                     .setOnComplete(() =>
+        {
+            CardTween.move(createdBattleCard, createdBattleCard.transform.position, CardTween.TWEEN_DURATION)
+                 .setOnComplete(() =>
+                 {
+                     createdBattleCard.Burn();
+                 });
+        });
     }
 
     /*

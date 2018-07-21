@@ -365,7 +365,7 @@ public class BoardCreature : Targetable
     {
         this.attack += amount;
         // TODO: animate.
-        Redraw();
+        this.UpdateStatText();
     }
 
     public void Die()
