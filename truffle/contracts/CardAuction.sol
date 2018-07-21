@@ -247,7 +247,6 @@ contract ClockAuctionBase {
     //  function is always guaranteed to be <= _price.
     return _price * ownerCut / 10000;
   }
-
 }
 
 /// @title Clock auction for non-fungible tokens.
@@ -278,17 +277,8 @@ contract ClockAuction is Pausable, ClockAuctionBase {
 
   /// @dev Remove all Ether from the contract, which is the owner's cuts
   ///  as well as any Ether sent directly to the contract address.
-  ///  Always transfers to the NFT contract, but can be called either by
-  ///  the owner or the NFT contract.
-  function withdrawBalance() external {
-    address nftAddress = address(nonFungibleContract);
-
-    require(
-      msg.sender == owner ||
-      msg.sender == nftAddress
-    );
-    // We are using this boolean method to make sure that even if one fails it will still work
-    bool res = nftAddress.send(this.balance);
+  function withdrawBalance() external onlyOwner {
+    owner.transfer(address(this).balance);
   }
 
   /// @dev Creates and begins a new auction.
