@@ -140,7 +140,6 @@ public class BoardCreature : Targetable
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
-        this.statusVFX = new Dictionary<string, GameObject>();
         this.abilitiesVFX = new Dictionary<string, GameObject>();
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
@@ -203,7 +202,7 @@ public class BoardCreature : Targetable
             this.summonAnimStates.Add(state);
         }
         this.summonAnimation.Play(summonAnimStates[0].name);
-        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);
+        this.summonAnimation.PlayQueued(summonAnimStates[1].name);
     }
 
     public override string GetCardId()
@@ -236,7 +235,7 @@ public class BoardCreature : Targetable
         this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
 
         this.summonAnimation.Play(summonAnimStates[0].name);
-        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);     //should group with sound as a method
+        this.summonAnimation.PlayQueued(summonAnimStates[1].name);     //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.transform.position;
@@ -454,32 +453,32 @@ public class BoardCreature : Targetable
         {
             if (!this.statusVFX.ContainsKey(BoardCreature.FROZEN_STATUS))
             {
-                this.summonAnimation.Stop();
+                this.summonAnimation.enabled = false;
                 this.statusVFX[BoardCreature.FROZEN_STATUS] = FXPoolManager.Instance.AssignEffect(BoardCreature.FROZEN_STATUS, this.transform).gameObject;
                 this.statusVFX[BoardCreature.FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
-                LeanTween
-                    .scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
-                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-                    .setEaseOutCubic();
+                LeanTween.scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
+                         .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+                         .setEaseOutCubic()
+                         .setOnStart(() =>
+                {
+                    SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
+                });
             }
         }
         else
         {
             if (this.statusVFX.ContainsKey(BoardCreature.FROZEN_STATUS))
             {
-                LeanTween
-                    .scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.zero, ActionManager.TWEEN_DURATION)
-                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-                    .setEaseInCubic()
-                    .setOnComplete(
-                        () =>
-                        {
-                            FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
-                            FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS], this.transform);
-                            this.summonAnimation.Play(this.summonAnimStates[1].name);
-                            statusVFX.Remove(BoardCreature.FROZEN_STATUS);
-                        }
-                    );
+                LeanTween.scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.zero, ActionManager.TWEEN_DURATION)
+                         .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+                         .setEaseInCubic().setOnComplete(() =>
+                {
+                    SoundManager.Instance.PlaySound("UnfreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: -0.3F);
+                    FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
+                    FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS], this.transform);
+                    this.summonAnimation.enabled = true;
+                    statusVFX.Remove(BoardCreature.FROZEN_STATUS);
+                });
             }
         }
     }

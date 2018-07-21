@@ -20,7 +20,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlaySound(string name, Vector3 position)
+    public void PlaySound(string name, Vector3 position, float pitchVariance = 0F, float pitchBias = 0F)
     {
         GameObject root = GameObject.Find(name);
         if (root == null)
@@ -31,7 +31,20 @@ public class SoundManager : MonoBehaviour
 
         Transform chosen = root.transform.GetChild(soundIndices[name]);
         chosen.position = position;
-        chosen.GetComponent<AudioSource>().Play();
+
+        AudioSource audioSource = chosen.GetComponent<AudioSource>();
+        audioSource.pitch = 1 + pitchBias;
         soundIndices[name] = (soundIndices[name] + 1) % root.transform.childCount;
+
+        if (pitchVariance > 0)
+        {
+            float previousPitch = audioSource.pitch;
+            audioSource.pitch += UnityEngine.Random.Range(-pitchVariance, pitchVariance);
+            audioSource.Play();
+        }
+        else
+        {
+            audioSource.Play();
+        }
     }
 }
