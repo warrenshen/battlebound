@@ -202,7 +202,7 @@ public class BoardCreature : Targetable
             this.summonAnimStates.Add(state);
         }
         this.summonAnimation.Play(summonAnimStates[0].name);
-        this.summonAnimation.PlayQueued(summonAnimStates[1].name);
+        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);
     }
 
     public override string GetCardId()
@@ -235,7 +235,7 @@ public class BoardCreature : Targetable
         this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
 
         this.summonAnimation.Play(summonAnimStates[0].name);
-        this.summonAnimation.PlayQueued(summonAnimStates[1].name);     //should group with sound as a method
+        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);    //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.transform.position;
@@ -477,7 +477,7 @@ public class BoardCreature : Targetable
                     FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
                     FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS], this.transform);
                     this.summonAnimation.enabled = true;
-                    statusVFX.Remove(BoardCreature.FROZEN_STATUS);
+                    this.statusVFX.Remove(BoardCreature.FROZEN_STATUS);
                 });
             }
         }
