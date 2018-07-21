@@ -647,6 +647,7 @@ public class BattleManager : MonoBehaviour
         GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
         battleCardObject.transform.position = deckObject.transform.position;
         battleCardObject.transform.rotation = deckObject.transform.rotation;
+        battleCardObject.visual.Redraw();
 
         Transform pivotPoint;
         if (player.Id == this.you.Id)
