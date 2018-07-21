@@ -271,10 +271,6 @@ public class PlayerState
         public int CanAttack => canAttack;
 
         [SerializeField]
-        private int hasShield;
-        public int HasShield => hasShield;
-
-        [SerializeField]
         private int isFrozen;
         public int IsFrozen => isFrozen;
 
@@ -355,11 +351,6 @@ public class PlayerState
             this.canAttack = canAttack;
         }
 
-        public void SetHasShield(int hasShield)
-        {
-            this.hasShield = hasShield;
-        }
-
         public void SetIsFrozen(int isFrozen)
         {
             this.isFrozen = isFrozen;
@@ -434,10 +425,6 @@ public class PlayerState
             else if (this.canAttack != other.CanAttack)
             {
                 return string.Format("CanAttack: {0} vs {1}", this.canAttack, other.CanAttack);
-            }
-            else if (this.hasShield != other.HasShield)
-            {
-                return string.Format("HasShield: {0} vs {1}", this.hasShield, other.HasShield);
             }
             else if (this.isFrozen != other.IsFrozen)
             {
