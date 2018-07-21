@@ -39,6 +39,7 @@ public class MarketplaceManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
         this.buyModeButton.onClick.AddListener(OnBuyModeButtonClick);
         this.sellModeButton.onClick.AddListener(OnSellModeButtonClick);
         this.cancelModeButton.onClick.AddListener(OnCancelModeButtonClick);
@@ -50,8 +51,58 @@ public class MarketplaceManager : MonoBehaviour
         sellableCards = new List<CardRaw>();
         cancelableCards = new List<CardAuction>();
 
-        GetCardAuctions();
-        GetPlayerCardAuctions();
+        if (SparkSingleton.Instance.IsAuthenticated)
+        {
+            GetCardAuctions();
+            GetPlayerCardAuctions();
+        }
+        else
+        {
+            Debug.Log("add callback");
+            SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
+        }
+    }
+
+    private void GetMarketplaceData()
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("GetMarketplaceData");
+        request.Send(OnGetMarketplaceDataSuccess, OnGetMarketplaceDataError);
+    }
+
+    private void OnGetMarketplaceDataSuccess(LogEventResponse response)
+    {
+        // JSON list of card auctions.
+        List<GSData> buyableCardsDataList = response.ScriptData.GetGSDataList("buyableCards");
+        List<GSData> cancelableCardsDataList = response.ScriptData.GetGSDataList("cancelableCards");
+        List<GSData> sellableCardsDataList = response.ScriptData.GetGSDataList("sellableCards");
+
+        this.buyableCards = new List<CardAuction>();
+        foreach (GSData buyableCardData in buyableCardsDataList)
+        {
+            CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(buyableCardData.JSON);
+            this.buyableCards.Add(cardAuction);
+        }
+
+        this.cancelableCards = new List<CardAuction>();
+        foreach (GSData cancelableCardData in cancelableCardsDataList)
+        {
+            CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(cancelableCardData.JSON);
+            this.cancelableCards.Add(cardAuction);
+        }
+
+        this.sellableCards = new List<CardRaw>();
+        foreach (GSData sellableCardData in sellableCardsDataList)
+        {
+            CardRaw cardRaw = JsonUtility.FromJson<CardRaw>(sellableCardData.JSON);
+            this.sellableCards.Add(cardRaw);
+        }
+    }
+
+    private void OnGetMarketplaceDataError(LogEventResponse response)
+    {
+        GSData errors = response.Errors;
+        Debug.Log(errors);
     }
 
     private void OnBuyModeButtonClick()
@@ -139,7 +190,7 @@ public class MarketplaceManager : MonoBehaviour
     {
         // JSON list of card auctions.
         string address = response.ScriptData.GetString("address");
-        int balance = (int)response.ScriptData.GetInt("balance");
+        long balance = (long)response.ScriptData.GetLong("balance");
         Debug.Log(address);
         Debug.Log(balance);
         List<GSData> dataList = response.ScriptData.GetGSDataList("auctions");
