@@ -74,6 +74,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
         PrivateKeyModal.Instance.ShowModalWithCallback(
             new UnityAction<Account>(SubmitCreateAuctionTransaction)
         );
+        Close();
     }
 
     private void SubmitCreateAuctionTransaction(Account account)
