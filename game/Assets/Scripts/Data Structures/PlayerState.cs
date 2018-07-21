@@ -461,8 +461,9 @@ public class PlayerState
             abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
             abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
 
-            List<string> exceptAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
-            if (exceptAbilities.Count > 0)
+            List<string> exceptOneAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
+            List<string> exceptTwoAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
+            if (exceptOneAbilities.Count > 0 || exceptTwoAbilities.Count > 0)
             {
                 return string.Format("Abilities: {0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
             }
