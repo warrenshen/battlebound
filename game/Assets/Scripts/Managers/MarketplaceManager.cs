@@ -7,11 +7,20 @@ using GameSparks.Api.Responses;
 
 public class MarketplaceManager : MonoBehaviour
 {
-    public static int MARKETPLACE_MODE_BUY = 0;
-    public static int MARKETPLACE_MODE_SELL = 1;
-    public static int MARKETPLACE_MODE_CANCEL = 2;
+    public const int MARKETPLACE_MODE_BUY = 0;
+    public const int MARKETPLACE_MODE_SELL = 1;
+    public const int MARKETPLACE_MODE_CANCEL = 2;
 
     private int mode = MARKETPLACE_MODE_BUY;
+
+    private string contractAddressTreasury;
+    public string ContractAddressTreasury => contractAddressTreasury;
+
+    private string contractAddressAuction;
+    public string ContractAddressAuction => contractAddressAuction;
+
+    private string gasPriceSuggested;
+    public string GasPriceSuggested => gasPriceSuggested;
 
     [SerializeField]
     private Button buyModeButton;
@@ -58,10 +67,10 @@ public class MarketplaceManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("add callback");
             SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
         }
     }
+
 
     private void GetMarketplaceData()
     {
@@ -72,7 +81,10 @@ public class MarketplaceManager : MonoBehaviour
 
     private void OnGetMarketplaceDataSuccess(LogEventResponse response)
     {
-        // JSON list of card auctions.
+        this.contractAddressTreasury = response.ScriptData.GetString("contractAddressTreasury");
+        this.contractAddressAuction = response.ScriptData.GetString("contractAddressAuction");
+        this.gasPriceSuggested = response.ScriptData.GetString("gasPriceSuggested");
+
         List<GSData> buyableCardsDataList = response.ScriptData.GetGSDataList("buyableCards");
         List<GSData> cancelableCardsDataList = response.ScriptData.GetGSDataList("cancelableCards");
         List<GSData> sellableCardsDataList = response.ScriptData.GetGSDataList("sellableCards");

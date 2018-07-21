@@ -38,12 +38,13 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         // TODO: validate all input prams.
         if (duration < 60)
         {
+            Debug.LogError("Invalid duration parameter");
             return "Invalid duration parameter";
         }
 
         int nonce = (int)await FetchTransactionNonce();
 
-        string signedTx = TreasuryContract.signCreateAuctionTransaction(
+        string signedTx = TreasuryContract.SignCreateAuctionTransaction(
             account,
             nonce,
             tokenId,
@@ -118,7 +119,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         int nonce = (int)await FetchTransactionNonce();
 
-        string signedTx = AuctionContract.signBidAuctionTransaction(
+        string signedTx = AuctionContract.SignBidAuctionTransaction(
             account,
             nonce,
             tokenId,
@@ -183,7 +184,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             return "Invalid tokenId parameter";
         }
 
-        string signedTx = AuctionContract.signCancelAuctionTransaction(
+        string signedTx = AuctionContract.SignCancelAuctionTransaction(
             account,
             nonce,
             tokenId
