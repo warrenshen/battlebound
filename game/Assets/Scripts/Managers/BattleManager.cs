@@ -688,22 +688,21 @@ public class BattleManager : MonoBehaviour
 
     public void HideMulliganOverlay(Player player)
     {
-        StartCoroutine("AnimateHideMulliganOverlay", player);
-    }
-
-    private IEnumerator AnimateHideMulliganOverlay(Player player)
-    {
         GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
-        LeanTween.scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION);
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-        overlay.SetActive(false);
 
-        //do some turn transition render
-        SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
-        SetPassiveCursor();
-        // This is being called twice even though it doesn't need to be
-        this.activePlayer.MulliganNewTurn();
-        this.mode = BATTLE_STATE_NORMAL_MODE;
+        LeanTween.move(overlay, overlay.transform.position + overlay.transform.up * -3, CardTween.TWEEN_DURATION);
+        LeanTween.scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION)
+                 .setOnComplete(() =>
+        {
+            overlay.SetActive(false);
+
+            SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
+            SetPassiveCursor();
+
+            // This is being called twice even though it doesn't need to be
+            this.activePlayer.MulliganNewTurn();
+            this.mode = BATTLE_STATE_NORMAL_MODE;
+        });
     }
 
     public void ToggleMulliganCard(BattleCardObject battleCardObject)

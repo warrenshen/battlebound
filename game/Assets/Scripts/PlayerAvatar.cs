@@ -186,7 +186,7 @@ public class PlayerAvatar : Targetable
 
         this.UpdateStatText();
         int damageTaken = Math.Min(healthBefore, amount);
-        TextManager.Instance.ShowTextAtTarget("Damage", this.transform, (0 - damageTaken).ToString());
+        TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
 
         return damageTaken;
     }

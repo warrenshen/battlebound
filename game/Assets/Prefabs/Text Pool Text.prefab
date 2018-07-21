@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 222602000296414740}
   - component: {fileID: 114657132563682298}
   m_Layer: 5
-  m_Name: Damage Text
+  m_Name: Text Pool Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,8 +73,8 @@ MeshRenderer:
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 21337716048801368, guid: 252df9eb4101f479fbd492218c4c7407, type: 2}
@@ -165,7 +165,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: -50
+  m_text: 30
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 252df9eb4101f479fbd492218c4c7407, type: 2}
   m_sharedMaterial: {fileID: 21337716048801368, guid: 252df9eb4101f479fbd492218c4c7407,
@@ -175,14 +175,14 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278199295
-  m_fontColor: {r: 0.9528302, g: 0, b: 0.10497274, a: 1}
-  m_enableVertexGradient: 1
+    rgba: 4280025330
+  m_fontColor: {r: 0.9528302, g: 0, b: 0.11261346, a: 1}
+  m_enableVertexGradient: 0
   m_fontColorGradient:
-    topLeft: {r: 0.745283, g: 0.0035154943, b: 0.0035154943, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 0.5566038, g: 0.002625496, b: 0.002625496, a: 1}
-    bottomRight: {r: 0.31132078, g: 0.0044054748, b: 0.0044054748, a: 1}
+    topLeft: {r: 1, g: 0, b: 0.24313736, a: 1}
+    topRight: {r: 0.9150943, g: 0, b: 0.16994604, a: 1}
+    bottomLeft: {r: 0.5471698, g: 0.002580996, b: 0.14335908, a: 1}
+    bottomRight: {r: 0.3679245, g: 0, b: 0.117924504, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
@@ -193,12 +193,12 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 17.2
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 1
-  m_fontSizeMax: 20
+  m_fontSizeMax: 30
   m_fontStyle: 0
   m_textAlignment: 514
   m_isAlignmentEnumConverted: 1
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
-  m_enableKerning: 1
+  m_enableKerning: 0
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -234,19 +234,19 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114657132563682298}
-    characterCount: 3
+    characterCount: 2
     spriteCount: 0
     spaceCount: 0
     wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
-    materialCount: 2
-  m_havePropertiesChanged: 1
+    materialCount: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 23030696281395152}

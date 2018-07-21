@@ -6,48 +6,34 @@ using TMPro;
 
 public class TextManager : MonoBehaviour
 {
+    int index;
+
     [SerializeField]
-    public Dictionary<string, int> typeIndices;
     public static TextManager Instance { get; private set; }
 
     private void Awake()
     {
         Instance = this;
-        this.typeIndices = new Dictionary<string, int>();
-
-        foreach (Transform source in this.transform)
-        {
-            typeIndices.Add(source.name, 0);
-        }
     }
 
-    public void ShowTextAtTarget(string name, Transform target, string value, float duration = 0.5F)
+    public void ShowTextAtTarget(Transform target, string value, Color color, float duration = 1.5f)
     {
-        Transform root = transform.Find(name);
-        if (root == null)
-        {
-            Debug.LogWarning("Could not play sound because no sound root found in pool.");
-            return;
-        }
+        Transform chosen = transform.GetChild(index);
+        TextMeshPro text_m = chosen.GetComponent<TextMeshPro>();
 
-        Transform chosen = root.transform.GetChild(typeIndices[name]);
-        TextMeshPro textMesh = chosen.GetComponent<TextMeshPro>();
         chosen.position = target.transform.position;
-        chosen.localScale = Vector3.zero;
-        textMesh.text = value;
+        text_m.text = value;
+        text_m.color = color;
+        text_m.alpha = 0;
 
-        typeIndices[name] = (typeIndices[name] + 1) % root.childCount;
+        index = (index + 1) % transform.childCount;
+        text_m.gameObject.SetActive(true);
 
-        textMesh.gameObject.SetActive(true);
-        LeanTween.scale(textMesh.gameObject, Vector3.one, ActionManager.TWEEN_DURATION)
-             .setOnComplete(() =>
-             {
-                 LeanTween.moveY(textMesh.gameObject, chosen.transform.position.y + 0.5F, ActionManager.TWEEN_DURATION)
-                      .setOnComplete(() =>
-                      {
-                          textMesh.gameObject.SetActive(false);
-                      });
-             });
-
+        LeanTween.alphaVertex(text_m.gameObject, 1, duration).setEaseShake();
+        LeanTween.moveY(text_m.gameObject, chosen.transform.position.y + 0.1F, duration)
+          .setOnComplete(() =>
+          {
+              text_m.gameObject.SetActive(false);
+          });
     }
 }
