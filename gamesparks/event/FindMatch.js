@@ -35,7 +35,7 @@ if (!playerDecksData.deckByName[playerDeck]) {
 }
 
 // Sync player's PlayerDecks instance with blockchain.
-const isChanged = syncPlayerDecksByPlayer(player);
+syncPlayerDecksByPlayer(player);
 
 playerDecksData.activeDeck = playerDeck;
 

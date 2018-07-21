@@ -26,8 +26,8 @@ Spark.setScriptData("buyableCards", buyableAuctions);
 Spark.setScriptData("sellableCards", bCards);
 Spark.setScriptData("cancelableCards", cancelableAuctions);
 
-Spark.setScriptData("treasuryContractAddress", TREASURY_CONTRACT_ADDRESS);
-Spark.setScriptData("auctionContractAddress", AUCTION_CONTRACT_ADDRESS);
-Spark.setScriptData("gasPrice", "3000000000");
+Spark.setScriptData("contractAddressTreasury", TREASURY_CONTRACT_ADDRESS);
+Spark.setScriptData("contractAddressAuction", AUCTION_CONTRACT_ADDRESS);
+Spark.setScriptData("gasPriceSuggested", "3000000000");
 
 setScriptSuccess();
