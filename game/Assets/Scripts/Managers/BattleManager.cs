@@ -345,10 +345,6 @@ public class BattleManager : MonoBehaviour
                 BattleSingleton.Instance.SendChallengeEndTurnRequest();
                 NextTurn();
             }
-            else
-            {
-                Debug.LogError("End turn clicked during opponent's turn in connected mode.");
-            }
         }
         else
         {
