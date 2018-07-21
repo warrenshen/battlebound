@@ -48,7 +48,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
 
             this.card = card;
             Texture2D image = ResourceSingleton.Instance.GetImageTextureByName(aCard.GetFrontImage());
-            cardImage.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
+            //cardImage.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
             this.gameObject.SetActive(true);
         }
         else

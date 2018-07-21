@@ -2,10 +2,12 @@
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+using TMPro;
+
 public class GenericModalPanel : MonoBehaviour
 {
     [SerializeField]
-    private Text questionText;
+    private TextMeshProUGUI questionText;
 
     [SerializeField]
     private Image questionImage;
@@ -36,8 +38,8 @@ public class GenericModalPanel : MonoBehaviour
         this.gameObject.SetActive(true);
 
         this.questionText.text = question;
-        this.confirmButton.GetComponentInChildren<Text>().text = confirmText;
-        this.cancelButton.GetComponentInChildren<Text>().text = cancelText;
+        this.confirmButton.GetComponentInChildren<TextMeshProUGUI>().text = confirmText;
+        this.cancelButton.GetComponentInChildren<TextMeshProUGUI>().text = cancelText;
 
         this.confirmButton.onClick.RemoveAllListeners();
         this.confirmButton.onClick.AddListener(confirmEvent);
