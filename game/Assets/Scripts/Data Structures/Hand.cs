@@ -111,6 +111,8 @@ public class Hand
             BattleCardObject battleCardObject = this.battleCardObjects[k];
             if (ActionManager.Instance.GetDragTarget() == battleCardObject)
                 continue;
+            if (LeanTween.isTweening(battleCardObject.gameObject))
+                continue;
 
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);

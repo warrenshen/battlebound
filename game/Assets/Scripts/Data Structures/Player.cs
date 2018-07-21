@@ -242,8 +242,8 @@ public class Player
             BattleCardObject battleCardObject = AddDrawnCard(
                 this.keptMulliganCards[i],
                 isInit: true,
-                reposition: false
-            );  //doesn't use standard RepositionCards()
+                reposition: false //doesn't use standard RepositionCards()
+            );
             BattleManager.Instance.AnimateDrawCardForMulligan(
                 this,
                 battleCardObject,
