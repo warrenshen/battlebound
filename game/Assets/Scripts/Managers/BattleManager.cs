@@ -79,8 +79,14 @@ public class BattleManager : MonoBehaviour
         {
             if (!BattleSingleton.Instance.ChallengeStarted)
             {
-                //throw new Exception("Challenge not started - did you enter this scene from the matchmaking scene?");
-                BattleSingleton.Instance.SendFindMatchRequest(Matchmaking.MATCH_TYPE_CASUAL, "Deck1");
+                if (SparkSingleton.Instance.IsAuthenticated)
+                {
+                    SendFindMatchRequest();
+                }
+                else
+                {
+                    SparkSingleton.Instance.AddAuthenticatedCallback(SendFindMatchRequest);
+                }
                 this.initialized = false;
                 return;
             }
@@ -92,6 +98,11 @@ public class BattleManager : MonoBehaviour
         }
 
         attackCommand.SetWidth(0);
+    }
+
+    private void SendFindMatchRequest()
+    {
+        BattleSingleton.Instance.SendFindMatchRequest(Matchmaking.MATCH_TYPE_CASUAL, "Deck1");
     }
 
     private void Update()
