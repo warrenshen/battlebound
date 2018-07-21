@@ -2097,4 +2097,192 @@ describe("divine shield", function() {
       );
     });
   });
+
+  it("should not pop shield on attack opponent face", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 30,
+          "manaMax": 50,
+          "health": 60,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C4-5b0b017502bd4e052f08a28d-4",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 20,
+              "cost": 20,
+              "name": "Young Kyo",
+              "description": "",
+              "abilities": [],
+              "baseId": "C4",
+              "attackStart": 30,
+              "costStart": 20,
+              "healthStart": 20,
+              "healthMax": 20,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [
+            {
+              "id": "HIDDEN"
+            },
+            {
+              "id": "HIDDEN"
+            },
+            {
+              "id": "HIDDEN"
+            }
+          ],
+          "deckSize": 11,
+          "cardCount": 17,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 0,
+          "manaMax": 50,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C6-5b0b012e7486050526c9c1a8-6",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 60,
+              "cost": 50,
+              "name": "Poseidon's Handmaiden",
+              "description": "Charge; Deathrattle: Deal 20 damage to your opponent",
+              "abilities": [
+                0,
+                2
+              ],
+              "baseId": "C6",
+              "attackStart": 30,
+              "costStart": 50,
+              "healthStart": 60,
+              "healthMax": 60,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 5
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [
+            {
+              "id": "HIDDEN"
+            },
+            {
+              "id": "HIDDEN"
+            },
+            {
+              "id": "HIDDEN"
+            }
+          ],
+          "deckSize": 12,
+          "cardCount": 17,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 6,
+      "nonce": 14
+    };
+
+    return new Promise((resolve) => {
+      gamesparks.sendWithData(
+        "LogEventRequest",
+        {
+          eventKey: "TestChallengeCardAttackCard",
+          challengeStateString: JSON.stringify(challengeStateData),
+          challengePlayerId: "ID_PLAYER",
+          cardId: "C6-5b0b012e7486050526c9c1a8-6",
+          attributesJson: {
+            fieldId: "ID_OPPONENT",
+            targetId: "TARGET_ID_FACE",
+          },
+        },
+        function(response) {
+          const challengeStateData = response.scriptData.challengeStateData;
+
+          const lastMoves = challengeStateData.lastMoves;
+          assert.equal(lastMoves.length, 1);
+          assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+
+          const playerState = challengeStateData.current["ID_PLAYER"];
+          const playerField = playerState.field;
+          assert.equal(playerField[2].id, "C6-5b0b012e7486050526c9c1a8-6");
+          assert.equal(playerField[2].health, 60);
+          assert.equal(playerField[2].abilities.indexOf(2) >= 0, true);
+
+          const opponentState = challengeStateData.current["ID_OPPONENT"];
+          assert.equal(opponentState.health, 30);
+
+          assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+          assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+
+          resolve();
+        }
+      );
+    });
+  });
 });
