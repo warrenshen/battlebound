@@ -319,6 +319,10 @@ public class BattleManager : MonoBehaviour
         {
             ActionManager.Instance.SetCursor(0);
         }
+        else if (this.activePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)
+        {
+            ActionManager.Instance.SetCursor(1);
+        }
         else
         {
             ActionManager.Instance.SetCursor(2);
@@ -615,7 +619,6 @@ public class BattleManager : MonoBehaviour
                 {
                     target.Owner.PlayCard(target);
                 }
-
                 return true;
             }
             else
@@ -632,23 +635,13 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void AnimateDrawCard(Player player, BattleCardObject battleCardObject)
+    public LTDescr AnimateDrawCard(Player player, BattleCardObject battleCardObject)
     {
-        StartCoroutine("DrawCardAnimation", new object[2] { player, battleCardObject });
-    }
-
-    private IEnumerator DrawCardAnimation(object[] args)
-    {
-        Player player = args[0] as Player;
-        BattleCardObject battleCardObject = args[1] as BattleCardObject;
-
         GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
         battleCardObject.transform.position = deckObject.transform.position;
         battleCardObject.transform.rotation = deckObject.transform.rotation;
-        //done initializing to match deck orientation
 
         Transform pivotPoint;
-
         if (player.Id == this.you.Id)
         {
             pivotPoint = this.playerDrawCardFixedTransform;
@@ -659,18 +652,16 @@ public class BattleManager : MonoBehaviour
         }
 
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-
-        battleCardObject.noInteraction = true;  //to-do: try to streamline this if possible
-        LeanTween.move(
-            battleCardObject.gameObject,
-            pivotPoint.position,
-            CardTween.TWEEN_DURATION
-        ).setEaseInQuad();
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-        //card stops to show what it is
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-        battleCardObject.noInteraction = false;
-        player.Hand.RepositionCards();
+        return CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad()
+                 .setOnComplete(() =>
+        {
+            CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                 .setOnComplete(() =>
+            {
+                player.Hand.RepositionCards();  //can override completioon behavior by calling setOnComplete again
+            });
+        });
     }
 
     public void AnimateDrawCardForMulligan(Player player, BattleCardObject battleCardObject, int position)
@@ -680,11 +671,12 @@ public class BattleManager : MonoBehaviour
         battleCardObject.transform.position = targetPoint.transform.position;
         battleCardObject.transform.localScale = Vector3.zero;
 
-        LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
-        LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        CardTween.move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION).setEaseInQuad();
         battleCardObject.visual.SetOutline(true);
         battleCardObject.visual.Redraw();
+        LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
+        LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        CardTween.move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad();
     }
 
     public void HideMulliganOverlay(Player player)
@@ -1043,7 +1035,7 @@ public class BattleManager : MonoBehaviour
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(handIndex);
             battleCardObject.Reinitialize(card);
             opponent.PlayCard(battleCardObject);
-            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { battleCardObject, fieldIndex });
+            this.EnemyPlayCardToBoardAnim(battleCardObject, fieldIndex);
         }
         else
         {
@@ -1054,7 +1046,7 @@ public class BattleManager : MonoBehaviour
                 return;
             }
             opponent.PlayCard(battleCardObject);
-            StartCoroutine("EnemyPlayCardToBoardAnim", new object[2] { battleCardObject, fieldIndex });
+            this.EnemyPlayCardToBoardAnim(battleCardObject, fieldIndex);
         }
     }
 
@@ -1082,10 +1074,7 @@ public class BattleManager : MonoBehaviour
             battleCardObject.Reinitialize(card);
 
             opponent.PlayCard(battleCardObject);
-            StartCoroutine(
-                "EnemyPlaySpellTargetedAnim",
-                new object[2] { battleCardObject, targetedCreature }
-            );
+            this.EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
         }
         else
         {
@@ -1097,10 +1086,7 @@ public class BattleManager : MonoBehaviour
             }
 
             opponent.PlayCard(battleCardObject);
-            StartCoroutine(
-                "EnemyPlaySpellTargetedAnim",
-                new object[2] { battleCardObject, targetedCreature }
-            );
+            this.EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
         }
     }
 
@@ -1423,53 +1409,51 @@ public class BattleManager : MonoBehaviour
         return serverMove.Rank;
     }
 
-    private IEnumerator EnemyPlayCardToBoardAnim(object[] args)
+    private void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
     {
-        BattleCardObject battleCardObject = (BattleCardObject)args[0];
-        int fieldIndex = (int)args[1];
-
-        Transform pivotPoint = this.enemyPlayCardFixedTransform;
-
-        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
-        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-        battleCardObject.noInteraction = true; //will get destroyed and replaced by boardcreature anyways
-        //flash or something
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
-        PlayCardToBoard(battleCardObject, fieldIndex);
+        LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad();
+        CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad()
+                 .setOnComplete(() =>
+                 {
+                     CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                                   .setOnComplete(() =>
+                                   {
+                                       PlayCardToBoard(battleCardObject, fieldIndex);
+                                   });
+                 });
     }
 
-    private IEnumerator EnemyPlaySpellTargetedAnim(object[] args)
+    private void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
-        BattleCardObject battleCardObject = (BattleCardObject)args[0];
-        BoardCreature targetedCreature = (BoardCreature)args[1];
-
-        Transform pivotPoint = this.enemyPlayCardFixedTransform;
-
-        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
-        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-
-        //flash or something
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
-
-        PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+        LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad();
+        CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad()
+                 .setOnComplete(() =>
+                 {
+                     CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                                            .setOnComplete(() =>
+                                            {
+                                                PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+                                            });
+                 });
     }
 
-    private IEnumerator EnemyPlaySpellUntargetedAnim(object[] args)
+    private void EnemyPlaySpellUntargetedAnim(BattleCardObject battleCardObject)
     {
-        BattleCardObject battleCardObject = (BattleCardObject)args[0];
-
-        Transform pivotPoint = this.enemyPlayCardFixedTransform;
-
-        CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION).setEaseInQuad();
-        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION);
-
-        //flash or something
-        yield return new WaitForSeconds(CardTween.TWEEN_DURATION * 2);
-
-        PlayUntargetedSpellFromServer(battleCardObject);
+        LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad()
+                 .setOnComplete(() =>
+                 {
+                     CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                                            .setOnComplete(() =>
+                                            {
+                                                PlayUntargetedSpellFromServer(battleCardObject);
+                                            });
+                 });
     }
 
     private PlayerState GetPlayerState()
