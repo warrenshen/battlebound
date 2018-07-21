@@ -9,6 +9,7 @@ require("ScriptDataModule");
 require("AttackModule");
 require("ChallengeMovesModule");
 require("ChallengeStateModule");
+require("CancelScheduledTimeEventsModule");
 
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
@@ -95,6 +96,8 @@ if (playerState.mode === PLAYER_STATE_MODE_NORMAL) {
         category: MOVE_CATEGORY_FINISH_MULLIGAN,
     };
     addChallengeMove(challengeStateData, move);
+    
+    cancelMulliganTimeEvents(challengeId);
 }
 
 require("PersistChallengeStateModule");

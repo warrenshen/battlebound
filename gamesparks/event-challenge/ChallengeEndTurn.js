@@ -7,7 +7,9 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
+require("ChallengeMovesModule");
 require("ChallengeEndTurnModule");
+require("CancelScheduledTimeEventsModule");
 
 // This is secure because the only thing a malicious actor
 // can do is send end turn's on time expired for themselves -
@@ -43,6 +45,7 @@ if (isExpired && challengeStateData.moveTakenThisTurn === 0) {
     challengeStateData.expiredStreakByPlayerId[playerId] = 0;
 }
 
+// We only do the following if challenge is not over.
 if (!isChallengeOver) {
     handleChallengeEndTurn(challengeStateData, playerId);
     
@@ -50,11 +53,11 @@ if (!isChallengeOver) {
     // since this will already be sent because this is a challenge event.
     challenge.consumeTurn(playerId);
     
-    // We only send these time expiring messages if challenge is not over.
     const scheduler = Spark.getScheduler();
     const opponentRunningKey = "TROM" + ":" + challengeId + ":" + opponentId;
     const opponentExpiredKey = "TLEM" + ":" + challengeId + ":" + opponentId;
     const data = {
+        category: TIME_LIMIT_CATEGORY_NORMAL,
         challengeId: challengeId,
         opponentId: opponentId,
         hasTurnPlayerId: opponentId,

@@ -11,11 +11,12 @@ require("OnChainModule");
 const player = Spark.getPlayer();
 
 const address = player.getPrivateData("address");
-var balance = null;
+var balance = 0;
 if (address) {
     balance = fetchBalanceByAddress(address);
 }
 
+Spark.setScriptData("playerId", player.getPlayerId());
 Spark.setScriptData("address", address);
 Spark.setScriptData("balance", balance);
 Spark.setScriptData("activeChallengeId", player.getPrivateData("activeChallengeId"));

@@ -25,8 +25,10 @@ if (!master.blockNumber) {
     master.blockNumber = "0x24E810";
 }
 
+const BLOCK_CONFIRMATIONS_COUNT = 8;
+
 const latestBlockNumber = fetchLatestBlockNumber();
-const toBlock = "0x" + (parseInt(latestBlockNumber, 16) - 16).toString(16);
+const toBlock = "0x" + (parseInt(latestBlockNumber, 16) - BLOCK_CONFIRMATIONS_COUNT).toString(16);
 
 var auctions = master.auctions;
 const fromBlock = master.blockNumber;
@@ -79,3 +81,5 @@ const error = masterDataItem.persistor().persist().error();
 if (error) {
     setScriptError(error);
 }
+
+// Spark.getLog().info("GS_MINUTE success up to block: " + toBlock);

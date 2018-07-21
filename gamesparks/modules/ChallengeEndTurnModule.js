@@ -5,8 +5,6 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-require("CancelScheduledTimeEventsModule");
-require("ChallengeMovesModule");
 require("AttackModule");
 require("ChallengeEffectsModule");
 

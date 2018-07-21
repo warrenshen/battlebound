@@ -7,7 +7,40 @@
 // ====================================================================================================
 require("DeckModule");
 
-function findAuctionedCardsBySeller(address) {
+function findAuctionsExceptSeller(address) {
+    address = cleanHex(address).toLowerCase();
+
+    const API = Spark.getGameDataService();
+    
+    const cardsDataQuery = API.S("seller").ne(address);
+    const cardsDataQueryResult = API.queryItems("Card", cardsDataQuery);
+    const cardsDataQueryResultError = cardsDataQueryResult.error();
+    
+    const cards = [];
+    
+    if (cardsDataQueryResultError) {
+        setScriptError(cardsDataQueryResultError);
+    } else {
+        const cardsDataCursor = cardsDataQueryResult.cursor();
+        while (cardsDataCursor.hasNext()) {
+            cards.push(cardsDataCursor.next().getData());
+        }
+    }
+    
+    const AUCTIONABLE_CARD_FIELDS = [
+        "id",
+        "level",
+        "auction",
+        "seller",
+    ];
+    const instances = getInstancesByCards(cards, AUCTIONABLE_CARD_FIELDS);
+    return instances.filter(function(instance) {
+        return instance.seller != "0x" && instance.seller != null;
+    });
+}
+
+
+function findAuctionsBySeller(address) {
     address = cleanHex(address).toLowerCase();
     
     const API = Spark.getGameDataService();

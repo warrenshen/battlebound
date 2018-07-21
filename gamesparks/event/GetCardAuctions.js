@@ -37,6 +37,12 @@ const AUCTIONABLE_CARD_FIELDS = [
 ];
 const instances = getInstancesByCards(bCards, AUCTIONABLE_CARD_FIELDS);
 const validAuctions = instances.filter(function(instance) { return instance.seller != prefixHex(address.toLowerCase()) });
-    
+
+var balance = 0;
+if (address) {
+    balance = fetchBalanceByAddress(address);
+}
+Spark.setScriptData("address", address);
+Spark.setScriptData("balance", balance);
 Spark.setScriptData("auctions", validAuctions);
 setScriptSuccess();

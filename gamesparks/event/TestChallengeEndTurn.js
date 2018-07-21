@@ -6,6 +6,7 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
+require("ChallengeMovesModule");
 require("ChallengeEndTurnModule");
 
 const challengeStateString = Spark.getData().challengeStateString;
@@ -13,7 +14,7 @@ const playerId = Spark.getData().challengePlayerId;
 // const isExpired = Spark.getData().isExpired;
 
 const challengeStateData = JSON.parse(challengeStateString);
-handleChallengeEndTurnEvent(challengeStateData, playerId);
+handleChallengeEndTurn(challengeStateData, playerId);
 
 Spark.setScriptData("challengeStateData", challengeStateData);
 setScriptSuccess();

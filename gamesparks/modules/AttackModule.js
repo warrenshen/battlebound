@@ -180,7 +180,7 @@ function drawCardForPlayer(playerId, playerState) {
     } else {
         return {
             playerId: playerId,
-            category: MOVE_CATEGORY_DRAW_CARD_FAILURE,
+            category: MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY,
         };
     }
 }
@@ -190,15 +190,25 @@ function drawCardForPlayer(playerId, playerState) {
  * @return object - draw card move object for drawn card
  **/
 function addCardToPlayerHand(playerId, playerState, card) {
-    playerState.hand.push(card);
-        
-    return {
-        playerId: playerId,
-        category: MOVE_CATEGORY_DRAW_CARD,
-        attributes: {
-            card: card,
-        },
-    };
+    if (playerState.hand.length >= 10) {
+        return {
+            playerId: playerId,
+            category: MOVE_CATEGORY_DRAW_CARD_HAND_FULL,
+            attributes: {
+                card: card,
+            },
+        };
+    } else {
+        playerState.hand.push(card);
+            
+        return {
+            playerId: playerId,
+            category: MOVE_CATEGORY_DRAW_CARD,
+            attributes: {
+                card: card,
+            },
+        };
+    }
 }
 
 /**
