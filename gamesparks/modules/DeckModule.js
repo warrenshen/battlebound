@@ -193,7 +193,7 @@ function createBCardByBCardId(bCardId) {
         setScriptError(error);
     }
     
-    return cardData;
+    return cardDataItem;
 }
 
 function _getBCardIdsFromChainByPlayer(player) {
@@ -215,8 +215,7 @@ function _getBCardsByPlayer(player) {
         const missingBCardIds = bCardIds.filter(function(bCardId) { return existingBCardIds.indexOf(bCardId) < 0 });
         
         missingBCardIds.forEach(function(bCardId) {
-            var cardData = createBCardByBCardId(bCardId);
-            bCards.push(cardData);
+            bCards.push(createBCardByBCardId(bCardId).getData());
         });
     }
 
@@ -232,7 +231,7 @@ function _getBCardsByPlayer(player) {
  * as a result of the blockchain sync.
  * 
  * @param player - GS player
- * @return PlayerDecksDataItem
+ * @return array - array of b-cards player owns
  **/
 function syncPlayerDecksByPlayer(player) {
     const API = Spark.getGameDataService();
