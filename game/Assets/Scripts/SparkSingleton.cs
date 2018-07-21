@@ -32,21 +32,16 @@ public class SparkSingleton : Singleton<SparkSingleton>
         ClearAuthenticatedCallbacks();
         this.isAuthenticated = false;
         GS.Instance.GameSparksAvailable = OnGameSparksAvailable;
-        //GS.Instance.GameSparksAuthenticated = OnGameSparksAuthenticated;
+        GS.Instance.GameSparksAuthenticated = OnGameSparksAuthenticated;
     }
 
     private void OnGameSparksAvailable(bool available)
     {
         if (available)
         {
-            if (GS.Instance.Authenticated)
+            if (!GS.Instance.Authenticated)
             {
-                GetPlayerData();
-            }
-            else
-            {
-                // Need login.
-                Debug.LogWarning("Not authenticated...");
+                Login(this.username, this.password);
             }
         }
         else
@@ -55,18 +50,17 @@ public class SparkSingleton : Singleton<SparkSingleton>
         }
     }
 
-    //private void OnGameSparksAuthenticated(string result)
-    //{
-    //    if (GS.Instance.Authenticated)
-    //    {
-    //        Debug.Log("Authenticated!");
-    //        GetPlayerData();
-    //    }
-    //    else
-    //    {
-    //        Debug.Log("Not authenticated...");
-    //    }
-    //}
+    private void OnGameSparksAuthenticated(string playerId)
+    {
+        if (GS.Instance.Authenticated)
+        {
+            GetPlayerData();
+        }
+        else
+        {
+            Debug.LogWarning("Not authenticated...");
+        }
+    }
 
     public void AddAuthenticatedCallback(UnityAction callback)
     {
