@@ -17,11 +17,6 @@ public class CollectionCardObject : CardObject
 
     public override void Initialize(Card card)
     {
-        if (!CollectionManager.Instance.cardTemplates.ContainsKey(card.Name))
-        {
-            Debug.LogError(string.Format("Card with name {0} does not exist.", card.Name));
-        }
-
         //does the visual stuff using templateData
         base.Initialize(card);
         //this is always at the end

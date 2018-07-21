@@ -85,7 +85,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
-                    SparkSingleton.Instance.AddAuthenticatedCallback(SendFindMatchRequest);
+                    SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
                 }
                 this.initialized = false;
                 return;
@@ -102,7 +102,7 @@ public class BattleManager : MonoBehaviour
 
     private void SendFindMatchRequest()
     {
-        BattleSingleton.Instance.SendFindMatchRequest(Matchmaking.MATCH_TYPE_CASUAL, "Deck1");
+        BattleSingleton.Instance.SendFindMatchRequest(MatchmakingManager.MATCH_TYPE_CASUAL, "Deck1");
     }
 
     private void Update()

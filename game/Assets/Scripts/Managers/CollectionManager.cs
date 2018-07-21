@@ -36,8 +36,6 @@ public class CollectionManager : MonoBehaviour
     private CollectionCardObject selectedCard;
     private LogEventResponse cardsResponse;
 
-    public Dictionary<string, CardTemplate> cardTemplates;
-
     public static CollectionManager Instance { get; private set; }
 
     private void Awake()
@@ -47,67 +45,37 @@ public class CollectionManager : MonoBehaviour
         this.decksRaw = new List<DeckRaw>();
         this.activeDecklist = new List<CollectionCardObject>();
         this.idToCard = new Dictionary<string, Card>();
-
-        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
-        this.cardTemplates = CodexHelper.ParseFile(codexPath);
     }
 
     private void Start()
     {
-        //ping server for collection json
-        GetCollectionRequest();
+        this.collectionObject = GameObject.Find("Collection");
+        this.buildPanel = GameObject.Find("Build Panel");
+        this.buildPanelCollider = buildPanel.GetComponent<BoxCollider>() as Collider;
 
-        collectionObject = GameObject.Find("Collection");
-        buildPanel = GameObject.Find("Build Panel");
-        buildPanelCollider = buildPanel.GetComponent<BoxCollider>() as Collider;
+        DeckStore.Instance().GetDecksWithCallback(Callback);
     }
 
-    private void GetCollectionRequest()
+    private void Callback()
     {
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("GetPlayerCards");
-        request.Send(GetCollectionSuccess, Error); //TODO: set callbacks
-    }
-
-    private void GetCollectionSuccess(LogEventResponse resp)
-    {
-        cardsResponse = resp;
-        GSData decksData = resp.ScriptData.GetGSData("decks");
-        Debug.Log(decksData.BaseData.Count + " decks found.");
-
-        this.LoadCollection(resp);
-
-        //Create decks by mapping to cards
-        foreach (string deckName in decksData.BaseData.Keys)
+        List<CardRaw> data = DeckStore.Instance().GetCards();
+        foreach (CardRaw cardRaw in data)
         {
-            List<string> gdata = decksData.GetStringList(deckName);
-            DeckRaw created = new DeckRaw(deckName, gdata, DeckRaw.DeckClass.Warrior);
-            decksRaw.Add(created);
-        }
-        this.CreateDecksView();
-    }
-
-    private void LoadCollection(LogEventResponse resp)
-    {
-        //Create pool of cards
-        List<GSData> data = resp.ScriptData.GetGSDataList("cards");
-        foreach (GSData elem in data)
-        {
-            int category = (int)elem.GetInt("category");
+            int category = (int)cardRaw.Category;
             Card newCard;
             switch (category)
             {
                 case Card.CARD_CATEGORY_MINION: //creature
-                    newCard = CreatureCard.GetFromJson(elem.JSON);
+                    newCard = CreatureCard.GetFromJson(JsonUtility.ToJson(cardRaw));
                     break;
                 case Card.CARD_CATEGORY_SPELL:  //spell
-                    newCard = SpellCard.GetFromJson(elem.JSON);
+                    newCard = SpellCard.GetFromJson(JsonUtility.ToJson(cardRaw));
                     break;
                 case Card.CARD_CATEGORY_WEAPON:  //weapon
-                    newCard = WeaponCard.GetFromJson(elem.JSON);
+                    newCard = WeaponCard.GetFromJson(JsonUtility.ToJson(cardRaw));
                     break;
                 case Card.CARD_CATEGORY_STRUCTURE:  //structure
-                    newCard = StructureCard.GetFromJson(elem.JSON);
+                    newCard = StructureCard.GetFromJson(JsonUtility.ToJson(cardRaw));
                     break;
                 default:
                     newCard = null;
@@ -116,7 +84,17 @@ public class CollectionManager : MonoBehaviour
             }
             collection.Add(newCard);
         }
+
         this.CreateCardObjects();
+
+        //Create decks by mapping to cards
+        foreach (string deckName in DeckStore.Instance().GetDeckNames())
+        {
+            List<string> cardIds = DeckStore.Instance().GetCardIdsByDeckName(deckName);
+            DeckRaw created = new DeckRaw(deckName, cardIds, DeckRaw.DeckClass.Warrior);
+            decksRaw.Add(created);
+        }
+        this.CreateDecksView();
     }
 
     private void Update()
@@ -247,27 +225,25 @@ public class CollectionManager : MonoBehaviour
 
     private void SaveCollectionRequest()
     {
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("CreateUpdatePlayerDeck");
         List<string> cardIds = new List<string>();
         foreach (CollectionCardObject elem in this.activeDecklist)
         {
             cardIds.Add(elem.Card.Id);
         }
-        request.SetEventAttribute("cardIds", cardIds);
-        request.SetEventAttribute("previousName", decksRaw[activeDeck].name);
-        request.SetEventAttribute("name", decksRaw[activeDeck].name);   //to-do, let name be changed, and pull from input field
-        request.Send(SaveCollectionSuccess, Error);
+        string previousName = decksRaw[activeDeck].name;
+        string name = decksRaw[activeDeck].name;   //to-do, let name be changed, and pull from input field
+
+        DeckStore.Instance().CreateUpdatePlayerDeckWithCallback(
+            cardIds,
+            previousName,
+            name,
+            SaveCallback
+        );
     }
 
-    private void SaveCollectionSuccess(LogEventResponse resp)
+    private void SaveCallback()
     {
-        Debug.Log("Successfully saved deck.");
-    }
 
-    private void Error(LogEventResponse resp)
-    {
-        Debug.Log("Gamesparks Request Error!");
     }
 
     private void CreateCardObjects()
