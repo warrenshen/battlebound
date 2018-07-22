@@ -201,16 +201,27 @@ public class BattleManager : MonoBehaviour
                 HideMulliganOverlay(this.you);
                 HideMulliganOverlay(this.opponent);
 
-
                 // TODO: render mana for other player.
                 activePlayer.RenderTurnStart();
             }
         }
         else
         {
-            this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
-            this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
-            this.mode = BATTLE_STATE_MULLIGAN_MODE;
+            if (DeveloperPanel.ShouldSkipMulligan())
+            {
+                this.mode = BATTLE_STATE_MULLIGAN_MODE;
+                HideMulliganOverlay(this.you);
+                HideMulliganOverlay(this.opponent);
+
+                this.you.DrawCardsForce(3);
+                this.opponent.DrawCardsForce(3);
+            }
+            else
+            {
+                this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
+                this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
+                this.mode = BATTLE_STATE_MULLIGAN_MODE;
+            }
 
             turnIndex = UnityEngine.Random.Range(0, players.Count);
             activePlayer = players[turnIndex % players.Count];
@@ -700,9 +711,11 @@ public class BattleManager : MonoBehaviour
             SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
             SetPassiveCursor();
 
-            // This is being called twice even though it doesn't need to be
-            this.activePlayer.MulliganNewTurn();
-            this.mode = BATTLE_STATE_NORMAL_MODE;
+            if (this.mode != BATTLE_STATE_NORMAL_MODE)
+            {
+                this.activePlayer.MulliganNewTurn();
+                this.mode = BATTLE_STATE_NORMAL_MODE;
+            }
         });
     }
 
