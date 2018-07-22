@@ -140,6 +140,7 @@ public class BoardCreature : Targetable
         this.owner = battleCardObject.Owner;
         this.gameObject.layer = 9;
 
+        this.statusVFX = new Dictionary<string, GameObject>();
         this.abilitiesVFX = new Dictionary<string, GameObject>();
 
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
