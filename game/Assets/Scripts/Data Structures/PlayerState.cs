@@ -473,7 +473,7 @@ public class PlayerState
 
         public Card GetCard(bool shouldCompare = true)
         {
-            if (this.category == Card.CARD_CATEGORY_MINION)
+            if (this.category == (int)Card.CardType.Creature)
             {
                 CreatureCard creatureCard = new CreatureCard(
                     this.id,

@@ -46,6 +46,7 @@ public abstract class Card
         CARD_NAME_NESSA_NATURES_CHAMPION,
     };
 
+    public enum CardType { Creature, Spell, Weapon, Structure };
     public enum RarityType { Common, Uncommon, Rare, Epic, Legendary, Cosmic }
 
     public const string CARD_EMPTY_ABILITY = "EMPTY";
@@ -121,11 +122,6 @@ public abstract class Card
     public static readonly string[] VALID_BUFFS = {
         BUFF_CATEGORY_UNSTABLE_POWER,
     };
-
-    public const int CARD_CATEGORY_MINION = 0;
-    public const int CARD_CATEGORY_SPELL = 1;
-    public const int CARD_CATEGORY_STRUCTURE = 2;
-    public const int CARD_CATEGORY_WEAPON = 3;
 
     [SerializeField]
     protected string id;
@@ -290,7 +286,7 @@ public class CreatureCard : Card
     {
         PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
         challengeCard.SetId(this.id);
-        challengeCard.SetCategory(CARD_CATEGORY_MINION);
+        challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(this.GetCost());
@@ -344,7 +340,7 @@ public class WeaponCard : Card
     {
         PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
         challengeCard.SetId(this.id);
-        challengeCard.SetCategory(CARD_CATEGORY_WEAPON);
+        challengeCard.SetCategory((int)Card.CardType.Weapon);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(this.GetCost());
@@ -389,7 +385,7 @@ public class StructureCard : Card
     {
         PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
         challengeCard.SetId(this.id);
-        challengeCard.SetCategory(CARD_CATEGORY_STRUCTURE);
+        challengeCard.SetCategory((int)Card.CardType.Structure);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(this.GetCost());
@@ -481,7 +477,7 @@ public class SpellCard : Card
     {
         PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
         challengeCard.SetId(this.id);
-        challengeCard.SetCategory(CARD_CATEGORY_SPELL);
+        challengeCard.SetCategory((int)Card.CardType.Spell);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(this.GetCost());

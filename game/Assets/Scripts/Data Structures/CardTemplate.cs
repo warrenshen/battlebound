@@ -5,7 +5,7 @@ using UnityEngine;
 public class CardTemplate
 {
     public string name;
-    public CardRaw.CardType cardType;
+    public Card.CardType cardType;
     public string description; //to-do: need to add to view
     public int cost;
     public Card.RarityType rarity;
@@ -43,7 +43,7 @@ public class CardTemplate
         this.backOffset = new Vector2(0, -0.66F);
 
         this.rarity = Card.RarityType.Common;
-        this.cardType = CardRaw.CardType.Creature;
+        this.cardType = Card.CardType.Creature;
         this.abilities = new string[4];
     }
 }

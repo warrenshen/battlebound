@@ -22,7 +22,7 @@ public class CancelableListItem : MonoBehaviour
     {
         this.cardAuction = cardAuction;
 
-        Texture2D texture = Resources.Load(cardAuction.Image) as Texture2D;
+        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(cardAuction.Card.GetFrontImage());
         this.cardImage.sprite = Sprite.Create(
             texture,
             new Rect(0.0f, 0.0f, texture.width, texture.height),
@@ -51,7 +51,7 @@ public class CancelableListItem : MonoBehaviour
     {
         CryptoSingleton.Instance.CancelAuction(
             account,
-            Int32.Parse(cardAuction.Id.Substring(1))
+            Int32.Parse(cardAuction.GetId().Substring(1))
         );
     }
 

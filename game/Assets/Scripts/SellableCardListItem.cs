@@ -9,19 +9,18 @@ public class SellableCardListItem : MonoBehaviour
     [SerializeField]
     private Button createAuctionButton;
 
-    private CardRaw card;
+    private Card card;
 
     public void Awake()
     {
         this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
     }
 
-    public void Initialize(CardRaw card)
+    public void Initialize(Card card)
     {
         this.card = card;
 
-        //Texture2D texture = Resources.Load("HS/" + card.Image) as Texture2D;
-        Texture2D texture = Resources.Load("HS/Armorsmith") as Texture2D;
+        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(card.GetFrontImage());
         this.cardImage.sprite = Sprite.Create(
             texture,
             new Rect(0.0f, 0.0f, texture.width, texture.height),
