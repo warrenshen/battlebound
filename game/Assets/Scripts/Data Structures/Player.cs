@@ -206,6 +206,32 @@ public class Player
         }
     }
 
+    /*
+     * Only meant to be used for local dev - do not use willy nilly!
+     */
+    private void DrawCardForce()
+    {
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(this.id);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        DrawCard();
+    }
+
+    /*
+     * Only meant to be used for local dev - do not use willy nilly!
+     */
+    public void DrawCardsForce(int amount)
+    {
+        while (amount > 0)
+        {
+            DrawCardForce();
+            amount--;
+        }
+    }
+
     private Card PopCardFromDeck()
     {
         this.deckSize -= 1;
