@@ -399,27 +399,6 @@ public class BattleManager : MonoBehaviour
         SetPassiveCursor();
         //to-do: action manager set active = false, but that makes singleplayer broken
 
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(activePlayer.Id);
-
-        if (activePlayer.DeckSize <= 0)
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY);
-        }
-        else
-        {
-            if (activePlayer.Hand.IsFull())
-            {
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_HAND_FULL);
-            }
-            else
-            {
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-            }
-        }
-        challengeMove.SetRank(GetDeviceMoveRank());
-        AddDeviceMove(challengeMove);
-
         activePlayer.NewTurn();
         EffectManager.Instance.OnStartTurn(activePlayer.Id);
     }
@@ -678,6 +657,7 @@ public class BattleManager : MonoBehaviour
             CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
                  .setOnComplete(() =>
             {
+                EffectManager.Instance.OnDrawCardFinish();
                 player.Hand.RepositionCards();  //can override completioon behavior by calling setOnComplete again
             });
         });
