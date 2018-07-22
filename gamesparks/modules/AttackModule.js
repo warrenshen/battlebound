@@ -30,6 +30,16 @@ function healCard(card, amount) {
 }
 
 /**
+ * @return int - health given to card
+ **/
+function healCardMax(card) {
+    const healthMax = card.healthMax;
+    const initialHealth = card.health;
+    card.health = healthMax;
+    return healthMax - initialHealth;
+}
+
+/**
  * @return int - damage done to face
  **/
 function damageFace(playerState, damage) {

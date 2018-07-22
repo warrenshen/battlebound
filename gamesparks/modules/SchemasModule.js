@@ -85,7 +85,6 @@
  *   ],
  * }
  * 
- * 
  * ChallengeState schema: {
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
  *   opponentIdByPlayerId: { [playerId]: opponentId },
@@ -120,6 +119,7 @@
  *     ...
  *   },
  *   spawnCount: int, // "Auto-increment" int for any spawn by either player.
+ *   isFinal: bool (int), // Whether challenge has been post-processed (grant experience, etc).
  * }
  * 
  * Move schema: {
