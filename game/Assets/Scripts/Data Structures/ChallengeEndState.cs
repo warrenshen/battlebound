@@ -18,7 +18,8 @@ public class ChallengeEndState
     private string levelPrevious;
     public string LevelPrevious => levelPrevious;
 
-    List<ExperienceCard> experienceCards;
+    private List<ExperienceCard> experienceCards;
+    public List<ExperienceCard> ExperienceCards => experienceCards;
 
     [System.Serializable]
     public class ExperienceCard

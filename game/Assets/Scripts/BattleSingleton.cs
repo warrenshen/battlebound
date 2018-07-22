@@ -104,29 +104,27 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void ChallengeWonMessageHandler(ChallengeWonMessage message)
     {
-        Debug.Log("ChallengeWonMessage received.");
         GSData scriptData = message.ScriptData;
         if (IsMessageChallengeIdValid(scriptData))
         {
-            Debug.Log("Challenge won!");
+            ProcessChallengeScriptData(scriptData);
 
             string challengeEndStateJson = scriptData.GetString("challengeEndState");
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
-            BattleManager.Instance.ReceiveChallengeEndState(challengeEndState);
+            BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
         }
     }
 
     private void ChallengeLostMessageHandler(ChallengeLostMessage message)
     {
-        Debug.Log("ChallengeLostMessage received.");
         GSData scriptData = message.ScriptData;
         if (IsMessageChallengeIdValid(scriptData))
         {
-            Debug.Log("Challenge lost...");
+            ProcessChallengeScriptData(scriptData);
 
             string challengeEndStateJson = scriptData.GetString("challengeEndState");
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
-            BattleManager.Instance.ReceiveChallengeEndState(challengeEndState);
+            BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
         }
     }
 

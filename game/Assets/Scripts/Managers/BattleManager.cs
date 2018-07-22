@@ -1171,8 +1171,33 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    public void ReceiveChallengeEndState(ChallengeEndState challengeEndState)
+    public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
+        Debug.Log("Challenge won!");
+    }
+
+    public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
+    {
+        Debug.Log("Challenge lost...");
+        //{
+        //    "id": "C14",
+        //  "level": 0,
+        //  "levelPrevious": 0,
+        //  "exp": 2,
+        //  "expMax": 10,
+        //  "expPrevious": 1,
+        //  "category": 0,
+        //  "attack": 60,
+        //  "health": 60,
+        //  "cost": 70,
+        //  "name": "Fireborn Menace",
+        //  "description": "Battlecry: Deal 20 damage to any minion in front",
+        //  "abilities": [
+        //    16
+        //  ]
+        //}
+        List<ChallengeEndState.ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
+
 
     }
 
@@ -1434,10 +1459,10 @@ public class BattleManager : MonoBehaviour
                  .setOnComplete(() =>
                  {
                      CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                                            .setOnComplete(() =>
-                                            {
-                                                PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
-                                            });
+                        .setOnComplete(() =>
+                        {
+                            PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+                        });
                  });
     }
 
