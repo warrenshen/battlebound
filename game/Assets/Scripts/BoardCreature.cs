@@ -291,11 +291,7 @@ public class BoardCreature : Targetable
             this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
 
             damageTaken = Math.Min(healthBefore, amount);
-            TextManager.Instance.ShowTextAtTarget(
-                this.transform,
-                damageTaken.ToString(),
-                Color.red
-            );
+            TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
         }
 
         Redraw();
@@ -314,7 +310,8 @@ public class BoardCreature : Targetable
         int amountHealed = Math.Min(this.health - healthBefore, amount);
         if (amountHealed > 0)
         {
-            // TODO: animate.
+            TextManager.Instance.ShowTextAtTarget(transform, amountHealed.ToString(), Color.green);
+            FXPoolManager.Instance.PlayEffect("HealPillarVFX", transform.position);
         }
 
         this.Redraw();

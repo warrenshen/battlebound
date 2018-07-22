@@ -505,34 +505,19 @@ public class EffectManager : MonoBehaviour
         );
 
         List<Effect> effects = new List<Effect>();
-        // TODO: use pooling so don't instantiate?
-        string effectName = "VFX/FanMeteorsVFX"; //attackingCreature.CreatureCard.GetEffectPrefab();
-        GameObject effectVFX = Instantiate(
-            ResourceSingleton.Instance.GetEffectPrefabByName(effectName),
-            attackingCreature.transform.position,
-            Quaternion.identity
-        );
-        effectVFX.transform.parent = attackingCreature.transform;
-        effectVFX.transform.Translate(Vector3.back * 1 + Vector3.up * 1, Space.Self);
 
         Transform defendingTransform = Board.Instance.GetInFrontBoardPlaceByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
-        if (defendingTransform)
-        {
-            effectVFX.transform.LookAt(defendingTransform);
-        }
-
-        if (effectVFX == null)
-        {
-            Debug.LogError("Should render attack in front effect.");
-        }
 
         BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
+
+        string effectName = "FanMeteorsVFX";   //TODO: use attackingCreature.CreatureCard.GetEffectPrefab();
+        FXPoolManager.Instance.PlayEffectLookAt(effectName, attackingCreature.transform, defendingTransform);
 
         if (defendingCreature != null)
         {
@@ -545,7 +530,6 @@ public class EffectManager : MonoBehaviour
                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
             }
         }
-
         AddToQueues(effects);
     }
 

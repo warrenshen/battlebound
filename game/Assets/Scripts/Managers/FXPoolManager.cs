@@ -65,6 +65,21 @@ public class FXPoolManager : MonoBehaviour
         chosen.gameObject.SetActive(true);
     }
 
+    public void PlayEffectLookAt(string effect, Transform from, Transform to)
+    {
+        Transform chosen = GetEffect(effect);
+        chosen.position = from.position;
+        if (to != null)
+        {
+            chosen.LookAt(to);
+        }
+        else
+        {
+            chosen.LookAt(from.position - from.up);
+        }
+        chosen.gameObject.SetActive(true);
+    }
+
     public Transform AssignEffect(string effect, Transform parent)
     {
         Transform chosen = GetEffect(effect);
