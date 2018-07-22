@@ -21,6 +21,7 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
     public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
+    public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
 
     private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
@@ -43,6 +44,8 @@ public class EffectManager : MonoBehaviour
 
     private static readonly List<string> EFFECT_L_PRIORITY_ORDER = new List<string>
     {
+        EFFECT_CHANGE_TURN_DRAW_CARD,
+
         // Start turn.
         Card.BUFF_CATEGORY_UNSTABLE_POWER,
 
@@ -56,6 +59,7 @@ public class EffectManager : MonoBehaviour
         // Battlecry.
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
+        Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
 
         // Deathrattle.
@@ -84,6 +88,7 @@ public class EffectManager : MonoBehaviour
     {
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
+        Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
     };
 
@@ -439,9 +444,13 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
                 AbilityDeathRattleDrawCard(effect);
                 break;
+            case EFFECT_CHANGE_TURN_DRAW_CARD:
             case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
             case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
                 AbilityDrawCard(effect);
+                break;
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
+                AbilityHealFriendlyMax(effect);
                 break;
             case Card.BUFF_CATEGORY_UNSTABLE_POWER:
                 BuffUnstablePower(effect);
@@ -475,12 +484,11 @@ public class EffectManager : MonoBehaviour
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
-                effect.PlayerId,
-                effect.CardId
+            Player player = BattleManager.Instance.GetPlayerById(
+                effect.PlayerId
             );
 
-            boardCreature.Owner.DrawCards(1);
+            player.DrawCards(1);
         }
     }
 
@@ -621,6 +629,28 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitForDrawCard(object[] args)
+    {
+        int moveRank = (int)args[0];
+        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        // this.isWaiting will be unset by OnDrawCardFinish().
+    }
+
+    private void AbilityHealFriendlyMax(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+
+        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        foreach (BoardCreature boardCreature in boardCreatures)
+        {
+            boardCreature.HealMax();
+        }
+    }
+
     private void BuffUnstablePower(Effect effect)
     {
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
@@ -637,14 +667,8 @@ public class EffectManager : MonoBehaviour
         AddToQueues(effects);
     }
 
-    private IEnumerator WaitForDrawCard(object[] args)
+    public void OnDrawCardFinish()
     {
-        int moveRank = (int)args[0];
-        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
-        {
-            yield return new WaitForSeconds(0.1f);
-        }
-
         this.isWaiting = false;
     }
 
@@ -652,14 +676,19 @@ public class EffectManager : MonoBehaviour
     {
         Player player = BattleManager.Instance.GetPlayerById(playerId);
 
-        if (!DeveloperPanel.IsServerEnabled())
-        {
-            player.DrawCards(1);
-        }
-
         player.Avatar.OnStartTurn();
 
         List<Effect> effects = new List<Effect>();
+
+        // Draw a card for player to start its turn.
+        effects.Add(
+            new Effect(
+                playerId,
+                EFFECT_CHANGE_TURN_DRAW_CARD,
+                null, // Does not matter.
+                0 // Does not matter.
+            )
+        );
 
         List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
         foreach (BoardCreature boardCreature in boardCreatures)

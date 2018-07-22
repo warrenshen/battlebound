@@ -336,6 +336,16 @@ public class BoardCreature : Targetable
         return amountHealed;
     }
 
+    /*
+     * @return int - amount of health healed
+     */
+    public int HealMax()
+    {
+        int healthBefore = this.health;
+        this.health = this.maxHealth;
+        return this.maxHealth - healthBefore;
+    }
+
     public override void OnStartTurn()
     {
         this.canAttack = this.maxAttacks;
