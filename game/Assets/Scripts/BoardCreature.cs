@@ -46,8 +46,8 @@ public class BoardCreature : Targetable
     private Dictionary<string, GameObject> abilitiesVFX;
     private Dictionary<string, GameObject> statusVFX;
 
-    private bool silenced;
-    public bool Silenced => silenced;
+    private bool isSilenced;
+    public bool IsSilenced => isSilenced;
 
     private int isFrozen;
     public int IsFrozen => isFrozen;
@@ -432,6 +432,12 @@ public class BoardCreature : Targetable
         Redraw();
     }
 
+    public void Silence()
+    {
+        this.isSilenced = true;
+        Redraw();
+    }
+
     public void Redraw()
     {
         UpdateStatText();
@@ -519,7 +525,7 @@ public class BoardCreature : Targetable
         //do removals
         foreach (string ability in new List<string>(this.abilitiesVFX.Keys))
         {
-            if (abilities.Contains(ability))
+            if (HasAbility(ability))
             {
                 continue;
             }
@@ -533,7 +539,7 @@ public class BoardCreature : Targetable
 
     public bool HasAbility(string ability)
     {
-        if (this.silenced)
+        if (this.isSilenced)
         {
             return false;
         }

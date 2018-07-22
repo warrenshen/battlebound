@@ -60,6 +60,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
+        Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
 
         // Deathrattle.
@@ -89,6 +90,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
+        Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
     };
 
@@ -452,6 +454,9 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
                 AbilityHealFriendlyMax(effect);
                 break;
+            case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT:
+                AbilitySilenceInFront(effect);
+                break;
             case Card.BUFF_CATEGORY_UNSTABLE_POWER:
                 BuffUnstablePower(effect);
                 break;
@@ -649,6 +654,54 @@ public class EffectManager : MonoBehaviour
         {
             boardCreature.HealMax();
         }
+    }
+
+    private void AbilitySilenceInFront(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        BoardCreature attackingCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            playerId,
+            cardId
+        );
+
+        List<Effect> effects = new List<Effect>();
+        // TODO: use pooling so don't instantiate?
+        //string effectName = "VFX/FanMeteorsVFX"; //attackingCreature.CreatureCard.GetEffectPrefab();
+        //GameObject effectVFX = Instantiate(
+        //    ResourceSingleton.Instance.GetEffectPrefabByName(effectName),
+        //    attackingCreature.transform.position,
+        //    Quaternion.identity
+        //);
+        //effectVFX.transform.parent = attackingCreature.transform;
+        //effectVFX.transform.Translate(Vector3.back * 1 + Vector3.up * 1, Space.Self);
+
+        Transform defendingTransform = Board.Instance.GetInFrontBoardPlaceByPlayerIdAndCardId(
+            playerId,
+            cardId
+        );
+        //if (defendingTransform)
+        //{
+        //    effectVFX.transform.LookAt(defendingTransform);
+        //}
+
+        //if (effectVFX == null)
+        //{
+        //    Debug.LogError("Should render attack in front effect.");
+        //}
+
+        BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
+            playerId,
+            cardId
+        );
+
+        if (defendingCreature != null)
+        {
+            defendingCreature.Silence();
+        }
+
+        AddToQueues(effects);
     }
 
     private void BuffUnstablePower(Effect effect)
