@@ -11,6 +11,8 @@ public class EffectManager : MonoBehaviour
     private List<Effect> lQueue; // Low priority.
 
     private bool isWaiting;
+    public bool IsWaiting => isWaiting;
+
     private bool isDirty;
 
     private UnityAction callback;
@@ -148,11 +150,11 @@ public class EffectManager : MonoBehaviour
     {
         Instance = this;
 
+        this.isWaiting = false;
+
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
         this.lQueue = new List<Effect>();
-
-        this.isWaiting = false;
     }
 
     // Update is called once per frame
@@ -1005,8 +1007,6 @@ public class EffectManager : MonoBehaviour
             List<Effect> effects = new List<Effect>();
 
             // TODO: animate as bomb or whatever.
-
-            attackingCreature.Fight(defendingAvatar);
 
             int damageDone = defendingAvatar.TakeDamage(20);
             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));

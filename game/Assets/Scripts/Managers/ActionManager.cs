@@ -50,7 +50,6 @@ public class ActionManager : MonoBehaviour
     [SerializeField]
     private MouseWatchable lastHitWatchable;
 
-
     private void Awake()
     {
         Instance = this;
@@ -66,8 +65,11 @@ public class ActionManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (!active)
+        if (!active || EffectManager.Instance.IsWaiting)
+        {
             return;
+        }
+
         MouseWatch();
     }
 
