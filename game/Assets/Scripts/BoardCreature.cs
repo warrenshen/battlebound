@@ -30,7 +30,6 @@ public class BoardCreature : Targetable
     protected int maxHealth;
     public int MaxHealth => maxHealth;
 
-    private int attacksThisTurn;
     //Player owner / Owner exists in Targetable class
 
     private CreatureCard creatureCard;
@@ -65,10 +64,9 @@ public class BoardCreature : Targetable
     private int spawnRank;
     public int SpawnRank => spawnRank;
 
-    public void Initialize(BattleCardObject battleCardObject, int spawnRank)
+    public void Initialize(CreatureCard creatureCard, int spawnRank)
     {
-        //data structure stuff
-        this.creatureCard = battleCardObject.Card as CreatureCard;
+        this.creatureCard = creatureCard;
 
         this.cost = this.creatureCard.GetCost();
         this.attack = this.creatureCard.GetAttack();
@@ -85,40 +83,18 @@ public class BoardCreature : Targetable
             this.canAttack = 0;
         }
 
-        this.maxAttacks = 1;
-        this.attacksThisTurn = 0;
-
         this.isFrozen = 0;
+        this.isSilenced = false;
 
         this.spawnRank = spawnRank;
 
-        this.owner = battleCardObject.Owner;
-        this.gameObject.layer = 9;
-
-        this.statusVFX = new Dictionary<string, GameObject>();
-        this.abilitiesVFX = new Dictionary<string, GameObject>();
-
-        BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
-        BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
-        newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
-        newCollider.size *= BOARD_GROW_FACTOR;
-        newCollider.center = oldCollider.center;
-
-        this.visual = battleCardObject.visual;
-        this.RepurposeCardVisual();
-        this.SummonCreature();
-
-        //method calls
-        this.Redraw();
-
-        //post-collider-construction visuals
-        transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
-
-        this.buffs = new List<string>();
+        InitializeHelper();
     }
 
-    public void InitializeFromChallengeCard(BattleCardObject battleCardObject, PlayerState.ChallengeCard challengeCard)
+    public void InitializeFromChallengeCard(
+        BattleCardObject battleCardObject,
+        PlayerState.ChallengeCard challengeCard
+    )
     {
         this.creatureCard = battleCardObject.Card as CreatureCard;
 
@@ -130,19 +106,30 @@ public class BoardCreature : Targetable
         this.abilities = challengeCard.GetAbilities();
         this.canAttack = challengeCard.CanAttack;
 
-        this.maxAttacks = 1;
-        this.attacksThisTurn = 0;
-
         this.isFrozen = challengeCard.IsFrozen;
+        this.isSilenced = challengeCard.IsSilenced == 1;
 
         this.spawnRank = challengeCard.SpawnRank;
 
-        this.owner = battleCardObject.Owner;
+        InitializeHelper();
+        Summon(battleCardObject);
+    }
+
+    private void InitializeHelper()
+    {
+        this.maxAttacks = 1;
+
         this.gameObject.layer = 9;
 
         this.statusVFX = new Dictionary<string, GameObject>();
         this.abilitiesVFX = new Dictionary<string, GameObject>();
 
+        this.buffs = new List<string>();
+    }
+
+    public void Summon(BattleCardObject battleCardObject)
+    {
+        this.owner = battleCardObject.Owner;
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
         BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
         newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
@@ -154,13 +141,11 @@ public class BoardCreature : Targetable
         this.SummonCreature();
 
         //method calls
-        this.Redraw();
+        Redraw();
 
         //post-collider-construction visuals
         transform.localScale = new Vector3(0, 0, 0);
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
-
-        this.buffs = new List<string>();
     }
 
     private void RepurposeCardVisual()

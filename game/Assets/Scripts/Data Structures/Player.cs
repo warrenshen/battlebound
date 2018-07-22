@@ -600,12 +600,6 @@ public class Player
             }
             else
             {
-                if (boardCreature.CreatureCard == null)
-                {
-                    Debug.LogError("Board creature card is null!");
-                    Debug.Log(i);
-                }
-
                 challengeCard.SetId(boardCreature.CreatureCard.Id);
                 challengeCard.SetCategory((int)Card.CardType.Creature);
                 challengeCard.SetName(boardCreature.CreatureCard.Name);
@@ -620,6 +614,7 @@ public class Player
                 challengeCard.SetAttackStart(boardCreature.CreatureCard.GetAttack());
                 challengeCard.SetCanAttack(boardCreature.CanAttack);
                 challengeCard.SetIsFrozen(boardCreature.IsFrozen);
+                challengeCard.SetIsSilenced(boardCreature.IsSilenced ? 1 : 0);
                 challengeCard.SetSpawnRank(boardCreature.SpawnRank);
                 challengeCard.SetAbilities(boardCreature.Abilities);
             }
