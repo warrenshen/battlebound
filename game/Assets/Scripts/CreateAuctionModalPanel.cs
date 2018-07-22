@@ -7,7 +7,7 @@ using Nethereum.Web3.Accounts;
 
 public class CreateAuctionModalPanel : MonoBehaviour
 {
-    private CardRaw card;
+    private Card card;
 
     [SerializeField]
     private Image cardImage;
@@ -39,22 +39,17 @@ public class CreateAuctionModalPanel : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    public void ShowModalForCard(CardRaw card)
+    public void ShowModalForCard(Card card)
     {
-        Card aCard;
-        if (card.Category == CardRaw.CardType.Creature)
-        {
-            aCard = new CreatureCard(card.Id, card.Name, 1);
-
-            this.card = card;
-            Texture2D image = ResourceSingleton.Instance.GetImageTextureByName(aCard.GetFrontImage());
-            //cardImage.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), 100.0f);
-            this.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Only suppport creature cards now");
-        }
+        this.card = card;
+        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(card.GetFrontImage());
+        this.cardImage.sprite = Sprite.Create(
+            texture,
+            new Rect(0.0f, 0.0f, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100.0f
+        );
+        this.gameObject.SetActive(true);
     }
 
     public void AuthorizeBidAuction()

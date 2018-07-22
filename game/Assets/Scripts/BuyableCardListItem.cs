@@ -31,15 +31,13 @@ public class BuyableCardListItem : MonoBehaviour
         Debug.Log(cardAuction.Auction.Duration);
         Debug.Log(cardAuction.Auction.StartedAt);
 
-        //Texture2D texture = Resources.Load("HS/" + card.Image) as Texture2D;
-        Texture2D texture = Resources.Load("HS/Armorsmith") as Texture2D;
+        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(cardAuction.Card.GetFrontImage());
         this.cardImage.sprite = Sprite.Create(
             texture,
             new Rect(0.0f, 0.0f, texture.width, texture.height),
             new Vector2(0.5f, 0.5f),
             100.0f
         );
-
 
         this.priceText.text = cardAuction.Auction.StartingPrice.ToString();
     }
@@ -70,7 +68,7 @@ public class BuyableCardListItem : MonoBehaviour
     {
         CryptoSingleton.Instance.BidAuction(
             account,
-            Int32.Parse(cardAuction.Id.Substring(1)),
+            Int32.Parse(cardAuction.GetId().Substring(1)),
             1000L
         );
     }

@@ -581,7 +581,7 @@ public class Player
                 }
 
                 challengeCard.SetId(boardCreature.CreatureCard.Id);
-                challengeCard.SetCategory(Card.CARD_CATEGORY_MINION);
+                challengeCard.SetCategory((int)Card.CardType.Creature);
                 challengeCard.SetName(boardCreature.CreatureCard.Name);
                 //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
                 challengeCard.SetLevel(boardCreature.CreatureCard.Level);

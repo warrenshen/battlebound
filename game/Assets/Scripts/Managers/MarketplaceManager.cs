@@ -40,7 +40,7 @@ public class MarketplaceManager : MonoBehaviour
     private Transform contentPanel;
 
     private List<CardAuction> buyableCards;
-    private List<CardRaw> sellableCards;
+    private List<Card> sellableCards;
     private List<CardAuction> cancelableCards;
 
     public static MarketplaceManager Instance { get; private set; }
@@ -57,13 +57,12 @@ public class MarketplaceManager : MonoBehaviour
     private void Start()
     {
         buyableCards = new List<CardAuction>();
-        sellableCards = new List<CardRaw>();
+        sellableCards = new List<Card>();
         cancelableCards = new List<CardAuction>();
 
         if (SparkSingleton.Instance.IsAuthenticated)
         {
-            GetCardAuctions();
-            GetPlayerCardAuctions();
+            GetMarketplaceData();
         }
         else
         {
@@ -92,23 +91,18 @@ public class MarketplaceManager : MonoBehaviour
         this.buyableCards = new List<CardAuction>();
         foreach (GSData buyableCardData in buyableCardsDataList)
         {
-            CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(buyableCardData.JSON);
+            CardAuction cardAuction = CardAuction.GetFromJson(buyableCardData.JSON);
             this.buyableCards.Add(cardAuction);
         }
 
         this.cancelableCards = new List<CardAuction>();
         foreach (GSData cancelableCardData in cancelableCardsDataList)
         {
-            CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(cancelableCardData.JSON);
+            CardAuction cardAuction = CardAuction.GetFromJson(cancelableCardData.JSON);
             this.cancelableCards.Add(cardAuction);
         }
 
-        this.sellableCards = new List<CardRaw>();
-        foreach (GSData sellableCardData in sellableCardsDataList)
-        {
-            CardRaw cardRaw = JsonUtility.FromJson<CardRaw>(sellableCardData.JSON);
-            this.sellableCards.Add(cardRaw);
-        }
+        this.sellableCards = DeckStore.Instance().ParseCardsFromScriptData(sellableCardsDataList);
     }
 
     private void OnGetMarketplaceDataError(LogEventResponse response)
@@ -180,82 +174,14 @@ public class MarketplaceManager : MonoBehaviour
         }
     }
 
-    private void CreateSellableCardListItems(List<CardRaw> cardRaws)
+    private void CreateSellableCardListItems(List<Card> cards)
     {
-        foreach (CardRaw card in cardRaws)
+        foreach (Card card in cards)
         {
             GameObject listItemGO = Instantiate(sellableCardListItem) as GameObject;
             SellableCardListItem listItem = listItemGO.GetComponent<SellableCardListItem>();
             listItem.Initialize(card);
             listItemGO.transform.SetParent(contentPanel);
         }
-    }
-
-    private void GetCardAuctions()
-    {
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("GetCardAuctions");
-        request.Send(OnGetCardAuctionsSuccess, OnGetCardAuctionsError);
-    }
-
-    private void OnGetCardAuctionsSuccess(LogEventResponse response)
-    {
-        // JSON list of card auctions.
-        string address = response.ScriptData.GetString("address");
-        long balance = (long)response.ScriptData.GetLong("balance");
-        Debug.Log(address);
-        Debug.Log(balance);
-        List<GSData> dataList = response.ScriptData.GetGSDataList("auctions");
-        Debug.Log(dataList.Count + " auctions found.");
-
-        buyableCards = new List<CardAuction>();
-        foreach (GSData data in dataList)
-        {
-            CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(data.JSON);
-            buyableCards.Add(cardAuction);
-        }
-    }
-
-    private void OnGetCardAuctionsError(LogEventResponse response)
-    {
-        GSData errors = response.Errors;
-        Debug.Log(errors);
-    }
-
-    private void GetPlayerCardAuctions()
-    {
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("GetPlayerCardAuctions");
-        request.Send(OnGetPlayerCardAuctionsSuccess, OnGetPlayerCardAuctionsError);
-    }
-
-    private void OnGetPlayerCardAuctionsSuccess(LogEventResponse response)
-    {
-        // JSON list of card auctions.
-        List<GSData> auctionableDataList = response.ScriptData.GetGSDataList("auctionableCards");
-        Debug.Log(auctionableDataList.Count + " auctionable cards found.");
-
-        List<GSData> auctionedDataList = response.ScriptData.GetGSDataList("auctionedCards");
-        Debug.Log(auctionedDataList.Count + " auctioned cards found.");
-
-        sellableCards = new List<CardRaw>();
-        foreach (GSData data in auctionableDataList)
-        {
-            CardRaw card = JsonUtility.FromJson<CardRaw>(data.JSON);
-            sellableCards.Add(card);
-        }
-
-        cancelableCards = new List<CardAuction>();
-        foreach (GSData data in auctionedDataList)
-        {
-            CardAuction cardAuction = JsonUtility.FromJson<CardAuction>(data.JSON);
-            cancelableCards.Add(cardAuction);
-        }
-    }
-
-    private void OnGetPlayerCardAuctionsError(LogEventResponse response)
-    {
-        GSData errors = response.Errors;
-        Debug.Log(errors);
     }
 }

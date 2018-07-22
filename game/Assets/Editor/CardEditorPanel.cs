@@ -279,12 +279,12 @@ public class CardEditorPanel : EditorWindow
             ValidationErrorBox("Missing name.");
             return false;
         }
-        else if (template.cardType == CardRaw.CardType.Creature && template.health == 0)
+        else if (template.cardType == Card.CardType.Creature && template.health == 0)
         {
             ValidationErrorBox("Health cannot be zero.");
             return false;
         }
-        else if (template.cardType == CardRaw.CardType.Creature && this.summonPrefab == null)
+        else if (template.cardType == Card.CardType.Creature && this.summonPrefab == null)
         {
             ValidationErrorBox("Creature cards must have a summon prefab.");
             return false;
@@ -365,7 +365,7 @@ public class CardEditorPanel : EditorWindow
     {
         //start card attributes
         int enumSelectorYPos = 200 + verticalOffset;
-        template.cardType = (CardRaw.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), template.cardType);
+        template.cardType = (Card.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), template.cardType);
 
         int standardDetailsYPos = 220 + verticalOffset;
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos, 40, lineHeight), "Name");
@@ -394,7 +394,7 @@ public class CardEditorPanel : EditorWindow
         int belowRarity = 365 + +verticalOffset;
         switch (template.cardType)
         {
-            case CardRaw.CardType.Creature:
+            case Card.CardType.Creature:
 
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 40, lineHeight), "Attack");
                 template.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.attack);
@@ -417,14 +417,14 @@ public class CardEditorPanel : EditorWindow
                 this.thirdAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 2, qtr, 20), this.thirdAbility, Card.VALID_ABILITIES);
                 this.fourthAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 3, qtr, 20), this.fourthAbility, Card.VALID_ABILITIES);
                 break;
-            case CardRaw.CardType.Weapon:
+            case Card.CardType.Weapon:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 50, lineHeight), "Durability");
                 template.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.durability);
                 break;
-            case CardRaw.CardType.Structure:
+            case Card.CardType.Structure:
                 //to-do: lots
                 break;
-            case CardRaw.CardType.Spell:
+            case Card.CardType.Spell:
                 template.targeted = EditorGUI.ToggleLeft(new Rect(cardSpecificXPos, cardSpecificYPos, 80, 20), "Targeted?", template.targeted);
 
                 EditorGUI.LabelField(new Rect(5, belowRarity, position.width / 2 - 10, lineHeight), "Spell Effect Prefab");

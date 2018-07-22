@@ -58,34 +58,9 @@ public class CollectionManager : MonoBehaviour
 
     private void Callback()
     {
-        List<CardRaw> data = DeckStore.Instance().GetCards();
-        foreach (CardRaw cardRaw in data)
-        {
-            int category = (int)cardRaw.Category;
-            Card newCard;
-            switch (category)
-            {
-                case Card.CARD_CATEGORY_MINION: //creature
-                    newCard = CreatureCard.GetFromJson(JsonUtility.ToJson(cardRaw));
-                    break;
-                case Card.CARD_CATEGORY_SPELL:  //spell
-                    newCard = SpellCard.GetFromJson(JsonUtility.ToJson(cardRaw));
-                    break;
-                case Card.CARD_CATEGORY_WEAPON:  //weapon
-                    newCard = WeaponCard.GetFromJson(JsonUtility.ToJson(cardRaw));
-                    break;
-                case Card.CARD_CATEGORY_STRUCTURE:  //structure
-                    newCard = StructureCard.GetFromJson(JsonUtility.ToJson(cardRaw));
-                    break;
-                default:
-                    newCard = null;
-                    Debug.LogError("Card has no category/type field!");
-                    break;
-            }
-            collection.Add(newCard);
-        }
-
-        this.CreateCardObjects();
+        List<Card> cards = DeckStore.Instance().GetCards();
+        this.collection = cards;
+        CreateCardObjects();
 
         //Create decks by mapping to cards
         foreach (string deckName in DeckStore.Instance().GetDeckNames())

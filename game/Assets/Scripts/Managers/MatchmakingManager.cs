@@ -49,7 +49,7 @@ public class MatchmakingManager : MonoBehaviour
 
     private void ChangeSelectedDeck(string deckName)
     {
-        List<CardRaw> cards = DeckStore.Instance().GetCardsByDeckName(deckName);
+        List<Card> cards = DeckStore.Instance().GetCardsByDeckName(deckName);
         // TODO: render cards in middle column.
         this.matchDeckName = deckName;
     }
