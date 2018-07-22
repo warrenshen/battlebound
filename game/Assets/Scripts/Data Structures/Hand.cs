@@ -111,7 +111,7 @@ public class Hand
             BattleCardObject battleCardObject = this.battleCardObjects[k];
             if (ActionManager.Instance.GetDragTarget() == battleCardObject)
                 continue;
-            if (LeanTween.isTweening(battleCardObject.gameObject))
+            if (LeanTween.isTweening(battleCardObject.gameObject))  //TODO: this is hiding and causing some subtle problems...
                 continue;
 
             float pos = -((size - 1) / 2.0f) + k;

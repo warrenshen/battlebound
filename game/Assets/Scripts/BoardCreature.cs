@@ -10,7 +10,12 @@ public class BoardCreature : Targetable
 {
     public const float UPDATE_STATS_GROWTH_FACTOR = 1.4F;
     public const float ATTACK_DELAY = 0.66F;
+
     private static Vector3 BOARD_CARD_SIZE = new Vector3(5, 3.7F, 1);
+    private static Vector3 INSPECT_CARD_SIZE = new Vector3(5, 4.28F, 1);
+
+    public static Color LIGHT_GREEN = new Color(0.33F, 1, 0.33F);
+    public static Color LIGHT_RED = new Color(1, 0.33F, 0.33F);
 
     public const string FROZEN_STATUS = "FROZEN_STATUS";
 
@@ -50,6 +55,8 @@ public class BoardCreature : Targetable
 
     private int isFrozen;
     public int IsFrozen => isFrozen;
+
+    private bool raisedCard;
 
     Material dissolve;
 
@@ -219,16 +226,16 @@ public class BoardCreature : Targetable
         this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);    //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-        Vector3 originalPosition = this.transform.position;
+        Vector3 originalPosition = this.summonAnimation.transform.position;
 
         LeanTween
-            .move(this.gameObject, this.transform.position - delta, 0.3F)
+            .move(this.summonAnimation.gameObject, this.transform.position - delta, 0.3F)
             .setEaseOutCubic().setDelay(BoardCreature.ATTACK_DELAY)
             .setOnComplete(
                 () =>
                 {
                     LeanTween
-                        .move(this.gameObject, originalPosition, 0.3F)
+                        .move(this.summonAnimation.gameObject, originalPosition, 0.3F)
                         .setEaseInCubic();
                     onFightFinish();
                 }
@@ -369,6 +376,7 @@ public class BoardCreature : Targetable
 
     private IEnumerator Dissolve(float duration)
     {
+        this.noInteraction = true;
         FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
         SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
 
@@ -428,18 +436,24 @@ public class BoardCreature : Targetable
 
     private void UpdateStatText()
     {
+        if (this.visual == null)
+            return;
+
         HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
         if (this.attack > creatureCard.GetAttack())
-            attackText.TmpObject.color = Color.green;
+            attackText.TmpObject.color = BoardCreature.LIGHT_GREEN;
         else if (this.attack < creatureCard.GetAttack())
-            attackText.TmpObject.color = Color.red;
+            attackText.TmpObject.color = BoardCreature.LIGHT_RED;
+        else
+            attackText.TmpObject.color = Color.white;
 
         HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
         if (this.health > creatureCard.GetHealth())
-            healthText.TmpObject.color = Color.green;
+            healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
         else if (this.health < creatureCard.GetHealth())
-            healthText.TmpObject.color = Color.red;
-
+            healthText.TmpObject.color = BoardCreature.LIGHT_RED;
+        else
+            attackText.TmpObject.color = Color.white;
 
         if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
@@ -550,5 +564,68 @@ public class BoardCreature : Targetable
     public bool HasBuff(string buff)
     {
         return this.buffs.Contains(buff);
+    }
+
+
+    private void RaiseCardVisual()
+    {
+        ActionManager.Instance.SetCursor(3);
+        this.raisedCard = true;
+
+        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 3 + Vector3.right * 2F + Vector3.down, ActionManager.TWEEN_DURATION)
+                 .setDelay(1)
+                 .setOnStart(() =>
+            {
+                this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Animated"));
+            });
+        LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, ActionManager.TWEEN_DURATION)
+                 .setDelay(1);
+        LeanTween.rotateX(this.visual.gameObject, 15, ActionManager.TWEEN_DURATION)
+                 .setDelay(1);
+    }
+
+    private void LowerCardVisual()
+    {
+        ActionManager.Instance.SetCursor(0);
+        this.raisedCard = false;
+
+        LeanTween.cancel(this.visual.gameObject);
+        this.visual.transform.localPosition = Vector3.zero;
+        this.visual.transform.rotation = Quaternion.Euler(0, 180, 0);
+        this.visual.transform.localScale = BOARD_CARD_SIZE;
+        this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Battle"));
+    }
+
+    //begin mouse interactions for showing card when hovering
+    public override void EnterHover()
+    {
+        if (!this.raisedCard)
+        {
+            RaiseCardVisual();
+        }
+    }
+
+    public override void MouseUp()
+    {
+        if (!this.raisedCard)
+        {
+            RaiseCardVisual();
+        }
+    }
+
+    public override void ExitHover()
+    {
+        if (this.raisedCard)
+        {
+            LowerCardVisual();
+        }
+    }
+
+    public override void MouseDown()
+    {
+        if (this.Owner.Id == BattleManager.Instance.ActivePlayer.Id && this.raisedCard)
+        {
+            LowerCardVisual();
+        }
     }
 }

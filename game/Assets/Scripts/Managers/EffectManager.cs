@@ -1301,4 +1301,9 @@ public class EffectManager : MonoBehaviour
 
         return effects;
     }
+
+    public bool IsWaiting()
+    {
+        return isWaiting;
+    }
 }

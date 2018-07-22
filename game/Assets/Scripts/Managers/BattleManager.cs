@@ -266,6 +266,8 @@ public class BattleManager : MonoBehaviour
                 Debug.LogError("Raycast hit an object in battle layer that is not of class Targetable...");
                 return;
             }
+            //Trigger any events as needed
+            mouseDownTargetable.MouseDown();
 
             if (DeveloperPanel.IsServerEnabled() && mouseDownTargetable.Owner.Id != this.you.Id)
             {

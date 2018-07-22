@@ -69,7 +69,6 @@ public class ActionManager : MonoBehaviour
         {
             return;
         }
-
         MouseWatch();
     }
 
@@ -100,27 +99,28 @@ public class ActionManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (!Physics.Raycast(ray, out hit, 100f, cardAndUILayerMask))
+        if (!Physics.Raycast(ray, out hit, 100f))
+            return;
+
+        MouseWatchable hitWatchable = hit.collider.GetComponent<MouseWatchable>();
+        if (hitWatchable == null || hitWatchable.noInteraction)
         {
             ResetLastHitWatchable();
             return;
         }
-        MouseWatchable hitWatchable = hit.collider.GetComponent<MouseWatchable>();
-        if (hitWatchable == null || hitWatchable.noInteraction)
-            return;
 
-        if (Input.GetMouseButtonDown(0))
+        if (hitWatchable != lastHitWatchable)
+        {
+            ResetLastHitWatchable();
+            hitWatchable.EnterHover();
+        }
+        else if (Input.GetMouseButtonDown(0))
         {
             hitWatchable.MouseDown();
         }
         else if (Input.GetMouseButtonUp(0))
         {
             hitWatchable.MouseUp();
-        }
-        else if (hitWatchable != lastHitWatchable)
-        {
-            ResetLastHitWatchable();
-            hitWatchable.EnterHover();
         }
         lastHitWatchable = hitWatchable;
     }

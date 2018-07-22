@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 
 [System.Serializable]  //serialization won't work because abstract
-public abstract class Targetable : MonoBehaviour
+public abstract class Targetable : MouseWatchable
 {
     protected bool isAvatar = false;
     public bool IsAvatar => isAvatar;
