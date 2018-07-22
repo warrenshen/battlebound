@@ -42,11 +42,7 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
         opponentState.manaMax += 10;
     }
     opponentState.manaCurrent = opponentState.manaMax;
-    
-    // Draw a card for opponent to start its turn.
-    move = drawCardForPlayer(opponentId, opponentState);
-    addChallengeMove(challengeStateData, move);
-    
+
     processStartTurn(challengeStateData, opponentId);
     
     // Perform start of turn events for cards on field.
