@@ -160,7 +160,7 @@ public class Player
         this.hand.RepositionCards();
     }
 
-    private void DrawCard(bool isMulligan = false)
+    private void DrawCardMock(bool isMulligan = false)
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
@@ -197,11 +197,11 @@ public class Player
         BattleManager.Instance.ReceiveChallengeMove(challengeMove);
     }
 
-    public void DrawCards(int amount)
+    public void DrawCardsMock(int amount)
     {
         while (amount > 0)
         {
-            DrawCard();
+            DrawCardMock();
             amount--;
         }
     }
@@ -217,7 +217,7 @@ public class Player
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        DrawCard();
+        DrawCardMock();
     }
 
     /*
@@ -458,7 +458,7 @@ public class Player
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            DrawCard(true);
+            DrawCardMock(true);
         }
 
         BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
@@ -471,7 +471,7 @@ public class Player
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            DrawCard(true);
+            DrawCardMock(true);
         }
         Debug.Log(this.deckSize);
         BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple

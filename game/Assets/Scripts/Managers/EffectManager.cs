@@ -488,7 +488,7 @@ public class EffectManager : MonoBehaviour
                 effect.PlayerId
             );
 
-            player.DrawCards(1);
+            player.DrawCardsMock(1);
         }
     }
 
@@ -625,7 +625,7 @@ public class EffectManager : MonoBehaviour
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            boardCreature.Owner.DrawCards(1);
+            boardCreature.Owner.DrawCardsMock(1);
         }
     }
 
