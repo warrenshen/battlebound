@@ -134,7 +134,7 @@ public class PlayerAvatar : Targetable
         return false;
     }
 
-    public override int Fight(Targetable other)
+    public int Fight(Targetable other)
     {
         int damageDone = 0;
 
