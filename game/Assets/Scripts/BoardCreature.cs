@@ -211,11 +211,6 @@ public class BoardCreature : Targetable
         this.canAttack -= 1;
     }
 
-    public override int Fight(Targetable other)
-    {
-        return 0;
-    }
-
     public void FightAnimationWithCallback(Targetable other, UnityAction onFightFinish)
     {
         this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
