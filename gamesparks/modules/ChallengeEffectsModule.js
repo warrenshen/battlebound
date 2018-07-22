@@ -9,6 +9,7 @@ const EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
 const EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
 const EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
 const EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
+const EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_START_TURN_DRAW_CARD"; // When opponent ends their turn.
 
 const EFFECT_H_PRIORITY_ORDER = [
     CARD_ABILITY_LIFE_STEAL,
@@ -22,6 +23,7 @@ const EFFECT_M_PRIORITY_ORDER = [
 ];
 
 const EFFECT_L_PRIORITY_ORDER = [
+    EFFECT_CHANGE_TURN_DRAW_CARD,
     BUFF_CATEGORY_UNSTABLE_POWER,
     
     CARD_ABILITY_END_TURN_HEAL_TEN,
@@ -30,6 +32,7 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY,
     CARD_ABILITY_END_TURN_DRAW_CARD,
     
+    CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
     CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
@@ -323,12 +326,6 @@ function processLQueue(challengeStateData, effect) {
         setScriptError("Effect player ID is invalid.");
     }
     
-    const playerField = playerState.field;
-    const card = playerField.find(function(fieldCard) { return fieldCard.id === effect.cardId });
-    if (card == null) {
-        setScriptError("Effect card ID is invalid.");
-    }
-    
     var newEffects;
     
     switch (effect.name) {
@@ -358,6 +355,7 @@ function processLQueue(challengeStateData, effect) {
         case CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
             newEffects = abilityDeathRattleDrawCard(challengeStateData, effect);
             break;
+        case EFFECT_CHANGE_TURN_DRAW_CARD:
         case CARD_ABILITY_END_TURN_DRAW_CARD:
         case CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
             move = drawCardForPlayer(playerId, playerState);
@@ -625,6 +623,13 @@ function processStartTurn(challengeStateData, playerId) {
     const playerField = playerState.field;
     
     const newEffects = [];
+    
+    // Draw a card for player to start its turn.
+    newEffects.push({
+        playerId: playerId,
+        name: EFFECT_CHANGE_TURN_DRAW_CARD,
+        spawnRank: 0, // Does not matter.
+    });
     
     playerField.forEach(function(fieldCard) {
         if (fieldCard.id === "EMPTY" || !fieldCard.abilities) {
