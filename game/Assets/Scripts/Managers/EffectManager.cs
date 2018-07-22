@@ -1105,6 +1105,8 @@ public class EffectManager : MonoBehaviour
         targetedCreature.AddAttack(30);
         targetedCreature.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
 
+        targetedCreature.Redraw();
+
         // No triggered effects on unstable power for now.
         return new List<Effect>();
     }

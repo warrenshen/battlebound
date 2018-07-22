@@ -275,6 +275,10 @@ public class PlayerState
         public int IsFrozen => isFrozen;
 
         [SerializeField]
+        private int isSilenced;
+        public int IsSilenced => isSilenced;
+
+        [SerializeField]
         private List<string> abilities;
 
         [SerializeField]
@@ -356,6 +360,11 @@ public class PlayerState
             this.isFrozen = isFrozen;
         }
 
+        public void SetIsSilenced(int isSilenced)
+        {
+            this.isSilenced = isSilenced;
+        }
+
         public void SetAbilities(List<string> abilities)
         {
             this.abilities = abilities;
@@ -429,6 +438,10 @@ public class PlayerState
             else if (this.isFrozen != other.IsFrozen)
             {
                 return string.Format("IsFrozen: {0} vs {1}", this.isFrozen, other.IsFrozen);
+            }
+            else if (this.isSilenced != other.IsSilenced)
+            {
+                return string.Format("IsSilenced: {0} vs {1}", this.isSilenced, other.IsSilenced);
             }
             else if (this.spawnRank != other.SpawnRank)
             {
