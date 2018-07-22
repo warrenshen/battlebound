@@ -6,9 +6,11 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
+require("DeckModule");
 
 const API = Spark.getGameDataService();
-const playerId = Spark.getPlayer().getPlayerId();
+const player = Spark.getPlayer();
+const playerId = player.getPlayerId();
 
 const previousName = Spark.getData().previousName;
 const name = Spark.getData().name;
@@ -55,5 +57,10 @@ if (error) {
     setScriptError(error)
 }
 
-Spark.setScriptData("deckByName", deckByName);
+const result = getCardsAndDecksByPlayer(player);
+const cards = result[0];
+const decks = result[1];
+
+Spark.setScriptData("cards", cards);
+Spark.setScriptData("decks", decks);
 setScriptSuccess();

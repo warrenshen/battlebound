@@ -5,24 +5,22 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+require("ScriptDataModule");
 require("ChallengeGrantExperienceModule");
 
-const API = Spark.getGameDataService();
+const playerId = Spark.getData().challengePlayerId;
+const challengeStateString = Spark.getData().challengeStateString;
+const bCards = Spark.getData().bCardsJson;
+const decksData = Spark.getData().decksDataJson;
 
-const playerId = Spark.getData().pId;
-const challengeId = Spark.getData().challengeId;
-const challenge = Spark.getChallenge(challengeId);
+const challengeStateData = JSON.parse(challengeStateString);
+const response = handleGrantExperience(challengeStateData, playerId, decksData, bCards);
+const newDecksData = response[0];
+const newBCards = response[1];
+const expCards = response[2];
 
-const challengeStateDataItem = API.getItem("ChallengeState", challengeId).document();
+Spark.setScriptData("newDecksData", newDecksData);
+Spark.setScriptData("newBCards", newBCards);
+Spark.setScriptData("expCards", expCards);
 
-if (challengeStateDataItem === null) {
-    Spark.setScriptError("ERROR", "ChallengeState does not exist.");
-    Spark.exit();
-}
-
-const challengeStateData = challengeStateDataItem.getData();
-
-const resultCards = grantExperienceByPlayerAndChallenge(playerId, challengeStateData);
-
-Spark.setScriptData("resultCards", resultCards);
-Spark.setScriptData("responseCode", 200);
+setScriptSuccess();

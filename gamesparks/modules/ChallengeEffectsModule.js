@@ -57,6 +57,7 @@ const EFFECTS_BATTLE_CRY = [
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
     CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
+    CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
 ];
 
 const EFFECTS_DEATH_RATTLE = [
@@ -337,6 +338,9 @@ function processLQueue(challengeStateData, effect) {
         case CARD_ABILITY_END_TURN_HEAL_TWENTY:
             newEffects = abilityEndTurnHeal(challengeStateData, effect, 20);
             break;
+        case CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
+            newEffects = abilityHealFriendlyMax(challengeStateData, effect);
+            break;
         case CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
         case CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
             newEffects = abilityAttackInFront(challengeStateData, effect, 10);
@@ -385,6 +389,23 @@ function abilityEndTurnHeal(challengeStateData, effect, amount) {
     }
     
     healCard(card, 20);
+    return [];
+}
+
+function abilityHealFriendlyMax(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const playerState = challengeStateData.current[playerId];
+    if (playerState == null) {
+        setScriptError("Effect player ID is invalid.");
+    }
+    
+    const playerField = playerState.field;
+    playerField.forEach(function(fieldCard) {
+        if (fieldCard.id != "EMPTY") {
+            healCardMax(fieldCard);
+        }
+    });
+    
     return [];
 }
 

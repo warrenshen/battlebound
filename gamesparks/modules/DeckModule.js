@@ -249,9 +249,9 @@ function syncPlayerDecksByPlayer(player) {
     // Filter out bad card IDs from player's decks.
     const deckByName = decksData.deckByName;
     Object.keys(deckByName).forEach(function(deckName) {
-        const oldCardIds = deckByName[deckName];
-        const newCardIds = oldCardIds.filter(function(cardId) {
-            return bCardIds.indexOf(cardId) >= 0 || cardId.indexOf("C") === 0;
+        var oldCardIds = deckByName[deckName];
+        var newCardIds = oldCardIds.filter(function(cardId) {
+            return bCardIds.indexOf(cardId) >= 0 || cCardIds.indexOf(cardId) >= 0;
         })
         deckByName[deckName] = newCardIds;
     });

@@ -6,6 +6,7 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
+require("AttackModule");
 require("ChallengeMovesModule");
 
 const player = Spark.getPlayer();
@@ -29,9 +30,7 @@ const move = {
     playerId: playerId,
     category: MOVE_CATEGORY_SURRENDER_BY_CHOICE,
 };
-challengeStateData.moves.push(move);
-challengeStateData.lastMoves = [move];
-challengeStateData.moveTakenThisTurn = 1;
+addChallengeMove(challengeStateData, move);
 
 require("PersistChallengeStateModule");
 
