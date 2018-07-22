@@ -433,17 +433,29 @@ public class BoardCreature : Targetable
 
     private void UpdateStatText()
     {
-        if (!this.visual.GetTextFieldWithKey("Title").Value.Equals(this.name))
-            LeanTween.scale(this.visual.GetTextFieldWithKey("Title").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
+        if (this.attack > creatureCard.GetAttack())
+            attackText.TmpObject.color = Color.green;
+        else if (this.attack < creatureCard.GetAttack())
+            attackText.TmpObject.color = Color.red;
+
+        HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
+        if (this.health > creatureCard.GetHealth())
+            healthText.TmpObject.color = Color.green;
+        else if (this.health < creatureCard.GetHealth())
+            healthText.TmpObject.color = Color.red;
+
+
         if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        if (!this.visual.GetTextFieldWithKey("Attack").Value.Equals(this.attack.ToString()))
-            LeanTween.scale(this.visual.GetTextFieldWithKey("Attack").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        if (!this.visual.GetTextFieldWithKey("Health").Value.Equals(this.health.ToString()))
-            LeanTween.scale(this.visual.GetTextFieldWithKey("Health").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
 
+        if (!attackText.Value.Equals(this.attack.ToString()))
+            LeanTween.scale(attackText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        if (!healthText.Value.Equals(this.health.ToString()))
+            LeanTween.scale(healthText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+
+        //this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
         this.visual.SetTextFieldWithKey("Title", this.name);
-        this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
         this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
         this.visual.SetTextFieldWithKey("Health", this.health.ToString());
     }
