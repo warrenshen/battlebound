@@ -1243,7 +1243,7 @@ describe("challenge events", function() {
               "attack": null,
               "health": null,
               "cost": 30,
-              "name": "Freeze",
+              "name": "Deep Freeze",
               "description": "Deal 10 damage to creature and freeze it",
               "abilities": null,
               "baseId": "C21",
@@ -1378,7 +1378,7 @@ describe("challenge events", function() {
       });
     });
 
-    it("should support freeze", function() {
+    it("should support deep freeze", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -1408,6 +1408,566 @@ describe("challenge events", function() {
 
             assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
             assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("spells", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C10-5b0b012e7486050526c9c1a8-5",
+              "level": 0,
+              "category": 0,
+              "attack": 20,
+              "health": 30,
+              "cost": 20,
+              "name": "Firebug Catelyn",
+              "description": "Deathrattle: Damage opponent face by 10 dmg",
+              "abilities": [
+                10,
+              ],
+              "baseId": "C10",
+              "attackStart": 20,
+              "costStart": 20,
+              "healthStart": 30,
+              "healthMax": 30,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 2
+            },
+            {
+              "id": "C2-5b0b012e7486050526c9c1a8-2",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 3
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C3",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 0
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [
+            {
+              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "level": 0,
+              "category": 1,
+              "cost": 50,
+              "name": "Death Note",
+              "description": "Kill an opponent creature",
+              "baseId": "C23",
+              "costStart": 50,
+            },
+            {
+              "id": "C24-5b0b012e7486050526c9c1a8-5",
+              "level": 0,
+              "category": 1,
+              "cost": 30,
+              "name": "Mudslinging",
+              "description": "Give all friendly creatures taunt",
+              "baseId": "C24",
+              "costStart": 30,
+            },
+            {
+              "id": "C25-5b0b012e7486050526c9c1a8-6",
+              "level": 0,
+              "category": 1,
+              "cost": 40,
+              "name": "Silence of the Lambs",
+              "description": "Silence all creatures",
+              "baseId": "C25",
+              "costStart": 40,
+            },
+          ],
+          "deckSize": 1,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    it("should support death note", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellTargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "EMPTY");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.health, 90);
+            assert.equal(playerState.manaCurrent, 20);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support mudslinging", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C24-5b0b012e7486050526c9c1a8-5",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C24-5b0b012e7486050526c9c1a8-5");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 40);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "C2-5b0b017502bd4e052f08a28d-2");
+            assert.equal(playerField[1].abilities.indexOf(1) >= 0, true);
+
+            assert.equal(playerField[2].id, "C3-5b0b017502bd4e052f08a28d-5");
+            assert.equal(playerField[2].abilities.indexOf(1) >= 0, true);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support silence of the lambs", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C25-5b0b012e7486050526c9c1a8-6",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C25-5b0b012e7486050526c9c1a8-6");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 30);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "C2-5b0b017502bd4e052f08a28d-2");
+            assert.equal(playerField[1].isSilenced, 1);
+
+            assert.equal(playerField[2].id, "C3-5b0b017502bd4e052f08a28d-5");
+            assert.equal(playerField[2].isSilenced, 1);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(opponentField[0].isSilenced, 1);
+
+            assert.equal(opponentField[1].id, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(opponentField[1].isSilenced, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("spells", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C10-5b0b012e7486050526c9c1a8-5",
+              "level": 0,
+              "category": 0,
+              "attack": 20,
+              "health": 30,
+              "cost": 20,
+              "name": "Firebug Catelyn",
+              "description": "Deathrattle: Damage opponent face by 10 dmg",
+              "abilities": [
+                10,
+              ],
+              "baseId": "C10",
+              "attackStart": 20,
+              "costStart": 20,
+              "healthStart": 30,
+              "healthMax": 30,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 2
+            },
+            {
+              "id": "C2-5b0b012e7486050526c9c1a8-2",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 3
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C3",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 0
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [
+            {
+              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "level": 0,
+              "category": 1,
+              "cost": 40,
+              "name": "Greedy Fingers",
+              "description": "Draw three cards",
+              "baseId": "C23",
+              "costStart": 40,
+            },
+          ],
+          "deckSize": 1,
+          "deck": [
+            {
+              "id": "C24-5b0b012e7486050526c9c1a8-5",
+              "level": 0,
+              "category": 1,
+              "cost": 30,
+              "name": "Mudslinging",
+              "description": "Give all friendly creatures taunt",
+              "baseId": "C24",
+              "costStart": 30,
+            },
+            {
+              "id": "C25-5b0b012e7486050526c9c1a8-6",
+              "level": 0,
+              "category": 1,
+              "cost": 40,
+              "name": "Silence of the Lambs",
+              "description": "Silence all creatures",
+              "baseId": "C25",
+              "costStart": 40,
+            },
+            {
+              "id": "C26-5b0b012e7486050526c9c1a8-7",
+              "level": 0,
+              "category": 1,
+              "cost": 40,
+              "name": "Silence of the Lambs",
+              "description": "Silence all creatures",
+              "baseId": "C25",
+              "costStart": 40,
+            },
+          ],
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    it("should support greedy fingers", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 4);
+
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[0].attributes.card.name, "Greedy Fingers");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DRAW_CARD");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerHand = playerState.hand;
+            assert.equal(playerHand.length, 3);
+
             resolve();
           }
         );
