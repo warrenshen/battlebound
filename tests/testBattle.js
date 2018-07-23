@@ -1363,6 +1363,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C19-5b0b012e7486050526c9c1a8-0");
+            assert.equal(lastMoves[0].attributes.card.name, "Touch of Zeus");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C2-5b0b012e7486050526c9c1a8-2");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -1399,6 +1402,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C21-5b0b012e7486050526c9c1a8-2");
+            assert.equal(lastMoves[0].attributes.card.name, "Deep Freeze");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C2-5b0b012e7486050526c9c1a8-2");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -1636,6 +1642,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[0].attributes.card.name, "Death Note");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C10-5b0b012e7486050526c9c1a8-5");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
