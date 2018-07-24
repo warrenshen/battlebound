@@ -301,6 +301,22 @@ public class BoardCreature : Targetable
         return damageTaken;
     }
 
+    public void DeathNotice()
+    {
+        if (HasAbility(Card.CARD_ABILITY_SHIELD))
+        {
+            // TODO: play shield pop sound.
+            RemoveShield();
+        }
+
+        int healthBefore = this.health;
+        this.health = 0;
+
+        this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
+
+        Redraw();
+    }
+
     /*
      * @return int - amount of health healed
      */

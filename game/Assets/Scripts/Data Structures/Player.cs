@@ -693,7 +693,7 @@ public class Player
         cards.Add(new SpellCard("C26", "Greedy Fingers", 1));
         cards.Add(new SpellCard("C27", "Silence of the Lambs", 1));
         cards.Add(new SpellCard("C28", "Mudslinging", 1));
-        //cards.Add(new SpellCard("C29", "Death Notice", 1));
+        cards.Add(new SpellCard("C29", "Death Notice", 1));
         //cards.Add(new SpellCard("C30", "Spray n' Pray", 1));
         //cards.Add(new SpellCard("C31", "Battle Royale", 1));
         //cards.Add(new SpellCard("C32", "Grave-digging", 1));
