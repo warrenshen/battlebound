@@ -595,13 +595,13 @@ public class BoardCreature : Targetable
 
     private void RaiseCardVisual()
     {
-        ActionManager.Instance.SetCursor(3);
         this.raisedCard = true;
 
         LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 3 + Vector3.right * 2F + Vector3.down, ActionManager.TWEEN_DURATION)
                  .setDelay(1)
                  .setOnStart(() =>
             {
+                ActionManager.Instance.SetCursor(3);
                 this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Animated"));
             });
         LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, ActionManager.TWEEN_DURATION)

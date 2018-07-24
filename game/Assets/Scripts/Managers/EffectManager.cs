@@ -1004,26 +1004,34 @@ public class EffectManager : MonoBehaviour
             PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
             List<Effect> effects = new List<Effect>();
+            GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
             // TODO: animate as bomb or whatever.
+            this.isWaiting = true;
+            LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 10)
+                     .setEaseInOutCirc()
+                     .setOnComplete(() =>
+                {
+                    int damageDone = defendingAvatar.TakeDamage(20);
+                    //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-            int damageDone = defendingAvatar.TakeDamage(20);
-            //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                    if (defendingAvatar.Health <= 0)
+                    {
+                        effects.Add(
+                            new Effect(
+                                defendingAvatar.Owner.Id,
+                                EFFECT_PLAYER_AVATAR_DIE,
+                                defendingAvatar.GetCardId(),
+                                0
+                            )
+                        );
+                    }
+                    bombObject.SetActive(false);
 
-            if (defendingAvatar.Health <= 0)
-            {
-                effects.Add(
-                    new Effect(
-                        defendingAvatar.Owner.Id,
-                        EFFECT_PLAYER_AVATAR_DIE,
-                        defendingAvatar.GetCardId(),
-                        0
-                    )
-                );
-            }
-
-            AddToQueues(effects);
-            this.isDirty = true;
+                    AddToQueues(effects);
+                    this.isWaiting = false;
+                    this.isDirty = true;
+                });
         }
         else
         {

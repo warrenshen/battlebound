@@ -61,8 +61,8 @@ public class Player
         this.deck = GetDeck();
         this.deckSize = this.deck.Size();
 
-        this.mana = 30;
-        this.maxMana = 30;
+        this.mana = 80;
+        this.maxMana = 80;
 
         this.hand = new Hand(this);
 
@@ -675,21 +675,21 @@ public class Player
         cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1));
         cards.Add(new CreatureCard("C8", "Taji the Fearless", 1));
         cards.Add(new CreatureCard("C9", "Young Kyo", 1));
-        //cards.Add(new CreatureCard("C10", "Emberkitty", 1));
-        //cards.Add(new CreatureCard("C11", "Firestrided Tigress", 1));
-        //cards.Add(new CreatureCard("C12", "Unkindled Junior", 1));
-        //cards.Add(new CreatureCard("C13", "Flamebelcher", 1));
-        //cards.Add(new CreatureCard("C14", "Fireborn Menace", 1));
-        //cards.Add(new CreatureCard("C15", "Te'a Greenleaf", 1));
-        //cards.Add(new CreatureCard("C16", "Wave Charmer", 1));
-        //cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1));
-        //cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1));
-        //cards.Add(new SpellCard("C20", "Touch of Zeus", 1));
-        //cards.Add(new SpellCard("C21", "Raze to Ashes", 1));
-        //cards.Add(new SpellCard("C22", "Deep Freeze", 1));
-        //cards.Add(new SpellCard("C23", "Brr Brr Blizzard", 1));
-        //cards.Add(new SpellCard("C24", "Riot Up", 1));
-        //cards.Add(new SpellCard("C25", "Widespread Frostbite", 1));
+        cards.Add(new CreatureCard("C10", "Emberkitty", 1));
+        cards.Add(new CreatureCard("C11", "Firestrided Tigress", 1));
+        cards.Add(new CreatureCard("C12", "Unkindled Junior", 1));
+        cards.Add(new CreatureCard("C13", "Flamebelcher", 1));
+        cards.Add(new CreatureCard("C14", "Fireborn Menace", 1));
+        cards.Add(new CreatureCard("C15", "Te'a Greenleaf", 1));
+        cards.Add(new CreatureCard("C16", "Wave Charmer", 1));
+        cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1));
+        cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1));
+        cards.Add(new SpellCard("C20", "Touch of Zeus", 1));
+        cards.Add(new SpellCard("C21", "Raze to Ashes", 1));
+        cards.Add(new SpellCard("C22", "Deep Freeze", 1));
+        cards.Add(new SpellCard("C23", "Brr Brr Blizzard", 1));
+        cards.Add(new SpellCard("C24", "Riot Up", 1));
+        cards.Add(new SpellCard("C25", "Widespread Frostbite", 1));
         cards.Add(new SpellCard("C26", "Greedy Fingers", 1));
         cards.Add(new SpellCard("C27", "Silence of the Lambs", 1));
         cards.Add(new SpellCard("C28", "Mudslinging", 1));
