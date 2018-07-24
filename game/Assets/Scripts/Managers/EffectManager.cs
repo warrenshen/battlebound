@@ -858,7 +858,16 @@ public class EffectManager : MonoBehaviour
             attackingCreature.FightAnimationWithCallback(defendingCreature, new UnityAction(
                 () =>
                 {
-                    int damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
+                    int damageDone;
+
+                    if (attackingCreature.HasAbility(Card.CARD_ABILITY_LETHAL))
+                    {
+                        damageDone = defendingCreature.TakeDamageWithLethal();
+                    }
+                    else
+                    {
+                        damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
+                    }
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 

@@ -24,6 +24,11 @@ public abstract class Card
     public const string CARD_NAME_FIREBORN_MENACE = "Fireborn Menace";
     public const string CARD_NAME_TEA_GREENLEAF = "Te'a Greenleaf";
     public const string CARD_NAME_NESSA_NATURES_CHAMPION = "Nessa, Nature's Champion";
+    public const string CARD_NAME_BUBBLE_SQUIRTER = "Bubble Squirter";
+    public const string CARD_NAME_SWIFT_SHELLBACK = "Swift Shellback";
+    public const string CARD_NAME_SENTIENT_SEAKING = "Sentient Seaking";
+    public const string CARD_NAME_CRYSTAL_SNAPPER = "Crystal Snapper";
+    public const string CARD_NAME_BATTLECLAD_GASDON = "Battleclad Gasdon";
 
     public static readonly List<string> CREATURE_CARD_NAMES = new List<string>
     {
@@ -44,6 +49,11 @@ public abstract class Card
         CARD_NAME_FIREBORN_MENACE,
         CARD_NAME_TEA_GREENLEAF,
         CARD_NAME_NESSA_NATURES_CHAMPION,
+        CARD_NAME_BUBBLE_SQUIRTER,
+        CARD_NAME_SWIFT_SHELLBACK,
+        CARD_NAME_SENTIENT_SEAKING,
+        CARD_NAME_CRYSTAL_SNAPPER,
+        CARD_NAME_BATTLECLAD_GASDON,
     };
 
     public enum CardType { Creature, Spell, Weapon, Structure };
