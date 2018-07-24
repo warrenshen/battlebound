@@ -412,6 +412,15 @@ public class BoardCreature : Targetable
         this.abilities.Remove(Card.CARD_ABILITY_SHIELD);
     }
 
+    public void GrantTaunt()
+    {
+        if (!HasAbility(Card.CARD_ABILITY_TAUNT))
+        {
+            this.abilities.Add(Card.CARD_ABILITY_TAUNT);
+            Redraw();
+        }
+    }
+
     public void Freeze(int amount)
     {
         this.isFrozen += amount;

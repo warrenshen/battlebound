@@ -24,6 +24,7 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
     public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
     public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
+    public const string EFFECT_DRAW_CARD = "EFFECT_DRAW_CARD";
 
     private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
@@ -47,6 +48,7 @@ public class EffectManager : MonoBehaviour
     private static readonly List<string> EFFECT_L_PRIORITY_ORDER = new List<string>
     {
         EFFECT_CHANGE_TURN_DRAW_CARD,
+        EFFECT_DRAW_CARD,
 
         // Start turn.
         Card.BUFF_CATEGORY_UNSTABLE_POWER,
@@ -449,6 +451,7 @@ public class EffectManager : MonoBehaviour
                 AbilityDeathRattleDrawCard(effect);
                 break;
             case EFFECT_CHANGE_TURN_DRAW_CARD:
+            case EFFECT_DRAW_CARD:
             case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
             case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
                 AbilityDrawCard(effect);
@@ -480,21 +483,17 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDrawCard(Effect effect)
     {
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(effect.PlayerId);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
+        Player player = BattleManager.Instance.GetPlayerById(
+            effect.PlayerId
+        );
+
+        int rank = player.DrawCardDevice();
 
         this.isWaiting = true;
-        StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
+        StartCoroutine("WaitForDrawCard", new object[1] { rank });
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            Player player = BattleManager.Instance.GetPlayerById(
-                effect.PlayerId
-            );
-
             player.DrawCardsMock(1);
         }
     }
@@ -587,8 +586,12 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDeathRattleDrawCard(Effect effect)
     {
+        string playerId = effect.PlayerId;
+
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
-            effect.PlayerId,
+            playerId,
             effect.CardId
         );
 
@@ -603,16 +606,12 @@ public class EffectManager : MonoBehaviour
             )
         );
 
+        this.isWaiting = true;
         AddToQueues(effects);
 
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(effect.PlayerId);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
+        int rank = player.DrawCardDevice();
 
-        this.isWaiting = true;
-        StartCoroutine("WaitForDrawCard", new object[1] { challengeMove.Rank });
+        StartCoroutine("WaitForDrawCard", new object[1] { rank });
 
         if (!DeveloperPanel.IsServerEnabled())
         {
@@ -1162,6 +1161,15 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_RAZE_TO_ASHES:
                 effects = SpellUntargetedRazeToAshes(playerId);
                 break;
+            case SpellCard.SPELL_NAME_GREEDY_FINGERS:
+                effects = SpellUntargetedGreedyFingers(playerId);
+                break;
+            case SpellCard.SPELL_NAME_SILENCE_OF_THE_LAMBS:
+                effects = SpellUntargetedSilenceOfTheLambs(playerId);
+                break;
+            case SpellCard.SPELL_NAME_MUDSLINGING:
+                effects = SpellUntargetedMudslinging(playerId);
+                break;
             default:
                 Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
                 break;
@@ -1213,6 +1221,58 @@ public class EffectManager : MonoBehaviour
             {
                 effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
             }
+        }
+
+        return effects;
+    }
+
+    private List<Effect> SpellUntargetedGreedyFingers(string playerId)
+    {
+        List<Effect> effects = new List<Effect>();
+
+        for (int i = 0; i < 3; i += 1)
+        {
+            effects.Add(
+                new Effect(
+                    playerId,
+                    EFFECT_DRAW_CARD,
+                    null, // Does not matter.
+                    0 // Does not matter.
+                )
+            );
+        }
+
+        return effects;
+    }
+
+    private List<Effect> SpellUntargetedSilenceOfTheLambs(string playerId)
+    {
+        List<Effect> effects = new List<Effect>();
+
+        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        foreach (BoardCreature boardCreature in playerCreatures)
+        {
+            boardCreature.Silence();
+        }
+        foreach (BoardCreature boardCreature in opponentCreatures)
+        {
+            boardCreature.Silence();
+        }
+
+        return effects;
+    }
+
+    private List<Effect> SpellUntargetedMudslinging(string playerId)
+    {
+        List<Effect> effects = new List<Effect>();
+
+        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+
+        foreach (BoardCreature boardCreature in playerCreatures)
+        {
+            boardCreature.GrantTaunt();
         }
 
         return effects;

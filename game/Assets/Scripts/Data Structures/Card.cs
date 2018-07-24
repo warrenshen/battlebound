@@ -450,11 +450,16 @@ public class SpellCard : Card
     public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
     public const string SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
     public const string SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
+    public const string SPELL_NAME_DEATH_NOTICE = "Death Notice";
 
     public const string SPELL_NAME_RIOT_UP = "Riot Up";
     public const string SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
     public const string SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
-
+    public const string SPELL_NAME_GREEDY_FINGERS = "Greedy Fingers";
+    public const string SPELL_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
+    public const string SPELL_NAME_MUDSLINGING = "Mudslinging";
+    public const string SPELL_NAME_SPRAY_N_PRAY = "Spray n' Pray";
+    public const string SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
 
     public static readonly List<string> VALID_SPELLS = new List<string>
     {
@@ -462,9 +467,16 @@ public class SpellCard : Card
         SPELL_NAME_UNSTABLE_POWER,
         SPELL_NAME_DEEP_FREEZE,
         SPELL_NAME_WIDESPREAD_FROSTBITE,
+        SPELL_NAME_DEATH_NOTICE,
+
         SPELL_NAME_RIOT_UP,
         SPELL_NAME_BRR_BRR_BLIZZARD,
         SPELL_NAME_RAZE_TO_ASHES,
+        SPELL_NAME_GREEDY_FINGERS,
+        SPELL_NAME_SILENCE_OF_THE_LAMBS,
+        SPELL_NAME_MUDSLINGING,
+        SPELL_NAME_SPRAY_N_PRAY,
+        SPELL_NAME_GRAVE_DIGGING,
     };
 
     public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
@@ -473,6 +485,7 @@ public class SpellCard : Card
         SPELL_NAME_UNSTABLE_POWER,
         SPELL_NAME_DEEP_FREEZE,
         SPELL_NAME_WIDESPREAD_FROSTBITE,
+        SPELL_NAME_DEATH_NOTICE,
     };
 
     public static readonly List<string> UNTARGETED_SPELL_NAMES = new List<string>
@@ -480,9 +493,12 @@ public class SpellCard : Card
         SPELL_NAME_RIOT_UP,
         SPELL_NAME_BRR_BRR_BLIZZARD,
         SPELL_NAME_RAZE_TO_ASHES,
+        SPELL_NAME_GREEDY_FINGERS,
+        SPELL_NAME_SILENCE_OF_THE_LAMBS,
+        SPELL_NAME_MUDSLINGING,
+        SPELL_NAME_SPRAY_N_PRAY,
+        SPELL_NAME_GRAVE_DIGGING,
     };
-
-    private static Dictionary<string, string> spellToMethod;
 
     private bool targeted;      //affects single target or whole board?
     public bool Targeted => targeted;
