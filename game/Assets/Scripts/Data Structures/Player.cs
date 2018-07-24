@@ -662,7 +662,6 @@ public class Player
     private Deck GetDeck()
     {
         string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
-
         //do manually for now
         //cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
 
