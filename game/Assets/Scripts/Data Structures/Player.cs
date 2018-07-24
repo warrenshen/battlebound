@@ -525,14 +525,16 @@ public class Player
 
         this.deckSize -= 1;
         BattleManager.Instance.AnimateDrawCard(this, createdBattleCard)
-                     .setOnComplete(() =>
-        {
-            CardTween.move(createdBattleCard, createdBattleCard.transform.position, CardTween.TWEEN_DURATION)
-                 .setOnComplete(() =>
-                 {
-                     createdBattleCard.Burn();
-                 });
-        });
+            .setOnComplete(() =>
+            {
+                CardTween
+                    .move(createdBattleCard, createdBattleCard.transform.position, CardTween.TWEEN_DURATION)
+                    .setOnComplete(() =>
+                    {
+                        EffectManager.Instance.OnDrawCardFinish();
+                        createdBattleCard.Burn();
+                    });
+            });
     }
 
     /*
