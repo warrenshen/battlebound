@@ -985,19 +985,28 @@ public class EffectManager : MonoBehaviour
             BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
             List<Effect> effects = new List<Effect>();
+            GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
             // TODO: animate as bomb or whatever.
+            this.isWaiting = true;
+            LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                     .setEaseInOutCirc()
+                     .setOnComplete(() =>
+                 {
+                     int damageDone = defendingCreature.TakeDamage(20);
+                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-            int damageDone = defendingCreature.TakeDamage(20);
+                     if (defendingCreature.Health <= 0)
+                     {
+                         effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
+                     }
 
-            effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                     bombObject.SetActive(false);
 
-            if (defendingCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-            }
-
-            AddToQueues(effects);
+                     AddToQueues(effects);
+                     this.isWaiting = false;
+                     this.isDirty = true;
+                 });
         }
         else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
         {
@@ -1006,9 +1015,8 @@ public class EffectManager : MonoBehaviour
             List<Effect> effects = new List<Effect>();
             GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-            // TODO: animate as bomb or whatever.
             this.isWaiting = true;
-            LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 10)
+            LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
                      .setEaseInOutCirc()
                      .setOnComplete(() =>
                 {
