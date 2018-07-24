@@ -13,6 +13,15 @@ public class BattleCardObject : CardObject
     {
         this.owner = player;
         base.Initialize(card);
+        this.HideIfNeeded();
+    }
+
+    private void HideIfNeeded()
+    {
+        if (DeveloperPanel.IsServerEnabled() && this.owner.Id == BattleManager.Instance.Opponent.Id)
+        {
+            this.visual.transform.Rotate(0, 180, 0, Space.Self);
+        }
     }
 
     public override void EnterHover()
