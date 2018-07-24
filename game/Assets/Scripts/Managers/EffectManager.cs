@@ -407,8 +407,6 @@ public class EffectManager : MonoBehaviour
         {
             yield return new WaitForSeconds(0.1f);
         }
-
-        this.isWaiting = false;
     }
 
     private void ProcessLQueue()
