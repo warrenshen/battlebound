@@ -987,7 +987,6 @@ public class EffectManager : MonoBehaviour
             List<Effect> effects = new List<Effect>();
             GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-            // TODO: animate as bomb or whatever.
             this.isWaiting = true;
             LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
                      .setEaseInOutCirc()

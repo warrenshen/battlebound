@@ -61,8 +61,8 @@ public class Player
         this.deck = GetDeck();
         this.deckSize = this.deck.Size();
 
-        this.mana = 30;
-        this.maxMana = 30;
+        this.mana = 80;
+        this.maxMana = 80;
 
         this.hand = new Hand(this);
 
@@ -664,10 +664,11 @@ public class Player
         string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
 
         //do manually for now
+        //cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
+
         List<Card> cards = new List<Card>();
         cards.Add(new CreatureCard("C0", "Blessed Newborn", 2));
         cards.Add(new CreatureCard("C1", "Temple Guardian", 1));
-        //cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
         cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1));
         cards.Add(new SpellCard("C4", "Unstable Power", 4));
         cards.Add(new CreatureCard("C5", "Bombshell Bombadier", 1));
