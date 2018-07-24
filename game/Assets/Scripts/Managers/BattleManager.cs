@@ -1472,15 +1472,15 @@ public class BattleManager : MonoBehaviour
     {
         LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
         CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad()
-                 .setOnComplete(() =>
-                 {
-                     CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                                            .setOnComplete(() =>
-                                            {
-                                                PlayUntargetedSpellFromServer(battleCardObject);
-                                            });
-                 });
+            .setEaseInQuad()
+            .setOnComplete(() =>
+            {
+                CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                    .setOnComplete(() =>
+                    {
+                        PlayUntargetedSpellFromServer(battleCardObject);
+                    });
+            });
     }
 
     private PlayerState GetPlayerState()

@@ -1056,6 +1056,9 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_WIDESPREAD_FROSTBITE:
                 effects = SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
                 break;
+            case SpellCard.SPELL_NAME_DEATH_NOTICE:
+                effects = SpellTargetedDeathNotice(playerId, targetedCreature);
+                break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
                 break;
@@ -1140,6 +1143,20 @@ public class EffectManager : MonoBehaviour
 
         // No triggered effects on freeze for now.
         return new List<Effect>();
+    }
+
+    private List<Effect> SpellTargetedDeathNotice(string playerId, BoardCreature targetedCreature)
+    {
+        targetedCreature.DeathNotice();
+
+        List<Effect> effects = new List<Effect>();
+
+        if (targetedCreature.Health <= 0)
+        {
+            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
+        }
+
+        return effects;
     }
 
     public void OnSpellUntargetedPlay(BattleCardObject battleCardObject)
