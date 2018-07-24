@@ -91,7 +91,11 @@ public class Board : MonoBehaviour
         BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
 
         playingField.Place(boardCreature, index);
-        boardCreature.Initialize(battleCardObject.Card as CreatureCard, spawnRank);
+        boardCreature.Initialize(
+            battleCardObject.Card as CreatureCard,
+            battleCardObject.Owner,
+            spawnRank
+        );
 
         FXPoolManager.Instance.PlayEffect("SpawnVFX", boardPlace.position + new Vector3(0f, 0f, -0.1f));
         yield return new WaitForSeconds(0.2f);

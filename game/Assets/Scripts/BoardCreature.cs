@@ -71,8 +71,9 @@ public class BoardCreature : Targetable
     private int spawnRank;
     public int SpawnRank => spawnRank;
 
-    public void Initialize(CreatureCard creatureCard, int spawnRank)
+    public void Initialize(CreatureCard creatureCard, Player owner, int spawnRank)
     {
+        this.owner = owner;
         this.creatureCard = creatureCard;
 
         this.cost = this.creatureCard.GetCost();
@@ -103,6 +104,7 @@ public class BoardCreature : Targetable
         PlayerState.ChallengeCard challengeCard
     )
     {
+        this.owner = battleCardObject.Owner;
         this.creatureCard = battleCardObject.Card as CreatureCard;
 
         // Use challenge card stats.
@@ -136,7 +138,6 @@ public class BoardCreature : Targetable
 
     public void Summon(BattleCardObject battleCardObject)
     {
-        this.owner = battleCardObject.Owner;
         BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
         BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
         newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
@@ -210,7 +211,7 @@ public class BoardCreature : Targetable
 
     public override bool CanAttackNow()
     {
-        return this.Owner.HasTurn && this.isFrozen <= 0 && this.canAttack > 0;
+        return this.owner.HasTurn && this.isFrozen <= 0 && this.canAttack > 0;
     }
 
     public void DecrementCanAttack()
@@ -623,7 +624,7 @@ public class BoardCreature : Targetable
 
     public override void MouseDown()
     {
-        if (this.Owner.Id == BattleManager.Instance.ActivePlayer.Id && this.raisedCard)
+        if (this.owner.Id == BattleManager.Instance.ActivePlayer.Id && this.raisedCard)
         {
             LowerCardVisual();
         }
