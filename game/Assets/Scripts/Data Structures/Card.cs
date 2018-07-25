@@ -502,7 +502,7 @@ public class StructureCard : Card
 [System.Serializable]
 public class SpellCard : Card
 {
-    public const string SPELL_NAME_LIGHTNING_BOLT = "Touch of Zeus";
+    public const string SPELL_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
     public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
     public const string SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
     public const string SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
@@ -519,7 +519,7 @@ public class SpellCard : Card
 
     public static readonly List<string> VALID_SPELLS = new List<string>
     {
-        SPELL_NAME_LIGHTNING_BOLT,
+        SPELL_NAME_TOUCH_OF_ZEUS,
         SPELL_NAME_UNSTABLE_POWER,
         SPELL_NAME_DEEP_FREEZE,
         SPELL_NAME_WIDESPREAD_FROSTBITE,
@@ -537,7 +537,7 @@ public class SpellCard : Card
 
     public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
     {
-        SPELL_NAME_LIGHTNING_BOLT,
+        SPELL_NAME_TOUCH_OF_ZEUS,
         SPELL_NAME_UNSTABLE_POWER,
         SPELL_NAME_DEEP_FREEZE,
         SPELL_NAME_WIDESPREAD_FROSTBITE,

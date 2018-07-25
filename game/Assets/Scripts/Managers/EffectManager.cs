@@ -942,22 +942,63 @@ public class EffectManager : MonoBehaviour
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            List<ChallengeMove> serverMoves = BattleManager.Instance.GetServerMoves();
+            List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
 
-            Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
+            int highestCost = -1;
+            ChallengeCard reviveCard = null;
 
-            challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(effect.PlayerId);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+            for (int i = sortedDeadCards.Count - 1; i >= 0; i -= 1)
+            {
+                ChallengeCard currentCard = sortedDeadCards[0];
+                int currentCost = currentCard.CostStart;
+                if (currentCost > highestCost)
+                {
+                    highestCost = currentCost;
+                    reviveCard = currentCard;
+                }
+            }
 
-            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetCardId(effect.CardId);
-            moveAttributes.SetFieldId(randomTargetable.Owner.Id);
-            moveAttributes.SetTargetId(randomTargetable.GetCardId());
-            challengeMove.SetMoveAttributes(moveAttributes);
+            if (reviveCard == null)
+            {
 
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            }
+            else
+            {
+                int spawnRank = BattleManager.Instance.GetNewSpawnRank();
+                ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(JsonUtility.ToJson(reviveCard));
+
+                spawnCard.SetId(playerId + "-" + spawnRank);
+                spawnCard.SetCost(reviveCard.CostStart);
+                spawnCard.SetAttack(reviveCard.AttackStart);
+                spawnCard.SetHealth(reviveCard.HealthStart);
+                spawnCard.SetHealthMax(reviveCard.HealthStart);
+                spawnCard.SetIsFrozen(0);
+                spawnCard.SetIsSilenced(0);
+
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(effect.PlayerId);
+                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+                int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
+
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetCard(spawnCard);
+                moveAttributes.SetFieldId(playerId);
+
+                if (spawnIndex < 0)
+                {
+                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+                }
+                else
+                {
+                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+                    moveAttributes.SetFieldIndex(spawnIndex);
+                }
+
+                challengeMove.SetMoveAttributes(moveAttributes);
+
+                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            }
         }
     }
 
@@ -1400,7 +1441,7 @@ public class EffectManager : MonoBehaviour
 
         switch (spellCard.Name)
         {
-            case SpellCard.SPELL_NAME_LIGHTNING_BOLT:
+            case SpellCard.SPELL_NAME_TOUCH_OF_ZEUS:
                 effects = SpellTargetedLightningBolt(playerId, targetedCreature);
                 break;
             case SpellCard.SPELL_NAME_UNSTABLE_POWER:

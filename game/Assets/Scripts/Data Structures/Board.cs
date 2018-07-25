@@ -219,6 +219,23 @@ public class Board : MonoBehaviour
         return opponentTargetables[randomIndex];
     }
 
+    public int GetAvailableFieldIndexByPlayerId(string playerId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        BoardCreature[] boardCreatures = playingField.GetCreatures();
+
+        for (int i = 0; i < boardCreatures.Length; i += 1)
+        {
+            BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
+            if (boardCreature == null)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     [System.Serializable]
     public class PlayingField
     {

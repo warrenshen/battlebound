@@ -666,29 +666,29 @@ public class Player
         //cards.Add(new CreatureCard("C2", "Cursed Imp", 1));
 
         List<Card> cards = new List<Card>();
-        cards.Add(new CreatureCard("C0", "Blessed Newborn", 2));
-        cards.Add(new CreatureCard("C1", "Temple Guardian", 1));
-        cards.Add(new CreatureCard("C3", "Waterborne Razorback", 1));
+        cards.Add(new CreatureCard("C0", Card.CARD_NAME_BLESSED_NEWBORN, 2));
+        cards.Add(new CreatureCard("C1", Card.CARD_NAME_TEMPLE_GUARDIAN, 1));
+        cards.Add(new CreatureCard("C3", Card.CARD_NAME_WATERBORNE_RAZORBACK, 1));
 
-        cards.Add(new CreatureCard("C5", "Bombshell Bombadier", 1));
-        cards.Add(new CreatureCard("C6", "Firebug Catelyn", 1));
-        cards.Add(new CreatureCard("C7", "Marshwater Squealer", 1));
-        cards.Add(new CreatureCard("C8", "Taji the Fearless", 1));
-        cards.Add(new CreatureCard("C9", "Young Kyo", 1));
-        cards.Add(new CreatureCard("C10", "Emberkitty", 1));
-        //cards.Add(new CreatureCard("C11", "Firestrided Tigress", 1));
-        //cards.Add(new CreatureCard("C12", "Unkindled Junior", 1));
-        //cards.Add(new CreatureCard("C13", "Flamebelcher", 1));
-        //cards.Add(new CreatureCard("C14", "Fireborn Menace", 1));
-        //cards.Add(new CreatureCard("C15", "Te'a Greenleaf", 1));
-        //cards.Add(new CreatureCard("C16", "Wave Charmer", 1));
-        //cards.Add(new CreatureCard("C17", "Poseidon's Handmaiden", 1));
-        //cards.Add(new CreatureCard("C18", "Nessa, Nature's Champion", 1));
-        cards.Add(new CreatureCard("C19", "Bubble Squirter", 1));
-        cards.Add(new CreatureCard("C20", "Swift Shellback", 1));
-        cards.Add(new CreatureCard("C21", "Sentient Seaking", 1));
-        cards.Add(new CreatureCard("C22", "Crystal Snapper", 1));
-        cards.Add(new CreatureCard("C23", "Battleclad Gasdon", 1));
+        cards.Add(new CreatureCard("C5", Card.CARD_NAME_BOMBSHELL_BOMBADIER, 1));
+        cards.Add(new CreatureCard("C6", Card.CARD_NAME_FIREBUG_CATELYN, 1));
+        cards.Add(new CreatureCard("C7", Card.CARD_NAME_MARSHWATER_SQUEALER, 1));
+        cards.Add(new CreatureCard("C8", Card.CARD_NAME_TAJI_THE_FEARLESS, 1));
+        cards.Add(new CreatureCard("C9", Card.CARD_NAME_YOUNG_KYO, 1));
+        cards.Add(new CreatureCard("C10", Card.CARD_NAME_EMBERKITTY, 1));
+        cards.Add(new CreatureCard("C11", Card.CARD_NAME_FIRESTRIDED_TIGRESS, 1));
+        cards.Add(new CreatureCard("C12", Card.CARD_NAME_UNKINDLED_JUNIOR, 1));
+        cards.Add(new CreatureCard("C13", Card.CARD_NAME_FLAMEBELCHER, 1));
+        cards.Add(new CreatureCard("C14", Card.CARD_NAME_FIREBORN_MENACE, 1));
+        cards.Add(new CreatureCard("C15", Card.CARD_NAME_TEA_GREENLEAF, 1));
+        cards.Add(new CreatureCard("C16", Card.CARD_NAME_WAVE_CHARMER, 1));
+        cards.Add(new CreatureCard("C17", Card.CARD_NAME_POSEIDONS_HANDMAIDEN, 1));
+        cards.Add(new CreatureCard("C18", Card.CARD_NAME_NESSA_NATURES_CHAMPION, 1));
+        cards.Add(new CreatureCard("C19", Card.CARD_NAME_BUBBLE_SQUIRTER, 1));
+        cards.Add(new CreatureCard("C20", Card.CARD_NAME_SWIFT_SHELLBACK, 1));
+        cards.Add(new CreatureCard("C21", Card.CARD_NAME_SENTIENT_SEAKING, 1));
+        cards.Add(new CreatureCard("C22", Card.CARD_NAME_CRYSTAL_SNAPPER, 1));
+        cards.Add(new CreatureCard("C23", Card.CARD_NAME_BATTLECLAD_GASDON, 1));
         cards.Add(new CreatureCard("C24", Card.CARD_NAME_REDHAIRED_PALADIN, 1));
         cards.Add(new CreatureCard("C25", Card.CARD_NAME_FIRESWORN_GODBLADE, 1));
         cards.Add(new CreatureCard("C26", Card.CARD_NAME_RITUAL_HATCHLING, 1));
@@ -714,20 +714,19 @@ public class Player
         //CARD_NAME_CHAR_BOT_451,
         //CARD_NAME_MEGAPUNK,
 
-        cards.Add(new SpellCard("C4", "Unstable Power", 4));
-        //cards.Add(new SpellCard("C100", "Touch of Zeus", 1));
-        //cards.Add(new SpellCard("C101", "Raze to Ashes", 1));
-        //cards.Add(new SpellCard("C102", "Deep Freeze", 1));
-        //cards.Add(new SpellCard("C103", "Brr Brr Blizzard", 1));
-        //cards.Add(new SpellCard("C104", "Riot Up", 1));
-        //cards.Add(new SpellCard("C105", "Widespread Frostbite", 1));
-        //cards.Add(new SpellCard("C106", "Greedy Fingers", 1));
-        //cards.Add(new SpellCard("C107", "Silence of the Lambs", 1));
-        //cards.Add(new SpellCard("C108", "Mudslinging", 1));
-        //cards.Add(new SpellCard("C109", "Death Notice", 1));
-        //cards.Add(new SpellCard("C30", "Spray n' Pray", 1));
-        //cards.Add(new SpellCard("C31", "Battle Royale", 1));
-        //cards.Add(new SpellCard("C32", "Grave-digging", 1));
+        cards.Add(new SpellCard("C4", SpellCard.SPELL_NAME_UNSTABLE_POWER, 4));
+        cards.Add(new SpellCard("C100", SpellCard.SPELL_NAME_TOUCH_OF_ZEUS, 1));
+        cards.Add(new SpellCard("C101", SpellCard.SPELL_NAME_RAZE_TO_ASHES, 1));
+        cards.Add(new SpellCard("C102", SpellCard.SPELL_NAME_DEEP_FREEZE, 1));
+        cards.Add(new SpellCard("C103", SpellCard.SPELL_NAME_BRR_BRR_BLIZZARD, 1));
+        cards.Add(new SpellCard("C104", SpellCard.SPELL_NAME_RIOT_UP, 1));
+        cards.Add(new SpellCard("C105", SpellCard.SPELL_NAME_WIDESPREAD_FROSTBITE, 1));
+        cards.Add(new SpellCard("C106", SpellCard.SPELL_NAME_GREEDY_FINGERS, 1));
+        cards.Add(new SpellCard("C107", SpellCard.SPELL_NAME_SILENCE_OF_THE_LAMBS, 1));
+        cards.Add(new SpellCard("C108", SpellCard.SPELL_NAME_MUDSLINGING, 1));
+        cards.Add(new SpellCard("C109", SpellCard.SPELL_NAME_DEATH_NOTICE, 1));
+        cards.Add(new SpellCard("C30", SpellCard.SPELL_NAME_SPRAY_N_PRAY, 1));
+        cards.Add(new SpellCard("C31", SpellCard.SPELL_NAME_GRAVE_DIGGING, 1));
 
         Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;

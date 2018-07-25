@@ -818,13 +818,12 @@ public class BattleManager : MonoBehaviour
 
     private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
     {
-        int spawnCount = this.spawnCount;
-        this.spawnCount += 1;
+        int spawnRank = GetNewSpawnRank();
 
         battleCardObject.visual.Renderer.enabled = false;
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
 
-        Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex, spawnCount);
+        Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex, spawnRank);
     }
 
     /*
@@ -1529,6 +1528,13 @@ public class BattleManager : MonoBehaviour
     public bool CanReceiveChallengeMove()
     {
         return true;
+    }
+
+    public int GetNewSpawnRank()
+    {
+        int spawnRank = this.spawnCount;
+        this.spawnCount += 1;
+        return spawnRank;
     }
 
     public List<ChallengeMove> GetServerMoves()
