@@ -869,11 +869,11 @@ public class EffectManager : MonoBehaviour
 
         foreach (BoardCreature boardCreature in playerCreatures)
         {
-            boardCreature.Heal(40);
+            boardCreature.Heal(amount);
         }
         foreach (BoardCreature boardCreature in opponentCreatures)
         {
-            boardCreature.Heal(40);
+            boardCreature.Heal(amount);
         }
     }
 
@@ -916,6 +916,33 @@ public class EffectManager : MonoBehaviour
         return deadCards;
     }
 
+    private ChallengeCard CleanCardForSummon(string playerId, ChallengeCard dirtyCard)
+    {
+        int spawnRank = BattleManager.Instance.GetNewSpawnRank();
+        ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
+            JsonUtility.ToJson(dirtyCard)
+        );
+
+        spawnCard.SetId(playerId + "-" + spawnRank);
+        spawnCard.SetCost(spawnCard.CostStart);
+        spawnCard.SetAttack(spawnCard.AttackStart);
+        spawnCard.SetHealth(spawnCard.HealthStart);
+        spawnCard.SetHealthMax(spawnCard.HealthStart);
+        spawnCard.SetIsFrozen(0);
+        spawnCard.SetIsSilenced(0);
+
+        if (spawnCard.GetAbilities().Contains(Card.CARD_ABILITY_CHARGE))
+        {
+            spawnCard.SetCanAttack(1);
+        }
+        else
+        {
+            spawnCard.SetCanAttack(0);
+        }
+
+        return spawnCard;
+    }
+
     private void AbilityReviveHighestCostCreature(Effect effect)
     {
         string playerId = effect.PlayerId;
@@ -952,7 +979,7 @@ public class EffectManager : MonoBehaviour
 
             for (int i = sortedDeadCards.Count - 1; i >= 0; i -= 1)
             {
-                ChallengeCard currentCard = sortedDeadCards[0];
+                ChallengeCard currentCard = sortedDeadCards[i];
                 int currentCost = currentCard.CostStart;
                 if (currentCost > highestCost)
                 {
@@ -972,22 +999,13 @@ public class EffectManager : MonoBehaviour
             }
             else
             {
-                int spawnRank = BattleManager.Instance.GetNewSpawnRank();
-                ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(JsonUtility.ToJson(reviveCard));
+                ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
 
-                spawnCard.SetId(playerId + "-" + spawnRank);
-                spawnCard.SetCost(reviveCard.CostStart);
-                spawnCard.SetAttack(reviveCard.AttackStart);
-                spawnCard.SetHealth(reviveCard.HealthStart);
-                spawnCard.SetHealthMax(reviveCard.HealthStart);
-                spawnCard.SetIsFrozen(0);
-                spawnCard.SetIsSilenced(0);
+                int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
 
                 challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(effect.PlayerId);
                 challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-                int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
 
                 ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
                 moveAttributes.SetCard(spawnCard);
@@ -1606,6 +1624,9 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_MUDSLINGING:
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
+            case SpellCard.SPELL_NAME_GRAVE_DIGGING:
+                effects = SpellUntargetedGraveDigging(playerId);
+                break;
             default:
                 Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
                 break;
@@ -1712,6 +1733,79 @@ public class EffectManager : MonoBehaviour
         }
 
         return effects;
+    }
+
+    private List<Effect> SpellUntargetedGraveDigging(string playerId)
+    {
+        List<BoardCreature> aliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+
+        if (sortedDeadCards.Count <= 0)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
+        }
+        else if (aliveCreatures.Count < 6)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+        }
+        else
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+        }
+
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true;
+        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+
+        if (!DeveloperPanel.IsServerEnabled())
+        {
+            if (sortedDeadCards.Count <= 0)
+            {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(playerId);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
+                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            }
+            else
+            {
+                ChallengeCard reviveCard = sortedDeadCards.Last();
+
+                ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
+
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(playerId);
+                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+                int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
+
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetCard(spawnCard);
+                moveAttributes.SetFieldId(playerId);
+
+                if (spawnIndex < 0)
+                {
+                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+                }
+                else
+                {
+                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+                    moveAttributes.SetFieldIndex(spawnIndex);
+                }
+
+                challengeMove.SetMoveAttributes(moveAttributes);
+
+                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            }
+        }
+
+        return new List<Effect>();
     }
 
     private List<Effect> GetEffectsOnCreatureDamageDealt(

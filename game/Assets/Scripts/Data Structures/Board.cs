@@ -68,12 +68,19 @@ public class Board : MonoBehaviour
     public void CreateAndPlaceCreature(
         BattleCardObject battleCardObject,
         int index,
-        int spawnRank
+        int spawnRank,
+        bool shouldWarcry = true
     )
     {
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
-            new object[3] { battleCardObject, index, spawnRank }
+            new object[4]
+                {
+                    battleCardObject,
+                    index,
+                    spawnRank,
+                    shouldWarcry
+                }
         );
     }
 
@@ -82,6 +89,7 @@ public class Board : MonoBehaviour
         BattleCardObject battleCardObject = args[0] as BattleCardObject;
         int index = (int)args[1];
         int spawnRank = (int)args[2];
+        bool shouldWarcry = (bool)args[3];
 
         PlayingField playingField = this.playerIdToField[battleCardObject.Owner.Id];
         Transform boardPlace = playingField.GetBoardPlaceByIndex(index);
@@ -104,10 +112,13 @@ public class Board : MonoBehaviour
 
         Destroy(battleCardObject.gameObject);
 
-        EffectManager.Instance.OnCreaturePlay(
-            boardCreature.Owner.Id,
-            boardCreature.GetCardId()
-        );
+        if (shouldWarcry)
+        {
+            EffectManager.Instance.OnCreaturePlay(
+                boardCreature.Owner.Id,
+                boardCreature.GetCardId()
+            );
+        }
     }
 
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
@@ -302,6 +313,7 @@ public class Board : MonoBehaviour
             int index
         )
         {
+            // TODO: could use Board's CreateAndPlaceCreature with shouldWarcry false.
             Transform boardPlace = GetBoardPlaceByIndex(index);
 
             CreatureCard creatureCard = challengeCard.GetCard(false) as CreatureCard;
