@@ -798,6 +798,13 @@ public class BattleManager : MonoBehaviour
                 challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(player.Id);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
+
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetCardId(battleCardObject.Card.Id);
+                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+                moveAttributes.SetFieldIndex(index);
+                challengeMove.SetMoveAttributes(moveAttributes);
+
                 challengeMove.SetRank(GetServerMoveRank());
                 ReceiveChallengeMove(challengeMove);
             }
@@ -1174,9 +1181,50 @@ public class BattleManager : MonoBehaviour
         );
     }
 
-    private void ReceiveMoveSummonCreature()
+    private void ReceiveMoveSummonCreature(
+        string playerId,
+        ChallengeCard challengeCard,
+        string fieldId,
+        int fieldIndex
+    )
     {
+        Card card = challengeCard.GetCard();
+        if (card.GetType() == typeof(CreatureCard))
+        {
+            Player player = GetPlayerById(playerId);
+            GameObject created = new GameObject(card.Name);
+            BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+            battleCardObject.Initialize(player, card);
 
+            Board.Instance.CreateAndPlaceCreature(
+                battleCardObject,
+                fieldIndex,
+                challengeCard.SpawnRank,
+                false
+            );
+
+            EffectManager.Instance.OnSummonCreatureFinish();
+        }
+        else
+        {
+            Debug.LogError("Invalid card category for summon creature move");
+        }
+    }
+
+    private void ReceiveMoveSummonCreatureFieldFull(
+        string playerId,
+        CreatureCard card,
+        string fieldId
+    )
+    {
+        // TODO
+        EffectManager.Instance.OnSummonCreatureFinish();
+    }
+
+    private void ReceiveMoveSummonCreatureNoCreature(string playerId)
+    {
+        // TODO
+        EffectManager.Instance.OnSummonCreatureFinish();
     }
 
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
@@ -1205,7 +1253,6 @@ public class BattleManager : MonoBehaviour
         //  ]
         //}
         List<ChallengeEndState.ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-
 
     }
 
@@ -1443,9 +1490,31 @@ public class BattleManager : MonoBehaviour
         {
             ReceiveMoveSummonCreature(
                 serverMove.PlayerId,
+                serverMove.Attributes.Card,
                 serverMove.Attributes.FieldId,
-                serverMove.Attributes.Card
+                serverMove.Attributes.FieldIndex
             );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL)
+        {
+            Card card = serverMove.Attributes.Card.GetCard();
+
+            if (card.GetType() == typeof(SpellCard))
+            {
+                ReceiveMoveSummonCreatureFieldFull(
+                    serverMove.PlayerId,
+                    card as CreatureCard,
+                    serverMove.Attributes.FieldId
+                );
+            }
+            else
+            {
+                Debug.LogError("Invalid card category for summon creature move");
+            }
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE)
+        {
+            ReceiveMoveSummonCreatureNoCreature(serverMove.PlayerId);
         }
 
         return serverMove.Rank;
@@ -1485,7 +1554,12 @@ public class BattleManager : MonoBehaviour
 
     private void EnemyPlaySpellUntargetedAnim(BattleCardObject battleCardObject)
     {
-        LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
+        LeanTween.rotate(
+            battleCardObject.gameObject,
+            this.enemyPlayCardFixedTransform.rotation.eulerAngles,
+            CardTween.TWEEN_DURATION
+        ).setEaseInQuad();
+
         CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
             .setEaseInQuad()
             .setOnComplete(() =>
