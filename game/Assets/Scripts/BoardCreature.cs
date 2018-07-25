@@ -101,7 +101,7 @@ public class BoardCreature : Targetable
 
     public void InitializeFromChallengeCard(
         BattleCardObject battleCardObject,
-        PlayerState.ChallengeCard challengeCard
+        ChallengeCard challengeCard
     )
     {
         this.owner = battleCardObject.Owner;

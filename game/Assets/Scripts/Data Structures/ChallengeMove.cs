@@ -85,8 +85,8 @@ public class ChallengeMove
         public List<int> DeckCardIndices => deckCardIndices;
 
         [SerializeField]
-        private PlayerState.ChallengeCard card;
-        public PlayerState.ChallengeCard Card => card;
+        private ChallengeCard card;
+        public ChallengeCard Card => card;
 
         public void SetCardId(string cardId)
         {
@@ -118,7 +118,7 @@ public class ChallengeMove
             this.deckCardIndices = deckCardIndices;
         }
 
-        public void SetCard(PlayerState.ChallengeCard card)
+        public void SetCard(ChallengeCard card)
         {
             this.card = card;
         }

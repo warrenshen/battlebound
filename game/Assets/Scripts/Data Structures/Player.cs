@@ -608,24 +608,24 @@ public class Player
         playerState.SetDeckSize(this.deckSize);
         playerState.SetMode(this.mode);
 
-        List<PlayerState.ChallengeCard> handCards = new List<PlayerState.ChallengeCard>();
+        List<ChallengeCard> handCards = new List<ChallengeCard>();
         if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
         {
             for (int i = 0; i < this.hand.Size(); i += 1)
             {
                 Card card = this.hand.GetCardObjectByIndex(i).Card;
-                PlayerState.ChallengeCard challengeCard = card.GetChallengeCard();
+                ChallengeCard challengeCard = card.GetChallengeCard();
                 handCards.Add(challengeCard);
             }
         }
         playerState.SetHand(handCards);
 
-        PlayerState.ChallengeCard[] fieldCards = new PlayerState.ChallengeCard[6];
+        ChallengeCard[] fieldCards = new ChallengeCard[6];
         for (int i = 0; i < 6; i += 1)
         {
             Board.PlayingField playingField = Board.Instance.GetFieldByPlayerId(this.id);
             BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
-            PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+            ChallengeCard challengeCard = new ChallengeCard();
 
             if (boardCreature == null)
             {
