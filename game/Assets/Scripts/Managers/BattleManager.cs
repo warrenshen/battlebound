@@ -54,6 +54,8 @@ public class BattleManager : MonoBehaviour
     private List<ChallengeMove> serverMoveQueue;
     private List<ChallengeMove> deviceMoveQueue;
 
+    private List<ChallengeMove> serverMoves;
+
     // Cached transforms.
     [SerializeField]
     private Transform enemyPlayCardFixedTransform;
@@ -122,6 +124,7 @@ public class BattleManager : MonoBehaviour
 
         this.serverMoveQueue = new List<ChallengeMove>();
         this.deviceMoveQueue = new List<ChallengeMove>();
+        this.serverMoves = new List<ChallengeMove>();
 
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.players = new List<Player>();
@@ -1293,6 +1296,7 @@ public class BattleManager : MonoBehaviour
             this.deviceMoveQueue.RemoveAt(0);
         }
 
+        this.serverMoves.Add(serverMove);
         this.serverMoveQueue.RemoveAt(0);
 
         if (
@@ -1525,5 +1529,10 @@ public class BattleManager : MonoBehaviour
     public bool CanReceiveChallengeMove()
     {
         return true;
+    }
+
+    public List<ChallengeMove> GetServerMoves()
+    {
+        return this.serverMoves;
     }
 }

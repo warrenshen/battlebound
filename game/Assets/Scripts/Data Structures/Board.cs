@@ -34,7 +34,7 @@ public class Board : MonoBehaviour
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
-    public void RegisterPlayer(Player player, PlayerState.ChallengeCard[] fieldCards)
+    public void RegisterPlayer(Player player, ChallengeCard[] fieldCards)
     {
         PlayingField playingField = new PlayingField(player, fieldCards);
         this.playerIdToField[player.Id] = playingField;
@@ -239,7 +239,7 @@ public class Board : MonoBehaviour
             CacheBoardPlaces(player);
         }
 
-        public PlayingField(Player player, PlayerState.ChallengeCard[] fieldCards)
+        public PlayingField(Player player, ChallengeCard[] fieldCards)
         {
             this.playerId = player.Id;
             this.creatures = new BoardCreature[6];
@@ -260,11 +260,11 @@ public class Board : MonoBehaviour
             }
         }
 
-        private void SpawnCardsFromChallengeState(Player player, PlayerState.ChallengeCard[] fieldCards)
+        private void SpawnCardsFromChallengeState(Player player, ChallengeCard[] fieldCards)
         {
             for (int i = 0; i < 6; i += 1)
             {
-                PlayerState.ChallengeCard challengeCard = fieldCards[i];
+                ChallengeCard challengeCard = fieldCards[i];
 
                 if (challengeCard.Id == "EMPTY")
                 {
@@ -281,7 +281,7 @@ public class Board : MonoBehaviour
 
         private void SpawnCreatureFromChallengeCard(
             Player player,
-            PlayerState.ChallengeCard challengeCard,
+            ChallengeCard challengeCard,
             int index
         )
         {
