@@ -29,6 +29,29 @@ public abstract class Card
     public const string CARD_NAME_SENTIENT_SEAKING = "Sentient Seaking";
     public const string CARD_NAME_CRYSTAL_SNAPPER = "Crystal Snapper";
     public const string CARD_NAME_BATTLECLAD_GASDON = "Battleclad Gasdon";
+    public const string CARD_NAME_REDHAIRED_PALADIN = "Redhaired Paladin";
+    public const string CARD_NAME_FIRESWORN_GODBLADE = "Firesworn Godblade";
+    public const string CARD_NAME_RITUAL_HATCHLING = "Ritual Hatchling";
+    public const string CARD_NAME_HELLBRINGER = "Hellbringer";
+    public const string CARD_NAME_HOOFED_LUSH = "Hoofed Lush";
+    public const string CARD_NAME_DIONYSIAN_TOSSPOT = "Dionysian Tosspot";
+    public const string CARD_NAME_SEAHORSE_SQUIRE = "Seahorse Squire";
+    public const string CARD_NAME_TRIDENT_BATTLEMAGE = "Trident Battlemage";
+    public const string CARD_NAME_SNEERBLADE = "Sneerblade";
+    public const string CARD_NAME_TIMEWARP_KINGPIN = "Timewarp Kingpin";
+    public const string CARD_NAME_LUX = "Lux";
+    public const string CARD_NAME_THUNDEROUS_DESPERADO = "Thunderous Desperado";
+    public const string CARD_NAME_CEREBOAROUS = "Cereboarus";
+    public const string CARD_NAME_GUPPEA = "Guppea";
+    public const string CARD_NAME_RHYNOKARP = "Rhynokarp";
+    public const string CARD_NAME_PRICKLEPILLAR = "Pricklepillar";
+    public const string CARD_NAME_ADDERSPINE_WEEVIL = "Adderspine Weevil";
+    public const string CARD_NAME_THIEF_OF_NIGHT = "Thief of Night";
+    public const string CARD_NAME_POWER_SIPHONER = "POWER SIPH#NER";
+    public const string CARD_NAME_LIL_RUSTY = "Lil' Rusty";
+    public const string CARD_NAME_INFERNO_902 = "INFERNO-902";
+    public const string CARD_NAME_CHAR_BOT_451 = "CHAR-BOT-451";
+    public const string CARD_NAME_MEGAPUNK = "MegaPUNK";
 
     public static readonly List<string> CREATURE_CARD_NAMES = new List<string>
     {
@@ -54,6 +77,29 @@ public abstract class Card
         CARD_NAME_SENTIENT_SEAKING,
         CARD_NAME_CRYSTAL_SNAPPER,
         CARD_NAME_BATTLECLAD_GASDON,
+        CARD_NAME_REDHAIRED_PALADIN,
+        CARD_NAME_FIRESWORN_GODBLADE,
+        CARD_NAME_RITUAL_HATCHLING,
+        CARD_NAME_HELLBRINGER,
+        CARD_NAME_HOOFED_LUSH,
+        CARD_NAME_DIONYSIAN_TOSSPOT,
+        CARD_NAME_SEAHORSE_SQUIRE,
+        CARD_NAME_TRIDENT_BATTLEMAGE,
+        CARD_NAME_SNEERBLADE,
+        CARD_NAME_TIMEWARP_KINGPIN,
+        CARD_NAME_LUX,
+        CARD_NAME_THUNDEROUS_DESPERADO,
+        CARD_NAME_CEREBOAROUS,
+        CARD_NAME_GUPPEA,
+        CARD_NAME_RHYNOKARP,
+        CARD_NAME_PRICKLEPILLAR,
+        CARD_NAME_ADDERSPINE_WEEVIL,
+        CARD_NAME_THIEF_OF_NIGHT,
+        CARD_NAME_POWER_SIPHONER,
+        CARD_NAME_LIL_RUSTY,
+        CARD_NAME_INFERNO_902,
+        CARD_NAME_CHAR_BOT_451,
+        CARD_NAME_MEGAPUNK,
     };
 
     public enum CardType { Creature, Spell, Weapon, Structure };
@@ -193,7 +239,7 @@ public abstract class Card
     public CardObject wrapper;
     //Rarity, Description, FrontImage, BackImage all moved into CardObject, obtain via codex loading cached to BattleManager
 
-    public abstract PlayerState.ChallengeCard GetChallengeCard();
+    public abstract ChallengeCard GetChallengeCard();
 
     public string GetName()
     {
@@ -333,9 +379,9 @@ public class CreatureCard : Card
         return this.cardTemplate.effectPrefab;
     }
 
-    public override PlayerState.ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard()
     {
-        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
         challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetName(this.name);
@@ -387,9 +433,9 @@ public class WeaponCard : Card
         LoadCodex();
     }
 
-    public override PlayerState.ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard()
     {
-        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
         challengeCard.SetCategory((int)Card.CardType.Weapon);
         challengeCard.SetName(this.name);
@@ -432,9 +478,9 @@ public class StructureCard : Card
         LoadCodex();
     }
 
-    public override PlayerState.ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard()
     {
-        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
         challengeCard.SetCategory((int)Card.CardType.Structure);
         challengeCard.SetName(this.name);
@@ -540,9 +586,9 @@ public class SpellCard : Card
         LoadCodex();
     }
 
-    public override PlayerState.ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard()
     {
-        PlayerState.ChallengeCard challengeCard = new PlayerState.ChallengeCard();
+        ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
         challengeCard.SetCategory((int)Card.CardType.Spell);
         challengeCard.SetName(this.name);
