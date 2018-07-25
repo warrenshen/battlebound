@@ -197,7 +197,7 @@ public class BoardCreature : Targetable
         {
             foreach (AnimationState state in this.summonAnimation)
             {
-                state.speed = 1.66f;
+                state.speed = 5f;
                 this.summonAnimClips.Add(state.clip.name);
             }
         }
@@ -212,10 +212,10 @@ public class BoardCreature : Targetable
             {
                 this.summonAnimClips.Add(clip.name);
             }
-            this.summonAnimation.speed = 1;
+            this.summonAnimation.speed = 1.33f;
         }
         this.summonAnimation.Play(this.summonAnimClips[0]);
-        this.summonAnimation.CrossFade(this.summonAnimClips[1], 3F);
+        this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
     }
 
     public override string GetCardId()
@@ -524,20 +524,7 @@ public class BoardCreature : Targetable
             return;
 
         HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
-        if (this.attack > creatureCard.GetAttack())
-            attackText.TmpObject.color = BoardCreature.LIGHT_GREEN;
-        else if (this.attack < creatureCard.GetAttack())
-            attackText.TmpObject.color = BoardCreature.LIGHT_RED;
-        else
-            attackText.TmpObject.color = Color.white;
-
         HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
-        if (this.health > creatureCard.GetHealth())
-            healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
-        else if (this.health < creatureCard.GetHealth())
-            healthText.TmpObject.color = BoardCreature.LIGHT_RED;
-        else
-            attackText.TmpObject.color = Color.white;
 
         if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
@@ -551,6 +538,20 @@ public class BoardCreature : Targetable
         this.visual.SetTextFieldWithKey("Title", this.name);
         this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
         this.visual.SetTextFieldWithKey("Health", this.health.ToString());
+
+        if (this.attack > creatureCard.GetAttack())
+            attackText.TmpObject.color = BoardCreature.LIGHT_GREEN;
+        else if (this.attack < creatureCard.GetAttack())
+            attackText.TmpObject.color = BoardCreature.LIGHT_RED;
+        else
+            attackText.TmpObject.color = Color.white;
+
+        if (this.health > creatureCard.GetHealth())
+            healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
+        else if (this.health < creatureCard.GetHealth())
+            healthText.TmpObject.color = BoardCreature.LIGHT_RED;
+        else
+            attackText.TmpObject.color = Color.white;
     }
 
     private void RenderStatus()
@@ -655,17 +656,17 @@ public class BoardCreature : Targetable
     {
         this.raisedCard = true;
 
-        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 3 + Vector3.right * 2F + Vector3.down, ActionManager.TWEEN_DURATION)
+        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 6 + Vector3.right + Vector3.down, 0.01f)
                  .setDelay(1)
                  .setOnStart(() =>
             {
                 ActionManager.Instance.SetCursor(3);
                 this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Animated"));
             });
-        LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, ActionManager.TWEEN_DURATION)
+        LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, 0.01f)
                  .setDelay(1);
-        LeanTween.rotateX(this.visual.gameObject, 15, ActionManager.TWEEN_DURATION)
-                 .setDelay(1);
+        LeanTween.rotateX(this.visual.gameObject, 15, 0.01f)
+        .setDelay(1);
     }
 
     private void LowerCardVisual()

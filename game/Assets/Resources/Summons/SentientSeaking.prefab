@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4103088116437550}
   - component: {fileID: 114760551015933832}
-  - component: {fileID: 114779925599678268}
   - component: {fileID: 111407828942282704}
   - component: {fileID: 137770140234300500}
   m_Layer: 13
@@ -709,8 +708,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1026206871535110}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0035, y: 0.0037, z: 1}
+  m_LocalPosition: {x: 0, y: -1.5, z: 0}
+  m_LocalScale: {x: 0.0031, y: 0.0031, z: 1}
   m_Children:
   - {fileID: 4441698375291928}
   m_Father: {fileID: 4586636759480378}
@@ -9892,19 +9891,7 @@ MonoBehaviour:
   mLocalTransform: {fileID: 4103088116437550}
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
-  updatePrefabs: 1
---- !u!114 &114779925599678268
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1026206871535110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
+  updatePrefabs: 0
 --- !u!137 &137770140234300500
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

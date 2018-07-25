@@ -36,8 +36,8 @@ public class CardTemplate
     public CardTemplate()
     {
         //empty constructor
-        this.frontScale = new Vector2(1, 1);
-        this.frontOffset = new Vector2(0, 0);
+        this.frontScale = new Vector2(1, 1.66F);
+        this.frontOffset = new Vector2(0, -0.66F);
 
         this.backScale = new Vector2(1, 1.66F);
         this.backOffset = new Vector2(0, -0.66F);

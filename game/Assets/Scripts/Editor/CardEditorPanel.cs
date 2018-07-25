@@ -149,12 +149,20 @@ public class CardEditorPanel : EditorWindow
 
         this.summonPrefab = Resources.Load(chosen.summonPrefab) as GameObject;
         this.effectPrefab = Resources.Load(chosen.effectPrefab) as GameObject;
+
+        if (chosen.frontScale.x < 0)
+        {
+            chosen.frontScale *= -1;
+            this.flipHorizontal = true;
+        }
+        else
+        {
+            this.flipHorizontal = false;
+        }
     }
 
     private void RenderTemplateEditor(CardTemplate template, int verticalOffset, bool editMode)
     {
-        ApplyCorrections(template, editMode);  //do fixes as needed
-
         CardArtworkSelect(template, verticalOffset, editMode);
         CardDefaultSection(template, verticalOffset);
         CardByTypeSection(template, verticalOffset, editMode);
@@ -171,19 +179,6 @@ public class CardEditorPanel : EditorWindow
         if (valid && GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), buttonMessage, style))
         {
             GenerateCard(template, editMode);
-        }
-    }
-
-    private void ApplyCorrections(CardTemplate template, bool editMode)
-    {
-        if (template.frontScale.x < 0)
-        {
-            template.frontScale *= -1;
-            this.flipHorizontal = true;
-        }
-        else
-        {
-            this.flipHorizontal = false;
         }
     }
 

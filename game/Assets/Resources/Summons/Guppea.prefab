@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4882364068432048}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: head_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,7 +34,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4992860827963178}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: shadow_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,7 +49,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4758209701382640}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: right_hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4802430841065042}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +79,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4518435465487882}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4627709870484188}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Root_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4707120366039264}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: left_hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4715866728518956}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: back2_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,10 +140,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4332899755704132}
   - component: {fileID: 114750042216059908}
-  - component: {fileID: 114983382559973962}
   - component: {fileID: 111321723237130514}
   - component: {fileID: 137102300696778786}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: prefab_0244
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,7 +157,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4391695711608984}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Guppea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +172,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4910058523937476}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: left_hand_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +187,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4458256599402994}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: back1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -203,7 +202,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4151990441485422}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: back2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +217,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4016930861129236}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +232,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4109880698518664}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: back1_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +247,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4666649521006476}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: right_hand_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1964,18 +1963,6 @@ MonoBehaviour:
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
   updatePrefabs: 1
---- !u!114 &114983382559973962
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1456186722932160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
 --- !u!137 &137102300696778786
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
