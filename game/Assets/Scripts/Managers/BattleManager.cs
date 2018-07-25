@@ -1085,7 +1085,7 @@ public class BattleManager : MonoBehaviour
             battleCardObject.Reinitialize(card);
 
             opponent.PlayCard(battleCardObject);
-            this.EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
+            EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
         }
         else
         {
@@ -1097,7 +1097,7 @@ public class BattleManager : MonoBehaviour
             }
 
             opponent.PlayCard(battleCardObject);
-            this.EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
+            EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
         }
     }
 
@@ -1121,10 +1121,7 @@ public class BattleManager : MonoBehaviour
             battleCardObject.Reinitialize(card);
 
             opponent.PlayCard(battleCardObject);
-            StartCoroutine(
-                "EnemyPlaySpellUntargetedAnim",
-                new object[1] { battleCardObject }
-            );
+            EnemyPlaySpellUntargetedAnim(battleCardObject);
         }
         else
         {
@@ -1136,10 +1133,7 @@ public class BattleManager : MonoBehaviour
             }
 
             opponent.PlayCard(battleCardObject);
-            StartCoroutine(
-                "EnemyPlaySpellUntargetedAnim",
-                new object[1] { battleCardObject }
-            );
+            EnemyPlaySpellUntargetedAnim(battleCardObject);
         }
     }
 
