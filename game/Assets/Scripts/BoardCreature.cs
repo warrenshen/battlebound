@@ -252,7 +252,7 @@ public class BoardCreature : Targetable
         if (summonAnimClips.Count >= 2)
         {
             this.summonAnimation.Play(summonAnimClips[0]);
-            this.summonAnimation.CrossFadeQueued(summonAnimClips[1], 3F);    //should group with sound as a method
+            this.summonAnimation.CrossFade(summonAnimClips[1], 3F);    //should group with sound as a method
         }
         else
         {

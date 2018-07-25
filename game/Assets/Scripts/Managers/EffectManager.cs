@@ -25,6 +25,7 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
     public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
     public const string EFFECT_DRAW_CARD = "EFFECT_DRAW_CARD";
+    public const string EFFECT_SPRAY_N_PRAY_RANDOM = "EFFECT_SPRAY_N_PRAY_RANDOM";
 
     private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
@@ -41,6 +42,7 @@ public class EffectManager : MonoBehaviour
 
     private static readonly List<string> EFFECT_M_PRIORITY_ORDER = new List<string>
     {
+        EFFECT_SPRAY_N_PRAY_RANDOM,
         EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
         EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
     };
@@ -67,6 +69,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
         Card.CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY,
+        Card.CARD_ABILITY_BATTLE_CRY_DAMAGE_PLAYER_FACE_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_FOURTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY,
@@ -372,6 +375,9 @@ public class EffectManager : MonoBehaviour
 
         switch (effect.Name)
         {
+            case EFFECT_SPRAY_N_PRAY_RANDOM:
+                EffectSprayNPrayRandom(effect);
+                break;
             case EFFECT_DEATH_RATTLE_ATTACK_RANDOM:
                 EffectDeathRattleAttackRandom(effect);
                 break;
@@ -385,6 +391,35 @@ public class EffectManager : MonoBehaviour
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
+        }
+    }
+
+    private void EffectSprayNPrayRandom(Effect effect)
+    {
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(effect.PlayerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SPRAY_N_PRAY_RANDOM);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true;
+        StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
+
+        if (!DeveloperPanel.IsServerEnabled())
+        {
+            Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(effect.PlayerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SPRAY_N_PRAY_RANDOM);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetFieldId(randomTargetable.Owner.Id);
+            moveAttributes.SetTargetId(randomTargetable.GetCardId());
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
         }
     }
 
@@ -1283,8 +1318,8 @@ public class EffectManager : MonoBehaviour
                     if (adjacentAttack > 0)
                     {
                         List<BoardCreature> adjacentCreatures = Board.Instance.GetAdjacentCreaturesByPlayerIdAndCardId(
-                            attackingCreature.Owner.Id,
-                            attackingCreature.GetCardId()
+                            defendingCreature.Owner.Id,
+                            defendingCreature.GetCardId()
                         );
 
                         foreach (BoardCreature adjacentCreature in adjacentCreatures)
@@ -1625,6 +1660,9 @@ public class EffectManager : MonoBehaviour
             case SpellCard.SPELL_NAME_MUDSLINGING:
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
+            case SpellCard.SPELL_NAME_SPRAY_N_PRAY:
+                effects = SpellUntargetedSprayNPray(playerId);
+                break;
             case SpellCard.SPELL_NAME_GRAVE_DIGGING:
                 effects = SpellUntargetedGraveDigging(playerId);
                 break;
@@ -1731,6 +1769,25 @@ public class EffectManager : MonoBehaviour
         foreach (BoardCreature boardCreature in playerCreatures)
         {
             boardCreature.GrantTaunt();
+        }
+
+        return effects;
+    }
+
+    private List<Effect> SpellUntargetedSprayNPray(string playerId)
+    {
+        List<Effect> effects = new List<Effect>();
+
+        for (int i = 0; i < 3; i += 1)
+        {
+            effects.Add(
+                new Effect(
+                    playerId,
+                    EFFECT_SPRAY_N_PRAY_RANDOM,
+                    null, // Does not matter.
+                    i
+                )
+            );
         }
 
         return effects;
