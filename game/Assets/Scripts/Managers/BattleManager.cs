@@ -1174,6 +1174,10 @@ public class BattleManager : MonoBehaviour
         );
     }
 
+    private void ReceiveMoveSummonCreature()
+    {
+
+    }
 
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
@@ -1433,6 +1437,14 @@ public class BattleManager : MonoBehaviour
                 serverMove.Attributes.CardId,
                 serverMove.Attributes.FieldId,
                 serverMove.Attributes.TargetId
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE)
+        {
+            ReceiveMoveSummonCreature(
+                serverMove.PlayerId,
+                serverMove.Attributes.FieldId,
+                serverMove.Attributes.Card
             );
         }
 

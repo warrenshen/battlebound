@@ -921,11 +921,16 @@ public class EffectManager : MonoBehaviour
         string playerId = effect.PlayerId;
 
         List<BoardCreature> aliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(effect.PlayerId);
 
-        if (aliveCreatures.Count < 6)
+        if (sortedDeadCards.Count <= 0)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
+        }
+        else if (aliveCreatures.Count < 6)
         {
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
         }
@@ -938,12 +943,10 @@ public class EffectManager : MonoBehaviour
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
         this.isWaiting = true;
-        StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
+        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
 
         if (!DeveloperPanel.IsServerEnabled())
         {
-            List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
-
             int highestCost = -1;
             ChallengeCard reviveCard = null;
 
@@ -960,7 +963,12 @@ public class EffectManager : MonoBehaviour
 
             if (reviveCard == null)
             {
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(effect.PlayerId);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
+                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
+                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
             }
             else
             {
@@ -1002,6 +1010,15 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitForSummonCreature(object[] args)
+    {
+        int moveRank = (int)args[0];
+        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     private void AbilitySilenceAllOpponentCreatures(Effect effect)
     {
         string playerId = effect.PlayerId;
@@ -1033,6 +1050,11 @@ public class EffectManager : MonoBehaviour
     }
 
     public void OnDrawCardFinish()
+    {
+        this.isWaiting = false;
+    }
+
+    public void OnSummonCreatureFinish()
     {
         this.isWaiting = false;
     }

@@ -240,10 +240,25 @@ public class BoardCreature : Targetable
 
     public void FightAnimationWithCallback(Targetable other, UnityAction onFightFinish)
     {
-        this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
+        if (this.audioSources != null && this.audioSources.Length >= 2 && this.audioSources[1] != null)
+        {
+            this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
+        }
+        else
+        {
+            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
+        }
 
-        this.summonAnimation.Play(summonAnimClips[0]);
-        this.summonAnimation.CrossFade(summonAnimClips[1], 3F);    //should group with sound as a method
+        if (summonAnimClips.Count >= 2)
+        {
+            this.summonAnimation.Play(summonAnimClips[0]);
+            this.summonAnimation.CrossFadeQueued(summonAnimClips[1], 3F);    //should group with sound as a method
+        }
+        else
+        {
+            Debug.LogWarning(string.Format("Missing summon animation for card {0}", this.name));
+        }
+
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.summonAnimation.transform.position;
@@ -310,7 +325,7 @@ public class BoardCreature : Targetable
             int healthBefore = this.health;
             this.health -= amount;
 
-            this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
+            PlayAudioTakeDamage();
 
             damageTaken = Math.Min(healthBefore, amount);
             TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
@@ -334,7 +349,7 @@ public class BoardCreature : Targetable
             int healthBefore = this.health;
             this.health = 0;
 
-            this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
+            PlayAudioTakeDamage();
 
             damageTaken = healthBefore;
             TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
@@ -355,7 +370,7 @@ public class BoardCreature : Targetable
         int healthBefore = this.health;
         this.health = 0;
 
-        this.audioSources[2].PlayDelayed(BoardCreature.ATTACK_DELAY / 2);
+        PlayAudioTakeDamage();
 
         Redraw();
     }
@@ -376,7 +391,7 @@ public class BoardCreature : Targetable
             FXPoolManager.Instance.PlayEffect("HealPillarVFX", transform.position);
         }
 
-        this.Redraw();
+        Redraw();
         return amountHealed;
     }
 
@@ -701,5 +716,17 @@ public class BoardCreature : Targetable
     public void PlayParticle0()
     {
         //Called during attack animation
+    }
+
+    private void PlayAudioTakeDamage()
+    {
+        if (this.audioSources != null && this.audioSources.Length >= 3 && this.audioSources[2] != null)
+        {
+            this.audioSources[2].PlayDelayed(ATTACK_DELAY / 2);
+        }
+        else
+        {
+            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
+        }
     }
 }
