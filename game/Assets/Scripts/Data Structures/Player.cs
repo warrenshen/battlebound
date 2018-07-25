@@ -689,6 +689,30 @@ public class Player
         cards.Add(new CreatureCard("C21", "Sentient Seaking", 1));
         cards.Add(new CreatureCard("C22", "Crystal Snapper", 1));
         cards.Add(new CreatureCard("C23", "Battleclad Gasdon", 1));
+        cards.Add(new CreatureCard("C24", Card.CARD_NAME_REDHAIRED_PALADIN, 1));
+        cards.Add(new CreatureCard("C25", Card.CARD_NAME_FIRESWORN_GODBLADE, 1));
+        cards.Add(new CreatureCard("C26", Card.CARD_NAME_RITUAL_HATCHLING, 1));
+        cards.Add(new CreatureCard("C27", Card.CARD_NAME_HELLBRINGER, 1));
+        cards.Add(new CreatureCard("C28", Card.CARD_NAME_HOOFED_LUSH, 1));
+        cards.Add(new CreatureCard("C29", Card.CARD_NAME_DIONYSIAN_TOSSPOT, 1));
+        cards.Add(new CreatureCard("C30", Card.CARD_NAME_SEAHORSE_SQUIRE, 1));
+        cards.Add(new CreatureCard("C31", Card.CARD_NAME_TRIDENT_BATTLEMAGE, 1));
+        cards.Add(new CreatureCard("C32", Card.CARD_NAME_SNEERBLADE, 1));
+        cards.Add(new CreatureCard("C33", Card.CARD_NAME_TIMEWARP_KINGPIN, 1));
+        cards.Add(new CreatureCard("C34", Card.CARD_NAME_LUX, 1));
+        cards.Add(new CreatureCard("C35", Card.CARD_NAME_THUNDEROUS_DESPERADO, 1));
+        cards.Add(new CreatureCard("C36", Card.CARD_NAME_CEREBOAROUS, 1));
+        cards.Add(new CreatureCard("C37", Card.CARD_NAME_GUPPEA, 1));
+        cards.Add(new CreatureCard("C38", Card.CARD_NAME_RHYNOKARP, 1));
+
+        //CARD_NAME_PRICKLEPILLAR,
+        //CARD_NAME_ADDERSPINE_WEEVIL,
+        //CARD_NAME_THIEF_OF_NIGHT,
+        //CARD_NAME_POWER_SIPHONER,
+        //CARD_NAME_LIL_RUSTY,
+        //CARD_NAME_INFERNO_902,
+        //CARD_NAME_CHAR_BOT_451,
+        //CARD_NAME_MEGAPUNK,
 
         cards.Add(new SpellCard("C4", "Unstable Power", 4));
         //cards.Add(new SpellCard("C100", "Touch of Zeus", 1));
