@@ -63,8 +63,9 @@ public class BoardCreature : Targetable
     private HyperCard.Card visual;
     private const float BOARD_GROW_FACTOR = 1.25f;
 
-    private Animation summonAnimation;
-    private List<AnimationState> summonAnimStates;
+    private GameObject summoned;
+    private dynamic summonAnimation;
+    private List<string> summonAnimClips;
 
     private AudioSource[] audioSources;
 
@@ -188,15 +189,33 @@ public class BoardCreature : Targetable
         }
 
         this.audioSources = created.GetComponents<AudioSource>();
+        this.summonAnimClips = new List<string>();
 
-        this.summonAnimation = created.transform.GetChild(0).GetComponent<Animation>();
-        this.summonAnimStates = new List<AnimationState>();
-        foreach (AnimationState state in this.summonAnimation)
+        this.summoned = created.transform.GetChild(0).gameObject;
+        this.summonAnimation = this.summoned.GetComponent<Animation>();
+        if (this.summonAnimation != null)
         {
-            this.summonAnimStates.Add(state);
+            foreach (AnimationState state in this.summonAnimation)
+            {
+                state.speed = 1.66f;
+                this.summonAnimClips.Add(state.clip.name);
+            }
         }
-        this.summonAnimation.Play(summonAnimStates[0].name);
-        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);
+        else
+        {
+            this.summonAnimation = this.summoned.GetComponent<Animator>();
+            if (this.summonAnimation == null)
+            {
+                Debug.LogError(String.Format("No animation or animator on gameobject: {0}", this.gameObject.name));
+            }
+            foreach (AnimationClip clip in this.summonAnimation.runtimeAnimatorController.animationClips)
+            {
+                this.summonAnimClips.Add(clip.name);
+            }
+            this.summonAnimation.speed = 1;
+        }
+        this.summonAnimation.Play(this.summonAnimClips[0]);
+        this.summonAnimation.CrossFade(this.summonAnimClips[1], 3F);
     }
 
     public override string GetCardId()
@@ -223,20 +242,20 @@ public class BoardCreature : Targetable
     {
         this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
 
-        this.summonAnimation.Play(summonAnimStates[0].name);
-        this.summonAnimation.CrossFadeQueued(summonAnimStates[1].name, 1F);    //should group with sound as a method
+        this.summonAnimation.Play(summonAnimClips[0]);
+        this.summonAnimation.CrossFade(summonAnimClips[1], 3F);    //should group with sound as a method
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.summonAnimation.transform.position;
 
         LeanTween
-            .move(this.summonAnimation.gameObject, this.transform.position - delta, 0.3F)
+            .move(this.summoned, this.transform.position - delta, 0.3F)
             .setEaseOutCubic().setDelay(BoardCreature.ATTACK_DELAY)
             .setOnComplete(
                 () =>
                 {
                     LeanTween
-                        .move(this.summonAnimation.gameObject, originalPosition, 0.3F)
+                        .move(this.summoned, originalPosition, 0.3F)
                         .setEaseInCubic();
                     onFightFinish();
                 }
@@ -422,7 +441,7 @@ public class BoardCreature : Targetable
         SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
 
         float elapsedTime = 0;
-        LeanTween.scale(this.summonAnimation.gameObject, Vector3.zero, duration / 3).setEaseInOutCubic();
+        LeanTween.scale(this.summoned, Vector3.zero, duration / 3).setEaseInOutCubic();
         while (elapsedTime < duration)
         {
             this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
@@ -677,5 +696,10 @@ public class BoardCreature : Targetable
         {
             LowerCardVisual();
         }
+    }
+
+    public void PlayParticle0()
+    {
+        //Called during attack animation
     }
 }
