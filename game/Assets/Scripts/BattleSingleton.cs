@@ -189,17 +189,30 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
-        List<GSData> movesData = scriptData.GetGSDataList("newMoves");
-        List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
-        foreach (GSData moveData in movesData)
+        // Logic to load in existing moves for resume challenge case.
+        List<GSData> movesData = scriptData.GetGSDataList("moves");
+        if (movesData.Count > 0)
         {
-            //Debug.Log(moveData.JSON);
-            challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
+            List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
+            foreach (GSData moveData in movesData)
+            {
+                //Debug.Log(moveData.JSON);
+                challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
+            }
+
+            BattleManager.Instance.SetServerMoves(challengeMoves);
+        }
+
+        List<GSData> newMovesData = scriptData.GetGSDataList("newMoves");
+        List<ChallengeMove> newChallengeMoves = new List<ChallengeMove>();
+        foreach (GSData moveData in newMovesData)
+        {
+            newChallengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
         }
 
         if (shouldQueueMoves)
         {
-            QueueChallengeMoves(challengeMoves);
+            QueueChallengeMoves(newChallengeMoves);
         }
     }
 

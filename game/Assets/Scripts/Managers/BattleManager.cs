@@ -1637,4 +1637,9 @@ public class BattleManager : MonoBehaviour
     {
         return this.serverMoves;
     }
+
+    public void SetServerMoves(List<ChallengeMove> serverMoves)
+    {
+        this.serverMoves = serverMoves;
+    }
 }
