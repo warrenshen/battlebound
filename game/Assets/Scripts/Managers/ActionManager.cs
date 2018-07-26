@@ -65,7 +65,7 @@ public class ActionManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (!active || EffectManager.Instance.IsWaiting)
+        if (!active || EffectManager.IsWaiting())
         {
             return;
         }
