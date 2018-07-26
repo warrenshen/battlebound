@@ -9,6 +9,14 @@
 require("DeckModule");
 require("ChallengeMovesModule");
 
+const MATCH_TYPE_CASUAL = 0;
+const MATCH_TYPE_RANKED = 1;
+
+const SHORT_CODE_TO_MATCH_TYPE = {
+    CasualChallenge: MATCH_TYPE_CASUAL,
+    RankedChallenge: MATCH_TYPE_RANKED,
+};
+
 /**
  * @return array - array of Card-like objects with levelPrevious and expPrevious fields.
  **/ 

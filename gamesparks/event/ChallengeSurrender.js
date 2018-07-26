@@ -26,6 +26,9 @@ if (challenge.getRunState() != "RUNNING") {
 const challengeStateData = challenge.getPrivateData("data");
 const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 
+// Reset `lastMoves` attribute in ChallengeState.
+challengeStateData.lastMoves = [];
+
 const move = {
     playerId: playerId,
     category: MOVE_CATEGORY_SURRENDER_BY_CHOICE,

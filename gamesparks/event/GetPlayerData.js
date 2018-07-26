@@ -20,6 +20,6 @@ Spark.setScriptData("playerId", player.getPlayerId());
 Spark.setScriptData("address", address);
 Spark.setScriptData("balance", balance);
 Spark.setScriptData("activeChallengeId", player.getPrivateData("activeChallengeId"));
-Spark.setScriptData("winStreak", player.getPrivateData("winStreak"));
+Spark.setScriptData("infoByMatchType", player.getPrivateData("infoByMatchType"));
 Spark.setScriptData("level", player.getPrivateData("level"));
 setScriptSuccess();

@@ -48,19 +48,21 @@ function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attribute
     challengeStateData.lastMoves = [];
     challengeStateData.moveTakenThisTurn = 1;
     
-    var move = {
+    const fieldId = attributes.fieldId;
+    const targetId = attributes.targetId;
+    
+    const move = {
         playerId: playerId,
         category: MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         attributes: {
             card: playedCard,
             cardId: cardId,
+            fieldId: fieldId,
+            targetId: targetId,
             handIndex: handIndex,
         },
     };
     addChallengeMove(challengeStateData, move);
-    
-    const fieldId = attributes.fieldId;
-    const targetId = attributes.targetId;
     
     processSpellTargetedPlay(challengeStateData, playerId, playedCard, fieldId, targetId);
     

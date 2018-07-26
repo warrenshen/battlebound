@@ -97,10 +97,10 @@ if (playedCard.abilities.indexOf(CARD_ABILITY_CHARGE) >= 0) {
     playedCard.canAttack = 0;
 }
 playedCard.isFrozen = 0;
+playedCard.isSilenced = 0;
 
-const spawnRank = challengeStateData.spawnCount;
+const spawnRank = getNewSpawnRank(challengeStateData);
 playedCard.spawnRank = spawnRank;
-challengeStateData.spawnCount += 1;
 
 // Reset `lastMoves` attribute in ChallengeState.
 challengeStateData.lastMoves = [];
