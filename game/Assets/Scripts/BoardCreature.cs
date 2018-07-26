@@ -730,4 +730,29 @@ public class BoardCreature : Targetable
             Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
         }
     }
+
+    public ChallengeCard GetChallengeCard()
+    {
+        ChallengeCard challengeCard = new ChallengeCard();
+
+        challengeCard.SetId(this.creatureCard.Id);
+        challengeCard.SetCategory((int)Card.CardType.Creature);
+        challengeCard.SetName(this.creatureCard.Name);
+        //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
+        challengeCard.SetLevel(this.creatureCard.Level);
+        challengeCard.SetCost(this.creatureCard.GetCost());
+        challengeCard.SetCostStart(this.creatureCard.GetCost());
+        challengeCard.SetHealth(this.health);
+        challengeCard.SetHealthStart(this.creatureCard.GetHealth());
+        challengeCard.SetHealthMax(this.maxHealth);
+        challengeCard.SetAttack(this.attack);
+        challengeCard.SetAttackStart(this.creatureCard.GetAttack());
+        challengeCard.SetCanAttack(this.canAttack);
+        challengeCard.SetIsFrozen(this.isFrozen);
+        challengeCard.SetIsSilenced(this.isSilenced ? 1 : 0);
+        challengeCard.SetSpawnRank(this.spawnRank);
+        challengeCard.SetAbilities(this.abilities);
+
+        return challengeCard;
+    }
 }

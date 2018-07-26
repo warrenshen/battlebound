@@ -22,10 +22,9 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
     public const string EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
-    public const string EFFECT_DEATH_RATTLE_ATTACK_RANDOM = "EFFECT_DEATH_RATTLE_ATTACK_RANDOM";
+    public const string EFFECT_RANDOM_TARGET = "EFFECT_RANDOM_TARGET";
     public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
     public const string EFFECT_DRAW_CARD = "EFFECT_DRAW_CARD";
-    public const string EFFECT_SPRAY_N_PRAY_RANDOM = "EFFECT_SPRAY_N_PRAY_RANDOM";
 
     private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
@@ -42,8 +41,7 @@ public class EffectManager : MonoBehaviour
 
     private static readonly List<string> EFFECT_M_PRIORITY_ORDER = new List<string>
     {
-        EFFECT_SPRAY_N_PRAY_RANDOM,
-        EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
+        EFFECT_RANDOM_TARGET,
         EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
     };
 
@@ -148,24 +146,30 @@ public class EffectManager : MonoBehaviour
         private int value;
         public int Value => value;
 
+        private ChallengeCard card;
+        public ChallengeCard Card => card;
+
         public Effect(
             string playerId,
             string name,
             string cardId,
-            int spawnRank,
-            int value = 0
+            int spawnRank
         )
         {
             this.playerId = playerId;
             this.name = name;
             this.cardId = cardId;
             this.spawnRank = spawnRank;
-            this.value = value;
         }
 
         public void SetValue(int value)
         {
             this.value = value;
+        }
+
+        public void SetCard(ChallengeCard card)
+        {
+            this.card = card;
         }
     }
 
@@ -362,6 +366,22 @@ public class EffectManager : MonoBehaviour
         Effect effect = this.mQueue[0];
         this.mQueue.RemoveAt(0);
 
+        switch (effect.Name)
+        {
+            case EFFECT_RANDOM_TARGET:
+                EffectRandomTarget(effect);
+                break;
+            case EFFECT_CARD_DIE_AFTER_DEATH_RATTLE:
+                EffectCardDieAfterDeathRattle(effect);
+                break;
+            default:
+                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
+                break;
+        }
+    }
+
+    private void EffectCardDieAfterDeathRattle(Effect effect)
+    {
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
@@ -373,32 +393,18 @@ public class EffectManager : MonoBehaviour
             return;
         }
 
-        switch (effect.Name)
-        {
-            case EFFECT_SPRAY_N_PRAY_RANDOM:
-                EffectSprayNPrayRandom(effect);
-                break;
-            case EFFECT_DEATH_RATTLE_ATTACK_RANDOM:
-                EffectDeathRattleAttackRandom(effect);
-                break;
-            case EFFECT_CARD_DIE_AFTER_DEATH_RATTLE:
-                Board.Instance.RemoveCreatureByPlayerIdAndCardId(
-                    effect.PlayerId,
-                    effect.CardId
-                );
-                boardCreature.Die();
-                break;
-            default:
-                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
-                break;
-        }
+        Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+        boardCreature.Die();
     }
 
-    private void EffectSprayNPrayRandom(Effect effect)
+    private void EffectRandomTarget(Effect effect)
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(effect.PlayerId);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SPRAY_N_PRAY_RANDOM);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
@@ -411,40 +417,11 @@ public class EffectManager : MonoBehaviour
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(effect.PlayerId);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SPRAY_N_PRAY_RANDOM);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
             challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetFieldId(randomTargetable.Owner.Id);
-            moveAttributes.SetTargetId(randomTargetable.GetCardId());
-            challengeMove.SetMoveAttributes(moveAttributes);
-
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
-        }
-    }
-
-    private void EffectDeathRattleAttackRandom(Effect effect)
-    {
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(effect.PlayerId);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        this.isWaiting = true;
-        StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
-
-        if (!DeveloperPanel.IsServerEnabled())
-        {
-            Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
-
-            challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(effect.PlayerId);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetCardId(effect.CardId);
+            moveAttributes.SetCard(effect.Card);
             moveAttributes.SetFieldId(randomTargetable.Owner.Id);
             moveAttributes.SetTargetId(randomTargetable.GetCardId());
             challengeMove.SetMoveAttributes(moveAttributes);
@@ -637,18 +614,23 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDeathRattleAttackRandomThree(Effect effect)
     {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(playerId, cardId);
+
         List<Effect> effects = new List<Effect>();
 
         for (int i = 0; i < 3; i += 1)
         {
-            effects.Add(
-                new Effect(
-                    effect.PlayerId,
-                    EFFECT_DEATH_RATTLE_ATTACK_RANDOM,
+            Effect newEffect = new Effect(
+                playerId,
+                    EFFECT_RANDOM_TARGET,
                     effect.CardId,
                     effect.SpawnRank
-                )
             );
+            effect.SetCard(boardCreature.GetChallengeCard());
+            effects.Add(effect);
         }
 
         effects.Add(
@@ -1420,87 +1402,163 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    public void OnDeathRattleAttackRandomTarget(
-        Targetable attackingTargetable,
-        Targetable defendingTargetable
+    public void OnRandomTarget(
+        string playerId,
+        ChallengeCard card,
+        string fieldId,
+        string targetId
     )
     {
-        if (attackingTargetable.GetType() == typeof(PlayerAvatar))
+        if (card.Name == Card.CARD_NAME_BOMBSHELL_BOMBADIER)
         {
-            Debug.LogError("Player avatar cannot have death rattle.");
-            return;
+            Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, card.Id);
+            Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
+
+            if (attackingTargetable.GetType() == typeof(PlayerAvatar))
+            {
+                Debug.LogError("Player avatar cannot have death rattle.");
+                return;
+            }
+
+            if (defendingTargetable.GetType() == typeof(BoardCreature))
+            {
+                BoardCreature defendingCreature = defendingTargetable as BoardCreature;
+
+                List<Effect> effects = new List<Effect>();
+                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+
+                this.isWaiting = true;
+                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                         .setEaseInOutCirc()
+                         .setOnComplete(() =>
+                         {
+                             int damageDone = defendingCreature.TakeDamage(20);
+                             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+                             if (defendingCreature.Health <= 0)
+                             {
+                                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
+                             }
+
+                             bombObject.SetActive(false);
+
+                             AddToQueues(effects);
+                             this.isWaiting = false;
+                             this.isDirty = true;
+                         });
+            }
+            else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
+            {
+                PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
+
+                List<Effect> effects = new List<Effect>();
+                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+
+                this.isWaiting = true;
+                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                         .setEaseInOutCirc()
+                         .setOnComplete(() =>
+                         {
+                             int damageDone = defendingAvatar.TakeDamage(20);
+                             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+                             if (defendingAvatar.Health <= 0)
+                             {
+                                 effects.Add(
+                                 new Effect(
+                                     defendingAvatar.Owner.Id,
+                                     EFFECT_PLAYER_AVATAR_DIE,
+                                     defendingAvatar.GetCardId(),
+                                     0
+                                 )
+                             );
+                             }
+                             bombObject.SetActive(false);
+
+                             AddToQueues(effects);
+                             this.isWaiting = false;
+                             this.isDirty = true;
+                         });
+            }
+            else
+            {
+                Debug.LogError("Unsupported.");
+            }
         }
-
-        BoardCreature attackingCreature = attackingTargetable as BoardCreature;
-        if (!attackingCreature.HasAbility(Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY))
+        else if (card.Name == SpellCard.SPELL_NAME_SPRAY_N_PRAY)
         {
-            Debug.LogError("Board creature does not have a death rattle attack random ability.");
-            return;
-        }
+            PlayerAvatar attackingTargetable = BattleManager.Instance.GetPlayerById(playerId).Avatar;
+            Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
-        if (defendingTargetable.GetType() == typeof(BoardCreature))
-        {
-            BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-            List<Effect> effects = new List<Effect>();
-            GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+            if (defendingTargetable.GetType() == typeof(BoardCreature))
+            {
+                BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-            this.isWaiting = true;
-            LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                     .setEaseInOutCirc()
-                     .setOnComplete(() =>
-                 {
-                     int damageDone = defendingCreature.TakeDamage(20);
-                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                List<Effect> effects = new List<Effect>();
+                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-                     if (defendingCreature.Health <= 0)
-                     {
-                         effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-                     }
+                this.isWaiting = true;
+                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                         .setEaseInOutCirc()
+                         .setOnComplete(() =>
+                         {
+                             int damageDone = defendingCreature.TakeDamage(20);
+                             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                     bombObject.SetActive(false);
+                             if (defendingCreature.Health <= 0)
+                             {
+                                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
+                             }
 
-                     AddToQueues(effects);
-                     this.isWaiting = false;
-                     this.isDirty = true;
-                 });
-        }
-        else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
-        {
-            PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
+                             bombObject.SetActive(false);
 
-            List<Effect> effects = new List<Effect>();
-            GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                             AddToQueues(effects);
+                             this.isWaiting = false;
+                             this.isDirty = true;
+                         });
+            }
+            else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
+            {
+                PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-            this.isWaiting = true;
-            LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                     .setEaseInOutCirc()
-                     .setOnComplete(() =>
-                {
-                    int damageDone = defendingAvatar.TakeDamage(20);
-                    //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                List<Effect> effects = new List<Effect>();
+                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-                    if (defendingAvatar.Health <= 0)
-                    {
-                        effects.Add(
-                            new Effect(
-                                defendingAvatar.Owner.Id,
-                                EFFECT_PLAYER_AVATAR_DIE,
-                                defendingAvatar.GetCardId(),
-                                0
-                            )
-                        );
-                    }
-                    bombObject.SetActive(false);
+                this.isWaiting = true;
+                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                         .setEaseInOutCirc()
+                         .setOnComplete(() =>
+                         {
+                             int damageDone = defendingAvatar.TakeDamage(20);
+                             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                    AddToQueues(effects);
-                    this.isWaiting = false;
-                    this.isDirty = true;
-                });
+                             if (defendingAvatar.Health <= 0)
+                             {
+                                 effects.Add(
+                                 new Effect(
+                                     defendingAvatar.Owner.Id,
+                                     EFFECT_PLAYER_AVATAR_DIE,
+                                     defendingAvatar.GetCardId(),
+                                     0
+                                 )
+                             );
+                             }
+                             bombObject.SetActive(false);
+
+                             AddToQueues(effects);
+                             this.isWaiting = false;
+                             this.isDirty = true;
+                         });
+            }
+            else
+            {
+                Debug.LogError("Unsupported.");
+            }
         }
         else
         {
-            Debug.LogError("Unsupported.");
+            Debug.LogError("Invalid card for move random target.");
         }
     }
 
@@ -1661,7 +1719,7 @@ public class EffectManager : MonoBehaviour
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
             case SpellCard.SPELL_NAME_SPRAY_N_PRAY:
-                effects = SpellUntargetedSprayNPray(playerId);
+                effects = SpellUntargetedSprayNPray(playerId, spellCard.GetChallengeCard());
                 break;
             case SpellCard.SPELL_NAME_GRAVE_DIGGING:
                 effects = SpellUntargetedGraveDigging(playerId);
@@ -1774,20 +1832,20 @@ public class EffectManager : MonoBehaviour
         return effects;
     }
 
-    private List<Effect> SpellUntargetedSprayNPray(string playerId)
+    private List<Effect> SpellUntargetedSprayNPray(string playerId, ChallengeCard card)
     {
         List<Effect> effects = new List<Effect>();
 
         for (int i = 0; i < 3; i += 1)
         {
-            effects.Add(
-                new Effect(
-                    playerId,
-                    EFFECT_SPRAY_N_PRAY_RANDOM,
-                    null, // Does not matter.
-                    i
-                )
+            Effect newEffect = new Effect(
+                playerId,
+                EFFECT_RANDOM_TARGET,
+                card.Id, // Does not matter.
+                i
             );
+            newEffect.SetCard(card);
+            effects.Add(newEffect);
         }
 
         return effects;
@@ -1875,15 +1933,14 @@ public class EffectManager : MonoBehaviour
 
         if (boardCreature.HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
         {
-            effects.Add(
-                new Effect(
-                    boardCreature.Owner.Id,
-                    Card.CARD_ABILITY_LIFE_STEAL,
-                    boardCreature.GetCardId(),
-                    boardCreature.SpawnRank,
-                    amount
-                )
+            Effect newEffect = new Effect(
+                boardCreature.Owner.Id,
+                Card.CARD_ABILITY_LIFE_STEAL,
+                boardCreature.GetCardId(),
+                boardCreature.SpawnRank
             );
+            newEffect.SetValue(amount);
+            effects.Add(newEffect);
         }
 
         return effects;

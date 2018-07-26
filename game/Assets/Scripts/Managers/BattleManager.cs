@@ -1159,19 +1159,18 @@ public class BattleManager : MonoBehaviour
         );
     }
 
-    private void ReceiveMoveDeathRattleAttackRandomTarget(
+    private void ReceiveMoveRandomTarget(
         string playerId,
-        string cardId,
+        ChallengeCard card,
         string fieldId,
         string targetId
     )
     {
-        Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
-        Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
-
-        EffectManager.Instance.OnDeathRattleAttackRandomTarget(
-            attackingTargetable,
-            defendingTargetable
+        EffectManager.Instance.OnRandomTarget(
+            playerId,
+            card,
+            fieldId,
+            targetId
         );
     }
 
@@ -1219,6 +1218,15 @@ public class BattleManager : MonoBehaviour
     {
         // TODO
         EffectManager.Instance.OnSummonCreatureFinish();
+    }
+
+    private void ReceiveMoveSprayNPrayRandom(
+        string playerId,
+        string fieldId,
+        string targetId
+    )
+    {
+
     }
 
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
@@ -1471,11 +1479,11 @@ public class BattleManager : MonoBehaviour
                 serverMove.Attributes.TargetId
             );
         }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET)
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET)
         {
-            ReceiveMoveDeathRattleAttackRandomTarget(
+            ReceiveMoveRandomTarget(
                 serverMove.PlayerId,
-                serverMove.Attributes.CardId,
+                serverMove.Attributes.Card,
                 serverMove.Attributes.FieldId,
                 serverMove.Attributes.TargetId
             );
@@ -1509,6 +1517,14 @@ public class BattleManager : MonoBehaviour
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE)
         {
             ReceiveMoveSummonCreatureNoCreature(serverMove.PlayerId);
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SPRAY_N_PRAY_RANDOM)
+        {
+            ReceiveMoveSprayNPrayRandom(
+                serverMove.PlayerId,
+                serverMove.Attributes.FieldId,
+                serverMove.Attributes.TargetId
+            );
         }
 
         return serverMove.Rank;
