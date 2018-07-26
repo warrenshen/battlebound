@@ -191,7 +191,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
         // Logic to load in existing moves for resume challenge case.
         List<GSData> movesData = scriptData.GetGSDataList("moves");
-        if (movesData.Count > 0)
+        if (movesData != null)
         {
             List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
             foreach (GSData moveData in movesData)
