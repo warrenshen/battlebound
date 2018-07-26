@@ -251,7 +251,7 @@ public class CollectionManager : MonoBehaviour
 
     private Transform CreateGrayed(Transform source, Card card)
     {
-        GameObject created = new GameObject("_gray_" + card.Name.Substring(0, 5));
+        GameObject created = new GameObject("_gray_" + card.Name);
         created.transform.position = source.position;
 
         //do visual stuff

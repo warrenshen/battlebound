@@ -11,8 +11,6 @@ public class EffectManager : MonoBehaviour
     private List<Effect> lQueue; // Low priority.
 
     private bool isWaiting;
-    public bool IsWaiting => isWaiting;
-
     private bool isDirty;
 
     private UnityAction callback;
@@ -2005,5 +2003,17 @@ public class EffectManager : MonoBehaviour
         }
 
         return effects;
+    }
+
+    public static bool IsWaiting()
+    {
+        if (Instance != null)
+        {
+            return Instance.isWaiting;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
