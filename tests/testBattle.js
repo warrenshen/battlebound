@@ -656,7 +656,7 @@ describe("challenge events", function() {
   });
 
   describe("dying breath", function() {
-    it("should run Bombshell Bombadier's deathrattle", function() {
+    it("should run Bombshell Bombadier's deathwish", function() {
       const challengeStateData = {
         "current": {
           "ID_OPPONENT": {
@@ -837,7 +837,7 @@ describe("challenge events", function() {
       });
     });
 
-    it("should run both Bombshell Bombadier's dying breaths", function() {
+    it("should run both Bombshell Bombadier's deathwish", function() {
       const challengeStateData = {
         "current": {
           "ID_OPPONENT": {
@@ -1030,6 +1030,223 @@ describe("challenge events", function() {
         );
       });
     });
+
+    it("should run Adderspine Weevil's deathwish", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 0,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C50-ID_OPPONENT-12",
+                "level": 0,
+                "category": 0,
+                "attack": 40,
+                "health": 20,
+                "cost": 60,
+                "name": "Adderspine Weevil",
+                "description": "Taunt; Deathwish: Deal 20 dmg to all opponent creatures",
+                "abilities": [
+                  1,
+                  30
+                ],
+                "baseId": "C50",
+                "attackStart": 40,
+                "costStart": 60,
+                "healthStart": 60,
+                "healthMax": 60,
+                "buffs": [],
+                "canAttack": 1,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 9
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 6,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b012e7486050526c9c1a8",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 70,
+            "manaMax": 70,
+            "health": 90,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "C53-ID_PLAYER-9",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 50,
+                "cost": 40,
+                "name": "Lil' Rusty",
+                "description": "Warcy: Grant Taunt to adjacent creatures",
+                "abilities": [
+                  20
+                ],
+                "baseId": "C53",
+                "attackStart": 20,
+                "costStart": 40,
+                "healthStart": 50,
+                "healthMax": 50,
+                "buffs": [],
+                "canAttack": 1,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "C40-ID_PLAYER-22",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 30,
+                "name": "Seahorse Squire",
+                "description": "Warcry: Heal adjacent creatures by 20 hp",
+                "abilities": [
+                  26
+                ],
+                "baseId": "C40",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 3
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C40-ID_PLAYER-23",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 30,
+                "name": "Seahorse Squire",
+                "description": "Warcry: Heal adjacent creatures by 20 hp",
+                "abilities": [
+                  26
+                ],
+                "baseId": "C40",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 4
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 1,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "5b0b017502bd4e052f08a28d",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C53-ID_PLAYER-9",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C50-ID_OPPONENT-12",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[0].attributes.cardId, "C53-ID_PLAYER-9");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C50-ID_OPPONENT-12");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[0].id, "EMPTY");
+
+            assert.equal(playerField[1].id, "C40-ID_PLAYER-22");
+            assert.equal(playerField[1].health, 10);
+
+            assert.equal(playerField[3].id, "C40-ID_PLAYER-23");
+            assert.equal(playerField[3].health, 10);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[2].id, "EMPTY");
+
+            resolve();
+          }
+        );
+      });
+    });
   });
 
   describe("warcry", function() {
@@ -1199,6 +1416,24 @@ describe("challenge events", function() {
               "healthStart": 30,
               "healthMax": 30
             },
+            {
+              "id": "C36-5b0b017502bd4e052f08a28d-26",
+              "level": 0,
+              "category": 0,
+              "attack": 40,
+              "health": 30,
+              "cost": 20,
+              "name": "Ritual Hatchling",
+              "description": "Warcry: sacrifice 20 dmg from your life total",
+              "abilities": [
+                24
+              ],
+              "baseId": "C36",
+              "attackStart": 40,
+              "costStart": 20,
+              "healthStart": 30,
+              "healthMax": 30
+            },
           ],
           "deckSize": 1,
           "cardCount": 8,
@@ -1347,7 +1582,6 @@ describe("challenge events", function() {
             const playerField = playerState.field;
             assert.equal(playerField[2].id, "C40-5b0b017502bd4e052f08a28d-22");
 
-            console.log(playerField[1]);
             assert.equal(playerField[1].id, "C44-5b0b017502bd4e052f08a28d-18");
             assert.equal(playerField[1].health, 30);
 
@@ -1408,6 +1642,44 @@ describe("challenge events", function() {
       });
     });
 
+    it("should support damage player face", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlayCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C36-5b0b017502bd4e052f08a28d-26",
+            attributesJson: {
+              fieldIndex: 0,
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.card.id, "C36-5b0b017502bd4e052f08a28d-26");
+            assert.equal(lastMoves[0].attributes.fieldIndex, 0);
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 50);
+            assert.equal(playerState.manaMax, 70);
+            assert.equal(playerState.health, 80);
+            assert.equal(playerState.healthMax, 100);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[0].id, "C36-5b0b017502bd4e052f08a28d-26");
+
+            resolve();
+          }
+        );
+      });
+    });
+
     //     {
     //       "id": "C34-5b0b017502bd4e052f08a28d-28",
     //       "level": 0,
@@ -1425,25 +1697,6 @@ describe("challenge events", function() {
     //       "costStart": 30,
     //       "healthStart": 30,
     //       "healthMax": 30
-    //     },
-    //     {
-    //       "id": "C46-5b0b017502bd4e052f08a28d-16",
-    //       "level": 0,
-    //       "category": 0,
-    //       "attack": 50,
-    //       "health": 40,
-    //       "cost": 50,
-    //       "name": "Cereboarus",
-    //       "description": "Lifesteal; Deathwish: Draw a card",
-    //       "abilities": [
-    //         5,
-    //         6
-    //       ],
-    //       "baseId": "C46",
-    //       "attackStart": 50,
-    //       "costStart": 50,
-    //       "healthStart": 40,
-    //       "healthMax": 40
     //     },
     //     {
     //       "id": "C45-5b0b017502bd4e052f08a28d-17",
@@ -1482,6 +1735,394 @@ describe("challenge events", function() {
     //       "healthMax": 70
     //     }
     //   ],
+    // "newMoves": [
+    //   {
+    //     "playerId": "5b0b017502bd4e052f08a28d",
+    //     "category": "MOVE_CATEGORY_PLAY_MINION",
+    //     "attributes": {
+    //       "card": {
+    //         "id": "C39-5b0b017502bd4e052f08a28d-23",
+    //         "level": 0,
+    //         "category": 0,
+    //         "attack": 40,
+    //         "health": 30,
+    //         "cost": 50,
+    //         "name": "Dionysian Tosspot",
+    //         "description": "Draw a card at end of either player's turn",
+    //         "abilities": [
+    //           25
+    //         ],
+    //         "baseId": "C39",
+    //         "attackStart": 40,
+    //         "costStart": 50,
+    //         "healthStart": 30,
+    //         "healthMax": 30,
+    //         "buffs": [],
+    //         "canAttack": 0,
+    //         "isFrozen": 0,
+    //         "isSilenced": 0,
+    //         "spawnRank": 1
+    //       },
+    //       "cardId": "C39-5b0b017502bd4e052f08a28d-23",
+    //       "fieldIndex": 2,
+    //       "handIndex": 1
+    //     },
+    //     "rank": 12
+    //   }
+    // ],
+  });
+
+  describe("lethal and lifesteal", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C12-ID_OPPONENT-8",
+              "level": 0,
+              "category": 0,
+              "attack": 20,
+              "health": 30,
+              "cost": 30,
+              "name": "Lux",
+              "description": "Warcry: Heal 40 hp to all creatures on board",
+              "abilities": [
+                28
+              ],
+              "baseId": "C44",
+              "attackStart": 20,
+              "costStart": 30,
+              "healthStart": 30,
+              "healthMax": 30,
+              "buffs": [],
+              "canAttack": 0,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 60,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+          {
+            "id": "C46-ID_PLAYER-16",
+            "level": 0,
+            "category": 0,
+            "attack": 50,
+            "health": 40,
+            "cost": 50,
+            "name": "Cereboarus",
+            "description": "Lifesteal; Deathwish: Draw a card",
+            "abilities": [
+              5,
+              6
+            ],
+            "baseId": "C46",
+            "attackStart": 50,
+            "costStart": 50,
+            "healthStart": 40,
+            "healthMax": 40,
+            "buffs": [],
+            "canAttack": 1,
+            "isFrozen": 0,
+            "isSilenced": 0,
+            "spawnRank": 5
+          },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    it("should support lifesteal", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C46-ID_PLAYER-16",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C12-ID_OPPONENT-8",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[0].attributes.cardId, "C46-ID_PLAYER-16");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C12-ID_OPPONENT-8");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.health, 90);
+            assert.equal(playerState.healthMax, 100);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[0].id, "C46-ID_PLAYER-16");
+            assert.equal(playerField[0].health, 20);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "EMPTY");
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("take damage", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C12-ID_OPPONENT-8",
+              "level": 0,
+              "category": 0,
+              "attack": 20,
+              "health": 30,
+              "cost": 30,
+              "name": "Lux",
+              "description": "Warcry: Heal 40 hp to all creatures on board",
+              "abilities": [
+                28
+              ],
+              "baseId": "C44",
+              "attackStart": 20,
+              "costStart": 30,
+              "healthStart": 30,
+              "healthMax": 30,
+              "buffs": [],
+              "canAttack": 0,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C37-ID_PLAYER-25",
+              "level": 0,
+              "category": 0,
+              "attack": 80,
+              "health": 70,
+              "cost": 50,
+              "name": "Hellbringer",
+              "description": "Whenever this creature takes damage, damage your face 30 damage",
+              "abilities": [
+                17
+              ],
+              "baseId": "C37",
+              "attackStart": 80,
+              "costStart": 50,
+              "healthStart": 70,
+              "healthMax": 70,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 2
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    it("should support damage player face on take damage", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C37-ID_PLAYER-25",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C12-ID_OPPONENT-8",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[0].attributes.cardId, "C37-ID_PLAYER-25");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C12-ID_OPPONENT-8");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.health, 70);
+            assert.equal(playerState.healthMax, 100);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[0].id, "C37-ID_PLAYER-25");
+            assert.equal(playerField[0].health, 50);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "EMPTY");
+
+            resolve();
+          }
+        );
+      });
+    });
   });
 
   describe("spells", function() {
