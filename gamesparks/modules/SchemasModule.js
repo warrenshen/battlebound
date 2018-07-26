@@ -9,9 +9,16 @@
  *   address: string, // Ethereum address.
  *   addressChallenge: string, // Challenge string used for address update.
  *   activeChallengeId: string, // Challenge ID of active challenge player is in (helps prevent simultaneous challenges).
- *   winStreak: int, // Player's current win streak.
  *   level: int, // Player's current level.
  *   exp: int, // Player's current exp.
+ *   infoByMatchType: {
+ *     [matchType]: {
+ *       winStreak: int,
+ *       wins: int,
+ *       losses: int,
+ *     },     
+ *     ...
+ *   }
  * }
  * 
  * PlayerDecks schema: {
@@ -71,8 +78,9 @@
  *   healthMax: int, // The max value of health - starts at initial health.
  *   attack: int,
  *   attackStart: int, // The initial value of attack.
- *   canAttack: int, // Number of attacks left this turn - field probably not set until card is played.
- *   isFrozen: int, // Number of turns stuck frozen - field not set until card is played.
+ *   canAttack: int, // Number of attacks left this turn - not set until card is played.
+ *   isFrozen: int, // Number of turns stuck frozen - not set until card is played.
+ *   isSilenced: bool (int), // If card is silenced - not set until card is played.
  *   spawnRank: int, // Number of cards played before this card - not set until card is played on field.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
  *   buffs: [

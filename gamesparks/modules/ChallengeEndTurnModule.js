@@ -28,6 +28,24 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
 
     playerState.hasTurn = 0;    
     challengeStateData.turnCountByPlayerId[playerId] += 1;
+        
+    const playerField = playerState.field;
+    // Perform start of turn events for cards on field.
+    for (var i = 0; i < playerField.length; i += 1) {
+        var fieldCard = playerField[i];
+        
+        if (fieldCard.id === "EMPTY") {
+            continue;
+        }
+        
+        if (fieldCard.health <= 0) {
+            setScriptError("Creature on opponent field that is dead at end turn.");
+        }
+        
+        if (fieldCard.isFrozen > 0) {
+            fieldCard.isFrozen -= 1;
+        }
+    }
     
     processEndTurn(challengeStateData, playerId);
 
@@ -59,10 +77,6 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
         
         // TODO: maybe should not set to 1 for all cards.
         fieldCard.canAttack = 1;
-        
-        if (fieldCard.isFrozen > 0) {
-            fieldCard.isFrozen -= 1;
-        }
         
         // fieldCard.buffs.forEach(function(buff) {
         //     if (buff.category === BUFF_CATEGORY_UNSTABLE_POWER) {

@@ -19,6 +19,29 @@ function damageCard(card, damage) {
     }
 }
 
+/**
+ * Reduce card health to zero.
+ * 
+ * @return int - damage done to card
+ **/
+function damageCardMax(card) {
+    const initialHealth = card.health;
+    card.health = 0;
+    return initialHealth;
+}
+
+/**
+ * @return int - damage done to card
+ **/
+function damageCardWithLethal(card, damage) {
+    if (card.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
+        card.abilities = card.abilities.filter(function(ability) { ability != CARD_ABILITY_SHIELD });
+        return 0;
+    } else {
+        return damageCardMax(card);
+    }
+}
+
 function healCard(card, amount) {
     if (amount % 10 !== 0) {
         setScriptError("Invalid heal card amount.");    
@@ -37,6 +60,10 @@ function healCardMax(card) {
     const initialHealth = card.health;
     card.health = healthMax;
     return healthMax - initialHealth;
+}
+
+function silenceCard(card) {
+    card.isSilenced = 1;
 }
 
 /**
@@ -236,4 +263,10 @@ function addChallengeMove(challengeStateData, move) {
     
     challengeStateData.moves.push(move);
     challengeStateData.lastMoves.push(move);
+}
+
+function getNewSpawnRank(challengeStateData) {
+    const spawnRank = challengeStateData.spawnCount;
+    challengeStateData.spawnCount += 1;
+    return spawnRank;
 }

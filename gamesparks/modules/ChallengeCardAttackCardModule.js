@@ -47,7 +47,7 @@ function handleChallengeCardAttackCard(challengeStateData, playerId, cardId, att
     challengeStateData.lastMoves = [];
     challengeStateData.moveTakenThisTurn = 1;
     
-    var move = {
+    const move = {
         playerId: playerId,
         category: MOVE_CATEGORY_CARD_ATTACK,
         attributes: {

@@ -19,6 +19,8 @@ if (activeChallengeId) {
     const response = request.ExecuteAs(playerId);
 }
 
+// Force remove active challenge ID even though it may
+// have already been removed by some other code path.
 player.removePrivateData("activeChallengeId");
 
 setScriptSuccess();

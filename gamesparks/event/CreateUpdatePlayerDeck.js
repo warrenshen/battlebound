@@ -39,6 +39,40 @@ cardIds.forEach(function(cardId) {
         setScriptError("Invalid card ID(s)");
     }
 });
+
+// Verify that there is no duplicate card.
+const cardIdsDict = {};
+cardIds.forEach(function(cardId) {
+    if (cardIdsDict[cardId] == null) {
+        cardIdsDict[cardId] = 0;
+    } else {
+        setScriptError("Cannot have duplicate card ID in a deck.");
+    }
+});
+
+// Verify that there is at most two cards of the same template.
+const bIds = cardIds.filter(function(cardId) { return cardId.indexOf("B") === 0 });
+const cIds = cardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });
+const bCards = getBCardsByBCardIds(bIds);
+const cCards = cIds.map(function(cId) {
+    return cardByCardId[cId];
+});
+
+const templateIdToCount = {};
+bCards.concat(cCards).forEach(function(card) {
+    var templateId = card.templateId;
+    if (templateIdToCount[templateId] == null) {
+        templateIdToCount[templateId] = 1;
+    } else {
+        templateIdToCount[templateId] += 1;
+    }
+    
+    if (templateIdToCount[templateId] > 2) {
+        setScriptError("Cannot have more than two of any template ID in a deck.");
+    }
+});
+//--
+
 deckByName[name] = cardIds;
 
 if (previousName !== name && deckByName[previousName]) {
