@@ -808,15 +808,15 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 4);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
-            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
-            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
-            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[1].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[2].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[3].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[1].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[2].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[3].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
@@ -989,25 +989,25 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 7);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
 
-            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
-            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
-            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[1].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
-            assert.equal(lastMoves[2].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
-            assert.equal(lastMoves[3].attributes.cardId, "C10-5b0b017502bd4e052f08a28d-10");
+            assert.equal(lastMoves[1].attributes.card.id, "C10-5b0b017502bd4e052f08a28d-10");
+            assert.equal(lastMoves[2].attributes.card.id, "C10-5b0b017502bd4e052f08a28d-10");
+            assert.equal(lastMoves[3].attributes.card.id, "C10-5b0b017502bd4e052f08a28d-10");
 
-            assert.equal(lastMoves[4].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
-            assert.equal(lastMoves[5].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
-            assert.equal(lastMoves[6].category, "MOVE_CATEGORY_DEATH_RATTLE_ATTACK_RANDOM_TARGET");
+            assert.equal(lastMoves[4].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[5].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[6].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[5].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[6].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[4].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[5].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[6].attributes.cardId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[4].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[5].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[6].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
@@ -1976,6 +1976,186 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerHand = playerState.hand;
             assert.equal(playerHand.length, 3);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("spells", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C3",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 0
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [
+            {
+              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "level": 0,
+              "category": 1,
+              "cost": 20,
+              "name": "Spray n' Pray",
+              "description": "Deal 10 dmg to three random opponent targetables",
+              "baseId": "C23",
+              "costStart": 40,
+            },
+          ],
+          "deckSize": 0,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    it("should support spray n' pray", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[3].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[2].attributes.card.id, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[3].attributes.card.id, "C23-5b0b012e7486050526c9c1a8-4");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.healthMax, 100);
+            assert.equal(opponentState.health, 70);
 
             resolve();
           }
