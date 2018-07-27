@@ -66,6 +66,7 @@
  * ChallengeCard schema: {
  *   id: string, // Challenge-unique card ID: "{card ID}-{player ID}-{auto-incrementing ID}".
  *   baseId: string, // Card ID in owner player.
+ *   playerId: string,
  *   category: int,
  *   name: string,
  *   image: string,
@@ -82,6 +83,7 @@
  *   isFrozen: int, // Number of turns stuck frozen - not set until card is played.
  *   isSilenced: bool (int), // If card is silenced - not set until card is played.
  *   spawnRank: int, // Number of cards played before this card - not set until card is played on field.
+ *   deathRank: int, // Number of cards dead before this card - not set until card is dead.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
  *   buffs: [
  *     {
@@ -122,11 +124,9 @@
  *   },
  *   moves: [Move, ...], // An array of moves by both players in chronological order.
  *   lastMoves: [Move, ...], // An array of the move(s) in last request of player whose turn it is.
- *   cardIdToCard: {
- *     [cardId]: ChallengeCard,
- *     ...
- *   },
- *   spawnCount: int, // "Auto-increment" int for any spawn by either player.
+ *   spawnCount: int, // "Auto-increment" int for any creature spawn by either player.
+ *   deathCount: int, // "Auto-increment" int for any creature death by either player.
+ *   deadCards: [ChallengeCard, ...], // Append-only list of dead cards.
  *   isFinal: bool (int), // Whether challenge has been post-processed (grant experience, etc).
  * }
  * 
