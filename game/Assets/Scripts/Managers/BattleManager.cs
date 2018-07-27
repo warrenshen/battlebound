@@ -1294,7 +1294,7 @@ public class BattleManager : MonoBehaviour
     // Challenge moves to skip since device has already performed them.
     private static List<string> PLAYER_SKIP_CHALLENGE_MOVES = new List<string>
     {
-        ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
+        ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN, // What about if ran out of time?
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
         ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
