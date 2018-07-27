@@ -18,8 +18,16 @@ using Nethereum.Web3.Accounts;
 
 public class CryptoSingleton : Singleton<CryptoSingleton>
 {
-    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
-    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
+    // 1st
+    //public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
+    //public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
+
+    //2nd
+    //public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
+    //public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
+
+    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_MM";
+    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_MM";
 
     private int nonce;
     private string txHash;
@@ -357,8 +365,8 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         //    return null;
         //}
 
-        Wallet wallet = new Wallet(Wordlist.English, WordCount.Twelve, password);
-        string mnemonicString = string.Join(", ", wallet.Words);
+        Wallet wallet = new Wallet(Wordlist.English, WordCount.Twelve);
+        string mnemonicString = string.Join(" ", wallet.Words);
 
         Account account = wallet.GetAccount(0);
         string publicAddress = account.Address;
@@ -376,6 +384,39 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Debug.Log("Set player prefs public address to: " + publicAddress);
 
         return mnemonicString;
+    }
+
+    public string RecoverPrivateKey(string mnemonicString, string password)
+    {
+        if (mnemonicString.Contains(","))
+        {
+            mnemonicString = mnemonicString.Replace(",", "");
+        }
+
+        string[] parsedMnemonic = mnemonicString.Split(' ');
+        if (parsedMnemonic.Length != 12)
+        {
+            return "Mnemonic must contain twelve words.";
+        }
+
+        Wallet wallet = new Wallet(mnemonicString, null);
+
+        Account account = wallet.GetAccount(0);
+        string publicAddress = account.Address;
+
+        KeyStorePbkdf2Service keyStorePbkdf2Service = new KeyStorePbkdf2Service();
+        string keyStoreJson = keyStorePbkdf2Service.EncryptAndGenerateKeyStoreAsJson(
+            password,
+            account.PrivateKey.HexToByteArray(),
+            publicAddress
+        );
+
+        PlayerPrefs.SetString(PLAYER_PREFS_ENCRYPTED_KEY_STORE, keyStoreJson);
+        PlayerPrefs.SetString(PLAYER_PREFS_PUBLIC_ADDRESS, publicAddress);
+
+        Debug.Log("Set player prefs public address to: " + publicAddress);
+
+        return null;
     }
 
     public Account GetAccountWithPassword(string password)
