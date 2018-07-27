@@ -1273,7 +1273,16 @@ public class EffectManager : MonoBehaviour
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                    int damageTaken = attackingCreature.TakeDamage(defendingCreature.Attack);
+                    int damageTaken;
+
+                    if (defendingCreature.HasAbility(Card.CARD_ABILITY_LETHAL))
+                    {
+                        damageTaken = attackingCreature.TakeDamageWithLethal();
+                    }
+                    else
+                    {
+                        damageTaken = attackingCreature.TakeDamage(defendingCreature.Attack);
+                    }
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
 

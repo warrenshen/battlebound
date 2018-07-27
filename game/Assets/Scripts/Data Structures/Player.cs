@@ -625,34 +625,17 @@ public class Player
         {
             Board.PlayingField playingField = Board.Instance.GetFieldByPlayerId(this.id);
             BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
-            ChallengeCard challengeCard = new ChallengeCard();
 
             if (boardCreature == null)
             {
+                ChallengeCard challengeCard = new ChallengeCard();
                 challengeCard.SetId("EMPTY");
+                fieldCards.SetValue(challengeCard, i);
             }
             else
             {
-                challengeCard.SetId(boardCreature.CreatureCard.Id);
-                challengeCard.SetCategory((int)Card.CardType.Creature);
-                challengeCard.SetName(boardCreature.CreatureCard.Name);
-                //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
-                challengeCard.SetLevel(boardCreature.CreatureCard.Level);
-                challengeCard.SetCost(boardCreature.CreatureCard.GetCost());
-                challengeCard.SetCostStart(boardCreature.CreatureCard.GetCost());
-                challengeCard.SetHealth(boardCreature.Health);
-                challengeCard.SetHealthStart(boardCreature.CreatureCard.GetHealth());
-                challengeCard.SetHealthMax(boardCreature.MaxHealth);
-                challengeCard.SetAttack(boardCreature.Attack);
-                challengeCard.SetAttackStart(boardCreature.CreatureCard.GetAttack());
-                challengeCard.SetCanAttack(boardCreature.CanAttack);
-                challengeCard.SetIsFrozen(boardCreature.IsFrozen);
-                challengeCard.SetIsSilenced(boardCreature.IsSilenced ? 1 : 0);
-                challengeCard.SetSpawnRank(boardCreature.SpawnRank);
-                challengeCard.SetAbilities(boardCreature.Abilities);
+                fieldCards.SetValue(boardCreature.GetChallengeCard(), i);
             }
-
-            fieldCards.SetValue(challengeCard, i);
         }
         playerState.SetField(fieldCards);
 
@@ -725,8 +708,8 @@ public class Player
         cards.Add(new SpellCard("C107", SpellCard.SPELL_NAME_SILENCE_OF_THE_LAMBS, 1));
         cards.Add(new SpellCard("C108", SpellCard.SPELL_NAME_MUDSLINGING, 1));
         cards.Add(new SpellCard("C109", SpellCard.SPELL_NAME_DEATH_NOTICE, 1));
-        cards.Add(new SpellCard("C30", SpellCard.SPELL_NAME_SPRAY_N_PRAY, 1));
-        cards.Add(new SpellCard("C31", SpellCard.SPELL_NAME_GRAVE_DIGGING, 1));
+        cards.Add(new SpellCard("C110", SpellCard.SPELL_NAME_SPRAY_N_PRAY, 1));
+        cards.Add(new SpellCard("C111", SpellCard.SPELL_NAME_GRAVE_DIGGING, 1));
 
         Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;
