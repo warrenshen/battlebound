@@ -89,7 +89,9 @@ function handleChallengeCardAttackCard(challengeStateData, playerId, cardId, att
             opponentState.field = filterDeadResponse[1];
         }
     } else {
-        const tauntCards = opponentField.filter(function(card) { return card.abilities && card.abilities.indexOf(CARD_ABILITY_TAUNT) >= 0 });
+        const tauntCards = opponentField.filter(function(card) {
+            return card.id != "EMPTY" && hasCardAbilityOrBuff(card, CARD_ABILITY_TAUNT);
+        });
         const tauntIds = tauntCards.map(function(card) { return card.id });
         
         // `targetId` must be of a taunt card if any exist.

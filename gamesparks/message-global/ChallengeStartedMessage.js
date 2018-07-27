@@ -64,7 +64,7 @@ const challengerDrawCardsResponse = drawCards(challengerDeck, 3);
 const challengerMulligan = challengerDrawCardsResponse[0];
 const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
 
-const HEALTH_START = 100;
+const HEALTH_START = 300;
 
 const challengerData = {
     manaCurrent: 30,

@@ -50,6 +50,10 @@ cardIds.forEach(function(cardId) {
     }
 });
 
+// if (cardIds.length != 30) {
+//     setScriptError("Deck should have 30 cards in total.");
+// }
+
 // Verify that there is at most two cards of the same template.
 const bIds = cardIds.filter(function(cardId) { return cardId.indexOf("B") === 0 });
 const cIds = cardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });
