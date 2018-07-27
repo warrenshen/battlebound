@@ -106,6 +106,7 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
         moveCount: challengeStateData.moves.length,
         spawnCount: challengeStateData.spawnCount,
         moves: obfuscatedMoves,
+        deadCards: challengeStateData.deadCards,
     };
 }
 
@@ -154,6 +155,7 @@ function getChallengeStateForPlayerWithPastMoves(playerId, challengeId) {
     Spark.setScriptData("moves", response.moves);
     Spark.setScriptData("moveCount", response.moveCount);
     Spark.setScriptData("spawnCount", response.spawnCount);
+    Spark.setScriptData("deadCards", response.deadCards);
     
     return challenge;
 }

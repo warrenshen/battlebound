@@ -32,16 +32,9 @@ const challengedDeck = getActiveDeckByPlayerId(challengedId);
 const challengeStateData = {};
 const challengeState = challengeStateData.current = {};
 challengeStateData.moves = [];
-challengeStateData.cardIdToCard = {};
+challengeStateData.deadCards = [];
 challengeStateData.spawnCount = 0;
-
-// Any card that can show up in game needs to go into `challengeStateData.cardIdToCard`.
-challengerDeck.forEach(function(card) {
-    challengeStateData.cardIdToCard[card.id] = card;
-});
-challengedDeck.forEach(function(card) {
-    challengeStateData.cardIdToCard[card.id] = card;
-});
+challengeStateData.deathCount = 0;
 
 const opponentIdByPlayerId = {};
 opponentIdByPlayerId[challengerId] = challengedId;

@@ -9,8 +9,11 @@
  * @return int - damage done to card
  **/
 function damageCard(card, damage) {
-    if (card.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
-        card.abilities = card.abilities.filter(function(ability) { ability != CARD_ABILITY_SHIELD });
+    // add has card ability func
+    if (hasCardAbilityOrBuff(card, CARD_ABILITY_SHIELD)) {
+        card.abilities = card.abilities.filter(function(ability) {
+            return ability != CARD_ABILITY_SHIELD;
+        });
         return 0;
     } else {
         const initialHealth = card.health;
@@ -265,8 +268,23 @@ function addChallengeMove(challengeStateData, move) {
     challengeStateData.lastMoves.push(move);
 }
 
+function addChallengeDeadCard(challengeStateData, deadCard) {
+    challengeStateData.deadCards.forEach(function(card) {
+        if (card.id === deadCard.id) {
+            setScriptError("Cannot add a duplicate card to dead cards.");
+        }
+    });
+    challengeStateData.deadCards.push(deadCard);    
+}
+
 function getNewSpawnRank(challengeStateData) {
     const spawnRank = challengeStateData.spawnCount;
     challengeStateData.spawnCount += 1;
     return spawnRank;
+}
+
+function getNewDeathRank(challengeStateData) {
+    const deathRank = challengeStateData.deathCount;
+    challengeStateData.deathCount += 1;
+    return deathRank;
 }

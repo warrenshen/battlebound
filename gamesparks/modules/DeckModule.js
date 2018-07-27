@@ -344,6 +344,7 @@ function getActiveDeckByPlayerId(playerId) {
     instances.forEach(function(instance, index) {
         const baseId = instance.id;
         instance.baseId = baseId;
+        instance.playerId = playerId;
         instance.id = baseId + "-" + playerId + "-" + index;
         instance.attackStart = instance.attack;
         instance.costStart = instance.cost;
