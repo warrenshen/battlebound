@@ -7,6 +7,32 @@
 // ====================================================================================================
 require("ChallengeMovesModule");
 
+function _getObfuscatedMoves(moves, playerId, opponentId) {
+    return moves.map(function(move) {
+        if (move === null) {
+            setScriptError("Move is null - did you remember to set move to something?");
+        }
+        if (
+            move.playerId === opponentId && 
+            (
+                move.category === MOVE_CATEGORY_DRAW_CARD ||
+                move.category === MOVE_CATEGORY_DRAW_CARD_MULLIGAN
+            ) 
+        ) {
+            return {
+                playerId: move.playerId,
+                category: move.category,
+                rank: move.rank,
+                attributes: {
+                    card: { id: "HIDDEN" },
+                },
+            };
+        } else {
+            return move;
+        }
+    });
+}
+
 /**
  * @param playerId - player ID to return challenge state for
  **/ 
@@ -64,40 +90,22 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     filteredOpponentState.expiredStreak = opponentExpiredStreak;
     
     const lastMoves = challengeStateData.lastMoves || [];
-    const obfuscatedMoves = lastMoves.map(function(move) {
-        if (move === null) {
-            setScriptError("Move is null - did you remember to set move to something?");
-        }
-        if (
-            move.playerId === opponentId && 
-            (
-                move.category === MOVE_CATEGORY_DRAW_CARD ||
-                move.category === MOVE_CATEGORY_DRAW_CARD_MULLIGAN
-            ) 
-        ) {
-            return {
-                playerId: move.playerId,
-                category: move.category,
-                rank: move.rank,
-                attributes: {
-                    card: { id: "HIDDEN" },
-                },
-            };
-        } else {
-            return move;
-        }
-    });
+    const obfuscatedLastMoves = _getObfuscatedMoves(lastMoves, playerId, opponentId);
     // const filteredMoves = obfuscatedMoves.filter(function(move) {
     //     return !(move.playerId !== playerId && move.category === MOVE_CATEGORY_PLAY_MULLIGAN);
     // });
+    
+    const moves = challengeStateData.moves || [];
+    const obfuscatedMoves = _getObfuscatedMoves(moves, playerId, opponentId);
     
     return {
         nonce: challengeStateData.nonce,
         playerState: filteredPlayerState,
         opponentState: filteredOpponentState,
-        newMoves: obfuscatedMoves,
+        newMoves: obfuscatedLastMoves,
         moveCount: challengeStateData.moves.length,
         spawnCount: challengeStateData.spawnCount,
+        moves: obfuscatedMoves,
     };
 }
 
@@ -119,6 +127,31 @@ function getChallengeStateForPlayer(playerId, challengeId) {
     Spark.setScriptData("playerState", response.playerState);
     Spark.setScriptData("opponentState", response.opponentState);
     Spark.setScriptData("newMoves", response.newMoves);
+    Spark.setScriptData("moveCount", response.moveCount);
+    Spark.setScriptData("spawnCount", response.spawnCount);
+    
+    return challenge;
+}
+
+/**
+ * @param playerId - player ID to return challenge state for
+ **/ 
+function getChallengeStateForPlayerWithPastMoves(playerId, challengeId) {
+    const challenge = Spark.getChallenge(challengeId);
+    if (challenge == null) {
+        setScriptError("Challenge does not exist.");
+    }
+
+    const challengeStateData = challenge.getPrivateData("data");
+
+    const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
+    
+    Spark.setScriptData("challengeId", challengeId);
+    Spark.setScriptData("nonce", response.nonce);
+    Spark.setScriptData("playerState", response.playerState);
+    Spark.setScriptData("opponentState", response.opponentState);
+    Spark.setScriptData("newMoves", response.newMoves);
+    Spark.setScriptData("moves", response.moves);
     Spark.setScriptData("moveCount", response.moveCount);
     Spark.setScriptData("spawnCount", response.spawnCount);
     

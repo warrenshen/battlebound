@@ -349,6 +349,10 @@ function getActiveDeckByPlayerId(playerId) {
         instance.costStart = instance.cost;
         instance.healthStart = instance.health;
         instance.healthMax = instance.health;
+        
+        if (instance.abilities == null) {
+            instance.abilities = [];
+        }
     });
     return instances;
 }

@@ -31,6 +31,7 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN,
     CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY,
     CARD_ABILITY_END_TURN_DRAW_CARD,
+    CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
     
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
@@ -38,6 +39,8 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
     CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
     CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY,
+    CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_TWENTY,
+    CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_FOURTY,
     CARD_ABILITY_BATTLE_CRY_DAMAGE_PLAYER_FACE_BY_TWENTY,
     CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY,
     CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
@@ -71,6 +74,8 @@ const EFFECTS_BATTLE_CRY = [
     CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
     CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
     CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY,
+    CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_TWENTY,
+    CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_FOURTY,
     CARD_ABILITY_BATTLE_CRY_DAMAGE_PLAYER_FACE_BY_TWENTY,
     CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY,
     CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
@@ -89,16 +94,18 @@ function hasCardAbilityOrBuff(card, abilityOrBuff) {
         return false;
     }
     
-    if (card.abilities.indexOf(abilityOrBuff) >= 0) {
+    if (card.abilities && card.abilities.indexOf(abilityOrBuff) >= 0) {
         return true;
     }
     
-    // TODO: what to do about multiple buffs of same type?
-    card.buffs.forEach(function(buff) {
-        if (buff.category === abilityOrBuff) {
-            return true;
-        }
-    });
+    if (card.buffs) {
+        // TODO: what to do about multiple buffs of same type?
+        card.buffs.forEach(function(buff) {
+            if (buff.category === abilityOrBuff) {
+                return true;
+            }
+        });
+    }
 }
 
 function addToQueues(newEffects) {
@@ -209,17 +216,30 @@ function processHQueue(challengeStateData, effect) {
     var newEffects;
     
     switch (effect.name) {
-        case EFFECT_CARD_DIE:
-            newEffects = effectCardDie(challengeStateData, effect);
+        case CARD_ABILITY_LIFE_STEAL:
+            newEffects = abilityLifeSteal(challengeStateData, effect);
             break;
         case CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY:
             newEffects = abilityDamagePlayerFace(challengeStateData, effect, 30);
+            break;
+        case EFFECT_CARD_DIE:
+            newEffects = effectCardDie(challengeStateData, effect);
+            break;
         default:
             setScriptError("Effect not supported.");
             break;
     }
     
     return newEffects;
+}
+
+function abilityLifeSteal(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const playerState = challengeStateData.current[playerId];
+    
+    healFace(playerState, effect.value);
+    
+    return [];
 }
 
 // Literally remove card from field, dying breath already handled.
@@ -538,7 +558,7 @@ function _getAdjacentCardsByPlayerIdAndCardId(challengeStateData, playerId, card
         }
     }
     if (playerIndex < 5) {
-        const rightCard = playerField[playerIndex - 1];
+        const rightCard = playerField[playerIndex + 1];
         if (rightCard.id != "EMPTY") {
             adjacentCards.push(rightCard);
         }
@@ -576,9 +596,6 @@ function abilityHealAdjacentFriendly(challengeStateData, effect, amount) {
 function abilityDamagePlayerFace(challengeStateData, effect, amount) {
     const playerId = effect.playerId;
     const playerState = challengeStateData.current[playerId];
-    if (playerState == null) {
-        setScriptError("Effect player ID is invalid.");
-    }
     
     damageFace(playerState, amount);
     
@@ -673,9 +690,11 @@ function _getDeadCardsByPlayerId(challengeStateData, playerId) {
         }
     });
     
-    const playedCards = Object.values(cardIdToPlayedCard);
+    const playedCards = Object.keys(cardIdToPlayedCard).map(function(cardId) {
+        return cardIdToPlayedCard[cardId];
+    });
     
-    const playerState = challengeStateData[playerId];
+    const playerState = challengeStateData.current[playerId];
     const playerField = playerState.field;
     const fieldCardIds = playerField.map(function(fieldCard) { return fieldCard.id });
     
@@ -744,7 +763,7 @@ function abilityReviveHighestCostCreature(challengeStateData, effect) {
     const spawnCard = _cleanCardForSummon(reviveCard);
     
     const playerState = challengeStateData.current[playerId];
-    const playerField = challengeStateData.playerField;
+    const playerField = playerState.field;
     
     const availableIndices = [];
     playerField.forEach(function(fieldCard, index) {
@@ -766,7 +785,7 @@ function abilityReviveHighestCostCreature(challengeStateData, effect) {
         };
     } else {
         const randomInt = Math.floor(Math.random() * availableIndices.length);
-        const spawnIndex = targetableIds[randomInt];
+        const spawnIndex = availableIndices[randomInt];
         playerField[spawnIndex] = spawnCard;
         
         move = {
@@ -814,11 +833,7 @@ function abilityAttackInFront(challengeStateData, effect, amount) {
 function abilityDeathRattleAttackFace(challengeStateData, effect, amount) {
     const playerId = effect.playerId;
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-    
     const opponentState = challengeStateData.current[opponentId];
-    if (opponentState == null) {
-        setScriptError("Effect player ID is invalid.");
-    }
 
     var newEffects = [];
     
@@ -896,6 +911,8 @@ function abilityDeathRattleDamageAllOpponentCreatures(challengeStateData, effect
     const playerId = effect.playerId;
     const cardId = effect.cardId;
     
+    const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+        
     var newEffects = [];
     
     const opponentCards = _getOpponentCreatureCards(challengeStateData, playerId);
@@ -995,6 +1012,15 @@ function getEffectsOnCardDamageDealt(playerId, card, amount) {
 
 function getEffectsOnCardDamageTaken(playerId, card, amount) {
     var newEffects = [];
+    
+    if (hasCardAbilityOrBuff(card, CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY)) {
+        newEffects.push({
+            playerId: playerId,
+            cardId: card.id,
+            name: CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+            spawnRank: card.spawnRank,
+        });
+    }
     
     return newEffects;
 }
@@ -1306,7 +1332,7 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
     var newEffects = [];
     
     if (playedCard.name === SPELL_NAME_TOUCH_OF_ZEUS) {
-        damageDone = damageCard(opponentCard, 20);
+        damageDone = damageCard(opponentCard, 30);
         
         newEffects = newEffects.concat(getEffectsOnCardDamageTaken(opponentId, opponentCard, damageDone));
         

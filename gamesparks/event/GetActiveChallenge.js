@@ -14,7 +14,7 @@ const playerId = player.getPlayerId();
 const activeChallengeId = player.getPrivateData("activeChallengeId");
 
 if (activeChallengeId) {
-    const challenge = getChallengeStateForPlayer(playerId, activeChallengeId);
+    const challenge = getChallengeStateForPlayerWithPastMoves(playerId, activeChallengeId);
     if (challenge.getRunState() !== "RUNNING") {
         player.removePrivateData("activeChallengeId");
         setScriptError("Challenge is already over.")
