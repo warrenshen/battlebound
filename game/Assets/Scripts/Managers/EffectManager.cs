@@ -15,6 +15,8 @@ public class EffectManager : MonoBehaviour
 
     private UnityAction callback;
 
+    private List<ChallengeCard> deadCards;
+
     public static EffectManager Instance { get; private set; }
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
@@ -181,6 +183,8 @@ public class EffectManager : MonoBehaviour
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
         this.lQueue = new List<Effect>();
+
+        this.deadCards = new List<ChallengeCard>();
     }
 
     // Update is called once per frame
@@ -896,41 +900,9 @@ public class EffectManager : MonoBehaviour
 
     private List<ChallengeCard> GetDeadCardsByPlayerId(string playerId)
     {
-        List<ChallengeMove> serverMoves = BattleManager.Instance.GetServerMoves();
-
-        Dictionary<string, ChallengeCard> cardIdToPlayedCard = new Dictionary<string, ChallengeCard>();
-
-        foreach (ChallengeMove serverMove in serverMoves)
-        {
-            if (
-                serverMove.PlayerId == playerId &&
-                (
-                    serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION ||
-                    serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE
-                )
-            )
-            {
-                cardIdToPlayedCard[serverMove.Attributes.Card.Id] = serverMove.Attributes.Card;
-            }
-        }
-
-        List<ChallengeCard> playedCards = new List<ChallengeCard>(cardIdToPlayedCard.Values);
-
-        List<BoardCreature> aliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
-        List<string> aliveCreatureIds = new List<string>(
-            aliveCreatures.Select(aliveCreature => aliveCreature.GetCardId())
+        return new List<ChallengeCard>(
+            this.deadCards.Where(deadCard => deadCard.PlayerId == playerId)
         );
-
-        List<ChallengeCard> deadCards = new List<ChallengeCard>(
-            playedCards.Where(playedCard => !aliveCreatureIds.Contains(playedCard.Id))
-        );
-
-        deadCards.Sort(delegate (ChallengeCard a, ChallengeCard b)
-        {
-            return a.SpawnRank < b.SpawnRank ? -1 : 1;
-        });
-
-        return deadCards;
     }
 
     private ChallengeCard CleanCardForSummon(string playerId, ChallengeCard dirtyCard)
@@ -1981,6 +1953,8 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> GetEffectsOnCreatureDeath(BoardCreature boardCreature)
     {
+        deadCards.Add(boardCreature.GetChallengeCard());
+
         List<Effect> effects = new List<Effect>();
 
         foreach (string effectName in EFFECT_DEATH_RATTLE)
@@ -2025,5 +1999,11 @@ public class EffectManager : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public void SetDeadCards(List<ChallengeCard> deadCards)
+    {
+        Debug.Log(string.Format("Dead cards count: {0}", deadCards.Count));
+        this.deadCards = deadCards;
     }
 }
