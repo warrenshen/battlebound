@@ -53,9 +53,18 @@ public class FXPoolManager : MonoBehaviour
             Debug.LogError(string.Format("Effect {0} not found!", effect));
         }
 
-        Transform chosen = pool.GetChild(effectIndices[effect]);
-        effectIndices[effect] = (effectIndices[effect] + 1) % pool.childCount;
-        return chosen;
+        try
+        {
+            Transform chosen = pool.GetChild(effectIndices[effect]);
+            effectIndices[effect] = (effectIndices[effect] + 1) % pool.childCount;
+            return chosen;
+        }
+        catch (UnityException exception)
+        {
+            Debug.LogError(exception);
+            Debug.LogError(effect);
+            return null;
+        }
     }
 
     public GameObject PlayEffect(string effect, Vector3 pos)
