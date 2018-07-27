@@ -656,17 +656,17 @@ public class BoardCreature : Targetable
     {
         this.raisedCard = true;
 
-        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 6 + Vector3.right + Vector3.down, 0.01f)
-                 .setDelay(1)
+        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 6 + Vector3.down, 0.01f)
+                 .setDelay(ActionManager.TWEEN_DURATION)
                  .setOnStart(() =>
             {
                 ActionManager.Instance.SetCursor(3);
                 this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Animated"));
             });
         LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, 0.01f)
-                 .setDelay(1);
+                 .setDelay(ActionManager.TWEEN_DURATION);
         LeanTween.rotateX(this.visual.gameObject, 15, 0.01f)
-        .setDelay(1);
+                 .setDelay(ActionManager.TWEEN_DURATION);
     }
 
     private void LowerCardVisual()
