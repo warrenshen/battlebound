@@ -1338,4 +1338,464 @@ describe("challenge end turn", function() {
       });
     });
   });
+
+  describe("triggered effects", function() {
+    it("should support draw card on both end turns", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 0,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "C39-5b0b017502bd4e052f08a28d-23",
+                "level": 0,
+                "category": 0,
+                "attack": 40,
+                "health": 30,
+                "cost": 50,
+                "name": "Dionysian Tosspot",
+                "description": "Draw a card at end of either player's turn",
+                "abilities": [
+                  25
+                ],
+                "baseId": "C39",
+                "attackStart": 40,
+                "costStart": 50,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 3,
+            "deck": [
+              {
+                "id": "C1-ID_OPPONENT-1",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "C4-ID_OPPONENT-4",
+                "level": 0,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+              {
+                "id": "C6-ID_PLAYER-6",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              },
+            ],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 1,
+            "manaCurrent": 30,
+            "manaMax": 40,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+            ],
+            "deckSize": 4,
+            "deck": [],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_OPPONENT"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 3);
+
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD");
+            assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support draw card on both end turns", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "C39-5b0b017502bd4e052f08a28d-23",
+                "level": 0,
+                "category": 0,
+                "attack": 40,
+                "health": 30,
+                "cost": 50,
+                "name": "Dionysian Tosspot",
+                "description": "Draw a card at end of either player's turn",
+                "abilities": [
+                  25
+                ],
+                "baseId": "C39",
+                "attackStart": 40,
+                "costStart": 50,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 5,
+            "deck": [
+              {
+                "id": "C1-ID_OPPONENT-1",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "C4-ID_OPPONENT-4",
+                "level": 0,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+              {
+                "id": "C6-ID_PLAYER-6",
+                "level": 0,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              },
+            ],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 30,
+            "manaMax": 40,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+            ],
+            "deckSize": 4,
+            "deck": [],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 3);
+
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY");
+            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
 });
