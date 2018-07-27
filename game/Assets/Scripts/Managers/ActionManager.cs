@@ -154,6 +154,8 @@ public class ActionManager : MonoBehaviour
 
     public LTDescr ResetTarget()
     {
+        if (this.target == null)
+            return null;
         CardTween.moveLocal(this.target, this.target.reset.position, CardTween.TWEEN_DURATION);
         return LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
     }

@@ -195,7 +195,7 @@ public class CollectionManager : MonoBehaviour
 
     private void PositionForDecklist(CollectionCardObject targetObject, int index)
     {
-        CardTween.move(targetObject, buildPanel.transform.position + Vector3.down * (index + 1) * 0.6F, ActionManager.TWEEN_DURATION);
+        CardTween.move(targetObject, buildPanel.transform.position + Vector3.down * (index + 1) * 0.4F, ActionManager.TWEEN_DURATION);
     }
 
     private void SaveCollectionRequest()

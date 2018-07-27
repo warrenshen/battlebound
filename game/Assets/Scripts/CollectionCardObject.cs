@@ -95,15 +95,15 @@ public class CollectionCardObject : CardObject
 
     public void DoubleClickUp()
     {
-        this.lastDoubleClickedTime = Time.time;
+        //this.lastDoubleClickedTime = Time.time;
 
-        if (!CollectionManager.Instance.ActiveDecklist.Contains(this))
-        {
-            LeanTween.cancel(this.gameObject);
-            this.noInteraction = false;
+        //if (!CollectionManager.Instance.ActiveDecklist.Contains(this))
+        //{
+        //    LeanTween.cancel(this.gameObject);
+        //    this.noInteraction = false;
 
-            CollectionManager.Instance.AddToDecklist(this);  //to-do: buggy af if spam-clicked
-        }
+        //    CollectionManager.Instance.AddToDecklist(this);  //to-do: buggy af if spam-clicked
+        //}
     }
 
     public void SetMinify(bool value)
