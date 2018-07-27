@@ -1701,7 +1701,7 @@ describe("challenge events", function() {
     //   ],
   });
 
-  describe("warcry: attack", function() {
+  describe("warcry: in front", function() {
     const challengeStateData = {
       "current": {
         "ID_OPPONENT": {
@@ -1805,6 +1805,24 @@ describe("challenge events", function() {
               "healthStart": 30,
               "healthMax": 30,
             },
+            {
+              "id": "C51-ID_PLAYER-12",
+              "level": 0,
+              "category": 0,
+              "attack": 10,
+              "health": 30,
+              "cost": 30,
+              "name": "Thief of Night",
+              "description": "Warcy: Silence creature in front",
+              "abilities": [
+                18
+              ],
+              "baseId": "C51",
+              "attackStart": 10,
+              "costStart": 30,
+              "healthStart": 30,
+              "healthMax": 30,
+            },
           ],
           "deckSize": 1,
           "cardCount": 8,
@@ -1901,6 +1919,264 @@ describe("challenge events", function() {
             const opponentField = opponentState.field;
             assert.equal(opponentField[0].id, "C44-ID_OPPONENT-18");
             assert.equal(opponentField[0].health, 10);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support silence in front", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlayCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C51-ID_PLAYER-12",
+            attributesJson: {
+              fieldIndex: 5,
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
+            assert.equal(lastMoves[0].attributes.card.id, "C51-ID_PLAYER-12");
+            assert.equal(lastMoves[0].attributes.fieldIndex, 5);
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[5].id, "C51-ID_PLAYER-12");
+            assert.equal(playerField[5].health, 30);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "C44-ID_OPPONENT-18");
+            assert.equal(opponentField[0].isSilenced, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("warcry: all enemy", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C12-ID_OPPONENT-8",
+              "level": 0,
+              "category": 0,
+              "attack": 20,
+              "health": 30,
+              "cost": 30,
+              "name": "Lux",
+              "description": "Warcry: Heal 40 hp to all creatures on board",
+              "abilities": [
+                28
+              ],
+              "baseId": "C44",
+              "attackStart": 20,
+              "costStart": 30,
+              "healthStart": 30,
+              "healthMax": 30,
+              "buffs": [],
+              "canAttack": 0,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "C49-ID_OPPONENT-13",
+              "level": 0,
+              "category": 0,
+              "attack": 10,
+              "health": 30,
+              "cost": 30,
+              "name": "Pricklepillar",
+              "description": "Taunt; Lethal",
+              "abilities": [
+                1,
+                21
+              ],
+              "baseId": "C49",
+              "attackStart": 10,
+              "costStart": 30,
+              "healthStart": 30,
+              "healthMax": 30,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 6,
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b012e7486050526c9c1a8",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 60,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "C46-ID_PLAYER-16",
+              "level": 0,
+              "category": 0,
+              "attack": 50,
+              "health": 40,
+              "cost": 50,
+              "name": "Cereboarus",
+              "description": "Lifesteal; Deathwish: Draw a card",
+              "abilities": [
+                5,
+                6
+              ],
+              "baseId": "C46",
+              "attackStart": 50,
+              "costStart": 50,
+              "healthStart": 40,
+              "healthMax": 40,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 5,
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "hand": [
+            {
+              "id": "C52-ID_PLAYER-4",
+              "level": 0,
+              "category": 0,
+              "attack": 60,
+              "health": 50,
+              "cost": 70,
+              "name": "POWER SIPH#NER",
+              "description": "Warcy: Silence all opponent creatures",
+              "abilities": [
+                31
+              ],
+              "baseId": "C52",
+              "attackStart": 60,
+              "costStart": 70,
+              "healthStart": 50,
+              "healthMax": 50,
+            },
+          ],
+          "deckSize": 0,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "nonce": 14
+    };
+
+    it("should support silence all enemy creatures", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlayCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C52-ID_PLAYER-4",
+            attributesJson: {
+              fieldIndex: 2,
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.card.id, "C52-ID_PLAYER-4");
+            assert.equal(lastMoves[0].attributes.fieldIndex, 2);
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 0);
+            assert.equal(playerState.manaMax, 70);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[2].id, "C52-ID_PLAYER-4");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+
+            assert.equal(opponentField[0].id, "C12-ID_OPPONENT-8");
+            assert.equal(opponentField[0].isSilenced, 1);
+
+            assert.equal(opponentField[1].id, "C49-ID_OPPONENT-13");
+            assert.equal(opponentField[1].isSilenced, 1);
 
             resolve();
           }
@@ -3032,8 +3308,7 @@ describe("challenge events", function() {
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
             assert.equal(opponentField[0].health, 10);
-            assert.equal(opponentField[1].id, "C2-5b0b012e7486050526c9c1a8-2");
-            assert.equal(opponentField[1].health, 10);
+            assert.equal(opponentField[1].id, "EMPTY");
 
             assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
             assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
