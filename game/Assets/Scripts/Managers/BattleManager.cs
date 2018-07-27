@@ -1532,7 +1532,7 @@ public class BattleManager : MonoBehaviour
 
     private LTDescr AnimateCardPlayed(BattleCardObject battleCardObject)
     {
-        LeanTween.rotate(battleCardObject.visual.gameObject, new Vector3(0, 180, 0), CardTween.TWEEN_DURATION)
+        LeanTween.rotateLocal(battleCardObject.visual.gameObject, new Vector3(0, 180, 0), CardTween.TWEEN_DURATION)
                  .setEaseInQuad();
         LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
                  .setEaseInQuad();
