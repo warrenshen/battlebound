@@ -13,10 +13,10 @@ public class BattleCardObject : CardObject
     {
         this.owner = player;
         base.Initialize(card);
-        this.HideIfNeeded();
+        this.StartFlippedIfNeeded();
     }
 
-    private void HideIfNeeded()
+    private void StartFlippedIfNeeded()
     {
         if (DeveloperPanel.IsServerEnabled() && this.owner.Id == BattleManager.Instance.Opponent.Id)
         {

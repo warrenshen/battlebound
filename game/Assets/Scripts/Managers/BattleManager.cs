@@ -1530,56 +1530,48 @@ public class BattleManager : MonoBehaviour
         return serverMove.Rank;
     }
 
-    private void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
+    private LTDescr AnimateCardPlayed(BattleCardObject battleCardObject)
     {
         LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
                  .setEaseInQuad();
-        CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad()
+        return CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad();
+    }
+
+    private void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
+    {
+        this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
+          {
+              CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
                  .setOnComplete(() =>
                  {
-                     CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                                   .setOnComplete(() =>
-                                   {
-                                       PlayCardToBoard(battleCardObject, fieldIndex);
-                                   });
+                     PlayCardToBoard(battleCardObject, fieldIndex);
                  });
+          });
     }
 
     private void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
-        LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad();
-        CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad()
+        this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
+        {
+            CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
                  .setOnComplete(() =>
                  {
-                     CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                        .setOnComplete(() =>
-                        {
-                            PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
-                        });
+                     PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
                  });
+        });
     }
 
     private void EnemyPlaySpellUntargetedAnim(BattleCardObject battleCardObject)
     {
-        LeanTween.rotate(
-            battleCardObject.gameObject,
-            this.enemyPlayCardFixedTransform.rotation.eulerAngles,
-            CardTween.TWEEN_DURATION
-        ).setEaseInQuad();
-
-        CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-            .setEaseInQuad()
-            .setOnComplete(() =>
-            {
-                CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                    .setOnComplete(() =>
-                    {
-                        PlayUntargetedSpellFromServer(battleCardObject);
-                    });
-            });
+        this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
+        {
+            CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                 .setOnComplete(() =>
+                 {
+                     PlayUntargetedSpellFromServer(battleCardObject);
+                 });
+        });
     }
 
     private PlayerState GetPlayerState()
