@@ -776,6 +776,7 @@ describe("challenge events", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -786,6 +787,7 @@ describe("challenge events", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 2,
+        "deathCount": 0,
         "nonce": 14
       };
 
@@ -956,6 +958,7 @@ describe("challenge events", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -966,6 +969,7 @@ describe("challenge events", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 2,
+        "deathCount": 0,
         "nonce": 14
       };
 
@@ -1192,6 +1196,7 @@ describe("challenge events", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -1202,6 +1207,7 @@ describe("challenge events", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 2,
+        "deathCount": 0,
         "nonce": 14
       };
 
@@ -1449,6 +1455,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -1459,6 +1466,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -1818,6 +1826,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -1828,6 +1837,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -2106,6 +2116,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -2116,6 +2127,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -2163,28 +2175,6 @@ describe("challenge events", function() {
         );
       });
     });
-  });
-
-  describe("warcry: revive", function() {
-    //     {
-    //       "id": "C45-5b0b017502bd4e052f08a28d-17",
-    //       "level": 0,
-    //       "category": 0,
-    //       "attack": 40,
-    //       "health": 60,
-    //       "cost": 80,
-    //       "name": "Thunderous Desperado",
-    //       "description": "Warcry: Revive your highest cost fallen creature",
-    //       "abilities": [
-    //         29
-    //       ],
-    //       "baseId": "C45",
-    //       "attackStart": 40,
-    //       "costStart": 80,
-    //       "healthStart": 60,
-    //       "healthMax": 60
-    //     },
-    //   ],
   });
 
   describe("lethal and lifesteal", function() {
@@ -2352,6 +2342,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -2362,6 +2353,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -2667,6 +2659,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -2677,6 +2670,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -2979,6 +2973,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -2989,6 +2984,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -3197,6 +3193,7 @@ describe("divine shield", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -3207,6 +3204,7 @@ describe("divine shield", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -3423,6 +3421,7 @@ describe("divine shield", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -3433,6 +3432,7 @@ describe("divine shield", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 6,
+      "deathCount": 0,
       "nonce": 14
     };
 
