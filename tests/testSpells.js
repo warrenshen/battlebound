@@ -890,6 +890,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -900,6 +901,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -1190,7 +1192,7 @@ describe("challenge events", function() {
               "level": 0,
               "category": 1,
               "cost": 50,
-              "name": "Death Note",
+              "name": "Death Notice",
               "description": "Kill an opponent creature",
               "baseId": "C23",
               "costStart": 50,
@@ -1230,6 +1232,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -1240,6 +1243,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -1264,7 +1268,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
-            assert.equal(lastMoves[0].attributes.card.name, "Death Note");
+            assert.equal(lastMoves[0].attributes.card.name, "Death Notice");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
             assert.equal(lastMoves[0].attributes.targetId, "C10-5b0b012e7486050526c9c1a8-5");
 
@@ -1299,6 +1303,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C24-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[0].attributes.card.name, "Mudslinging")
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
@@ -1558,6 +1563,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -1568,6 +1574,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -1737,6 +1744,7 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -1747,6 +1755,7 @@ describe("challenge events", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 2,
+      "deathCount": 0,
       "nonce": 14
     };
 

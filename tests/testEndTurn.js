@@ -820,6 +820,7 @@ describe("challenge end turn", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -830,6 +831,7 @@ describe("challenge end turn", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 0,
+        "deathCount": 0,
         "nonce": 4,
       };
 
@@ -1043,6 +1045,7 @@ describe("challenge end turn", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -1053,6 +1056,7 @@ describe("challenge end turn", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 0,
+        "deathCount": 0,
         "nonce": 4,
       };
 
@@ -1285,6 +1289,7 @@ describe("challenge end turn", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
         "ID_PLAYER": 0,
@@ -1295,6 +1300,7 @@ describe("challenge end turn", function() {
         "ID_OPPONENT": 0,
       },
       "spawnCount": 7,
+      "deathCount": 0,
       "nonce": 14
     };
 
@@ -1524,6 +1530,7 @@ describe("challenge end turn", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -1534,6 +1541,7 @@ describe("challenge end turn", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 0,
+        "deathCount": 0,
         "nonce": 4,
       };
 
@@ -1753,6 +1761,7 @@ describe("challenge end turn", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {
           "ID_PLAYER": 0,
@@ -1763,6 +1772,7 @@ describe("challenge end turn", function() {
           "ID_OPPONENT": 0,
         },
         "spawnCount": 0,
+        "deathCount": 0,
         "nonce": 4,
       };
 
