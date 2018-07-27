@@ -661,7 +661,7 @@ public class BoardCreature : Targetable
                  .setOnStart(() =>
             {
                 ActionManager.Instance.SetCursor(3);
-                this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Animated"));
+                this.visual.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
             });
         LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, 0.01f)
                  .setDelay(ActionManager.TWEEN_DURATION);
