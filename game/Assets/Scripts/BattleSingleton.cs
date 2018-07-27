@@ -203,6 +203,19 @@ public class BattleSingleton : Singleton<BattleSingleton>
             BattleManager.Instance.SetServerMoves(challengeMoves);
         }
 
+        // Logic to load in existing dead cards for resume challenge case.
+        List<GSData> deadCardsData = scriptData.GetGSDataList("deadCards");
+        if (deadCardsData != null)
+        {
+            List<ChallengeCard> deadCards = new List<ChallengeCard>();
+            foreach (GSData deadCardData in deadCardsData)
+            {
+                deadCards.Add(JsonUtility.FromJson<ChallengeCard>(deadCardData.JSON));
+            }
+
+            EffectManager.Instance.SetDeadCards(deadCards);
+        }
+
         List<GSData> newMovesData = scriptData.GetGSDataList("newMoves");
         List<ChallengeMove> newChallengeMoves = new List<ChallengeMove>();
         foreach (GSData moveData in newMovesData)

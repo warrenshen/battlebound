@@ -10,6 +10,10 @@ public class ChallengeCard
     public string Id => id;
 
     [SerializeField]
+    private string playerId;
+    public string PlayerId => playerId;
+
+    [SerializeField]
     private int category;
     public int Category => category;
 
@@ -80,6 +84,11 @@ public class ChallengeCard
     public void SetId(string id)
     {
         this.id = id;
+    }
+
+    public void SetPlayerId(string playerId)
+    {
+        this.playerId = playerId;
     }
 
     public void SetCategory(int category)
@@ -177,6 +186,14 @@ public class ChallengeCard
         if (this.id != other.Id)
         {
             return string.Format("Id: {0} vs {1}", this.id, other.Id);
+        }
+        else if (this.id == "HIDDEN")
+        {
+            return null;
+        }
+        else if (this.playerId != other.PlayerId)
+        {
+            return string.Format("PlayerId: {0} vs {1} [{2}]", this.playerId, other.PlayerId, this.id);
         }
         else if (this.category != other.Category)
         {

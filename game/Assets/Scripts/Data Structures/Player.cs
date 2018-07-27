@@ -615,6 +615,7 @@ public class Player
             {
                 Card card = this.hand.GetCardObjectByIndex(i).Card;
                 ChallengeCard challengeCard = card.GetChallengeCard();
+                challengeCard.SetPlayerId(this.id);
                 handCards.Add(challengeCard);
             }
         }
