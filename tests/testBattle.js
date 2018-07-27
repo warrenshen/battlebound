@@ -4304,6 +4304,7 @@ describe("divine shield", function() {
           const opponentField = opponentState.field;
           assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
           assert.equal(opponentField[2].abilities.indexOf(2) >= 0, false);
+          assert.equal(opponentField[2].abilities.indexOf(1) >= 0, true);
 
           assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
           assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
@@ -4338,6 +4339,7 @@ describe("divine shield", function() {
               assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
               assert.equal(opponentField[2].health, 30);
               assert.equal(opponentField[2].abilities.indexOf(2) >= 0, false);
+              assert.equal(opponentField[2].abilities.indexOf(1) >= 0, true);
 
               assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
               assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
@@ -4525,6 +4527,7 @@ describe("divine shield", function() {
           assert.equal(playerField[2].id, "C6-5b0b012e7486050526c9c1a8-6");
           assert.equal(playerField[2].health, 60);
           assert.equal(playerField[2].abilities.indexOf(2) >= 0, true);
+          assert.equal(playerField[2].abilities.indexOf(0) >= 0, true);
 
           const opponentState = challengeStateData.current["ID_OPPONENT"];
           assert.equal(opponentState.health, 30);
