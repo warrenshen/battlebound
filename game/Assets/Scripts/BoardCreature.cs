@@ -249,7 +249,7 @@ public class BoardCreature : Targetable
             Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
         }
 
-        if (summonAnimClips.Count >= 2)
+        if (this.summonAnimClips != null && this.summonAnimClips.Count >= 2)
         {
             this.summonAnimation.Play(summonAnimClips[0]);
             this.summonAnimation.CrossFade(summonAnimClips[1], 3F);    //should group with sound as a method
