@@ -656,7 +656,7 @@ public class BoardCreature : Targetable
     {
         this.raisedCard = true;
 
-        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 6 + Vector3.down, 0.01f)
+        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 7 + Vector3.down, 0.01f)
                  .setDelay(ActionManager.TWEEN_DURATION)
                  .setOnStart(() =>
             {

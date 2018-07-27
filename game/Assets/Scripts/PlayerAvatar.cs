@@ -90,7 +90,7 @@ public class PlayerAvatar : Targetable
         textMesh.alignment = TextAlignmentOptions.Center;
         RectTransform textContainer = textMesh.GetComponent<RectTransform>();
         textContainer.sizeDelta = new Vector2(2, 1);
-        textContainer.anchoredPosition = new Vector3(0, 2, -0.5f);
+        textContainer.anchoredPosition = new Vector3(0, 2.6F, -0.5F);
         textHolder.transform.SetParent(gameObject.transform, false);
         textHolder.layer = textHolder.transform.parent.gameObject.layer;
 
