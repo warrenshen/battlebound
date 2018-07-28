@@ -559,10 +559,8 @@ public class EffectManager : MonoBehaviour
             {
                 ChallengeCard challengeCard = challengeMove.Attributes.Card;
                 ExperienceCard experienceCard = new ExperienceCard(
-                    challengeCard,
-                    challengeCard.CostStart,
-                    challengeCard.AttackStart,
-                    challengeCard.HealthStart,
+                    challengeCard.Id,
+                    challengeCard.Name,
                     2,
                     2,
                     8,
@@ -573,7 +571,7 @@ public class EffectManager : MonoBehaviour
                 experienceCards.Add(experienceCard);
             }
         }
-        Debug.Log(experienceCards.Count);
+
         challengeEndState.SetExperienceCards(experienceCards);
 
         if (BattleManager.Instance.You.Id == playerId)
@@ -1460,7 +1458,7 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError("Unsupported.");
             }
         }
-        else if (card.Name == SpellCard.SPELL_NAME_SPRAY_N_PRAY)
+        else if (card.Name == Card.CARD_NAME_SPRAY_N_PRAY)
         {
             PlayerAvatar attackingTargetable = BattleManager.Instance.GetPlayerById(playerId).Avatar;
             Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
@@ -1535,19 +1533,19 @@ public class EffectManager : MonoBehaviour
 
         switch (spellCard.Name)
         {
-            case SpellCard.SPELL_NAME_TOUCH_OF_ZEUS:
+            case Card.CARD_NAME_TOUCH_OF_ZEUS:
                 effects = SpellTargetedLightningBolt(playerId, targetedCreature);
                 break;
-            case SpellCard.SPELL_NAME_UNSTABLE_POWER:
+            case Card.CARD_NAME_UNSTABLE_POWER:
                 effects = SpellTargetedUnstablePower(playerId, targetedCreature);
                 break;
-            case SpellCard.SPELL_NAME_DEEP_FREEZE:
+            case Card.CARD_NAME_DEEP_FREEZE:
                 effects = SpellTargetedDeepFreeze(playerId, targetedCreature);
                 break;
-            case SpellCard.SPELL_NAME_WIDESPREAD_FROSTBITE:
+            case Card.CARD_NAME_WIDESPREAD_FROSTBITE:
                 effects = SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
                 break;
-            case SpellCard.SPELL_NAME_DEATH_NOTICE:
+            case Card.CARD_NAME_DEATH_NOTICE:
                 effects = SpellTargetedDeathNotice(playerId, targetedCreature);
                 break;
             default:
@@ -1647,28 +1645,28 @@ public class EffectManager : MonoBehaviour
 
         switch (spellCard.Name)
         {
-            case SpellCard.SPELL_NAME_RIOT_UP:
+            case Card.CARD_NAME_RIOT_UP:
                 effects = SpellUntargetedRiotUp(playerId);
                 break;
-            case SpellCard.SPELL_NAME_BRR_BRR_BLIZZARD:
+            case Card.CARD_NAME_BRR_BRR_BLIZZARD:
                 effects = SpellUntargetedBrrBrrBlizzard(playerId);
                 break;
-            case SpellCard.SPELL_NAME_RAZE_TO_ASHES:
+            case Card.CARD_NAME_RAZE_TO_ASHES:
                 effects = SpellUntargetedRazeToAshes(playerId);
                 break;
-            case SpellCard.SPELL_NAME_GREEDY_FINGERS:
+            case Card.CARD_NAME_GREEDY_FINGERS:
                 effects = SpellUntargetedGreedyFingers(playerId);
                 break;
-            case SpellCard.SPELL_NAME_SILENCE_OF_THE_LAMBS:
+            case Card.CARD_NAME_SILENCE_OF_THE_LAMBS:
                 effects = SpellUntargetedSilenceOfTheLambs(playerId);
                 break;
-            case SpellCard.SPELL_NAME_MUDSLINGING:
+            case Card.CARD_NAME_MUDSLINGING:
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
-            case SpellCard.SPELL_NAME_SPRAY_N_PRAY:
+            case Card.CARD_NAME_SPRAY_N_PRAY:
                 effects = SpellUntargetedSprayNPray(playerId, spellCard.GetChallengeCard());
                 break;
-            case SpellCard.SPELL_NAME_GRAVE_DIGGING:
+            case Card.CARD_NAME_GRAVE_DIGGING:
                 effects = SpellUntargetedGraveDigging(playerId);
                 break;
             default:
