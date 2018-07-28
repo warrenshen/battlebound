@@ -94,7 +94,7 @@ public class Player
     {
         List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
-        this.AddDrawnCards(handCards, true, animate: false);
+        //this.AddDrawnCards(handCards, true, animate: false); // Don't need since never start with cards in hand?
     }
 
     public void SetMode(int mode)
@@ -296,16 +296,10 @@ public class Player
 
         for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
-            BattleCardObject battleCardObject = AddDrawnCard(
+            BattleCardObject battleCardObject = AddMulliganCard(
                 this.keptMulliganCards[i],
-                isInit: true,
-                reposition: false //doesn't use standard RepositionCards()
-            );
-            BattleManager.Instance.AnimateDrawCardForMulligan(
-                this,
-                battleCardObject,
                 i
-            ); //special animation to replace the omitted reposition
+            );
         }
 
         BattleManager.Instance.SetBoardCenterText("Choose cards to mulligan..");
@@ -537,10 +531,7 @@ public class Player
             });
     }
 
-    /*
-     * @param bool isInit - do not decrement deck size if true
-     */
-    public BattleCardObject AddDrawnCard(Card card, bool isInit = false, bool animate = true, bool reposition = true)
+    public BattleCardObject AddDrawnCard(Card card)
     {
         GameObject created = new GameObject(card.Name);
         BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
@@ -550,33 +541,32 @@ public class Player
             this.name + " Hand"
         ).transform;
 
-        if (!isInit)
-        {
-            this.deckSize -= 1;
-        }
-
+        this.deckSize -= 1;
         this.hand.AddCardObject(createdBattleCard);
 
-        if (reposition)
-        {
-            if (animate)
-            {
-                BattleManager.Instance.AnimateDrawCard(this, createdBattleCard);
-            }
-            else
-            {
-                this.hand.RepositionCards();
-            }
-        }
+        BattleManager.Instance.AnimateDrawCard(this, createdBattleCard);
         return createdBattleCard;
     }
 
-    public void AddDrawnCards(List<Card> cards, bool isInit = false, bool animate = true)
+    public BattleCardObject AddMulliganCard(Card card, int index)
     {
-        foreach (Card card in cards)
-        {
-            AddDrawnCard(card, isInit, animate: animate);
-        }
+        GameObject created = new GameObject(card.Name);
+        BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+        battleCardObject.Initialize(this, card);
+
+        created.transform.parent = GameObject.Find(
+            this.name + " Hand"
+        ).transform;
+
+        this.hand.AddCardObject(battleCardObject);
+
+        BattleManager.Instance.AnimateDrawCardForMulligan(
+            this,
+            battleCardObject,
+            index
+        );
+
+        return battleCardObject;
     }
 
     public void ReturnCardToDeck(Card card)

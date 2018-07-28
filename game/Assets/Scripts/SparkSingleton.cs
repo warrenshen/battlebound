@@ -7,7 +7,7 @@ using GameSparks.Api.Responses;
 
 public class SparkSingleton : Singleton<SparkSingleton>
 {
-    public string username = "warren";
+    public string username = "nick";
     public string password = "password";
 
     private bool isAuthenticated;
@@ -28,6 +28,8 @@ public class SparkSingleton : Singleton<SparkSingleton>
         {
             return;
         }
+
+        Login(username, password);
 
         ClearAuthenticatedCallbacks();
         this.isAuthenticated = false;

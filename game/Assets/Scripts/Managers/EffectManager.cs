@@ -1587,8 +1587,8 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        int damageTaken = targetedCreature.TakeDamage(10);
         targetedCreature.Freeze(1);
+        int damageTaken = targetedCreature.TakeDamage(10);
         effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
 
         return effects;

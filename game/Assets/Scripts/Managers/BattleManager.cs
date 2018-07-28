@@ -189,8 +189,8 @@ public class BattleManager : MonoBehaviour
     {
         if (DeveloperPanel.IsServerEnabled())
         {
-            turnIndex = this.players.FindIndex(player => player.HasTurn);
-            activePlayer = players[turnIndex % players.Count];
+            this.turnIndex = this.players.FindIndex(player => player.HasTurn);
+            this.activePlayer = this.players[turnIndex % players.Count];
 
             if (this.you.IsModeMulligan())
             {
@@ -213,24 +213,30 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            this.turnIndex = UnityEngine.Random.Range(0, players.Count);
+            this.activePlayer = players[turnIndex % players.Count];
+
+            Player inactivePlayer = Board.Instance.GetOpponentByPlayerId(this.activePlayer.Id);
+            this.mode = BATTLE_STATE_MULLIGAN_MODE;
+
             if (DeveloperPanel.ShouldSkipMulligan())
             {
-                this.mode = BATTLE_STATE_MULLIGAN_MODE;
                 HideMulliganOverlay(this.you);
                 HideMulliganOverlay(this.opponent);
 
-                this.you.DrawCardsForce(3);
-                this.opponent.DrawCardsForce(3);
+                this.activePlayer.DrawCardsForce(3);
+                inactivePlayer.DrawCardsForce(4);
+                //this.you.DrawCardsForce(3);
+                //this.opponent.DrawCardsForce(3);
             }
             else
             {
-                this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
-                this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
-                this.mode = BATTLE_STATE_MULLIGAN_MODE;
-            }
+                this.activePlayer.BeginMulligan(this.activePlayer.PopCardsFromDeck(3));
+                inactivePlayer.BeginMulligan(inactivePlayer.PopCardsFromDeck(4));
 
-            turnIndex = UnityEngine.Random.Range(0, players.Count);
-            activePlayer = players[turnIndex % players.Count];
+                //this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
+                //this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
+            }
         }
     }
 
@@ -561,7 +567,7 @@ public class BattleManager : MonoBehaviour
         float minThreshold = 20;
 
         //Debug.Log(String.Format("amt={0}, threshold={1}, mousepos={2}, resetpos={3}", GetCardDisplacement(target), Screen.height * minThreshold, target.transform.localPosition, target.reset.position));
-        if (target.Card.GetCost() > target.Owner.Mana)
+        if (target.GetCost() > target.Owner.Mana)
         {
             //can't play card due to mana
             ActionManager.Instance.ResetTarget();
@@ -680,6 +686,7 @@ public class BattleManager : MonoBehaviour
 
         battleCardObject.visual.SetOutline(true);
         battleCardObject.visual.Redraw();
+
         LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
         LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
         CardTween.move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION)
