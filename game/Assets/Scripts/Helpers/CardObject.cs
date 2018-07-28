@@ -68,14 +68,13 @@ public abstract class CardObject : MouseWatchable
 
     protected HyperCard.Card VisualizeCard()
     {
-        GameObject cardPrefab = ResourceSingleton.Instance.GetCardPrefab();
+        HyperCard.Card cardVisual = ResourceSingleton.Instance.TakeCardFromPool();
 
-        Transform created = Instantiate(cardPrefab, this.transform).transform as Transform;
-        created.localPosition = Vector3.zero;
-        created.localRotation = Quaternion.identity;
-        created.Rotate(0, 180, 0, Space.Self);
+        cardVisual.transform.parent = this.transform;
+        cardVisual.transform.localPosition = Vector3.zero;
+        cardVisual.transform.localRotation = Quaternion.identity;
+        cardVisual.transform.Rotate(0, 180, 0, Space.Self);
 
-        HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
         CardObject.SetHyperCardFromData(cardVisual, this.card);
         CardObject.SetHyperCardArtwork(cardVisual, this.card);
 
@@ -120,6 +119,7 @@ public abstract class CardObject : MouseWatchable
         cardVisual.SetTextFieldWithKey("Title", card.GetName());
         cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
         cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
+        cardVisual.SetFrameColor(CardTemplate.ColorFromClass(card.GetClassColor()));
 
         switch (card.GetRarity())
         {
@@ -152,9 +152,16 @@ public abstract class CardObject : MouseWatchable
         }
         else
         {
-            cardVisual.GetTextFieldWithKey("Attack").TmpObject.enabled = false;
-            cardVisual.GetTextFieldWithKey("Health").TmpObject.enabled = false;
+            cardVisual.SetTextFieldWithKey("Attack", "--");
+            cardVisual.SetTextFieldWithKey("Health", "--");
         }
         cardVisual.Redraw();
+    }
+
+    public void Recycle()
+    {
+        if (this.visual != null)
+            ResourceSingleton.Instance.ReturnCardToPool(this.visual);
+        Destroy(gameObject);
     }
 }

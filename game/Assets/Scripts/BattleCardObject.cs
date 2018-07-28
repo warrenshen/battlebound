@@ -128,6 +128,6 @@ public class BattleCardObject : CardObject
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-        Destroy(gameObject);
+        this.Recycle();
     }
 }

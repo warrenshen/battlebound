@@ -970,7 +970,7 @@ public class BattleManager : MonoBehaviour
 
     public void UseCard(Player player, BattleCardObject battleCardObject)
     {
-        GameObject.Destroy(battleCardObject.gameObject);
+        battleCardObject.Recycle();
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
     }
 
@@ -1234,11 +1234,13 @@ public class BattleManager : MonoBehaviour
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge won!");
+        this.ShowBattleEndFX(true);
     }
 
     public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge lost...");
+        this.ShowBattleEndFX(false);
         //{
         //    "id": "C14",
         //  "level": 0,
@@ -1258,6 +1260,23 @@ public class BattleManager : MonoBehaviour
         //}
         List<ChallengeEndState.ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
 
+    }
+
+    public void ShowBattleEndFX(bool won)
+    {
+        GameObject overlay = GameObject.Find("End Game Overlay");
+        TextMeshPro title = overlay.transform.Find("Title").GetComponent<TextMeshPro>();
+
+        if (won)
+        {
+            title.text = "Victory!";
+            overlay.transform.Find("WinFX").gameObject.SetActive(true);
+        }
+        else
+        {
+            title.text = "Defeat";
+            overlay.transform.Find("LoseFX").gameObject.SetActive(true);
+        }
     }
 
     public void ReceiveChallengeMove(ChallengeMove challengeMove)

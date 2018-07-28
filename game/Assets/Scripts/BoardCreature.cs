@@ -145,8 +145,7 @@ public class BoardCreature : Targetable
         newCollider.size *= BOARD_GROW_FACTOR;
         newCollider.center = oldCollider.center;
 
-        this.visual = battleCardObject.visual;
-        this.RepurposeCardVisual();
+        this.RepurposeCardVisual(battleCardObject);
         this.SummonCreature();
 
         //method calls
@@ -157,8 +156,11 @@ public class BoardCreature : Targetable
         LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
     }
 
-    private void RepurposeCardVisual()
+    private void RepurposeCardVisual(BattleCardObject previousOwner)
     {
+        this.visual = previousOwner.visual;
+        previousOwner.visual = null;
+
         this.visual.gameObject.SetLayer(9);
 
         this.visual.transform.parent = this.transform;
@@ -182,6 +184,7 @@ public class BoardCreature : Targetable
         created.transform.parent = this.transform;
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
         created.transform.Rotate(-15, 0, 0, Space.Self);
+        //created.transform.LookAt(Camera.main.transform);
 
         if (this.owner.Id != BattleManager.Instance.You.Id)
         {
@@ -585,7 +588,7 @@ public class BoardCreature : Targetable
                 {
                     SoundManager.Instance.PlaySound("UnfreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: -0.3F);
                     FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
-                    FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS], this.transform);
+                    FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS]);
                     this.summonAnimation.enabled = true;
                     this.statusVFX.Remove(BoardCreature.FROZEN_STATUS);
                 });
@@ -620,7 +623,7 @@ public class BoardCreature : Targetable
 
             //if not continue, needs removal
             GameObject effect = abilitiesVFX[ability];
-            FXPoolManager.Instance.UnassignEffect(ability, effect, this.transform);
+            FXPoolManager.Instance.UnassignEffect(ability, effect);
             abilitiesVFX.Remove(ability);
         }
     }

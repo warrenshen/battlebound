@@ -103,7 +103,7 @@ public abstract class Card
     };
 
     public enum CardType { Creature, Spell, Weapon, Structure };
-    public enum RarityType { Common, Uncommon, Rare, Epic, Legendary, Cosmic }
+    public enum RarityType { Common, Uncommon, Rare, Epic, Legendary, Cosmic };
 
     public const string CARD_EMPTY_ABILITY = "EMPTY";
     public const string CARD_ABILITY_CHARGE = "CARD_ABILITY_CHARGE";
@@ -260,6 +260,11 @@ public abstract class Card
     public RarityType GetRarity()
     {
         return this.cardTemplate.rarity;
+    }
+
+    public CardTemplate.ClassColor GetClassColor()
+    {
+        return this.cardTemplate.classColor;
     }
 
     public string GetFrontImage()

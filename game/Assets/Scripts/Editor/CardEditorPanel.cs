@@ -152,7 +152,6 @@ public class CardEditorPanel : EditorWindow
 
         if (chosen.frontScale.x < 0)
         {
-            chosen.frontScale *= -1;
             this.flipHorizontal = true;
         }
         else
@@ -356,6 +355,7 @@ public class CardEditorPanel : EditorWindow
         {
             EditorGUI.PrefixLabel(new Rect(23, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
         }
+        frameMat.color = CardTemplate.ColorFromClass(template.classColor);
         EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 400, 280, 390), this.cardFrame, frameMat);  //hardcoded for card frame
     }
 
@@ -363,7 +363,8 @@ public class CardEditorPanel : EditorWindow
     {
         //start card attributes
         int enumSelectorYPos = 200 + verticalOffset;
-        template.cardType = (Card.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width - 10, 20), template.cardType);
+        template.cardType = (Card.CardType)EditorGUI.EnumPopup(new Rect(5, enumSelectorYPos, position.width / 2 - 5, 20), template.cardType);
+        template.classColor = (CardTemplate.ClassColor)EditorGUI.EnumPopup(new Rect(5 + position.width / 2, enumSelectorYPos, position.width / 2 - 10, 20), template.classColor);
 
         int standardDetailsYPos = 220 + verticalOffset;
         EditorGUI.LabelField(new Rect(5, standardDetailsYPos, 40, lineHeight), "Name");

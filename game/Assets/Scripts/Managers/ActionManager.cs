@@ -160,11 +160,6 @@ public class ActionManager : MonoBehaviour
         return LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
     }
 
-    private void DestroyTarget()
-    {
-        GameObject.Destroy(target.gameObject);
-    }
-
     private void RepositionCard(CardObject cardObject)
     {
         //set target position by mouse position

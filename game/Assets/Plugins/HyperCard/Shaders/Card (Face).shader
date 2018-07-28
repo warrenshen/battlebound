@@ -421,7 +421,7 @@ Shader "HyperCard/Card (Face)"
              float4 time = _Time + _TimeEditor;
 
              float4 cardmask_col = tex2D(_CardMask, IN.texcoord);
-             float4 cardframe_col = tex2D(_CardFrame, IN.texcoord) * _CardFrameColor;
+             float4 cardframe_col = tex2D(_CardFrame, IN.texcoord) * _CardFrameColor;;
 
              float4 alpha_col = tex2D(_CardAlpha, IN.texcoord);
          
@@ -510,7 +510,6 @@ Shader "HyperCard/Card (Face)"
              // Blend
              float3 col = lerp(cardframe_col.rgb, cardpicture_col.rgb, cardmask_col.rgb.g);
              
-         
              // ...
 
              float4 finalColor = float4(col.rgb, alpha_col.a);
@@ -579,8 +578,8 @@ Shader "HyperCard/Card (Face)"
              {
                  half c = (finalColor.r + finalColor.g + finalColor.b) / 3;
                  finalColor = fixed4(c,c,c, alpha_col.a);
+                 finalColor = lerp(finalColor * _CardFrameColor, finalColor, cardmask_col.rgb.g);
              };
-
              finalColor.a *= _CardOpacity;
 
              // dissolve Fx

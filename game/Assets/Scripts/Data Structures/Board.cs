@@ -109,8 +109,7 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         boardCreature.Summon(battleCardObject);
-
-        Destroy(battleCardObject.gameObject);
+        battleCardObject.Recycle();
 
         if (shouldWarcry)
         {
@@ -327,8 +326,7 @@ public class Board : MonoBehaviour
             BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
             boardCreature.InitializeFromChallengeCard(battleCardObject, challengeCard);
 
-            Destroy(battleCardObject.gameObject);
-
+            battleCardObject.Recycle();
             Place(boardCreature, index);
         }
 

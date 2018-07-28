@@ -33,6 +33,7 @@ public class PlayerAvatar : Targetable
     //int maxAttacks in Targetable class
     //Player owner / Owner exists in Targetable class
 
+    [SerializeField]
     private SpriteRenderer spriteRenderer;
     private bool frozen;
     public bool Frozen => frozen;

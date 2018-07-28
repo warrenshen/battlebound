@@ -25,6 +25,25 @@ public class CardTemplate
     public string effectPrefab; //shared between creature and spell cards
     public string[] abilities;
 
+    public enum ClassColor { Neutral, Fire, Earth, Water, Dark, Light };
+    public ClassColor classColor;
+
+    public static Color COLOR_FIRE = new Color(1, 0.72f, 0.74f);
+    public static Color COLOR_EARTH = new Color(0.72f, 1, 0.72f);
+    public static Color COLOR_WATER = new Color(0.66f, 0.95f, 1);
+    public static Color COLOR_DARK = new Color(0.88f, 0.66f, 1);
+    public static Color COLOR_LIGHT = new Color(0.95f, 1, 0.66f);
+
+    public static Dictionary<ClassColor, Color> CLASS_TO_COLOR = new Dictionary<ClassColor, Color>()
+    {
+        { ClassColor.Neutral, Color.white },
+        { ClassColor.Fire,  CardTemplate.COLOR_FIRE},
+        { ClassColor.Earth, CardTemplate.COLOR_EARTH },
+        { ClassColor.Water, CardTemplate.COLOR_WATER },
+        { ClassColor.Dark, CardTemplate.COLOR_DARK },
+        { ClassColor.Light, CardTemplate.COLOR_LIGHT }
+    };
+
     //weapon
     public int durability;
     //to-do: special attributes?
@@ -45,5 +64,13 @@ public class CardTemplate
         this.rarity = Card.RarityType.Common;
         this.cardType = Card.CardType.Creature;
         this.abilities = new string[4];
+        this.classColor = ClassColor.Neutral;
+    }
+
+    public static Color ColorFromClass(CardTemplate.ClassColor classColor)
+    {
+        if (!CLASS_TO_COLOR.ContainsKey(classColor))
+            return Color.white;
+        return CLASS_TO_COLOR[classColor];
     }
 }

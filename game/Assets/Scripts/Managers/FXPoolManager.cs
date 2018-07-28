@@ -99,10 +99,10 @@ public class FXPoolManager : MonoBehaviour
         return chosen;
     }
 
-    public void UnassignEffect(string effect, GameObject effectObject, Transform parent)
+    public void UnassignEffect(string effect, GameObject effectObject)
     {
         effectObject.SetActive(false);
-        effectObject.transform.parent = GetEffect(effect);
+        effectObject.transform.parent = GetEffectPool(effect);
         effectObject.transform.localPosition = Vector3.zero;
     }
 }
