@@ -20,6 +20,7 @@ public class CollectionManager : MonoBehaviour
 
     [SerializeField]
     private Dictionary<string, Card> idToCard;
+
     [SerializeField]
     private List<CollectionCardObject> activeDecklist;  //list that is currently rendered/being changed
     public List<CollectionCardObject> ActiveDecklist => activeDecklist;
@@ -43,7 +44,6 @@ public class CollectionManager : MonoBehaviour
         Instance = this;
         this.collection = new List<Card>();
         this.decksRaw = new List<DeckRaw>();
-        this.activeDecklist = new List<CollectionCardObject>();
         this.idToCard = new Dictionary<string, Card>();
     }
 
@@ -129,16 +129,16 @@ public class CollectionManager : MonoBehaviour
         }
 
         //check for double clicks
-        if (hitCardObject != null)
-        {
-            if (hitCardObject == lastClickedCard &&
-                (Time.time - hitCardObject.lastClickedTime) < 0.5F &&
-                (Time.time - hitCardObject.lastDoubleClickedTime) > 2)
-            {
-                hitCardObject.DoubleClickUp();
-            }
-            hitCardObject.lastClickedTime = Time.time;
-        }
+        //if (hitCardObject != null)
+        //{
+        //    if (hitCardObject == lastClickedCard &&
+        //        (Time.time - hitCardObject.lastClickedTime) < 0.5F &&
+        //        (Time.time - hitCardObject.lastDoubleClickedTime) > 2)
+        //    {
+        //        hitCardObject.DoubleClickUp();
+        //    }
+        //    hitCardObject.lastClickedTime = Time.time;
+        //}
         lastClickedCard = hitCardObject;
     }
 
@@ -149,7 +149,7 @@ public class CollectionManager : MonoBehaviour
 
     private void OnBackButton()
     {
-        SceneManager.LoadScene("Collection");
+        RotateToDecks();
     }
 
     private void CreateDecksView()
@@ -277,17 +277,34 @@ public class CollectionManager : MonoBehaviour
         selectedCard = null;
     }
 
-    public void RotateToDeck(DeckRaw deckRaw)
+    public void RotateToCards(DeckRaw deckRaw)
     {
         this.activeDeck = decksRaw.IndexOf(deckRaw);
         Debug.Log("# of cards in deck: " + deckRaw.cardIds.Count);
 
         GameObject.Find("Deck Name").GetComponent<TextMeshPro>().text = deckRaw.name;
-        LeanTween.rotateY(Camera.main.gameObject, 2f, 1f).setEaseOutCubic();
+        LeanTween.rotateY(Camera.main.gameObject, 2, 1f).setEaseOutCubic();
 
         foreach (string cardId in deckRaw.cardIds)
         {
             this.AddToDecklist(idToCard[cardId].wrapper as CollectionCardObject);
+        }
+    }
+
+    public void RotateToDecks()
+    {
+        ActionManager.Instance.enabled = false;
+        LeanTween.rotateY(Camera.main.gameObject, -90, 1f)
+                 .setEaseOutCubic()
+                 .setOnComplete(() =>
+                 {
+                     ActionManager.Instance.enabled = true;
+                 });
+
+        List<CollectionCardObject> inDecklist = new List<CollectionCardObject>(this.activeDecklist);
+        foreach (CollectionCardObject cardInDeck in inDecklist)
+        {
+            this.RemoveFromDecklist(cardInDeck);
         }
     }
 }

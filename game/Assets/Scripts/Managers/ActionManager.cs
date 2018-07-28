@@ -159,6 +159,13 @@ public class ActionManager : MonoBehaviour
         CardTween.moveLocal(this.target, this.target.reset.position, CardTween.TWEEN_DURATION);
         return LeanTween.rotateLocal(this.target.gameObject, this.target.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
     }
+    public LTDescr ResetTarget(CardObject cardObject)
+    {
+        if (cardObject == null)
+            return null;
+        CardTween.moveLocal(cardObject, cardObject.reset.position, CardTween.TWEEN_DURATION);
+        return LeanTween.rotateLocal(cardObject.gameObject, cardObject.reset.rotation.eulerAngles, CardTween.TWEEN_DURATION);
+    }
 
     private void RepositionCard(CardObject cardObject)
     {

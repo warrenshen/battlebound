@@ -21,7 +21,7 @@ public class DeckPanel : BasicButton
 
     public override void MouseUp()
     {
-        CollectionManager.Instance.RotateToDeck(this.deckRaw);
+        CollectionManager.Instance.RotateToCards(this.deckRaw);
     }
 
 }

@@ -90,7 +90,7 @@ public class CollectionCardObject : CardObject
         LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
         this.visual.transform.localPosition = this.visual.reset.position;
 
-        ActionManager.Instance.ResetTarget().setOnComplete(() =>
+        ActionManager.Instance.ResetTarget(this).setOnComplete(() =>
         {
             this.gameObject.SetLayer(LayerMask.NameToLayer("Card"));
             this.visual.SetOutline(false);
