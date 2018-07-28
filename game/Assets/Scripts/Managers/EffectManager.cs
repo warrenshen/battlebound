@@ -78,6 +78,7 @@ public class EffectManager : MonoBehaviour
         // Deathrattle.
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
@@ -120,6 +121,7 @@ public class EffectManager : MonoBehaviour
     {
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
@@ -475,6 +477,9 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
                 AbilityDeathRattleAttackFace(effect, 10);
                 break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
+                AbilityDeathRattleAttackFace(effect, 20);
+                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
                 AbilityDeathRattleAttackRandomThree(effect);
                 break;
@@ -584,11 +589,6 @@ public class EffectManager : MonoBehaviour
             int damageDone = defendingCreature.TakeDamage(amount);
             effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
-
-            if (defendingCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-            }
         }
         AddToQueues(effects);
     }
@@ -632,8 +632,8 @@ public class EffectManager : MonoBehaviour
                     effect.CardId,
                     effect.SpawnRank
             );
-            effect.SetCard(boardCreature.GetChallengeCard());
-            effects.Add(effect);
+            newEffect.SetCard(boardCreature.GetChallengeCard());
+            effects.Add(newEffect);
         }
 
         effects.Add(
@@ -661,11 +661,6 @@ public class EffectManager : MonoBehaviour
             int damageTaken = opponentCreature.TakeDamage(amount);
 
             effects.AddRange(GetEffectsOnCreatureDamageTaken(opponentCreature, damageTaken));
-
-            if (opponentCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(opponentCreature));
-            }
         }
 
         effects.Add(
@@ -692,24 +687,12 @@ public class EffectManager : MonoBehaviour
         foreach (BoardCreature boardCreature in playerCreatures)
         {
             int damageTaken = boardCreature.TakeDamage(amount);
-
             effects.AddRange(GetEffectsOnCreatureDamageTaken(boardCreature, damageTaken));
-
-            if (boardCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
-            }
         }
         foreach (BoardCreature boardCreature in opponentCreatures)
         {
             int damageTaken = boardCreature.TakeDamage(amount);
-
             effects.AddRange(GetEffectsOnCreatureDamageTaken(boardCreature, damageTaken));
-
-            if (boardCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
-            }
         }
 
         effects.Add(
@@ -1258,15 +1241,6 @@ public class EffectManager : MonoBehaviour
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
 
-                    if (attackingCreature.Health <= 0)
-                    {
-                        effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
-                    }
-                    if (defendingCreature.Health <= 0)
-                    {
-                        effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-                    }
-
                     int adjacentAttack = 0;
                     if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN))
                     {
@@ -1289,11 +1263,6 @@ public class EffectManager : MonoBehaviour
                             damageDone = adjacentCreature.TakeDamage(adjacentAttack);
                             effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                             effects.AddRange(GetEffectsOnCreatureDamageTaken(adjacentCreature, damageDone));
-
-                            if (adjacentCreature.Health <= 0)
-                            {
-                                effects.AddRange(GetEffectsOnCreatureDeath(adjacentCreature));
-                            }
                         }
                     }
 
@@ -1415,11 +1384,6 @@ public class EffectManager : MonoBehaviour
                              int damageDone = defendingCreature.TakeDamage(20);
                              effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                             if (defendingCreature.Health <= 0)
-                             {
-                                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-                             }
-
                              bombObject.SetActive(false);
 
                              AddToQueues(effects);
@@ -1440,7 +1404,6 @@ public class EffectManager : MonoBehaviour
                          .setOnComplete(() =>
                          {
                              int damageDone = defendingAvatar.TakeDamage(20);
-                             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
                              if (defendingAvatar.Health <= 0)
                              {
@@ -1486,11 +1449,6 @@ public class EffectManager : MonoBehaviour
                              int damageDone = defendingCreature.TakeDamage(20);
                              effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                             if (defendingCreature.Health <= 0)
-                             {
-                                 effects.AddRange(GetEffectsOnCreatureDeath(defendingCreature));
-                             }
-
                              bombObject.SetActive(false);
 
                              AddToQueues(effects);
@@ -1511,7 +1469,6 @@ public class EffectManager : MonoBehaviour
                          .setOnComplete(() =>
                          {
                              int damageDone = defendingAvatar.TakeDamage(20);
-                             //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
                              if (defendingAvatar.Health <= 0)
                              {
@@ -1589,11 +1546,6 @@ public class EffectManager : MonoBehaviour
         int damageTaken = targetedCreature.TakeDamage(30);
         effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
 
-        if (targetedCreature.Health <= 0)
-        {
-            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
-        }
-
         return effects;
     }
 
@@ -1613,16 +1565,8 @@ public class EffectManager : MonoBehaviour
         List<Effect> effects = new List<Effect>();
 
         int damageTaken = targetedCreature.TakeDamage(10);
+        targetedCreature.Freeze(1);
         effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-
-        if (targetedCreature.Health <= 0)
-        {
-            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
-        }
-        else
-        {
-            targetedCreature.Freeze(1);
-        }
 
         return effects;
     }
@@ -1750,11 +1694,6 @@ public class EffectManager : MonoBehaviour
         {
             int damageTaken = targetedCreature.TakeDamage(50);
             effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-
-            if (targetedCreature.Health <= 0)
-            {
-                effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
-            }
         }
 
         return effects;
@@ -1946,6 +1885,11 @@ public class EffectManager : MonoBehaviour
                     )
                 );
             }
+        }
+
+        if (boardCreature.Health <= 0)
+        {
+            effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
         }
 
         return effects;
