@@ -667,7 +667,8 @@ describe("challenge events", function() {
           "armor": 0,
           "field": [
             {
-              "id": "C10-5b0b012e7486050526c9c1a8-5",
+              "id": "C10-ID_OPPONENT-5",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 50,
@@ -687,7 +688,8 @@ describe("challenge events", function() {
               "spawnRank": 2
             },
             {
-              "id": "C2-5b0b012e7486050526c9c1a8-2",
+              "id": "C2-ID_OPPONENT-2",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -724,7 +726,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -739,7 +741,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "id": "C2-ID_PLAYER-2",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -762,7 +765,8 @@ describe("challenge events", function() {
               "spawnRank": 1
             },
             {
-              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "id": "C3-ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -796,7 +800,8 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "id": "C23-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "attack": null,
@@ -812,7 +817,8 @@ describe("challenge events", function() {
               "healthMax": null
             },
             {
-              "id": "C19-5b0b012e7486050526c9c1a8-0",
+              "id": "C19-ID_PLAYER-0",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "attack": null,
@@ -828,7 +834,8 @@ describe("challenge events", function() {
               "healthMax": null
             },
             {
-              "id": "C20-5b0b012e7486050526c9c1a8-1",
+              "id": "C20-ID_PLAYER-1",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "attack": null,
@@ -844,7 +851,8 @@ describe("challenge events", function() {
               "healthMax": null
             },
             {
-              "id": "C22-5b0b012e7486050526c9c1a8-3",
+              "id": "C22-ID_PLAYER-3",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "attack": null,
@@ -860,7 +868,8 @@ describe("challenge events", function() {
               "healthMax": null
             },
             {
-              "id": "C21-5b0b012e7486050526c9c1a8-2",
+              "id": "C21-ID_PLAYER-2",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "attack": null,
@@ -880,7 +889,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -913,7 +922,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+            cardId: "C23-ID_PLAYER-4",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -921,7 +930,7 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[0].attributes.cardId, "C23-ID_PLAYER-4");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -944,7 +953,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C20-5b0b012e7486050526c9c1a8-1",
+            cardId: "C20-ID_PLAYER-1",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -952,7 +961,7 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C20-5b0b012e7486050526c9c1a8-1");
+            assert.equal(lastMoves[0].attributes.cardId, "C20-ID_PLAYER-1");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
@@ -975,10 +984,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellTargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C19-5b0b012e7486050526c9c1a8-0",
+            cardId: "C19-ID_PLAYER-0",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C2-5b0b012e7486050526c9c1a8-2",
+              targetId: "C2-ID_OPPONENT-2",
             },
           },
           function(response) {
@@ -987,10 +996,10 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C19-5b0b012e7486050526c9c1a8-0");
+            assert.equal(lastMoves[0].attributes.cardId, "C19-ID_PLAYER-0");
             assert.equal(lastMoves[0].attributes.card.name, "Touch of Zeus");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.targetId, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(lastMoves[0].attributes.targetId, "C2-ID_OPPONENT-2");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -1013,10 +1022,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellTargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C21-5b0b012e7486050526c9c1a8-2",
+            cardId: "C21-ID_PLAYER-2",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C2-5b0b012e7486050526c9c1a8-2",
+              targetId: "C2-ID_OPPONENT-2",
             },
           },
           function(response) {
@@ -1025,14 +1034,14 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C21-5b0b012e7486050526c9c1a8-2");
+            assert.equal(lastMoves[0].attributes.cardId, "C21-ID_PLAYER-2");
             assert.equal(lastMoves[0].attributes.card.name, "Deep Freeze");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.targetId, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(lastMoves[0].attributes.targetId, "C2-ID_OPPONENT-2");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
-            assert.equal(opponentField[1].id, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(opponentField[1].id, "C2-ID_OPPONENT-2");
             assert.equal(opponentField[1].health, 20);
             assert.equal(opponentField[1].isFrozen, 1);
 
@@ -1057,7 +1066,8 @@ describe("challenge events", function() {
           "armor": 0,
           "field": [
             {
-              "id": "C10-5b0b012e7486050526c9c1a8-5",
+              "id": "C10-ID_OPPONENT-5",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1079,7 +1089,8 @@ describe("challenge events", function() {
               "spawnRank": 2
             },
             {
-              "id": "C2-5b0b012e7486050526c9c1a8-2",
+              "id": "C2-ID_OPPONENT-2",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1116,7 +1127,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -1131,7 +1142,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "id": "C2-ID_PLAYER-2",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1154,7 +1166,8 @@ describe("challenge events", function() {
               "spawnRank": 1
             },
             {
-              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "id": "C3-ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1188,7 +1201,8 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "id": "C23-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 50,
@@ -1198,7 +1212,8 @@ describe("challenge events", function() {
               "costStart": 50,
             },
             {
-              "id": "C24-5b0b012e7486050526c9c1a8-5",
+              "id": "C24-ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 30,
@@ -1208,7 +1223,8 @@ describe("challenge events", function() {
               "costStart": 30,
             },
             {
-              "id": "C25-5b0b012e7486050526c9c1a8-6",
+              "id": "C25-ID_PLAYER-6",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 40,
@@ -1255,10 +1271,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellTargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+            cardId: "C23-ID_PLAYER-4",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+              targetId: "C10-ID_OPPONENT-5",
             },
           },
           function(response) {
@@ -1267,10 +1283,10 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[0].attributes.cardId, "C23-ID_PLAYER-4");
             assert.equal(lastMoves[0].attributes.card.name, "Death Notice");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.targetId, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[0].attributes.targetId, "C10-ID_OPPONENT-5");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -1294,7 +1310,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C24-5b0b012e7486050526c9c1a8-5",
+            cardId: "C24-ID_PLAYER-5",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1302,17 +1318,17 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C24-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[0].attributes.cardId, "C24-ID_PLAYER-5");
             assert.equal(lastMoves[0].attributes.card.name, "Mudslinging")
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
 
             const playerField = playerState.field;
-            assert.equal(playerField[1].id, "C2-5b0b017502bd4e052f08a28d-2");
+            assert.equal(playerField[1].id, "C2-ID_PLAYER-2");
             assert.equal(playerField[1].abilities.indexOf(1) >= 0, true);
 
-            assert.equal(playerField[2].id, "C3-5b0b017502bd4e052f08a28d-5");
+            assert.equal(playerField[2].id, "C3-ID_PLAYER-5");
             assert.equal(playerField[2].abilities.indexOf(1) >= 0, true);
 
             resolve();
@@ -1329,7 +1345,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C25-5b0b012e7486050526c9c1a8-6",
+            cardId: "C25-ID_PLAYER-6",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1337,24 +1353,24 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C25-5b0b012e7486050526c9c1a8-6");
+            assert.equal(lastMoves[0].attributes.cardId, "C25-ID_PLAYER-6");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 30);
 
             const playerField = playerState.field;
-            assert.equal(playerField[1].id, "C2-5b0b017502bd4e052f08a28d-2");
+            assert.equal(playerField[1].id, "C2-ID_PLAYER-2");
             assert.equal(playerField[1].isSilenced, 1);
 
-            assert.equal(playerField[2].id, "C3-5b0b017502bd4e052f08a28d-5");
+            assert.equal(playerField[2].id, "C3-ID_PLAYER-5");
             assert.equal(playerField[2].isSilenced, 1);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
-            assert.equal(opponentField[0].id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(opponentField[0].id, "C10-ID_OPPONENT-5");
             assert.equal(opponentField[0].isSilenced, 1);
 
-            assert.equal(opponentField[1].id, "C2-5b0b012e7486050526c9c1a8-2");
+            assert.equal(opponentField[1].id, "C2-ID_OPPONENT-2");
             assert.equal(opponentField[1].isSilenced, 1);
 
             resolve();
@@ -1376,7 +1392,8 @@ describe("challenge events", function() {
           "armor": 0,
           "field": [
             {
-              "id": "C10-5b0b012e7486050526c9c1a8-5",
+              "id": "C10-ID_OPPONENT-5",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1398,7 +1415,8 @@ describe("challenge events", function() {
               "spawnRank": 2
             },
             {
-              "id": "C2-5b0b012e7486050526c9c1a8-2",
+              "id": "C2-ID_OPPONENT-2",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1435,7 +1453,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -1450,7 +1468,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "id": "C2-ID_PLAYER-2",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1473,7 +1492,8 @@ describe("challenge events", function() {
               "spawnRank": 1
             },
             {
-              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "id": "C3-ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1507,7 +1527,8 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "id": "C23-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 40,
@@ -1520,7 +1541,8 @@ describe("challenge events", function() {
           "deckSize": 1,
           "deck": [
             {
-              "id": "C24-5b0b012e7486050526c9c1a8-5",
+              "id": "C24-ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 30,
@@ -1530,7 +1552,8 @@ describe("challenge events", function() {
               "costStart": 30,
             },
             {
-              "id": "C25-5b0b012e7486050526c9c1a8-6",
+              "id": "C25-ID_PLAYER-6",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 40,
@@ -1540,7 +1563,8 @@ describe("challenge events", function() {
               "costStart": 40,
             },
             {
-              "id": "C26-5b0b012e7486050526c9c1a8-7",
+              "id": "C26-ID_PLAYER-7",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 40,
@@ -1553,7 +1577,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -1586,7 +1610,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+            cardId: "C23-ID_PLAYER-4",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1595,7 +1619,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 4);
 
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[0].attributes.cardId, "C23-ID_PLAYER-4");
             assert.equal(lastMoves[0].attributes.card.name, "Greedy Fingers");
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD");
@@ -1648,7 +1672,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -1663,7 +1687,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C2-5b0b017502bd4e052f08a28d-2",
+              "id": "C2-ID_PLAYER-2",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1686,7 +1711,8 @@ describe("challenge events", function() {
               "spawnRank": 1
             },
             {
-              "id": "C3-5b0b017502bd4e052f08a28d-5",
+              "id": "C3-ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1720,7 +1746,8 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C23-5b0b012e7486050526c9c1a8-4",
+              "id": "C23-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 1,
               "cost": 20,
@@ -1734,7 +1761,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -1767,7 +1794,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C23-5b0b012e7486050526c9c1a8-4",
+            cardId: "C23-ID_PLAYER-4",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1780,9 +1807,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[1].attributes.card.id, "C23-5b0b012e7486050526c9c1a8-4");
-            assert.equal(lastMoves[2].attributes.card.id, "C23-5b0b012e7486050526c9c1a8-4");
-            assert.equal(lastMoves[3].attributes.card.id, "C23-5b0b012e7486050526c9c1a8-4");
+            assert.equal(lastMoves[1].attributes.card.id, "C23-ID_PLAYER-4");
+            assert.equal(lastMoves[2].attributes.card.id, "C23-ID_PLAYER-4");
+            assert.equal(lastMoves[3].attributes.card.id, "C23-ID_PLAYER-4");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.healthMax, 100);
@@ -1792,6 +1819,193 @@ describe("challenge events", function() {
           }
         );
       });
+    });
+  });
+
+  describe("spells + deathwish", function() {
+    it("should run Bombshell Bombadier's deathwish on lightning bolt", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 0,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C10-ID_OPPONENT-5",
+                "playerId": "ID_OPPONENT",
+                "level": 0,
+                "category": 0,
+                "attack": 50,
+                "health": 10,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  0,
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 1,
+                "isFrozen": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 6,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 70,
+            "manaMax": 70,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "C2-ID_PLAYER-2",
+                "playerId": "ID_PLAYER",
+                "level": 0,
+                "category": 0,
+                "attack": 30,
+                "health": 30,
+                "cost": 40,
+                "name": "Waterborne Razorback",
+                "description": "Charge; At the end of each turn, recover 20 health",
+                "abilities": [
+                  0,
+                  8
+                ],
+                "baseId": "C2",
+                "attackStart": 30,
+                "costStart": 40,
+                "healthStart": 50,
+                "healthMax": 50,
+                "buffs": [],
+                "canAttack": 1,
+                "isFrozen": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 1,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "deathCount": 0,
+        "nonce": 14
+      };
+
+      // return new Promise((resolve) => {
+      //   gamesparks.sendWithData(
+      //     "LogEventRequest",
+      //     {
+      //       eventKey: "TestChallengeCardAttackCard",
+      //       challengeStateString: JSON.stringify(challengeStateData),
+      //       challengePlayerId: "ID_PLAYER",
+      //       cardId: "C2-ID_PLAYER-2",
+      //       attributesJson: {
+      //         fieldId: "ID_OPPONENT",
+      //         targetId: "C10-ID_OPPONENT-5",
+      //       },
+      //     },
+      //     function(response) {
+      //       const challengeStateData = response.scriptData.challengeStateData;
+
+      //       const lastMoves = challengeStateData.lastMoves;
+      //       assert.equal(lastMoves.length, 4);
+      //       assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+      //       assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+      //       assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+      //       assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
+      //       assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+      //       assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+      //       assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+      //       assert.equal(lastMoves[1].attributes.card.id, "C10-ID_OPPONENT-5");
+      //       assert.equal(lastMoves[2].attributes.card.id, "C10-ID_OPPONENT-5");
+      //       assert.equal(lastMoves[3].attributes.card.id, "C10-ID_OPPONENT-5");
+
+      //       const playerState = challengeStateData.current["ID_PLAYER"];
+      //       const playerField = playerState.field;
+      //       assert.equal(playerField[1].id, "EMPTY");
+
+      //       assert.equal(playerState.healthMax, 100);
+      //       assert.equal(playerState.health, 40);
+
+      //       const opponentState = challengeStateData.current["ID_OPPONENT"];
+      //       const opponentField = opponentState.field;
+      //       assert.equal(opponentField[2].id, "EMPTY");
+
+      //       assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+      //       assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+      //       resolve();
+      //     }
+      //   );
+      // });
     });
   });
 });
