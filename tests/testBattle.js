@@ -655,7 +655,7 @@ describe("challenge events", function() {
     })
   });
 
-  describe("dying breath", function() {
+  describe("deathwish", function() {
     it("should run Bombshell Bombadier's deathwish", function() {
       const challengeStateData = {
         "current": {
@@ -674,7 +674,8 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C10-5b0b012e7486050526c9c1a8-5",
+                "id": "C10-ID_OPPONENT-5",
+                "playerId": "ID_OPPONENT",
                 "level": 0,
                 "category": 0,
                 "attack": 50,
@@ -711,7 +712,7 @@ describe("challenge events", function() {
             "cardCount": 6,
             "mode": 0,
             "mulliganCards": [],
-            "id": "5b0b012e7486050526c9c1a8",
+            "id": "ID_OPPONENT",
             "expiredStreak": 0
           },
           "ID_PLAYER": {
@@ -726,7 +727,8 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C2-5b0b017502bd4e052f08a28d-2",
+                "id": "C2-ID_PLAYER-2",
+                "playerId": "ID_PLAYER",
                 "level": 0,
                 "category": 0,
                 "attack": 30,
@@ -766,7 +768,7 @@ describe("challenge events", function() {
             "cardCount": 8,
             "mode": 0,
             "mulliganCards": [],
-            "id": "5b0b017502bd4e052f08a28d",
+            "id": "ID_PLAYER",
             "expiredStreak": 0
           },
         },
@@ -798,10 +800,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengeCardAttackCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C2-5b0b017502bd4e052f08a28d-2",
+            cardId: "C2-ID_PLAYER-2",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+              targetId: "C10-ID_OPPONENT-5",
             },
           },
           function(response) {
@@ -810,15 +812,21 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 4);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[0].attributes.cardId, "C2-ID_PLAYER-2");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "C10-ID_OPPONENT-5");
+
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
+
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[1].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[2].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[3].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
+
+            assert.equal(lastMoves[1].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[2].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[3].attributes.card.id, "C10-ID_OPPONENT-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
@@ -857,7 +865,8 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C10-5b0b012e7486050526c9c1a8-5",
+                "id": "C10-ID_OPPONENT-5",
+                "playerId": "ID_OPPONENT",
                 "level": 0,
                 "category": 0,
                 "attack": 50,
@@ -894,7 +903,7 @@ describe("challenge events", function() {
             "cardCount": 6,
             "mode": 0,
             "mulliganCards": [],
-            "id": "5b0b012e7486050526c9c1a8",
+            "id": "ID_OPPONENT",
             "expiredStreak": 0
           },
           "ID_PLAYER": {
@@ -909,7 +918,8 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C10-5b0b017502bd4e052f08a28d-10",
+                "id": "C10-ID_PLAYER-10",
+                "playerId": "ID_PLAYER",
                 "level": 0,
                 "category": 0,
                 "attack": 50,
@@ -948,7 +958,7 @@ describe("challenge events", function() {
             "cardCount": 8,
             "mode": 0,
             "mulliganCards": [],
-            "id": "5b0b017502bd4e052f08a28d",
+            "id": "ID_PLAYER",
             "expiredStreak": 0
           },
         },
@@ -980,10 +990,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengeCardAttackCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C10-5b0b017502bd4e052f08a28d-10",
+            cardId: "C10-ID_PLAYER-10",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C10-5b0b012e7486050526c9c1a8-5",
+              targetId: "C10-ID_OPPONENT-5",
             },
           },
           function(response) {
@@ -999,9 +1009,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[1].attributes.card.id, "C10-5b0b017502bd4e052f08a28d-10");
-            assert.equal(lastMoves[2].attributes.card.id, "C10-5b0b017502bd4e052f08a28d-10");
-            assert.equal(lastMoves[3].attributes.card.id, "C10-5b0b017502bd4e052f08a28d-10");
+            assert.equal(lastMoves[1].attributes.card.id, "C10-ID_PLAYER-10");
+            assert.equal(lastMoves[2].attributes.card.id, "C10-ID_PLAYER-10");
+            assert.equal(lastMoves[3].attributes.card.id, "C10-ID_PLAYER-10");
 
             assert.equal(lastMoves[4].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[5].category, "MOVE_CATEGORY_RANDOM_TARGET");
@@ -1009,9 +1019,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[5].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[6].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[4].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[5].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
-            assert.equal(lastMoves[6].attributes.card.id, "C10-5b0b012e7486050526c9c1a8-5");
+            assert.equal(lastMoves[4].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[5].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[6].attributes.card.id, "C10-ID_OPPONENT-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
@@ -1054,6 +1064,7 @@ describe("challenge events", function() {
               },
               {
                 "id": "C50-ID_OPPONENT-12",
+                "playerId": "ID_OPPONENT",
                 "level": 0,
                 "category": 0,
                 "attack": 40,
@@ -1091,7 +1102,7 @@ describe("challenge events", function() {
             "cardCount": 6,
             "mode": 0,
             "mulliganCards": [],
-            "id": "5b0b012e7486050526c9c1a8",
+            "id": "ID_OPPONENT",
             "expiredStreak": 0
           },
           "ID_PLAYER": {
@@ -1104,6 +1115,7 @@ describe("challenge events", function() {
             "field": [
               {
                 "id": "C53-ID_PLAYER-9",
+                "playerId": "ID_PLAYER",
                 "level": 0,
                 "category": 0,
                 "attack": 20,
@@ -1127,6 +1139,7 @@ describe("challenge events", function() {
               },
               {
                 "id": "C40-ID_PLAYER-22",
+                "playerId": "ID_PLAYER",
                 "level": 0,
                 "category": 0,
                 "attack": 20,
@@ -1153,6 +1166,7 @@ describe("challenge events", function() {
               },
               {
                 "id": "C40-ID_PLAYER-23",
+                "playerId": "ID_PLAYER",
                 "level": 0,
                 "category": 0,
                 "attack": 20,
@@ -1186,7 +1200,7 @@ describe("challenge events", function() {
             "cardCount": 8,
             "mode": 0,
             "mulliganCards": [],
-            "id": "5b0b017502bd4e052f08a28d",
+            "id": "ID_PLAYER",
             "expiredStreak": 0
           },
         },
@@ -1290,7 +1304,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -1305,7 +1319,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C44-5b0b017502bd4e052f08a28d-18",
+              "id": "C44-ID_PLAYER-18",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1331,7 +1346,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C44-5b0b017502bd4e052f08a28d-19",
+              "id": "C44-ID_PLAYER-19",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1357,7 +1373,8 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C44-5b0b017502bd4e052f08a28d-20",
+              "id": "C44-ID_PLAYER-20",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1382,7 +1399,8 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C53-5b0b017502bd4e052f08a28d-9",
+              "id": "C53-ID_PLAYER-9",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1405,7 +1423,8 @@ describe("challenge events", function() {
               "spawnRank": 2
             },
             {
-              "id": "C40-5b0b017502bd4e052f08a28d-22",
+              "id": "C40-ID_PLAYER-22",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1423,7 +1442,8 @@ describe("challenge events", function() {
               "healthMax": 30
             },
             {
-              "id": "C36-5b0b017502bd4e052f08a28d-26",
+              "id": "C36-ID_PLAYER-26",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 40,
@@ -1445,7 +1465,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -1478,7 +1498,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C53-5b0b017502bd4e052f08a28d-9",
+            cardId: "C53-ID_PLAYER-9",
             attributesJson: {
               fieldIndex: 2,
             },
@@ -1490,7 +1510,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C53-5b0b017502bd4e052f08a28d-9");
+            assert.equal(lastMoves[0].attributes.card.id, "C53-ID_PLAYER-9");
             assert.equal(lastMoves[0].attributes.fieldIndex, 2);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
@@ -1498,15 +1518,15 @@ describe("challenge events", function() {
             assert.equal(playerState.manaMax, 70);
 
             const playerField = playerState.field;
-            assert.equal(playerField[2].id, "C53-5b0b017502bd4e052f08a28d-9");
+            assert.equal(playerField[2].id, "C53-ID_PLAYER-9");
 
-            assert.equal(playerField[1].id, "C44-5b0b017502bd4e052f08a28d-18");
+            assert.equal(playerField[1].id, "C44-ID_PLAYER-18");
             assert.equal(playerField[1].abilities.indexOf(1) >= 0, true);
 
-            assert.equal(playerField[3].id, "C44-5b0b017502bd4e052f08a28d-19");
+            assert.equal(playerField[3].id, "C44-ID_PLAYER-19");
             assert.equal(playerField[3].abilities.indexOf(1) >= 0, true);
 
-            assert.equal(playerField[5].id, "C44-5b0b017502bd4e052f08a28d-20");
+            assert.equal(playerField[5].id, "C44-ID_PLAYER-20");
             assert.equal(playerField[5].abilities.indexOf(1) >= 0, false);
 
             resolve();
@@ -1523,7 +1543,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C53-5b0b017502bd4e052f08a28d-9",
+            cardId: "C53-ID_PLAYER-9",
             attributesJson: {
               fieldIndex: 0,
             },
@@ -1535,7 +1555,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C53-5b0b017502bd4e052f08a28d-9");
+            assert.equal(lastMoves[0].attributes.card.id, "C53-ID_PLAYER-9");
             assert.equal(lastMoves[0].attributes.fieldIndex, 0);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
@@ -1543,15 +1563,15 @@ describe("challenge events", function() {
             assert.equal(playerState.manaMax, 70);
 
             const playerField = playerState.field;
-            assert.equal(playerField[0].id, "C53-5b0b017502bd4e052f08a28d-9");
+            assert.equal(playerField[0].id, "C53-ID_PLAYER-9");
 
-            assert.equal(playerField[1].id, "C44-5b0b017502bd4e052f08a28d-18");
+            assert.equal(playerField[1].id, "C44-ID_PLAYER-18");
             assert.equal(playerField[1].abilities.indexOf(1) >= 0, true);
 
-            assert.equal(playerField[3].id, "C44-5b0b017502bd4e052f08a28d-19");
+            assert.equal(playerField[3].id, "C44-ID_PLAYER-19");
             assert.equal(playerField[3].abilities.indexOf(1) >= 0, false);
 
-            assert.equal(playerField[5].id, "C44-5b0b017502bd4e052f08a28d-20");
+            assert.equal(playerField[5].id, "C44-ID_PLAYER-20");
             assert.equal(playerField[5].abilities.indexOf(1) >= 0, false);
 
             resolve();
@@ -1568,7 +1588,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C40-5b0b017502bd4e052f08a28d-22",
+            cardId: "C40-ID_PLAYER-22",
             attributesJson: {
               fieldIndex: 2,
             },
@@ -1580,7 +1600,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C40-5b0b017502bd4e052f08a28d-22");
+            assert.equal(lastMoves[0].attributes.card.id, "C40-ID_PLAYER-22");
             assert.equal(lastMoves[0].attributes.fieldIndex, 2);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
@@ -1588,15 +1608,15 @@ describe("challenge events", function() {
             assert.equal(playerState.manaMax, 70);
 
             const playerField = playerState.field;
-            assert.equal(playerField[2].id, "C40-5b0b017502bd4e052f08a28d-22");
+            assert.equal(playerField[2].id, "C40-ID_PLAYER-22");
 
-            assert.equal(playerField[1].id, "C44-5b0b017502bd4e052f08a28d-18");
+            assert.equal(playerField[1].id, "C44-ID_PLAYER-18");
             assert.equal(playerField[1].health, 30);
 
-            assert.equal(playerField[3].id, "C44-5b0b017502bd4e052f08a28d-19");
+            assert.equal(playerField[3].id, "C44-ID_PLAYER-19");
             assert.equal(playerField[3].health, 30);
 
-            assert.equal(playerField[5].id, "C44-5b0b017502bd4e052f08a28d-20");
+            assert.equal(playerField[5].id, "C44-ID_PLAYER-20");
             assert.equal(playerField[5].health, 10);
 
             resolve();
@@ -1613,7 +1633,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C40-5b0b017502bd4e052f08a28d-22",
+            cardId: "C40-ID_PLAYER-22",
             attributesJson: {
               fieldIndex: 0,
             },
@@ -1625,7 +1645,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C40-5b0b017502bd4e052f08a28d-22");
+            assert.equal(lastMoves[0].attributes.card.id, "C40-ID_PLAYER-22");
             assert.equal(lastMoves[0].attributes.fieldIndex, 0);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
@@ -1633,15 +1653,15 @@ describe("challenge events", function() {
             assert.equal(playerState.manaMax, 70);
 
             const playerField = playerState.field;
-            assert.equal(playerField[0].id, "C40-5b0b017502bd4e052f08a28d-22");
+            assert.equal(playerField[0].id, "C40-ID_PLAYER-22");
 
-            assert.equal(playerField[1].id, "C44-5b0b017502bd4e052f08a28d-18");
+            assert.equal(playerField[1].id, "C44-ID_PLAYER-18");
             assert.equal(playerField[1].health, 30);
 
-            assert.equal(playerField[3].id, "C44-5b0b017502bd4e052f08a28d-19");
+            assert.equal(playerField[3].id, "C44-ID_PLAYER-19");
             assert.equal(playerField[3].health, 10);
 
-            assert.equal(playerField[5].id, "C44-5b0b017502bd4e052f08a28d-20");
+            assert.equal(playerField[5].id, "C44-ID_PLAYER-20");
             assert.equal(playerField[5].health, 10);
 
             resolve();
@@ -1658,7 +1678,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C36-5b0b017502bd4e052f08a28d-26",
+            cardId: "C36-ID_PLAYER-26",
             attributesJson: {
               fieldIndex: 0,
             },
@@ -1670,7 +1690,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C36-5b0b017502bd4e052f08a28d-26");
+            assert.equal(lastMoves[0].attributes.card.id, "C36-ID_PLAYER-26");
             assert.equal(lastMoves[0].attributes.fieldIndex, 0);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
@@ -1680,7 +1700,7 @@ describe("challenge events", function() {
             assert.equal(playerState.healthMax, 100);
 
             const playerField = playerState.field;
-            assert.equal(playerField[0].id, "C36-5b0b017502bd4e052f08a28d-26");
+            assert.equal(playerField[0].id, "C36-ID_PLAYER-26");
 
             resolve();
           }
@@ -1702,6 +1722,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C44-ID_OPPONENT-18",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1744,7 +1765,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -1777,6 +1798,7 @@ describe("challenge events", function() {
           "hand": [
             {
               "id": "C13-ID_PLAYER-13",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -1795,6 +1817,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C51-ID_PLAYER-12",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 10,
@@ -1816,7 +1839,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -1968,6 +1991,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C12-ID_OPPONENT-8",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -1991,6 +2015,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C49-ID_OPPONENT-13",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 10,
@@ -2031,7 +2056,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -2044,6 +2069,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C46-ID_PLAYER-16",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 50,
@@ -2085,6 +2111,7 @@ describe("challenge events", function() {
           "hand": [
             {
               "id": "C52-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 60,
@@ -2106,7 +2133,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -2190,6 +2217,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C12-ID_OPPONENT-8",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -2214,6 +2242,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C49-ID_OPPONENT-13",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 10,
@@ -2254,7 +2283,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -2267,6 +2296,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C46-ID_PLAYER-16",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 50,
@@ -2291,6 +2321,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C49-ID_PLAYER-13",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 10,
@@ -2332,7 +2363,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -2492,6 +2523,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C40-ID_OPPONENT-22",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -2515,6 +2547,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C40-ID_OPPONENT-23",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -2538,6 +2571,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C40-ID_OPPONENT-24",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -2574,7 +2608,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -2587,6 +2621,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C34-ID_PLAYER-28",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 40,
@@ -2610,6 +2645,7 @@ describe("challenge events", function() {
             },
             {
               "id": "C35-ID_PLAYER-27",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 50,
@@ -2649,7 +2685,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -2866,6 +2902,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C12-ID_OPPONENT-8",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 20,
@@ -2908,7 +2945,7 @@ describe("challenge events", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -2921,6 +2958,7 @@ describe("challenge events", function() {
           "field": [
             {
               "id": "C37-ID_PLAYER-25",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 80,
@@ -2963,7 +3001,7 @@ describe("challenge events", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -3051,7 +3089,8 @@ describe("divine shield", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C9-5b0b017502bd4e052f08a28d-9",
+              "id": "C9-ID_OPPONENT-9",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 40,
@@ -3075,7 +3114,8 @@ describe("divine shield", function() {
               "spawnRank": 7
             },
             {
-              "id": "C1-5b0b017502bd4e052f08a28d-1",
+              "id": "C1-ID_OPPONENT-1",
+              "playerId": "ID_OPPONENT",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -3110,7 +3150,7 @@ describe("divine shield", function() {
           "cardCount": 6,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b012e7486050526c9c1a8",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -3131,7 +3171,8 @@ describe("divine shield", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C7-5b0b012e7486050526c9c1a8-7",
+              "id": "C7-ID_PLAYER-7",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -3154,7 +3195,8 @@ describe("divine shield", function() {
               "spawnRank": 8
             },
             {
-              "id": "C4-5b0b012e7486050526c9c1a8-4",
+              "id": "C4-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 0,
               "category": 0,
               "attack": 30,
@@ -3183,7 +3225,7 @@ describe("divine shield", function() {
           "cardCount": 8,
           "mode": 0,
           "mulliganCards": [],
-          "id": "5b0b017502bd4e052f08a28d",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -3215,10 +3257,10 @@ describe("divine shield", function() {
           eventKey: "TestChallengeCardAttackCard",
           challengeStateString: JSON.stringify(challengeStateData),
           challengePlayerId: "ID_PLAYER",
-          cardId: "C4-5b0b012e7486050526c9c1a8-4",
+          cardId: "C4-ID_PLAYER-4",
           attributesJson: {
             fieldId: "ID_OPPONENT",
-            targetId: "C9-5b0b017502bd4e052f08a28d-9",
+            targetId: "C9-ID_OPPONENT-9",
           },
         },
         function(response) {
@@ -3234,7 +3276,7 @@ describe("divine shield", function() {
 
           const opponentState = challengeStateData.current["ID_OPPONENT"];
           const opponentField = opponentState.field;
-          assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
+          assert.equal(opponentField[2].id, "C9-ID_OPPONENT-9");
           assert.equal(opponentField[2].abilities.indexOf(2) >= 0, false);
           assert.equal(opponentField[2].abilities.indexOf(1) >= 0, true);
 
@@ -3248,10 +3290,10 @@ describe("divine shield", function() {
               eventKey: "TestChallengeCardAttackCard",
               challengeStateString: JSON.stringify(challengeStateData),
               challengePlayerId: "ID_PLAYER",
-              cardId: "C7-5b0b012e7486050526c9c1a8-7",
+              cardId: "C7-ID_PLAYER-7",
               attributesJson: {
                 fieldId: "ID_OPPONENT",
-                targetId: "C9-5b0b017502bd4e052f08a28d-9",
+                targetId: "C9-ID_OPPONENT-9",
               },
             },
             function(response) {
@@ -3268,7 +3310,7 @@ describe("divine shield", function() {
               const opponentState = challengeStateData.current["ID_OPPONENT"];
               const opponentField = opponentState.field;
 
-              assert.equal(opponentField[2].id, "C9-5b0b017502bd4e052f08a28d-9");
+              assert.equal(opponentField[2].id, "C9-ID_OPPONENT-9");
               assert.equal(opponentField[2].health, 30);
               assert.equal(opponentField[2].abilities.indexOf(2) >= 0, false);
               assert.equal(opponentField[2].abilities.indexOf(1) >= 0, true);
@@ -3468,6 +3510,203 @@ describe("divine shield", function() {
 
           assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
           assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+
+          resolve();
+        }
+      );
+    });
+  });
+});
+
+describe("silenced", function() {
+  it("should let damage through shield", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C9-ID_OPPONENT-9",
+              "playerId": "ID_OPPONENT",
+              "level": 0,
+              "category": 0,
+              "attack": 40,
+              "health": 60,
+              "cost": 60,
+              "name": "Temple Guardian",
+              "description": "Charge; Shield",
+              "abilities": [
+                1,
+                2
+              ],
+              "baseId": "C9",
+              "attackStart": 40,
+              "costStart": 60,
+              "healthStart": 60,
+              "healthMax": 60,
+              "buffs": [],
+              "canAttack": 0,
+              "hasShield": 1,
+              "isFrozen": 0,
+              "isSilenced": 1,
+              "spawnRank": 7
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "ID_OPPONENT",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "C7-ID_PLAYER-7",
+              "playerId": "ID_PLAYER",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 40,
+              "cost": 30,
+              "name": "Emberkitty",
+              "description": "Deal 10 damage to any opponent in front on end turn",
+              "abilities": [
+                13
+              ],
+              "baseId": "C7",
+              "attackStart": 30,
+              "costStart": 30,
+              "healthStart": 40,
+              "healthMax": 40,
+              "buffs": [],
+              "canAttack": 1,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 8
+            },
+            {
+              "id": "C4-ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
+              "level": 0,
+              "category": 0,
+              "attack": 30,
+              "health": 10,
+              "cost": 20,
+              "name": "Young Kyo",
+              "description": "",
+              "abilities": [],
+              "baseId": "C4",
+              "attackStart": 30,
+              "costStart": 20,
+              "healthStart": 20,
+              "healthMax": 20,
+              "buffs": [],
+              "canAttack": 1,
+              "hasShield": 0,
+              "isFrozen": 0,
+              "spawnRank": 2
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 1,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "ID_PLAYER",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "deadCards": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "deathCount": 0,
+      "nonce": 14
+    };
+
+    return new Promise((resolve) => {
+      gamesparks.sendWithData(
+        "LogEventRequest",
+        {
+          eventKey: "TestChallengeCardAttackCard",
+          challengeStateString: JSON.stringify(challengeStateData),
+          challengePlayerId: "ID_PLAYER",
+          cardId: "C4-ID_PLAYER-4",
+          attributesJson: {
+            fieldId: "ID_OPPONENT",
+            targetId: "C9-ID_OPPONENT-9",
+          },
+        },
+        function(response) {
+          const challengeStateData = response.scriptData.challengeStateData;
+
+          const lastMoves = challengeStateData.lastMoves;
+          assert.equal(lastMoves.length, 1);
+          assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+
+          const playerState = challengeStateData.current["ID_PLAYER"];
+          const playerField = playerState.field;
+          assert.equal(playerField[4].id, "EMPTY");
+
+          const opponentState = challengeStateData.current["ID_OPPONENT"];
+          const opponentField = opponentState.field;
+          assert.equal(opponentField[2].id, "C9-ID_OPPONENT-9");
+          assert.equal(opponentField[2].abilities.indexOf(2) >= 0, true);
+          assert.equal(opponentField[2].abilities.indexOf(1) >= 0, true);
+          assert.equal(opponentField[2].isSilenced, 1);
 
           resolve();
         }
