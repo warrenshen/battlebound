@@ -669,7 +669,7 @@ describe("challenge events", function() {
             {
               "id": "C10-ID_OPPONENT-5",
               "playerId": "ID_OPPONENT",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 50,
               "health": 10,
@@ -690,7 +690,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_OPPONENT-2",
               "playerId": "ID_OPPONENT",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -743,7 +743,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_PLAYER-2",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -767,7 +767,7 @@ describe("challenge events", function() {
             {
               "id": "C3-ID_PLAYER-5",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -802,7 +802,7 @@ describe("challenge events", function() {
             {
               "id": "C23-ID_PLAYER-4",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -819,7 +819,7 @@ describe("challenge events", function() {
             {
               "id": "C19-ID_PLAYER-0",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -836,7 +836,7 @@ describe("challenge events", function() {
             {
               "id": "C20-ID_PLAYER-1",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -853,7 +853,7 @@ describe("challenge events", function() {
             {
               "id": "C22-ID_PLAYER-3",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -870,7 +870,7 @@ describe("challenge events", function() {
             {
               "id": "C21-ID_PLAYER-2",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -899,6 +899,10 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
       "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
@@ -1068,7 +1072,7 @@ describe("challenge events", function() {
             {
               "id": "C10-ID_OPPONENT-5",
               "playerId": "ID_OPPONENT",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 20,
               "health": 30,
@@ -1091,7 +1095,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_OPPONENT-2",
               "playerId": "ID_OPPONENT",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1144,7 +1148,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_PLAYER-2",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1168,7 +1172,7 @@ describe("challenge events", function() {
             {
               "id": "C3-ID_PLAYER-5",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1203,7 +1207,7 @@ describe("challenge events", function() {
             {
               "id": "C23-ID_PLAYER-4",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 50,
               "name": "Death Notice",
@@ -1214,7 +1218,7 @@ describe("challenge events", function() {
             {
               "id": "C24-ID_PLAYER-5",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 30,
               "name": "Mudslinging",
@@ -1225,7 +1229,7 @@ describe("challenge events", function() {
             {
               "id": "C25-ID_PLAYER-6",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 40,
               "name": "Silence of the Lambs",
@@ -1248,6 +1252,10 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
       "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
@@ -1394,7 +1402,7 @@ describe("challenge events", function() {
             {
               "id": "C10-ID_OPPONENT-5",
               "playerId": "ID_OPPONENT",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 20,
               "health": 30,
@@ -1417,7 +1425,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_OPPONENT-2",
               "playerId": "ID_OPPONENT",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1470,7 +1478,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_PLAYER-2",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1494,7 +1502,7 @@ describe("challenge events", function() {
             {
               "id": "C3-ID_PLAYER-5",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1529,7 +1537,7 @@ describe("challenge events", function() {
             {
               "id": "C23-ID_PLAYER-4",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 40,
               "name": "Greedy Fingers",
@@ -1543,7 +1551,7 @@ describe("challenge events", function() {
             {
               "id": "C24-ID_PLAYER-5",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 30,
               "name": "Mudslinging",
@@ -1554,7 +1562,7 @@ describe("challenge events", function() {
             {
               "id": "C25-ID_PLAYER-6",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 40,
               "name": "Silence of the Lambs",
@@ -1565,7 +1573,7 @@ describe("challenge events", function() {
             {
               "id": "C26-ID_PLAYER-7",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 40,
               "name": "Silence of the Lambs",
@@ -1587,6 +1595,10 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
       "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
@@ -1689,7 +1701,7 @@ describe("challenge events", function() {
             {
               "id": "C2-ID_PLAYER-2",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1713,7 +1725,7 @@ describe("challenge events", function() {
             {
               "id": "C3-ID_PLAYER-5",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 30,
@@ -1748,7 +1760,7 @@ describe("challenge events", function() {
             {
               "id": "C23-ID_PLAYER-4",
               "playerId": "ID_PLAYER",
-              "level": 0,
+              "level": 1,
               "category": 1,
               "cost": 20,
               "name": "Spray n' Pray",
@@ -1771,6 +1783,10 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
       "deadCards": [],
       "moveTakenThisTurn": 0,
       "turnCountByPlayerId": {
@@ -1843,7 +1859,7 @@ describe("challenge events", function() {
               {
                 "id": "C10-ID_OPPONENT-5",
                 "playerId": "ID_OPPONENT",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 50,
                 "health": 10,
@@ -1896,7 +1912,7 @@ describe("challenge events", function() {
               {
                 "id": "C2-ID_PLAYER-2",
                 "playerId": "ID_PLAYER",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 30,
                 "health": 30,
@@ -1934,7 +1950,7 @@ describe("challenge events", function() {
               {
                 "id": "C19-ID_PLAYER-0",
                 "playerId": "ID_PLAYER",
-                "level": 0,
+                "level": 1,
                 "category": 1,
                 "attack": null,
                 "health": null,
@@ -1963,6 +1979,10 @@ describe("challenge events", function() {
         },
         "lastMoves": [],
         "moves": [],
+        "expCardIdsByPlayerId": {
+          "ID_PLAYER": [],
+          "ID_OPPONENT": [],
+        },
         "deadCards": [],
         "moveTakenThisTurn": 0,
         "turnCountByPlayerId": {

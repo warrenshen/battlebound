@@ -689,7 +689,7 @@ describe("challenge end turn", function() {
             "hand": [
               {
                 "id": "C1-ID_OPPONENT-1",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 30,
@@ -707,7 +707,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C4-ID_OPPONENT-4",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 10,
                 "health": 10,
@@ -723,7 +723,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C6-ID_PLAYER-6",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 10,
@@ -897,7 +897,7 @@ describe("challenge end turn", function() {
             "hand": [
               {
                 "id": "C1-ID_OPPONENT-1",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 30,
@@ -915,7 +915,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C4-ID_OPPONENT-4",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 10,
                 "health": 10,
@@ -931,7 +931,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C6-ID_PLAYER-6",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 10,
@@ -1022,7 +1022,7 @@ describe("challenge end turn", function() {
             "deck": [
               {
                 "id": "C6-ID_OPPONENT-6",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 10,
@@ -1112,7 +1112,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "C5-ID_OPPONENT-5",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 20,
@@ -1132,7 +1132,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "C4-ID_OPPONENT-4",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 20,
@@ -1192,7 +1192,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "C6-ID_PLAYER-6",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 60,
@@ -1215,7 +1215,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "C7-ID_PLAYER-7",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 60,
@@ -1238,7 +1238,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "C8-ID_PLAYER-8",
-              "level": 0,
+              "level": 1,
               "category": 0,
               "attack": 30,
               "health": 60,
@@ -1359,7 +1359,7 @@ describe("challenge end turn", function() {
             "field": [
               {
                 "id": "C39-5b0b017502bd4e052f08a28d-23",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 40,
                 "health": 30,
@@ -1401,7 +1401,7 @@ describe("challenge end turn", function() {
             "deck": [
               {
                 "id": "C1-ID_OPPONENT-1",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 30,
@@ -1419,7 +1419,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C4-ID_OPPONENT-4",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 10,
                 "health": 10,
@@ -1435,7 +1435,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C6-ID_PLAYER-6",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 10,
@@ -1590,7 +1590,7 @@ describe("challenge end turn", function() {
             "field": [
               {
                 "id": "C39-5b0b017502bd4e052f08a28d-23",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 40,
                 "health": 30,
@@ -1632,7 +1632,7 @@ describe("challenge end turn", function() {
             "deck": [
               {
                 "id": "C1-ID_OPPONENT-1",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 30,
@@ -1650,7 +1650,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C4-ID_OPPONENT-4",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 10,
                 "health": 10,
@@ -1666,7 +1666,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "C6-ID_PLAYER-6",
-                "level": 0,
+                "level": 1,
                 "category": 0,
                 "attack": 20,
                 "health": 10,
