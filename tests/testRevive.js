@@ -687,7 +687,7 @@ describe("challenge events", function() {
           ],
           "hand": [],
           "deckSize": 0,
-          "cardCount": 6,
+          "cardCount": 30,
           "mode": 0,
           "mulliganCards": [],
           "id": "ID_PLAYER",
@@ -757,7 +757,7 @@ describe("challenge events", function() {
             },
           ],
           "deckSize": 0,
-          "cardCount": 8,
+          "cardCount": 34,
           "mode": 0,
           "mulliganCards": [],
           "id": "ID_OPPONENT",
@@ -772,7 +772,7 @@ describe("challenge events", function() {
       "moves": [],
       "deadCards": [
         {
-          "id": "C3-ID_OPPONENT-0",
+          "id": "ID_OPPONENT-0",
           "level": 1,
           "category": 0,
           "attack": 10,
@@ -797,7 +797,7 @@ describe("challenge events", function() {
           "deathRank": 0
         },
         {
-          "id": "C36-ID_OPPONENT-15",
+          "id": "ID_OPPONENT-15",
           "level": 0,
           "category": 0,
           "attack": 40,
@@ -848,7 +848,7 @@ describe("challenge events", function() {
           "deathRank": 2
         },
         {
-          "id": "C34-ID_OPPONENT-22",
+          "id": "ID_OPPONENT-22",
           "level": 0,
           "category": 0,
           "attack": 40,
@@ -876,12 +876,17 @@ describe("challenge events", function() {
           "id": "C46-ID_PLAYER-9",
           "level": 0,
           "category": 0,
-          "attack": 50,
+          "attack": 60,
           "health": 0,
-          "cost": 50,
+          "cost": 40,
           "name": "Cereboarus",
           "description": "Lifesteal; Deathwish: Draw a card",
           "abilities": [
+            1,
+            5,
+            6
+          ],
+          "abilitiesStart": [
             5,
             6
           ],
@@ -964,7 +969,17 @@ describe("challenge events", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-34");
             assert.equal(lastMoves[1].attributes.card.name, "Cereboarus");
+            assert.equal(lastMoves[1].attributes.card.cost, 50);
+            assert.equal(lastMoves[1].attributes.card.attack, 50);
+            assert.equal(lastMoves[1].attributes.card.health, 40);
+            assert.equal(lastMoves[1].attributes.card.canAttack, 0);
+            assert.equal(lastMoves[1].attributes.card.isFrozen, 0);
+            assert.equal(lastMoves[1].attributes.card.isSilenced, 0);
+            assert.equal(lastMoves[1].attributes.card.abilities.indexOf(5) >= 0, true);
+            assert.equal(lastMoves[1].attributes.card.abilities.indexOf(6) >= 0, true);
+            assert.equal(lastMoves[1].attributes.card.abilities.indexOf(1) >= 0, false);
             assert.equal(lastMoves[1].attributes.fieldIndex >= 0, true);
             assert.equal(lastMoves[1].attributes.fieldIndex <= 5, true);
 
@@ -1003,6 +1018,7 @@ describe("challenge events", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-34");
             assert.equal(lastMoves[1].attributes.card.name, "Swift Shellback");
             assert.equal(lastMoves[1].attributes.fieldIndex >= 0, true);
             assert.equal(lastMoves[1].attributes.fieldIndex <= 5, true);
@@ -1053,7 +1069,7 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C45-ID_OPPONENT-10",
+              "id": "ID_OPPONENT-10",
               "level": 0,
               "category": 0,
               "attack": 40,
@@ -1071,7 +1087,7 @@ describe("challenge events", function() {
               "healthMax": 60,
             },
             {
-              "id": "C28-ID_OPPONENT-15",
+              "id": "ID_OPPONENT-15",
               "level": 0,
               "category": 1,
               "attack": null,
@@ -1088,7 +1104,7 @@ describe("challenge events", function() {
             },
           ],
           "deckSize": 0,
-          "cardCount": 6,
+          "cardCount": 33,
           "mode": 0,
           "mulliganCards": [],
           "id": "ID_PLAYER",
@@ -1158,7 +1174,7 @@ describe("challenge events", function() {
             },
           ],
           "deckSize": 0,
-          "cardCount": 8,
+          "cardCount": 32,
           "mode": 0,
           "mulliganCards": [],
           "id": "ID_OPPONENT",
@@ -1173,7 +1189,7 @@ describe("challenge events", function() {
       "moves": [],
       "deadCards": [
         {
-          "id": "C3-ID_OPPONENT-0",
+          "id": "ID_OPPONENT-0",
           "level": 1,
           "category": 0,
           "attack": 10,
@@ -1198,7 +1214,7 @@ describe("challenge events", function() {
           "deathRank": 0
         },
         {
-          "id": "C36-ID_OPPONENT-15",
+          "id": "ID_OPPONENT-15",
           "level": 0,
           "category": 0,
           "attack": 40,
@@ -1249,7 +1265,7 @@ describe("challenge events", function() {
           "deathRank": 2
         },
         {
-          "id": "C34-ID_OPPONENT-22",
+          "id": "ID_OPPONENT-22",
           "level": 0,
           "category": 0,
           "attack": 40,
@@ -1347,7 +1363,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_OPPONENT",
-            cardId: "C45-ID_OPPONENT-10",
+            cardId: "ID_OPPONENT-10",
             attributesJson: {
               fieldIndex: 0,
             },
@@ -1360,11 +1376,12 @@ describe("challenge events", function() {
 
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.card.id, "C45-ID_OPPONENT-10");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_OPPONENT-10");
             assert.equal(lastMoves[0].attributes.fieldIndex, 0);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-33");
             assert.equal(lastMoves[1].attributes.card.name, "Redhaired Paladin");
             assert.equal(lastMoves[1].attributes.fieldIndex >= 0, true);
             assert.equal(lastMoves[1].attributes.fieldIndex <= 5, true);
@@ -1374,7 +1391,7 @@ describe("challenge events", function() {
             assert.equal(playerState.manaMax, 90);
 
             const playerField = playerState.field;
-            assert.equal(playerField[0].id, "C45-ID_OPPONENT-10");
+            assert.equal(playerField[0].id, "ID_OPPONENT-10");
             assert.equal(playerField.filter(function(fieldCard) { return fieldCard.id != "EMPTY" }).length, 2);
 
             resolve();
@@ -1391,7 +1408,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_OPPONENT",
-            cardId: "C28-ID_OPPONENT-15",
+            cardId: "ID_OPPONENT-15",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1400,10 +1417,11 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 2);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
             assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.card.id, "C28-ID_OPPONENT-15");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_OPPONENT-15");
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-33");
             assert.equal(lastMoves[1].attributes.card.name, "Redhaired Paladin");
             assert.equal(lastMoves[1].attributes.fieldIndex >= 0, true);
             assert.equal(lastMoves[1].attributes.fieldIndex <= 5, true);
