@@ -690,7 +690,7 @@ describe("challenge events", function() {
           "cardCount": 30,
           "mode": 0,
           "mulliganCards": [],
-          "id": "ID_PLAYER",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -723,7 +723,8 @@ describe("challenge events", function() {
           "hand": [
             {
               "id": "C45-ID_PLAYER-10",
-              "level": 0,
+              "playerId": "ID_PLAYER",
+              "level": 1,
               "category": 0,
               "attack": 40,
               "health": 60,
@@ -741,7 +742,8 @@ describe("challenge events", function() {
             },
             {
               "id": "C28-ID_PLAYER-15",
-              "level": 0,
+              "playerId": "ID_PLAYER",
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -760,7 +762,7 @@ describe("challenge events", function() {
           "cardCount": 34,
           "mode": 0,
           "mulliganCards": [],
-          "id": "ID_OPPONENT",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -770,6 +772,10 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
       "deadCards": [
         {
           "id": "ID_OPPONENT-0",
@@ -798,7 +804,7 @@ describe("challenge events", function() {
         },
         {
           "id": "ID_OPPONENT-15",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 40,
           "health": 0,
@@ -823,7 +829,7 @@ describe("challenge events", function() {
         },
         {
           "id": "C38-ID_PLAYER-17",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 20,
           "health": 0,
@@ -849,7 +855,7 @@ describe("challenge events", function() {
         },
         {
           "id": "ID_OPPONENT-22",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 40,
           "health": -20,
@@ -874,7 +880,7 @@ describe("challenge events", function() {
         },
         {
           "id": "C46-ID_PLAYER-9",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 60,
           "health": 0,
@@ -905,7 +911,7 @@ describe("challenge events", function() {
         },
         {
           "id": "C30-ID_PLAYER-25",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 20,
           "health": 0,
@@ -1070,7 +1076,8 @@ describe("challenge events", function() {
           "hand": [
             {
               "id": "ID_OPPONENT-10",
-              "level": 0,
+              "playerId": "ID_OPPONENT",
+              "level": 1,
               "category": 0,
               "attack": 40,
               "health": 60,
@@ -1088,7 +1095,8 @@ describe("challenge events", function() {
             },
             {
               "id": "ID_OPPONENT-15",
-              "level": 0,
+              "playerId": "ID_OPPONENT",
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -1140,7 +1148,8 @@ describe("challenge events", function() {
           "hand": [
             {
               "id": "C45-ID_PLAYER-10",
-              "level": 0,
+              "playerId": "ID_PLAYER",
+              "level": 1,
               "category": 0,
               "attack": 40,
               "health": 60,
@@ -1158,7 +1167,8 @@ describe("challenge events", function() {
             },
             {
               "id": "C28-ID_PLAYER-15",
-              "level": 0,
+              "playerId": "ID_PLAYER",
+              "level": 1,
               "category": 1,
               "attack": null,
               "health": null,
@@ -1187,6 +1197,10 @@ describe("challenge events", function() {
       },
       "lastMoves": [],
       "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
       "deadCards": [
         {
           "id": "ID_OPPONENT-0",
@@ -1215,7 +1229,7 @@ describe("challenge events", function() {
         },
         {
           "id": "ID_OPPONENT-15",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 40,
           "health": 0,
@@ -1240,7 +1254,7 @@ describe("challenge events", function() {
         },
         {
           "id": "C38-ID_PLAYER-17",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 20,
           "health": 0,
@@ -1266,7 +1280,7 @@ describe("challenge events", function() {
         },
         {
           "id": "ID_OPPONENT-22",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 40,
           "health": -20,
@@ -1291,7 +1305,7 @@ describe("challenge events", function() {
         },
         {
           "id": "C46-ID_PLAYER-9",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 50,
           "health": 0,
@@ -1317,7 +1331,7 @@ describe("challenge events", function() {
         },
         {
           "id": "C30-ID_PLAYER-25",
-          "level": 0,
+          "level": 1,
           "category": 0,
           "attack": 20,
           "health": 0,
