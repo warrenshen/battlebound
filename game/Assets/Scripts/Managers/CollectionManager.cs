@@ -206,12 +206,12 @@ public class CollectionManager : MonoBehaviour
             cardIds.Add(elem.Card.Id);
         }
         string previousName = decksRaw[activeDeck].name;
-        string name = decksRaw[activeDeck].name;   //to-do, let name be changed, and pull from input field
+        string newName = decksRaw[activeDeck].name;   //to-do, let name be changed, and pull from input field
 
         DeckStore.Instance().CreateUpdatePlayerDeckWithCallback(
             cardIds,
             previousName,
-            name,
+            newName,
             SaveCallback
         );
     }

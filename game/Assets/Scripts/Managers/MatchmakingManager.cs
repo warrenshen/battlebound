@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
+
 using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
 using GameSparks.Api.Messages;
+
+using TMPro;
 
 public class MatchmakingManager : MonoBehaviour
 {
@@ -20,6 +24,13 @@ public class MatchmakingManager : MonoBehaviour
     [SerializeField]
     private Button findMatchButton;
 
+    [SerializeField]
+    private GameObject deckScrollViewContent;
+    [SerializeField]
+    private GameObject deckButton;
+    [SerializeField]
+    private List<CardObject> renderedCardObjects;
+
     public void Awake()
     {
         MatchFoundMessage.Listener += MatchFoundMessageHandler;
@@ -28,6 +39,8 @@ public class MatchmakingManager : MonoBehaviour
         casualMatchButton.onClick.AddListener(SelectCasualMatch);
         rankedMatchButton.onClick.AddListener(SelectRankedMatch);
         findMatchButton.onClick.AddListener(FindMatch);
+
+        renderedCardObjects = new List<CardObject>();
     }
 
     public void Start()
@@ -43,15 +56,58 @@ public class MatchmakingManager : MonoBehaviour
             Debug.LogError("No decks!");
             return;
         }
-        // TODO: render decks in left column.
+        RenderDecks(deckNames);
+
         this.matchDeckName = deckNames[0];
+        ChangeSelectedDeck(this.matchDeckName);
     }
 
     private void ChangeSelectedDeck(string deckName)
     {
         List<Card> cards = DeckStore.Instance().GetCardsByDeckName(deckName);
-        // TODO: render cards in middle column.
         this.matchDeckName = deckName;
+        RenderCards(cards);
+    }
+
+    private void RenderDecks(List<string> deckNames)
+    {
+        foreach (string deckName in deckNames)
+        {
+            GameObject created = Instantiate(deckButton, Vector3.zero, Quaternion.identity);
+            created.transform.SetParent(deckScrollViewContent.transform);
+            created.GetComponentInChildren<TextMeshProUGUI>().text = deckName;
+            created.GetComponent<Button>().onClick.AddListener(new UnityEngine.Events.UnityAction(() => ChangeSelectedDeck(deckName)));
+        }
+    }
+
+    private void RenderCards(List<Card> cards)
+    {
+        foreach (CardObject rendered in this.renderedCardObjects)
+        {
+            rendered.Recycle();
+        }
+        renderedCardObjects = new List<CardObject>();
+
+        foreach (Card card in cards)
+        {
+            GameObject created = new GameObject(card.Name);
+            CardObject cardObject = created.AddComponent<CardObject>();
+            cardObject.Initialize(card);
+            cardObject.visual.SetOutline(false);
+            renderedCardObjects.Add(cardObject);
+        }
+        PositionCards();
+    }
+
+    private void PositionCards()
+    {
+        Transform pivot = GameObject.Find("Deck Pivot").transform;
+        for (int index = 0; index < renderedCardObjects.Count; index++)
+        {
+            CardObject chosen = renderedCardObjects[index];
+            Vector3 offset = (index % 6) * Vector3.right * 1.8f + (index / 6) * Vector3.down * 3.6f;
+            CardTween.move(chosen, pivot.position + offset, CardTween.TWEEN_DURATION);
+        }
     }
 
     private void MatchFoundMessageHandler(MatchFoundMessage message)

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public abstract class CardObject : MouseWatchable
+public class CardObject : MouseWatchable
 {
     protected static Vector3 CARD_BOUNDS = new Vector3(2.3F, 3.5F, 0.2F);
 
