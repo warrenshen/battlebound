@@ -94,7 +94,6 @@ public class Player
     {
         List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
-        //this.AddDrawnCards(handCards, true, animate: false); // Don't need since never start with cards in hand?
     }
 
     public void SetMode(int mode)
@@ -104,8 +103,9 @@ public class Player
 
     public void PlayCard(BattleCardObject battleCardObject)
     {
-        this.mana -= battleCardObject.Card.GetCost();
+        this.mana -= battleCardObject.GetCost();
         RenderMana();
+
         this.hand.RemoveByCardId(battleCardObject.Card.Id);
         this.hand.RepositionCards();
     }
@@ -157,6 +157,12 @@ public class Player
         GameObject light = GameObject.Find("Point Light");
         LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
 
+        this.hand.RepositionCards();
+    }
+
+    public void RenderGameStart()
+    {
+        RenderMana();
         this.hand.RepositionCards();
     }
 
@@ -687,19 +693,19 @@ public class Player
         cards.Add(new CreatureCard("C45", Card.CARD_NAME_CHAR_BOT_451, 1));
         cards.Add(new CreatureCard("C46", Card.CARD_NAME_MEGAPUNK, 1));
 
-        cards.Add(new SpellCard("C4", SpellCard.SPELL_NAME_UNSTABLE_POWER, 4));
-        cards.Add(new SpellCard("C100", SpellCard.SPELL_NAME_TOUCH_OF_ZEUS, 1));
-        cards.Add(new SpellCard("C101", SpellCard.SPELL_NAME_RAZE_TO_ASHES, 1));
-        cards.Add(new SpellCard("C102", SpellCard.SPELL_NAME_DEEP_FREEZE, 1));
-        cards.Add(new SpellCard("C103", SpellCard.SPELL_NAME_BRR_BRR_BLIZZARD, 1));
-        cards.Add(new SpellCard("C104", SpellCard.SPELL_NAME_RIOT_UP, 1));
-        cards.Add(new SpellCard("C105", SpellCard.SPELL_NAME_WIDESPREAD_FROSTBITE, 1));
-        cards.Add(new SpellCard("C106", SpellCard.SPELL_NAME_GREEDY_FINGERS, 1));
-        cards.Add(new SpellCard("C107", SpellCard.SPELL_NAME_SILENCE_OF_THE_LAMBS, 1));
-        cards.Add(new SpellCard("C108", SpellCard.SPELL_NAME_MUDSLINGING, 1));
-        cards.Add(new SpellCard("C109", SpellCard.SPELL_NAME_DEATH_NOTICE, 1));
-        cards.Add(new SpellCard("C110", SpellCard.SPELL_NAME_SPRAY_N_PRAY, 1));
-        cards.Add(new SpellCard("C111", SpellCard.SPELL_NAME_GRAVE_DIGGING, 1));
+        cards.Add(new SpellCard("C4", Card.CARD_NAME_UNSTABLE_POWER, 4));
+        cards.Add(new SpellCard("C100", Card.CARD_NAME_TOUCH_OF_ZEUS, 1));
+        cards.Add(new SpellCard("C101", Card.CARD_NAME_RAZE_TO_ASHES, 1));
+        cards.Add(new SpellCard("C102", Card.CARD_NAME_DEEP_FREEZE, 1));
+        cards.Add(new SpellCard("C103", Card.CARD_NAME_BRR_BRR_BLIZZARD, 1));
+        cards.Add(new SpellCard("C104", Card.CARD_NAME_RIOT_UP, 1));
+        cards.Add(new SpellCard("C105", Card.CARD_NAME_WIDESPREAD_FROSTBITE, 1));
+        cards.Add(new SpellCard("C106", Card.CARD_NAME_GREEDY_FINGERS, 1));
+        cards.Add(new SpellCard("C107", Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
+        cards.Add(new SpellCard("C108", Card.CARD_NAME_MUDSLINGING, 1));
+        cards.Add(new SpellCard("C109", Card.CARD_NAME_DEATH_NOTICE, 1));
+        cards.Add(new SpellCard("C110", Card.CARD_NAME_SPRAY_N_PRAY, 1));
+        cards.Add(new SpellCard("C111", Card.CARD_NAME_GRAVE_DIGGING, 1));
 
         Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;

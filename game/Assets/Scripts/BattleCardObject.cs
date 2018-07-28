@@ -45,8 +45,7 @@ public class BattleCardObject : CardObject
         if (!this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
         {
             this.buffs.Add(HAND_CARD_DECREASE_COST_BY_COLOR);
-            Debug.Log("ya");
-            SetHyperCardFromData(this.visual, this);
+            SetHyperCardCost(this.visual, this);
         }
     }
 
@@ -55,7 +54,7 @@ public class BattleCardObject : CardObject
         if (this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
         {
             this.buffs.Remove(HAND_CARD_DECREASE_COST_BY_COLOR);
-            SetHyperCardFromData(this.visual, this);
+            SetHyperCardCost(this.visual, this);
         }
     }
 
@@ -172,5 +171,15 @@ public class BattleCardObject : CardObject
             yield return new WaitForEndOfFrame();
         }
         this.Recycle();
+    }
+
+    private static void SetHyperCardCost(
+        HyperCard.Card cardVisual,
+        BattleCardObject battleCardObject
+    )
+    {
+        cardVisual.SetTextFieldWithKey("Cost", battleCardObject.GetCost().ToString());
+
+        cardVisual.Redraw();
     }
 }

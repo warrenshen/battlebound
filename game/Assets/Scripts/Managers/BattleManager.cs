@@ -191,7 +191,17 @@ public class BattleManager : MonoBehaviour
         {
             this.turnIndex = this.players.FindIndex(player => player.HasTurn);
             this.activePlayer = this.players[turnIndex % players.Count];
+        }
+        else
+        {
+            this.turnIndex = UnityEngine.Random.Range(0, players.Count);
+            this.activePlayer = players[turnIndex % players.Count];
+        }
 
+        Player inactivePlayer = Board.Instance.GetOpponentByPlayerId(this.activePlayer.Id);
+
+        if (DeveloperPanel.IsServerEnabled())
+        {
             if (this.you.IsModeMulligan())
             {
                 this.you.ResumeMulligan(
@@ -201,22 +211,21 @@ public class BattleManager : MonoBehaviour
                     BattleSingleton.Instance.GetMulliganCards(this.opponent.Id)
                 );
                 this.mode = BATTLE_STATE_MULLIGAN_MODE;
+
+                activePlayer.RenderGameStart();
+                inactivePlayer.RenderGameStart();
             }
             else
             {
                 HideMulliganOverlay(this.you);
                 HideMulliganOverlay(this.opponent);
 
-                // TODO: render mana for other player.
                 activePlayer.RenderTurnStart();
+                inactivePlayer.RenderGameStart();
             }
         }
         else
         {
-            this.turnIndex = UnityEngine.Random.Range(0, players.Count);
-            this.activePlayer = players[turnIndex % players.Count];
-
-            Player inactivePlayer = Board.Instance.GetOpponentByPlayerId(this.activePlayer.Id);
             this.mode = BATTLE_STATE_MULLIGAN_MODE;
 
             if (DeveloperPanel.ShouldSkipMulligan())
@@ -226,16 +235,11 @@ public class BattleManager : MonoBehaviour
 
                 this.activePlayer.DrawCardsForce(3);
                 inactivePlayer.DrawCardsForce(4);
-                //this.you.DrawCardsForce(3);
-                //this.opponent.DrawCardsForce(3);
             }
             else
             {
                 this.activePlayer.BeginMulligan(this.activePlayer.PopCardsFromDeck(3));
                 inactivePlayer.BeginMulligan(inactivePlayer.PopCardsFromDeck(4));
-
-                //this.you.BeginMulligan(this.you.PopCardsFromDeck(3));
-                //this.opponent.BeginMulligan(this.opponent.PopCardsFromDeck(3));
             }
         }
     }
@@ -1236,7 +1240,10 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Log("Challenge won!");
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-        Debug.Log(JsonUtility.ToJson(experienceCards));
+        foreach (ExperienceCard experienceCard in experienceCards)
+        {
+            Debug.Log(JsonUtility.ToJson(experienceCard));
+        }
 
         ShowBattleEndFX(true);
     }

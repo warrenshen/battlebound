@@ -39,48 +39,8 @@ public class ExperienceCard
     public string Id => id;
 
     [SerializeField]
-    private int category;
-    public int Category => category;
-
-    [SerializeField]
     private string name;
     public string Name => name;
-
-    [SerializeField]
-    private string description;
-    public string Description => description;
-
-    [SerializeField]
-    private int cost;
-    public int Cost => cost;
-
-    [SerializeField]
-    private int costPrevious;
-    public int CostPrevious => costPrevious;
-
-    [SerializeField]
-    private int attack;
-    public int Attack => attack;
-
-    [SerializeField]
-    private int attackPrevious;
-    public int AttackPrevious => attackPrevious;
-
-    [SerializeField]
-    private int healthPrevious;
-    public int HealthPrevious => healthPrevious;
-
-    [SerializeField]
-    private int health;
-    public int Health => health;
-
-    [SerializeField]
-    private List<string> abilities;
-    public List<string> Abilities => abilities;
-
-    [SerializeField]
-    private List<string> abilitiesPrevious;
-    public List<string> AbilitiesPrevious => abilitiesPrevious;
 
     [SerializeField]
     private int level;
@@ -103,10 +63,8 @@ public class ExperienceCard
     public int ExpPrevious => expPrevious;
 
     public ExperienceCard(
-        ChallengeCard challengeCard,
-        int costPrevious,
-        int attackPrevious,
-        int healthPrevious,
+        string id,
+        string name,
         int level,
         int levelPrevious,
         int exp,
@@ -114,22 +72,43 @@ public class ExperienceCard
         int expMax
     )
     {
-        this.id = challengeCard.Id;
-        this.name = challengeCard.Name;
-        this.description = challengeCard.Description;
-        this.cost = challengeCard.CostStart;
-        this.attack = challengeCard.AttackStart;
-        this.health = challengeCard.HealthStart;
-        this.abilities = challengeCard.GetAbilities();
-
-        this.costPrevious = costPrevious;
-        this.attackPrevious = attackPrevious;
-        this.healthPrevious = healthPrevious;
+        this.id = id;
+        this.name = name;
 
         this.level = level;
         this.levelPrevious = levelPrevious;
         this.exp = exp;
         this.expPrevious = expPrevious;
         this.expMax = expMax;
+    }
+
+    public Card GetCard()
+    {
+        if (this.name == null)
+        {
+            Debug.LogError("Experience card does not have a name.");
+            return null;
+        }
+        else if (this.level <= 1)
+        {
+            Debug.LogError("Experience card does not have a valid level.");
+        }
+
+        return Card.CreateByNameAndLevel(this.id, this.name, this.level);
+    }
+
+    public Card GetCardPrevious()
+    {
+        if (this.name == null)
+        {
+            Debug.LogError("Experience card does not have a name.");
+            return null;
+        }
+        else if (this.levelPrevious <= 1)
+        {
+            Debug.LogError("Experience card does not have a valid level previous.");
+        }
+
+        return Card.CreateByNameAndLevel(this.id, this.name, this.levelPrevious);
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Card
 {
+    // Creatures.
     public const string CARD_NAME_FIREBUG_CATELYN = "Firebug Catelyn";
     public const string CARD_NAME_MARSHWATER_SQUEALER = "Marshwater Squealer";
     public const string CARD_NAME_WATERBORNE_RAZORBACK = "Waterborne Razorback";
@@ -53,7 +54,24 @@ public abstract class Card
     public const string CARD_NAME_CHAR_BOT_451 = "CHAR-BOT-451";
     public const string CARD_NAME_MEGAPUNK = "MegaPUNK";
 
-    public static readonly List<string> CREATURE_CARD_NAMES = new List<string>
+    // Spells targeted.
+    public const string CARD_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
+    public const string CARD_NAME_UNSTABLE_POWER = "Unstable Power";
+    public const string CARD_NAME_DEEP_FREEZE = "Deep Freeze";
+    public const string CARD_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
+    public const string CARD_NAME_DEATH_NOTICE = "Death Notice";
+
+    // Spells untargeted.
+    public const string CARD_NAME_RIOT_UP = "Riot Up";
+    public const string CARD_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
+    public const string CARD_NAME_RAZE_TO_ASHES = "Raze to Ashes";
+    public const string CARD_NAME_GREEDY_FINGERS = "Greedy Fingers";
+    public const string CARD_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
+    public const string CARD_NAME_MUDSLINGING = "Mudslinging";
+    public const string CARD_NAME_SPRAY_N_PRAY = "Spray n' Pray";
+    public const string CARD_NAME_GRAVE_DIGGING = "Grave-digging";
+
+    public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
         CARD_NAME_FIREBUG_CATELYN,
         CARD_NAME_MARSHWATER_SQUEALER,
@@ -100,6 +118,24 @@ public abstract class Card
         CARD_NAME_INFERNO_902,
         CARD_NAME_CHAR_BOT_451,
         CARD_NAME_MEGAPUNK,
+    };
+
+    public static readonly List<string> CARD_NAMES_SPELL = new List<string>
+    {
+        CARD_NAME_TOUCH_OF_ZEUS,
+        CARD_NAME_UNSTABLE_POWER,
+        CARD_NAME_DEEP_FREEZE,
+        CARD_NAME_WIDESPREAD_FROSTBITE,
+        CARD_NAME_DEATH_NOTICE,
+
+        CARD_NAME_RIOT_UP,
+        CARD_NAME_BRR_BRR_BLIZZARD,
+        CARD_NAME_RAZE_TO_ASHES,
+        CARD_NAME_GREEDY_FINGERS,
+        CARD_NAME_SILENCE_OF_THE_LAMBS,
+        CARD_NAME_MUDSLINGING,
+        CARD_NAME_SPRAY_N_PRAY,
+        CARD_NAME_GRAVE_DIGGING,
     };
 
     public enum CardType { Creature, Spell, Weapon, Structure };
@@ -328,6 +364,27 @@ public abstract class Card
         }
     }
 
+    public static Card CreateByNameAndLevel(string id, string name, int level)
+    {
+        Card card;
+
+        if (CARD_NAMES_CREATURE.Contains(name))
+        {
+            card = new CreatureCard(id, name, level);
+        }
+        else if (CARD_NAMES_SPELL.Contains(name))
+        {
+            card = new SpellCard(id, name, level);
+        }
+        else
+        {
+            Debug.LogError("Not supported yet.");
+            return null;
+        }
+
+        return card;
+    }
+
     public static List<string> GetAbilityStringsByCodes(List<string> abilityCodes)
     {
         List<string> abilityStrings = new List<string>();
@@ -553,58 +610,25 @@ public class StructureCard : Card
 [System.Serializable]
 public class SpellCard : Card
 {
-    public const string SPELL_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
-    public const string SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
-    public const string SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
-    public const string SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
-    public const string SPELL_NAME_DEATH_NOTICE = "Death Notice";
-
-    public const string SPELL_NAME_RIOT_UP = "Riot Up";
-    public const string SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
-    public const string SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
-    public const string SPELL_NAME_GREEDY_FINGERS = "Greedy Fingers";
-    public const string SPELL_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
-    public const string SPELL_NAME_MUDSLINGING = "Mudslinging";
-    public const string SPELL_NAME_SPRAY_N_PRAY = "Spray n' Pray";
-    public const string SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
-
-    public static readonly List<string> VALID_SPELLS = new List<string>
+    public static readonly List<string> TARGET_CARD_NAMES = new List<string>
     {
-        SPELL_NAME_TOUCH_OF_ZEUS,
-        SPELL_NAME_UNSTABLE_POWER,
-        SPELL_NAME_DEEP_FREEZE,
-        SPELL_NAME_WIDESPREAD_FROSTBITE,
-        SPELL_NAME_DEATH_NOTICE,
-
-        SPELL_NAME_RIOT_UP,
-        SPELL_NAME_BRR_BRR_BLIZZARD,
-        SPELL_NAME_RAZE_TO_ASHES,
-        SPELL_NAME_GREEDY_FINGERS,
-        SPELL_NAME_SILENCE_OF_THE_LAMBS,
-        SPELL_NAME_MUDSLINGING,
-        SPELL_NAME_SPRAY_N_PRAY,
-        SPELL_NAME_GRAVE_DIGGING,
+        CARD_NAME_TOUCH_OF_ZEUS,
+        CARD_NAME_UNSTABLE_POWER,
+        CARD_NAME_DEEP_FREEZE,
+        CARD_NAME_WIDESPREAD_FROSTBITE,
+        CARD_NAME_DEATH_NOTICE,
     };
 
-    public static readonly List<string> TARGETED_SPELL_NAMES = new List<string>
+    public static readonly List<string> UNTARGETED_CARD_NAMES = new List<string>
     {
-        SPELL_NAME_TOUCH_OF_ZEUS,
-        SPELL_NAME_UNSTABLE_POWER,
-        SPELL_NAME_DEEP_FREEZE,
-        SPELL_NAME_WIDESPREAD_FROSTBITE,
-        SPELL_NAME_DEATH_NOTICE,
-    };
-
-    public static readonly List<string> UNTARGETED_SPELL_NAMES = new List<string>
-    {
-        SPELL_NAME_RIOT_UP,
-        SPELL_NAME_BRR_BRR_BLIZZARD,
-        SPELL_NAME_RAZE_TO_ASHES,
-        SPELL_NAME_GREEDY_FINGERS,
-        SPELL_NAME_SILENCE_OF_THE_LAMBS,
-        SPELL_NAME_MUDSLINGING,
-        SPELL_NAME_SPRAY_N_PRAY,
-        SPELL_NAME_GRAVE_DIGGING,
+        CARD_NAME_RIOT_UP,
+        CARD_NAME_BRR_BRR_BLIZZARD,
+        CARD_NAME_RAZE_TO_ASHES,
+        CARD_NAME_GREEDY_FINGERS,
+        CARD_NAME_SILENCE_OF_THE_LAMBS,
+        CARD_NAME_MUDSLINGING,
+        CARD_NAME_SPRAY_N_PRAY,
+        CARD_NAME_GRAVE_DIGGING,
     };
 
     private bool targeted;      //affects single target or whole board?
@@ -616,7 +640,7 @@ public class SpellCard : Card
         int level
     )
     {
-        if (!VALID_SPELLS.Contains(name))
+        if (!CARD_NAMES_SPELL.Contains(name))
         {
             Debug.LogError(string.Format("Invalid spell name: {0}.", name));
         }
@@ -625,7 +649,7 @@ public class SpellCard : Card
         this.name = name;
         this.level = level;
 
-        if (TARGETED_SPELL_NAMES.Contains(this.name))
+        if (TARGET_CARD_NAMES.Contains(this.name))
         {
             this.targeted = true;
         }

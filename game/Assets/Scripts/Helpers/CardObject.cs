@@ -158,56 +158,6 @@ public class CardObject : MouseWatchable
         cardVisual.Redraw();
     }
 
-    protected static void SetHyperCardFromData(
-        HyperCard.Card cardVisual,
-        BattleCardObject battleCardObject
-    )
-    {
-        //set sprites and set textmeshpro labels using TmpTextObjects (?)
-        //cardVisual.SetTextFieldWithKey("Title", card.GetName());
-        //cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
-        cardVisual.SetTextFieldWithKey("Cost", battleCardObject.GetCost().ToString());
-        Debug.Log(battleCardObject.Card.Name);
-        Debug.Log(battleCardObject.GetCost());
-        //cardVisual.SetFrameColor(CardTemplate.ColorFromClass(card.GetClassColor()));
-
-        //switch (card.GetRarity())
-        //{
-        //    case Card.RarityType.Common:
-        //        cardVisual.SetTextFieldWithKey("Rarity", "N");
-        //        break;
-        //    case Card.RarityType.Uncommon:
-        //        cardVisual.SetTextFieldWithKey("Rarity", "UN");
-        //        break;
-        //    case Card.RarityType.Rare:
-        //        cardVisual.SetTextFieldWithKey("Rarity", "R");
-        //        break;
-        //    case Card.RarityType.Epic:
-        //        cardVisual.SetTextFieldWithKey("Rarity", "EP");
-        //        break;
-        //    case Card.RarityType.Legendary:
-        //        cardVisual.SetTextFieldWithKey("Rarity", "LG");
-        //        break;
-        //    case Card.RarityType.Cosmic:
-        //        cardVisual.SetTextFieldWithKey("Rarity", "CL");
-        //        break;
-        //}
-
-        //bool isCreature = card.GetType() == typeof(CreatureCard);
-        //if (isCreature)
-        //{
-        //    CreatureCard creatureCard = card as CreatureCard;
-        //    cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
-        //    cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
-        //}
-        //else
-        //{
-        //    cardVisual.SetTextFieldWithKey("Attack", "--");
-        //    cardVisual.SetTextFieldWithKey("Health", "--");
-        //}
-        cardVisual.Redraw();
-    }
-
     public void Recycle()
     {
         if (this.visual != null)

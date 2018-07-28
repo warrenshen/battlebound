@@ -50,7 +50,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             this.effectNameToPrefab[effectName] = Resources.Load(effectName) as GameObject;
         }
 
-        foreach (string creatureName in Card.CREATURE_CARD_NAMES)
+        foreach (string creatureName in Card.CARD_NAMES_CREATURE)
         {
             CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
             string summonPrefabPath = creatureCard.GetSummonPrefab();
