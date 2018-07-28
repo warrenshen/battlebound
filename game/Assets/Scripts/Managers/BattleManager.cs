@@ -69,6 +69,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private GameObject endOverlay;
 
+    [SerializeField]
+    private List<CardObject> xpCardObjects;
+
     public static BattleManager Instance { get; private set; }
 
     public Player GetPlayerById(string playerId)
@@ -1236,57 +1239,68 @@ public class BattleManager : MonoBehaviour
         EffectManager.Instance.OnSummonCreatureFinish();
     }
 
+
+    //{
+    //    "id": "C14",
+    //  "level": 0,
+    //  "levelPrevious": 0,
+    //  "exp": 2,
+    //  "expMax": 10,
+    //  "expPrevious": 1,
+    //  "category": 0,
+    //  "attack": 60,
+    //  "health": 60,
+    //  "cost": 70,
+    //  "name": "Fireborn Menace",
+    //  "description": "Battlecry: Deal 20 damage to any minion in front",
+    //  "abilities": [
+    //    16
+    //  ]
+    //}
+
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge won!");
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-        foreach (ExperienceCard experienceCard in experienceCards)
-        {
-            Debug.Log(JsonUtility.ToJson(experienceCard));
-        }
+        Debug.Log(JsonUtility.ToJson(experienceCards));
 
-        ShowBattleEndFX(true);
+        ShowBattleEndFX(experienceCards, true);
     }
 
     public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge lost...");
-        //{
-        //    "id": "C14",
-        //  "level": 0,
-        //  "levelPrevious": 0,
-        //  "exp": 2,
-        //  "expMax": 10,
-        //  "expPrevious": 1,
-        //  "category": 0,
-        //  "attack": 60,
-        //  "health": 60,
-        //  "cost": 70,
-        //  "name": "Fireborn Menace",
-        //  "description": "Battlecry: Deal 20 damage to any minion in front",
-        //  "abilities": [
-        //    16
-        //  ]
-        //}
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
         Debug.Log(JsonUtility.ToJson(experienceCards));
 
-        ShowBattleEndFX(false);
+        ShowBattleEndFX(experienceCards, false);
+    }
 
-        foreach (ExperienceCard card in experienceCards)
+    private void RenderEXPChanges(List<ExperienceCard> experienceCards)
+    {
+        int index = 0;
+        int rowSize = 4;
+        foreach (ExperienceCard item in experienceCards)
         {
-            //do something
+            Card card = item.GetCard();
+            GameObject created = new GameObject(card.Name);
+            CardObject cardObject = created.AddComponent<CardObject>();
+            cardObject.Initialize(card);
+
+            Vector3 offset = (index % rowSize) * Vector3.right * 1.8f + (index / rowSize) * Vector3.down * 3.6f;
+            CardTween.move(cardObject, endOverlay.transform.position, CardTween.TWEEN_DURATION);
+            ++index;
         }
     }
 
-    public void ShowBattleEndFX(bool won)
+    public void ShowBattleEndFX(List<ExperienceCard> experienceCards, bool won)
     {
         endOverlay.SetActive(true);
         TextMeshPro title = endOverlay.transform.Find("Title").GetComponent<TextMeshPro>();
 
         if (won)
         {
-            title.text = "Victory!";
+            title.text = "Victory";
             endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
         }
         else
@@ -1294,6 +1308,17 @@ public class BattleManager : MonoBehaviour
             title.text = "Defeat";
             endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
         }
+
+        LeanTween.scale(title.gameObject, title.transform.localScale / 1.33f, CardTween.TWEEN_DURATION)
+             .setDelay(CardTween.TWEEN_DURATION * 3)
+             .setOnComplete(() =>
+             {
+                 LeanTween.moveY(title.gameObject, title.transform.position.y + 3f, CardTween.TWEEN_DURATION)
+                    .setOnComplete(() =>
+                    {
+                        RenderEXPChanges(experienceCards);
+                    });
+             });
     }
 
     public void ReceiveChallengeMove(ChallengeMove challengeMove)

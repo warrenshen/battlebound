@@ -159,9 +159,9 @@ public class Hand
             RedrawOutline(battleCardObject);
             //to-do: do something with hypercard stencil here?
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.2f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
+            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.05f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
-            LeanTween.rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 2.5f, 0), CardTween.TWEEN_DURATION);
+            LeanTween.rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 3f, 0), CardTween.TWEEN_DURATION);
         }
     }
 

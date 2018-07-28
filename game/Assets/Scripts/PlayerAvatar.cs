@@ -40,6 +40,7 @@ public class PlayerAvatar : Targetable
     public bool Frozen => frozen;
 
     TextMeshPro textMesh;
+    AudioSource audioSource;
 
     public void Initialize(Player player)
     {
@@ -55,6 +56,7 @@ public class PlayerAvatar : Targetable
         this.maxAttacks = 1;
         this.canAttack = 1;
 
+        this.audioSource = GetComponent<AudioSource>();
         InitializeRender();
     }
 
@@ -72,6 +74,7 @@ public class PlayerAvatar : Targetable
         this.maxAttacks = 1;
         this.canAttack = 1;
 
+        this.audioSource = GetComponent<AudioSource>();
         InitializeRender();
     }
 
@@ -173,6 +176,9 @@ public class PlayerAvatar : Targetable
     public override int TakeDamage(int amount)
     {
         //to-do check immunity
+        LeanTween.scale(gameObject, transform.localScale * 1.1f, 0.5F).setEasePunch();
+
+
         int healthBefore = this.health;
         this.health -= amount;
         this.health = Math.Max(this.health, 0);

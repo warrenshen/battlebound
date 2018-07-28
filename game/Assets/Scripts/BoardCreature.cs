@@ -266,9 +266,11 @@ public class BoardCreature : Targetable
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.summonAnimation.transform.position;
 
+        LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.25f, 1.5f).setEasePunch();
         LeanTween
             .move(this.summoned, this.transform.position - delta, 0.3F)
-            .setEaseOutCubic().setDelay(BoardCreature.ATTACK_DELAY)
+            .setEaseOutCubic()
+            .setDelay(BoardCreature.ATTACK_DELAY)
             .setOnComplete(
                 () =>
                 {
@@ -325,6 +327,8 @@ public class BoardCreature : Targetable
         }
         else
         {
+            LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.1f, 0.5F).setEasePunch();
+
             int healthBefore = this.health;
             this.health -= amount;
 
