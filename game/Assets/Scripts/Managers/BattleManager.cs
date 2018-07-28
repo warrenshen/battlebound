@@ -1225,15 +1225,15 @@ public class BattleManager : MonoBehaviour
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge won!");
-        this.ShowBattleEndFX(true);
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
         Debug.Log(JsonUtility.ToJson(experienceCards));
+
+        ShowBattleEndFX(true);
     }
 
     public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge lost...");
-        this.ShowBattleEndFX(false);
         //{
         //    "id": "C14",
         //  "level": 0,
@@ -1253,6 +1253,8 @@ public class BattleManager : MonoBehaviour
         //}
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
         Debug.Log(JsonUtility.ToJson(experienceCards));
+
+        ShowBattleEndFX(false);
     }
 
     public void ShowBattleEndFX(bool won)

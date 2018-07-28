@@ -35,6 +35,7 @@ public class PlayerAvatar : Targetable
 
     [SerializeField]
     private SpriteRenderer spriteRenderer;
+
     private bool frozen;
     public bool Frozen => frozen;
 
@@ -43,15 +44,13 @@ public class PlayerAvatar : Targetable
     public void Initialize(Player player)
     {
         this.armor = 0;
-        this.maxHealth = 300;
+        this.maxHealth = 100;
         this.health = this.maxHealth;
 
         this.weapon = null;
         this.isAvatar = true;
 
         this.owner = player;
-
-        //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
 
         this.maxAttacks = 1;
         this.canAttack = 1;
@@ -70,19 +69,17 @@ public class PlayerAvatar : Targetable
 
         this.owner = player;
 
-        //sp.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 80.0f);
-
         this.maxAttacks = 1;
         this.canAttack = 1;
-
-        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        spriteRenderer.sortingOrder = -5;
 
         InitializeRender();
     }
 
     private void InitializeRender()
     {
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = -5;
+
         //maybe do this manually in prefab later
         GameObject textHolder = new GameObject("Text Label");
         textMesh = textHolder.AddComponent<TextMeshPro>();
@@ -180,11 +177,6 @@ public class PlayerAvatar : Targetable
         this.health -= amount;
         this.health = Math.Max(this.health, 0);
 
-        if (CheckAlive())
-        {
-            //do something
-        }
-
         this.UpdateStatText();
         int damageTaken = Math.Min(healthBefore, amount);
         TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
@@ -208,18 +200,9 @@ public class PlayerAvatar : Targetable
         return amountHealed;
     }
 
-    private bool CheckAlive()
+    public void Die()
     {
-        if (this.health > 0)
-        {
-            return true;
-        }
-        else
-        {
-            //to-do, delay creature death
-            StartCoroutine("Dissolve", 2);
-            return false;
-        }
+        StartCoroutine("Dissolve", 2);
     }
 
     private IEnumerator Dissolve(float duration)

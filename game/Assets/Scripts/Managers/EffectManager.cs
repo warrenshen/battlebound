@@ -458,7 +458,7 @@ public class EffectManager : MonoBehaviour
         switch (effect.Name)
         {
             case EFFECT_PLAYER_AVATAR_DIE:
-                Debug.LogWarning("Game over");
+                EffectPlayerAvatarDie(effect);
                 break;
             case Card.CARD_ABILITY_END_TURN_HEAL_TEN:
                 AbilityHeal(effect, 10);
@@ -532,6 +532,57 @@ public class EffectManager : MonoBehaviour
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
+        }
+    }
+
+    private void EffectPlayerAvatarDie(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        PlayerAvatar playerAvatar = player.Avatar;
+        playerAvatar.Die();
+
+        ChallengeEndState challengeEndState = new ChallengeEndState(
+            playerId,
+            2,
+            2
+        );
+
+        List<ExperienceCard> experienceCards = new List<ExperienceCard>();
+
+        foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
+        {
+            if (
+                challengeMove.PlayerId == playerId &&
+                challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
+            )
+            {
+                ChallengeCard challengeCard = challengeMove.Attributes.Card;
+                ExperienceCard experienceCard = new ExperienceCard(
+                    challengeCard,
+                    challengeCard.CostStart,
+                    challengeCard.AttackStart,
+                    challengeCard.HealthStart,
+                    2,
+                    2,
+                    8,
+                    7,
+                    10
+                );
+
+                experienceCards.Add(experienceCard);
+            }
+        }
+        Debug.Log(experienceCards.Count);
+        challengeEndState.SetExperienceCards(experienceCards);
+
+        if (BattleManager.Instance.You.Id == playerId)
+        {
+            BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
+        }
+        else
+        {
+            BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
         }
     }
 
@@ -659,7 +710,6 @@ public class EffectManager : MonoBehaviour
         foreach (BoardCreature opponentCreature in opponentCreatures)
         {
             int damageTaken = opponentCreature.TakeDamage(amount);
-
             effects.AddRange(GetEffectsOnCreatureDamageTaken(opponentCreature, damageTaken));
         }
 
@@ -1305,6 +1355,8 @@ public class EffectManager : MonoBehaviour
                 {
                     int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
+
                     //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
                     //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
@@ -1324,17 +1376,6 @@ public class EffectManager : MonoBehaviour
 
                     //    effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
                     //}
-                    if (defendingAvatar.Health <= 0)
-                    {
-                        effects.Add(
-                            new Effect(
-                                defendingAvatar.Owner.Id,
-                                EFFECT_PLAYER_AVATAR_DIE,
-                                defendingAvatar.GetCardId(),
-                                0
-                            )
-                        );
-                    }
 
                     // Need to call redraw to update outline for can attack.
                     attackingCreature.Redraw();
@@ -1399,29 +1440,20 @@ public class EffectManager : MonoBehaviour
                 GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
                 this.isWaiting = true;
-                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                         .setEaseInOutCirc()
-                         .setOnComplete(() =>
-                         {
-                             int damageDone = defendingAvatar.TakeDamage(20);
+                LeanTween
+                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                    .setEaseInOutCirc()
+                    .setOnComplete(() =>
+                    {
+                        int damageDone = defendingAvatar.TakeDamage(20);
+                        effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
-                             if (defendingAvatar.Health <= 0)
-                             {
-                                 effects.Add(
-                                 new Effect(
-                                     defendingAvatar.Owner.Id,
-                                     EFFECT_PLAYER_AVATAR_DIE,
-                                     defendingAvatar.GetCardId(),
-                                     0
-                                 )
-                             );
-                             }
-                             bombObject.SetActive(false);
+                        bombObject.SetActive(false);
 
-                             AddToQueues(effects);
-                             this.isWaiting = false;
-                             this.isDirty = true;
-                         });
+                        AddToQueues(effects);
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    });
             }
             else
             {
@@ -1464,29 +1496,20 @@ public class EffectManager : MonoBehaviour
                 GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
                 this.isWaiting = true;
-                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                         .setEaseInOutCirc()
-                         .setOnComplete(() =>
-                         {
-                             int damageDone = defendingAvatar.TakeDamage(20);
+                LeanTween
+                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                    .setEaseInOutCirc()
+                    .setOnComplete(() =>
+                    {
+                        int damageDone = defendingAvatar.TakeDamage(20);
+                        effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
-                             if (defendingAvatar.Health <= 0)
-                             {
-                                 effects.Add(
-                                 new Effect(
-                                     defendingAvatar.Owner.Id,
-                                     EFFECT_PLAYER_AVATAR_DIE,
-                                     defendingAvatar.GetCardId(),
-                                     0
-                                 )
-                             );
-                             }
-                             bombObject.SetActive(false);
+                        bombObject.SetActive(false);
 
-                             AddToQueues(effects);
-                             this.isWaiting = false;
-                             this.isDirty = true;
-                         });
+                        AddToQueues(effects);
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    });
             }
             else
             {
@@ -1934,57 +1957,24 @@ public class EffectManager : MonoBehaviour
     }
 
     private List<Effect> GetEffectsOnFaceDamageTaken(
-        string playerId,
+        PlayerAvatar playerAvatar,
         int amount
     )
     {
+        string playerId = playerAvatar.GetPlayerId();
+
         List<Effect> effects = new List<Effect>();
 
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
-        if (player.Avatar.Health <= 0)
+        if (playerAvatar.Health <= 0)
         {
-            ChallengeEndState challengeEndState = new ChallengeEndState(
-                playerId,
-                2,
-                2
-            );
-
-            List<ExperienceCard> experienceCards = new List<ExperienceCard>();
-
-            foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
-            {
-                if (
-                    challengeMove.PlayerId == playerId &&
-                    challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
+            effects.Add(
+                new Effect(
+                    playerAvatar.Owner.Id,
+                    EFFECT_PLAYER_AVATAR_DIE,
+                    playerAvatar.GetCardId(),
+                    0
                 )
-                {
-                    ChallengeCard challengeCard = challengeMove.Attributes.Card;
-                    ExperienceCard experienceCard = new ExperienceCard(
-                        challengeCard,
-                        challengeCard.CostStart,
-                        challengeCard.AttackStart,
-                        challengeCard.HealthStart,
-                        2,
-                        2,
-                        8,
-                        7,
-                        10
-                    );
-
-                    experienceCards.Add(experienceCard);
-                }
-            }
-
-            challengeEndState.SetExperienceCards(experienceCards);
-
-            if (BattleManager.Instance.You.Id == playerId)
-            {
-                BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
-            }
-            else
-            {
-                BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
-            }
+            );
         }
 
         return effects;
