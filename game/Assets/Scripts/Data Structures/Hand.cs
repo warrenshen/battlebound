@@ -51,16 +51,15 @@ public class Hand
     {
         this.battleCardObjects.Add(battleCardObject);
         SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
-    }
 
-    public void Discard(int count)
-    {
-
+        UpdateCosts();
     }
 
     public void RemoveByIndex(int index)
     {
         this.battleCardObjects.RemoveAt(index);
+
+        UpdateCosts();
     }
 
     public void RemoveByCardId(string cardId)
@@ -74,6 +73,42 @@ public class Hand
         }
 
         this.battleCardObjects.RemoveAt(removeIndex);
+
+        UpdateCosts();
+    }
+
+    private void UpdateCosts()
+    {
+        Dictionary<CardTemplate.ClassColor, int> classColorToCount =
+            new Dictionary<CardTemplate.ClassColor, int>();
+
+        foreach (BattleCardObject battleCardObject in this.battleCardObjects)
+        {
+            CardTemplate.ClassColor classColor = battleCardObject.GetClassColor();
+
+            if (classColorToCount.ContainsKey(classColor))
+            {
+                classColorToCount[classColor] += 1;
+            }
+            else
+            {
+                classColorToCount[classColor] = 1;
+            }
+        }
+
+        foreach (BattleCardObject battleCardObject in this.battleCardObjects)
+        {
+            CardTemplate.ClassColor classColor = battleCardObject.GetClassColor();
+
+            if (classColorToCount[classColor] >= 3)
+            {
+                battleCardObject.GrantDecreaseCostByColor();
+            }
+            else
+            {
+                battleCardObject.RemoveDecreaseCostByColor();
+            }
+        }
     }
 
     public void RecedeCards()
@@ -110,9 +145,13 @@ public class Hand
         {
             BattleCardObject battleCardObject = this.battleCardObjects[k];
             if (ActionManager.Instance.GetDragTarget() == battleCardObject)
+            {
                 continue;
+            }
             if (LeanTween.isTweening(battleCardObject.gameObject))  //TODO: this is hiding and causing some subtle problems...
+            {
                 continue;
+            }
 
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
@@ -130,7 +169,7 @@ public class Hand
     {
         Player player = BattleManager.Instance.GetPlayerById(this.playerId);
 
-        bool shouldSetOutline = player.HasTurn && player.Mana >= battleCardObject.Card.GetCost();
+        bool shouldSetOutline = player.HasTurn && player.Mana >= battleCardObject.GetCost();
         if (DeveloperPanel.IsServerEnabled())
         {
             shouldSetOutline = shouldSetOutline && player.Id == BattleManager.Instance.You.Id;

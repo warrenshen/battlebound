@@ -218,7 +218,7 @@ public class CollectionManager : MonoBehaviour
 
     private void SaveCallback()
     {
-
+        // TODO: show some indication of success.
     }
 
     private void CreateCardObjects()

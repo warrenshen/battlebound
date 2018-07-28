@@ -1,19 +1,62 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class BattleCardObject : CardObject
 {
+    public const string HAND_CARD_DECREASE_COST_BY_COLOR = "HAND_CARD_DECREASE_COST_BY_COLOR";
+
     [SerializeField]
     protected Player owner;
     public Player Owner => owner;
 
+    private List<string> buffs;
+    public List<string> Buffs => buffs;
 
     public void Initialize(Player player, Card card)
     {
         this.owner = player;
         base.Initialize(card);
         this.StartFlippedIfNeeded();
+
+        this.buffs = new List<string>();
+    }
+
+    public int GetCost()
+    {
+        int cost = this.card.GetCost();
+
+        if (this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
+        {
+            cost -= 10;
+        }
+
+        return cost;
+    }
+
+    public CardTemplate.ClassColor GetClassColor()
+    {
+        return this.card.GetClassColor();
+    }
+
+    public void GrantDecreaseCostByColor()
+    {
+        if (!this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
+        {
+            this.buffs.Add(HAND_CARD_DECREASE_COST_BY_COLOR);
+            Debug.Log("ya");
+            SetHyperCardFromData(this.visual, this);
+        }
+    }
+
+    public void RemoveDecreaseCostByColor()
+    {
+        if (this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
+        {
+            this.buffs.Remove(HAND_CARD_DECREASE_COST_BY_COLOR);
+            SetHyperCardFromData(this.visual, this);
+        }
     }
 
     private void StartFlippedIfNeeded()
