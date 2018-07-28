@@ -61,8 +61,8 @@ public class Player
         this.deck = GetDeck();
         this.deckSize = this.deck.Size();
 
-        this.mana = 80;
-        this.maxMana = 80;
+        this.mana = 40;
+        this.maxMana = 40;
 
         this.hand = new Hand(this);
 
