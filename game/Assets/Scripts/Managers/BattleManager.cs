@@ -1222,19 +1222,12 @@ public class BattleManager : MonoBehaviour
         EffectManager.Instance.OnSummonCreatureFinish();
     }
 
-    private void ReceiveMoveSprayNPrayRandom(
-        string playerId,
-        string fieldId,
-        string targetId
-    )
-    {
-
-    }
-
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge won!");
         this.ShowBattleEndFX(true);
+        List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
+        Debug.Log(JsonUtility.ToJson(experienceCards));
     }
 
     public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
@@ -1258,8 +1251,8 @@ public class BattleManager : MonoBehaviour
         //    16
         //  ]
         //}
-        List<ChallengeEndState.ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-
+        List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
+        Debug.Log(JsonUtility.ToJson(experienceCards));
     }
 
     public void ShowBattleEndFX(bool won)
@@ -1538,14 +1531,6 @@ public class BattleManager : MonoBehaviour
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE)
         {
             ReceiveMoveSummonCreatureNoCreature(serverMove.PlayerId);
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SPRAY_N_PRAY_RANDOM)
-        {
-            ReceiveMoveSprayNPrayRandom(
-                serverMove.PlayerId,
-                serverMove.Attributes.FieldId,
-                serverMove.Attributes.TargetId
-            );
         }
 
         return serverMove.Rank;

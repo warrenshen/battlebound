@@ -1933,6 +1933,63 @@ public class EffectManager : MonoBehaviour
         return effects;
     }
 
+    private List<Effect> GetEffectsOnFaceDamageTaken(
+        string playerId,
+        int amount
+    )
+    {
+        List<Effect> effects = new List<Effect>();
+
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        if (player.Avatar.Health <= 0)
+        {
+            ChallengeEndState challengeEndState = new ChallengeEndState(
+                playerId,
+                2,
+                2
+            );
+
+            List<ExperienceCard> experienceCards = new List<ExperienceCard>();
+
+            foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
+            {
+                if (
+                    challengeMove.PlayerId == playerId &&
+                    challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
+                )
+                {
+                    ChallengeCard challengeCard = challengeMove.Attributes.Card;
+                    ExperienceCard experienceCard = new ExperienceCard(
+                        challengeCard,
+                        challengeCard.CostStart,
+                        challengeCard.AttackStart,
+                        challengeCard.HealthStart,
+                        2,
+                        2,
+                        8,
+                        7,
+                        10
+                    );
+
+                    experienceCards.Add(experienceCard);
+                }
+            }
+
+            challengeEndState.SetExperienceCards(experienceCards);
+
+            if (BattleManager.Instance.You.Id == playerId)
+            {
+                BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
+            }
+            else
+            {
+                BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+            }
+        }
+
+        return effects;
+    }
+
     public static bool IsWaiting()
     {
         if (Instance != null)

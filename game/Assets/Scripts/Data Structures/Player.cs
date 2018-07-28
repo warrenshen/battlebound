@@ -688,15 +688,14 @@ public class Player
         cards.Add(new CreatureCard("C36", Card.CARD_NAME_CEREBOAROUS, 1));
         cards.Add(new CreatureCard("C37", Card.CARD_NAME_GUPPEA, 1));
         cards.Add(new CreatureCard("C38", Card.CARD_NAME_RHYNOKARP, 1));
-
-        //CARD_NAME_PRICKLEPILLAR,
-        //CARD_NAME_ADDERSPINE_WEEVIL,
-        //CARD_NAME_THIEF_OF_NIGHT,
-        //CARD_NAME_POWER_SIPHONER,
-        //CARD_NAME_LIL_RUSTY,
-        //CARD_NAME_INFERNO_902,
-        //CARD_NAME_CHAR_BOT_451,
-        //CARD_NAME_MEGAPUNK,
+        cards.Add(new CreatureCard("C39", Card.CARD_NAME_PRICKLEPILLAR, 1));
+        cards.Add(new CreatureCard("C40", Card.CARD_NAME_ADDERSPINE_WEEVIL, 1));
+        cards.Add(new CreatureCard("C41", Card.CARD_NAME_THIEF_OF_NIGHT, 1));
+        cards.Add(new CreatureCard("C42", Card.CARD_NAME_POWER_SIPHONER, 1));
+        cards.Add(new CreatureCard("C43", Card.CARD_NAME_LIL_RUSTY, 1));
+        cards.Add(new CreatureCard("C44", Card.CARD_NAME_INFERNO_902, 1));
+        cards.Add(new CreatureCard("C45", Card.CARD_NAME_CHAR_BOT_451, 1));
+        cards.Add(new CreatureCard("C46", Card.CARD_NAME_MEGAPUNK, 1));
 
         cards.Add(new SpellCard("C4", SpellCard.SPELL_NAME_UNSTABLE_POWER, 4));
         cards.Add(new SpellCard("C100", SpellCard.SPELL_NAME_TOUCH_OF_ZEUS, 1));

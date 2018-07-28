@@ -295,7 +295,11 @@ public class ChallengeCard
             CreatureCard creatureCard = new CreatureCard(
                 this.id,
                 this.name,
-                this.level
+                this.level,
+                this.costStart,
+                this.attackStart,
+                this.healthStart,
+                this.abilities
             );
 
             if (shouldCompare)
