@@ -42,7 +42,6 @@ public class CollectionCardObject : CardObject
         instance.transform.Rotate(0, 180, 0);
 
         cutout = instance.GetComponent<HyperCard.Card>();
-        cutout.SetOutline(false);
 
         CardObject.SetHyperCardFromData(cutout, this.card);
         CardObject.SetHyperCardArtwork(cutout, this.card);

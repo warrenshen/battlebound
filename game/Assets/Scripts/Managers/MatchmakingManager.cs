@@ -93,7 +93,6 @@ public class MatchmakingManager : MonoBehaviour
             GameObject created = new GameObject(card.Name);
             CardObject cardObject = created.AddComponent<CardObject>();
             cardObject.Initialize(card);
-            cardObject.visual.SetOutline(false);
             renderedCardObjects.Add(cardObject);
         }
         PositionCards();
@@ -105,7 +104,7 @@ public class MatchmakingManager : MonoBehaviour
         for (int index = 0; index < renderedCardObjects.Count; index++)
         {
             CardObject chosen = renderedCardObjects[index];
-            Vector3 offset = (index % 6) * Vector3.right * 1.8f + (index / 6) * Vector3.down * 3.6f;
+            Vector3 offset = (index % 6) * Vector3.right * 1.8f + (index / 6) * Vector3.down * 3.6f + (index % 6) * Vector3.forward * 0.05f;
             CardTween.move(chosen, pivot.position + offset, CardTween.TWEEN_DURATION);
         }
     }

@@ -10,13 +10,23 @@ public static class CardTween
     public static LTDescr move(CardObject target, Vector3 finalPosition, float duration)
     {
         target.noInteraction = true;
-        return LeanTween.move(target.gameObject, finalPosition, duration).setOnComplete(() => target.noInteraction = false);
+        return LeanTween.move(target.gameObject, finalPosition, duration)
+            .setOnStart(() => target.visual.Redraw())
+            .setOnComplete(() =>
+            {
+                target.noInteraction = false;
+            });
     }
 
     public static LTDescr moveLocal(CardObject target, Vector3 finalPosition, float duration)
     {
         target.noInteraction = true;
-        return LeanTween.moveLocal(target.gameObject, finalPosition, duration).setOnComplete(() => target.noInteraction = false);
+        return LeanTween.moveLocal(target.gameObject, finalPosition, duration)
+            .setOnStart(() => target.visual.Redraw())
+            .setOnComplete(() =>
+            {
+                target.noInteraction = false;
+            });
     }
 }
 

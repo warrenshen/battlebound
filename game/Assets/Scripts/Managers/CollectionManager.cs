@@ -241,7 +241,6 @@ public class CollectionManager : MonoBehaviour
 
             CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
             collectionCardObject.Initialize(card);
-            collectionCardObject.visual.SetOutline(false);
             idToCard.Add(card.Id, card);
 
             CreateGrayed(created.transform, card).parent = grayed;
@@ -259,7 +258,6 @@ public class CollectionManager : MonoBehaviour
         collectionCardObject.InitializeHollow(card);
         collectionCardObject.visual.Stencil = -100;
         collectionCardObject.visual.SetGrayscale(true);
-        collectionCardObject.visual.SetOutline(false);
         collectionCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
         return created.transform;
     }
