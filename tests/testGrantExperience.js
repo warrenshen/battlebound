@@ -661,810 +661,14 @@ describe("challenge end", function() {
         "ID_PLAYER": "ID_OPPONENT",
         "ID_OPPONENT": "ID_PLAYER",
       },
-      "moves": [
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_MULLIGAN",
-          "attributes": {
-            "deckCardIndices": []
-          },
-          "rank": 0
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_PLAY_MULLIGAN",
-          "attributes": {
-            "deckCardIndices": []
-          },
-          "rank": 1
-        },
-        {
-          "category": "MOVE_CATEGORY_FINISH_MULLIGAN",
-          "rank": 2
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C4-ID_OPPONENT-4",
-              "level": 1,
-              "category": 0,
-              "attack": 30,
-              "health": 20,
-              "cost": 20,
-              "name": "Young Kyo",
-              "description": "",
-              "abilities": [],
-              "baseId": "C4",
-              "attackStart": 30,
-              "costStart": 20,
-              "healthStart": 20,
-              "healthMax": 20,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 0
-            },
-            "cardId": "C4-ID_OPPONENT-4",
-            "fieldIndex": 3,
-            "handIndex": 1
-          },
-          "rank": 3
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 4
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C9-ID_PLAYER-9",
-              "level": 0,
-              "category": 0,
-              "attack": 40,
-              "health": 60,
-              "cost": 60,
-              "name": "Temple Guardian",
-              "description": "Taunt; Shield",
-              "abilities": [
-                1,
-                2
-              ],
-              "baseId": "C9",
-              "attackStart": 40,
-              "costStart": 60,
-              "healthStart": 60,
-              "healthMax": 60
-            }
-          },
-          "rank": 5
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C5-ID_PLAYER-5",
-              "level": 0,
-              "category": 0,
-              "attack": 20,
-              "health": 30,
-              "cost": 30,
-              "name": "Wave Charmer",
-              "description": "Charge",
-              "abilities": [
-                4
-              ],
-              "baseId": "C5",
-              "attackStart": 20,
-              "costStart": 30,
-              "healthStart": 30,
-              "healthMax": 30,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 1
-            },
-            "cardId": "C5-ID_PLAYER-5",
-            "fieldIndex": 2,
-            "handIndex": 0
-          },
-          "rank": 6
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "B6-ID_PLAYER-6",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 60,
-              "cost": 50,
-              "name": "Poseidon's Handmaiden",
-              "description": "Charge; Deathrattle: Deal 20 damage to your opponent",
-              "abilities": [
-                0,
-                2
-              ],
-              "baseId": "C6",
-              "attackStart": 30,
-              "costStart": 50,
-              "healthStart": 60,
-              "healthMax": 60
-            }
-          },
-          "rank": 7
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 8
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C2-ID_OPPONENT-2",
-              "level": 0,
-              "category": 0,
-              "attack": 20,
-              "health": 10,
-              "cost": 20,
-              "name": "Firebug Catelyn",
-              "description": "",
-              "abilities": [],
-              "baseId": "C2",
-              "attackStart": 20,
-              "costStart": 20,
-              "healthStart": 10,
-              "healthMax": 10
-            }
-          },
-          "rank": 9
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C2-ID_OPPONENT-2",
-              "level": 0,
-              "category": 0,
-              "attack": 20,
-              "health": 10,
-              "cost": 20,
-              "name": "Firebug Catelyn",
-              "description": "",
-              "abilities": [],
-              "baseId": "C2",
-              "attackStart": 20,
-              "costStart": 20,
-              "healthStart": 10,
-              "healthMax": 10,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 2
-            },
-            "cardId": "C2-ID_OPPONENT-2",
-            "fieldIndex": 2,
-            "handIndex": 2
-          },
-          "rank": 10
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "C4-ID_OPPONENT-4",
-            "fieldId": "ID_PLAYER",
-            "targetId": "C5-ID_PLAYER-5"
-          },
-          "rank": 11
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 12
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "B15-ID_PLAYER-15",
-              "level": 0,
-              "category": 1,
-              "attack": null,
-              "health": null,
-              "cost": 50,
-              "name": "Brr Brr Blizzard",
-              "description": "Freeze all opponent creatures",
-              "abilities": null,
-              "baseId": "C15",
-              "attackStart": null,
-              "costStart": 50,
-              "healthStart": null,
-              "healthMax": null
-            }
-          },
-          "rank": 13
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "B6-ID_PLAYER-6",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 60,
-              "cost": 50,
-              "name": "Poseidon's Handmaiden",
-              "description": "Charge; Deathrattle: Deal 20 damage to your opponent",
-              "abilities": [
-                0,
-                2
-              ],
-              "baseId": "C6",
-              "attackStart": 30,
-              "costStart": 50,
-              "healthStart": 60,
-              "healthMax": 60,
-              "buffs": [],
-              "canAttack": 1,
-              "isFrozen": 0,
-              "spawnRank": 3
-            },
-            "cardId": "B6-ID_PLAYER-6",
-            "fieldIndex": 3,
-            "handIndex": 3
-          },
-          "rank": 14
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "B6-ID_PLAYER-6",
-            "fieldId": "ID_OPPONENT",
-            "targetId": "TARGET_ID_FACE"
-          },
-          "rank": 15
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 16
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C13-ID_OPPONENT-13",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 30,
-              "cost": 40,
-              "name": "Flamebelcher",
-              "description": "Battlecry: Deal 10 damage to any minion in front",
-              "abilities": [
-                15
-              ],
-              "baseId": "C13",
-              "attackStart": 30,
-              "costStart": 40,
-              "healthStart": 30,
-              "healthMax": 30
-            }
-          },
-          "rank": 17
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "B6-ID_OPPONENT-6",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 60,
-              "cost": 50,
-              "name": "Poseidon's Handmaiden",
-              "description": "Charge; Deathrattle: Deal 20 damage to your opponent",
-              "abilities": [
-                0,
-                2
-              ],
-              "baseId": "C6",
-              "attackStart": 30,
-              "costStart": 50,
-              "healthStart": 60,
-              "healthMax": 60,
-              "buffs": [],
-              "canAttack": 1,
-              "isFrozen": 0,
-              "spawnRank": 4
-            },
-            "cardId": "B6-ID_OPPONENT-6",
-            "fieldIndex": 3,
-            "handIndex": 0
-          },
-          "rank": 18
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "B6-ID_OPPONENT-6",
-            "fieldId": "ID_PLAYER",
-            "targetId": "B6-ID_PLAYER-6"
-          },
-          "rank": 19
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "C2-ID_OPPONENT-2",
-            "fieldId": "ID_PLAYER",
-            "targetId": "TARGET_ID_FACE"
-          },
-          "rank": 20
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 21
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C0-ID_PLAYER-0",
-              "level": 1,
-              "category": 0,
-              "attack": 20,
-              "health": 30,
-              "cost": 20,
-              "name": "Marshwater Squealer",
-              "description": "At the end of each turn, recover 10 health",
-              "abilities": [
-                7
-              ],
-              "baseId": "C0",
-              "attackStart": 20,
-              "costStart": 20,
-              "healthStart": 30,
-              "healthMax": 30
-            }
-          },
-          "rank": 22
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C7-ID_PLAYER-7",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 40,
-              "cost": 30,
-              "name": "Emberkitty",
-              "description": "Deal 10 damage to any opponent in front on end turn",
-              "abilities": [
-                13
-              ],
-              "baseId": "C7",
-              "attackStart": 30,
-              "costStart": 30,
-              "healthStart": 40,
-              "healthMax": 40,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 5
-            },
-            "cardId": "C7-ID_PLAYER-7",
-            "fieldIndex": 2,
-            "handIndex": 0
-          },
-          "rank": 23
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C0-ID_PLAYER-0",
-              "level": 1,
-              "category": 0,
-              "attack": 20,
-              "health": 30,
-              "cost": 20,
-              "name": "Marshwater Squealer",
-              "description": "At the end of each turn, recover 10 health",
-              "abilities": [
-                7
-              ],
-              "baseId": "C0",
-              "attackStart": 20,
-              "costStart": 20,
-              "healthStart": 30,
-              "healthMax": 30,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 6
-            },
-            "cardId": "C0-ID_PLAYER-0",
-            "fieldIndex": 4,
-            "handIndex": 3
-          },
-          "rank": 24
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 25
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C1-ID_OPPONENT-1",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 60,
-              "cost": 40,
-              "name": "Waterborne Razorback",
-              "description": "Charge; At the end of each turn, recover 20 health",
-              "abilities": [
-                0,
-                8
-              ],
-              "baseId": "C1",
-              "attackStart": 30,
-              "costStart": 40,
-              "healthStart": 60,
-              "healthMax": 60
-            }
-          },
-          "rank": 26
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "B8-ID_OPPONENT-8",
-              "level": 0,
-              "category": 0,
-              "attack": 50,
-              "health": 40,
-              "cost": 50,
-              "name": "Firestrided Tigress",
-              "description": "Deal 20 damage to any opponent in front on end turn",
-              "abilities": [
-                14
-              ],
-              "baseId": "C8",
-              "attackStart": 50,
-              "costStart": 50,
-              "healthStart": 40,
-              "healthMax": 40,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 7
-            },
-            "cardId": "B8-ID_OPPONENT-8",
-            "fieldIndex": 1,
-            "handIndex": 0
-          },
-          "rank": 27
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "C2-ID_OPPONENT-2",
-            "fieldId": "ID_PLAYER",
-            "targetId": "B6-ID_PLAYER-6"
-          },
-          "rank": 28
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "B6-ID_OPPONENT-6",
-            "fieldId": "ID_PLAYER",
-            "targetId": "TARGET_ID_FACE"
-          },
-          "rank": 29
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 30
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C11-ID_PLAYER-11",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 50,
-              "cost": 30,
-              "name": "Taji the Fearless",
-              "description": "Taunt",
-              "abilities": [
-                1
-              ],
-              "baseId": "C11",
-              "attackStart": 30,
-              "costStart": 30,
-              "healthStart": 50,
-              "healthMax": 50
-            }
-          },
-          "rank": 31
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "C0-ID_PLAYER-0",
-            "fieldId": "ID_OPPONENT",
-            "targetId": "B8-ID_OPPONENT-8"
-          },
-          "rank": 32
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "B6-ID_PLAYER-6",
-            "fieldId": "ID_OPPONENT",
-            "targetId": "B6-ID_OPPONENT-6"
-          },
-          "rank": 33
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "C7-ID_PLAYER-7",
-            "fieldId": "ID_OPPONENT",
-            "targetId": "TARGET_ID_FACE"
-          },
-          "rank": 34
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 35
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C9-ID_OPPONENT-9",
-              "level": 0,
-              "category": 0,
-              "attack": 40,
-              "health": 60,
-              "cost": 60,
-              "name": "Temple Guardian",
-              "description": "Taunt; Shield",
-              "abilities": [
-                1,
-                2
-              ],
-              "baseId": "C9",
-              "attackStart": 40,
-              "costStart": 60,
-              "healthStart": 60,
-              "healthMax": 60
-            }
-          },
-          "rank": 36
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C9-ID_OPPONENT-9",
-              "level": 0,
-              "category": 0,
-              "attack": 40,
-              "health": 60,
-              "cost": 60,
-              "name": "Temple Guardian",
-              "description": "Taunt; Shield",
-              "abilities": [
-                1,
-                2
-              ],
-              "baseId": "C9",
-              "attackStart": 40,
-              "costStart": 60,
-              "healthStart": 60,
-              "healthMax": 60,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 8
-            },
-            "cardId": "C9-ID_OPPONENT-9",
-            "fieldIndex": 2,
-            "handIndex": 2
-          },
-          "rank": 37
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "B6-ID_OPPONENT-6",
-            "fieldId": "ID_PLAYER",
-            "targetId": "TARGET_ID_FACE"
-          },
-          "rank": 38
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "B8-ID_OPPONENT-8",
-            "fieldId": "ID_PLAYER",
-            "targetId": "B6-ID_PLAYER-6"
-          },
-          "rank": 39
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 40
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_DRAW_CARD",
-          "attributes": {
-            "card": {
-              "id": "C8-ID_PLAYER-8",
-              "level": 0,
-              "category": 0,
-              "attack": 50,
-              "health": 40,
-              "cost": 50,
-              "name": "Firestrided Tigress",
-              "description": "Deal 20 damage to any opponent in front on end turn",
-              "abilities": [
-                14
-              ],
-              "baseId": "C8",
-              "attackStart": 50,
-              "costStart": 50,
-              "healthStart": 40,
-              "healthMax": 40
-            }
-          },
-          "rank": 41
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED",
-          "attributes": {
-            "card": {
-              "id": "B15-ID_PLAYER-15",
-              "level": 0,
-              "category": 1,
-              "attack": null,
-              "health": null,
-              "cost": 50,
-              "name": "Brr Brr Blizzard",
-              "description": "Freeze all opponent creatures",
-              "abilities": null,
-              "baseId": "C15",
-              "attackStart": null,
-              "costStart": 50,
-              "healthStart": null,
-              "healthMax": null
-            },
-            "cardId": "B15-ID_PLAYER-15",
-            "handIndex": 2
-          },
-          "rank": 42
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_CARD_ATTACK",
-          "attributes": {
-            "cardId": "C7-ID_PLAYER-7",
-            "fieldId": "ID_OPPONENT",
-            "targetId": "C9-ID_OPPONENT-9"
-          },
-          "rank": 43
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_PLAY_MINION",
-          "attributes": {
-            "card": {
-              "id": "C11-ID_PLAYER-11",
-              "level": 0,
-              "category": 0,
-              "attack": 30,
-              "health": 50,
-              "cost": 30,
-              "name": "Taji the Fearless",
-              "description": "Taunt",
-              "abilities": [
-                1
-              ],
-              "baseId": "C11",
-              "attackStart": 30,
-              "costStart": 30,
-              "healthStart": 50,
-              "healthMax": 50,
-              "buffs": [],
-              "canAttack": 0,
-              "isFrozen": 0,
-              "spawnRank": 9
-            },
-            "cardId": "C11-ID_PLAYER-11",
-            "fieldIndex": 3,
-            "handIndex": 2
-          },
-          "rank": 44
-        },
-        {
-          "playerId": "ID_PLAYER",
-          "category": "MOVE_CATEGORY_END_TURN",
-          "rank": 45
-        },
-        {
-          "playerId": "ID_OPPONENT",
-          "category": "MOVE_CATEGORY_SURRENDER_BY_CHOICE",
-          "rank": 46
-        }
-      ],
+      "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": ["C0", "C7", "B6", "B15"],
+        "ID_OPPONENT": ["C2", "C4", "B6", "B8"],
+      },
     };
 
     it("should grant experience to correct cards of player", function() {
-      // console.log(
-      //   challengeStateData.moves.map((move) => move.playerId)
-      // );
-      // console.log(
-      //   challengeStateData.moves
-      //     .filter((move) => move.playerId == "ID_OPPONENT")
-      //     .filter((move) => ["MOVE_CATEGORY_PLAY_SPELL_TARGETED", "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED", "MOVE_CATEGORY_CARD_ATTACK"].indexOf(move.category) >= 0)
-      //     .map((move) => move.attributes.cardId)
-      // );
-
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -1475,7 +679,7 @@ describe("challenge end", function() {
             decksDataJson: {
               cardByCardId: {
                 C0: {
-                  level: 0,
+                  level: 1,
                   id: "C0",
                   templateId: "C0",
                 },
@@ -1483,6 +687,13 @@ describe("challenge end", function() {
                   level: 2,
                   id: "C7",
                   templateId: "C7",
+                  exp: 9,
+                  expMax: 10,
+                },
+                C8: {
+                  level: 2,
+                  id: "C8",
+                  templateId: "C8",
                   exp: 9,
                   expMax: 10,
                 },
@@ -1500,6 +711,13 @@ describe("challenge end", function() {
                 level: 2,
                 id: "B15",
                 templateId: "B15",
+                exp: 3,
+                expMax: 10,
+              },
+              {
+                level: 2,
+                id: "B16",
+                templateId: "B16",
                 exp: 3,
                 expMax: 10,
               },
@@ -1547,7 +765,7 @@ describe("challenge end", function() {
             const expCards = response.scriptData.expCards;
 
             assert.equal("C0", newDecksData.cardByCardId["C0"].id);
-            assert.equal(0, newDecksData.cardByCardId["C0"].level);
+            assert.equal(1, newDecksData.cardByCardId["C0"].level);
             assert.equal(1, newDecksData.cardByCardId["C0"].exp);
             assert.equal(10, newDecksData.cardByCardId["C0"].expMax);
 
@@ -1555,6 +773,14 @@ describe("challenge end", function() {
             assert.equal(3, newDecksData.cardByCardId["C7"].level);
             assert.equal(0, newDecksData.cardByCardId["C7"].exp);
             assert.equal(10, newDecksData.cardByCardId["C7"].expMax);
+
+            // Should not have any change.
+            assert.equal("C8", newDecksData.cardByCardId["C8"].id);
+            assert.equal(2, newDecksData.cardByCardId["C8"].level);
+            assert.equal(9, newDecksData.cardByCardId["C8"].exp);
+            assert.equal(10, newDecksData.cardByCardId["C8"].expMax);
+
+            assert.equal(newBCards.length, 2);
 
             assert.equal("B6", newBCards[0].id);
             assert.equal(2, newBCards[0].level);
@@ -1586,8 +812,15 @@ describe("challenge end", function() {
             assert.equal(expCards[2].expPrevious, 0);
             assert.equal(expCards[2].exp, 1);
             assert.equal(expCards[2].expMax, 10);
-            assert.equal(expCards[2].levelPrevious, 0);
-            assert.equal(expCards[2].level, 0);
+            assert.equal(expCards[2].levelPrevious, 1);
+            assert.equal(expCards[2].level, 1);
+
+            assert.equal(expCards[3].id, "C7");
+            assert.equal(expCards[3].expPrevious, 9);
+            assert.equal(expCards[3].exp, 0);
+            assert.equal(expCards[3].expMax, 10);
+            assert.equal(expCards[3].levelPrevious, 2);
+            assert.equal(expCards[3].level, 3);
 
             resolve();
           }
@@ -1606,14 +839,21 @@ describe("challenge end", function() {
             decksDataJson: {
               cardByCardId: {
                 C2: {
-                  level: 0,
+                  level: 1,
                   id: "C2",
                   templateId: "C2",
                 },
                 C4: {
-                  level: 1,
+                  level: 2,
                   id: "C4",
                   templateId: "C4",
+                  exp: 0,
+                  expMax: 10,
+                },
+                C7: {
+                  level: 2,
+                  id: "C7",
+                  templateId: "C7",
                   exp: 0,
                   expMax: 10,
                 },
@@ -1641,7 +881,63 @@ describe("challenge end", function() {
             const newBCards = response.scriptData.newBCards;
             const expCards = response.scriptData.expCards;
 
+            assert.equal("C2", newDecksData.cardByCardId["C2"].id);
+            assert.equal(1, newDecksData.cardByCardId["C2"].level);
+            assert.equal(1, newDecksData.cardByCardId["C2"].exp);
+            assert.equal(10, newDecksData.cardByCardId["C2"].expMax);
+
+            assert.equal("C4", newDecksData.cardByCardId["C4"].id);
+            assert.equal(2, newDecksData.cardByCardId["C4"].level);
+            assert.equal(1, newDecksData.cardByCardId["C4"].exp);
+            assert.equal(10, newDecksData.cardByCardId["C4"].expMax);
+
+            // Should not have any change.
+            assert.equal("C7", newDecksData.cardByCardId["C7"].id);
+            assert.equal(2, newDecksData.cardByCardId["C7"].level);
+            assert.equal(0, newDecksData.cardByCardId["C7"].exp);
+            assert.equal(10, newDecksData.cardByCardId["C7"].expMax);
+
+            assert.equal(newBCards.length, 2);
+
+            assert.equal("B6", newBCards[0].id);
+            assert.equal(2, newBCards[0].level);
+            assert.equal(0, newBCards[0].exp);
+            assert.equal(10, newBCards[0].expMax);
+
+            assert.equal("B8", newBCards[1].id);
+            assert.equal(1, newBCards[1].level);
+            assert.equal(4, newBCards[1].exp);
+            assert.equal(10, newBCards[1].expMax);
+
             assert.equal(4, expCards.length);
+
+            assert.equal(expCards[0].id, "B6");
+            assert.equal(expCards[0].expPrevious, 9);
+            assert.equal(expCards[0].exp, 0);
+            assert.equal(expCards[0].expMax, 10);
+            assert.equal(expCards[0].levelPrevious, 1);
+            assert.equal(expCards[0].level, 2);
+
+            assert.equal(expCards[1].id, "B8");
+            assert.equal(expCards[1].expPrevious, 3);
+            assert.equal(expCards[1].exp, 4);
+            assert.equal(expCards[1].expMax, 10);
+            assert.equal(expCards[1].levelPrevious, 1);
+            assert.equal(expCards[1].level, 1);
+
+            assert.equal(expCards[2].id, "C2");
+            assert.equal(expCards[2].expPrevious, 0);
+            assert.equal(expCards[2].exp, 1);
+            assert.equal(expCards[2].expMax, 10);
+            assert.equal(expCards[2].levelPrevious, 1);
+            assert.equal(expCards[2].level, 1);
+
+            assert.equal(expCards[3].id, "C4");
+            assert.equal(expCards[3].expPrevious, 0);
+            assert.equal(expCards[3].exp, 1);
+            assert.equal(expCards[3].expMax, 10);
+            assert.equal(expCards[3].levelPrevious, 2);
+            assert.equal(expCards[3].level, 2);
 
             resolve();
           }

@@ -1823,7 +1823,7 @@ describe("challenge events", function() {
   });
 
   describe("spells + deathwish", function() {
-    it("should run Bombshell Bombadier's deathwish on lightning bolt", function() {
+    it("should run Bombshell Bombadier's deathwish on touch of zeus", function() {
       const challengeStateData = {
         "current": {
           "ID_OPPONENT": {
@@ -1930,7 +1930,25 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               }
             ],
-            "hand": [],
+            "hand": [
+              {
+                "id": "C19-ID_PLAYER-0",
+                "playerId": "ID_PLAYER",
+                "level": 0,
+                "category": 1,
+                "attack": null,
+                "health": null,
+                "cost": 20,
+                "name": "Touch of Zeus",
+                "description": "Deal 20 damage to a creature",
+                "abilities": null,
+                "baseId": "C19",
+                "attackStart": null,
+                "costStart": 20,
+                "healthStart": null,
+                "healthMax": null
+              },
+            ],
             "deckSize": 1,
             "cardCount": 8,
             "mode": 0,
@@ -1960,52 +1978,52 @@ describe("challenge events", function() {
         "nonce": 14
       };
 
-      // return new Promise((resolve) => {
-      //   gamesparks.sendWithData(
-      //     "LogEventRequest",
-      //     {
-      //       eventKey: "TestChallengeCardAttackCard",
-      //       challengeStateString: JSON.stringify(challengeStateData),
-      //       challengePlayerId: "ID_PLAYER",
-      //       cardId: "C2-ID_PLAYER-2",
-      //       attributesJson: {
-      //         fieldId: "ID_OPPONENT",
-      //         targetId: "C10-ID_OPPONENT-5",
-      //       },
-      //     },
-      //     function(response) {
-      //       const challengeStateData = response.scriptData.challengeStateData;
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "C2-ID_PLAYER-2",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "C10-ID_OPPONENT-5",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
 
-      //       const lastMoves = challengeStateData.lastMoves;
-      //       assert.equal(lastMoves.length, 4);
-      //       assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
-      //       assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
-      //       assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
-      //       assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
-      //       assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
-      //       assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
-      //       assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
-      //       assert.equal(lastMoves[1].attributes.card.id, "C10-ID_OPPONENT-5");
-      //       assert.equal(lastMoves[2].attributes.card.id, "C10-ID_OPPONENT-5");
-      //       assert.equal(lastMoves[3].attributes.card.id, "C10-ID_OPPONENT-5");
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 4);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[2].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[3].attributes.card.id, "C10-ID_OPPONENT-5");
 
-      //       const playerState = challengeStateData.current["ID_PLAYER"];
-      //       const playerField = playerState.field;
-      //       assert.equal(playerField[1].id, "EMPTY");
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "EMPTY");
 
-      //       assert.equal(playerState.healthMax, 100);
-      //       assert.equal(playerState.health, 40);
+            assert.equal(playerState.healthMax, 100);
+            assert.equal(playerState.health, 40);
 
-      //       const opponentState = challengeStateData.current["ID_OPPONENT"];
-      //       const opponentField = opponentState.field;
-      //       assert.equal(opponentField[2].id, "EMPTY");
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[2].id, "EMPTY");
 
-      //       assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
-      //       assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
-      //       resolve();
-      //     }
-      //   );
-      // });
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
     });
   });
 });
