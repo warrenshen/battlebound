@@ -1265,6 +1265,11 @@ public class BattleManager : MonoBehaviour
         Debug.Log(JsonUtility.ToJson(experienceCards));
 
         ShowBattleEndFX(false);
+
+        foreach (ExperienceCard card in experienceCards)
+        {
+            //do something
+        }
     }
 
     public void ShowBattleEndFX(bool won)

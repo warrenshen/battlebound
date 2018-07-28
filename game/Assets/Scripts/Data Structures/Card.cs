@@ -309,7 +309,7 @@ public abstract class Card
         return ResourceSingleton.Instance.GetImageTextureByName(GetBackImage());
     }
 
-    protected void LoadCodex()
+    protected void LoadTemplateFromCodex()
     {
         if (this.name == null)
         {
@@ -367,7 +367,7 @@ public class CreatureCard : Card
         this.name = name;
         this.level = level;
 
-        LoadCodex();
+        LoadTemplateFromCodex();
     }
 
     public CreatureCard(
@@ -388,7 +388,7 @@ public class CreatureCard : Card
         this.health = health;
         this.abilities = abilities;
 
-        LoadCodex();
+        LoadTemplateFromCodex();
     }
 
     public int GetAttack()
@@ -452,7 +452,7 @@ public class CreatureCard : Card
     public static new CreatureCard GetFromJson(string json)
     {
         CreatureCard creatureCard = JsonUtility.FromJson<CreatureCard>(json);
-        creatureCard.LoadCodex();
+        creatureCard.LoadTemplateFromCodex();
         return creatureCard;
     }
 }
@@ -481,7 +481,7 @@ public class WeaponCard : Card
         this.name = name;
         this.level = level;
 
-        LoadCodex();
+        LoadTemplateFromCodex();
     }
 
     public override ChallengeCard GetChallengeCard()
@@ -505,7 +505,7 @@ public class WeaponCard : Card
     public static new WeaponCard GetFromJson(string json)
     {
         WeaponCard weaponCard = JsonUtility.FromJson<WeaponCard>(json);
-        weaponCard.LoadCodex();
+        weaponCard.LoadTemplateFromCodex();
         return weaponCard;
     }
 }
@@ -526,7 +526,7 @@ public class StructureCard : Card
         this.name = name;
         this.level = level;
 
-        LoadCodex();
+        LoadTemplateFromCodex();
     }
 
     public override ChallengeCard GetChallengeCard()
@@ -545,7 +545,7 @@ public class StructureCard : Card
     public static new StructureCard GetFromJson(string json)
     {
         StructureCard structureCard = JsonUtility.FromJson<StructureCard>(json);
-        structureCard.LoadCodex();
+        structureCard.LoadTemplateFromCodex();
         return structureCard;
     }
 }
@@ -634,7 +634,7 @@ public class SpellCard : Card
             this.targeted = false;
         }
 
-        LoadCodex();
+        LoadTemplateFromCodex();
     }
 
     public override ChallengeCard GetChallengeCard()
@@ -653,7 +653,7 @@ public class SpellCard : Card
     public static new SpellCard GetFromJson(string json)
     {
         SpellCard spellCard = JsonUtility.FromJson<SpellCard>(json);
-        spellCard.LoadCodex();
+        spellCard.LoadTemplateFromCodex();
         return spellCard;
     }
 }
