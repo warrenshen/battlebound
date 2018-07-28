@@ -26,6 +26,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         {
             GameObject created = Instantiate(this.cardPrefab, transform.position, Quaternion.identity);
             created.transform.parent = this.transform;
+            created.SetActive(false);
             HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
             cardVisualPool.Push(cardVisual);
         }

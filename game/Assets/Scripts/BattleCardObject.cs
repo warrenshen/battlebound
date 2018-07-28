@@ -29,7 +29,7 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             SetVisualResetValues();
-            this.visual.transform.localScale = 1.15F * this.visual.reset.scale;
+            this.visual.transform.localScale = 1.33F * this.visual.reset.scale;
             return;
         }
 

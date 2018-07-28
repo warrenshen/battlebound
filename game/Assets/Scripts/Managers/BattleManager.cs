@@ -66,6 +66,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private BasicButton endTurnButton;
 
+    [SerializeField]
+    private GameObject endOverlay;
+
     public static BattleManager Instance { get; private set; }
 
     public Player GetPlayerById(string playerId)
@@ -1259,18 +1262,18 @@ public class BattleManager : MonoBehaviour
 
     public void ShowBattleEndFX(bool won)
     {
-        GameObject overlay = GameObject.Find("End Game Overlay");
-        TextMeshPro title = overlay.transform.Find("Title").GetComponent<TextMeshPro>();
+        endOverlay.SetActive(true);
+        TextMeshPro title = endOverlay.transform.Find("Title").GetComponent<TextMeshPro>();
 
         if (won)
         {
             title.text = "Victory!";
-            overlay.transform.Find("WinFX").gameObject.SetActive(true);
+            endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
         }
         else
         {
             title.text = "Defeat";
-            overlay.transform.Find("LoseFX").gameObject.SetActive(true);
+            endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
         }
     }
 
