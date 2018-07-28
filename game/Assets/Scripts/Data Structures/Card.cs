@@ -140,6 +140,7 @@ public abstract class Card
     public const string CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY = "CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY";
     public const string CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES = "CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES";
     public const string CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY = "CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY";
+    public const string CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY = "CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY";
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
@@ -176,6 +177,7 @@ public abstract class Card
         CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
         CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
         CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
+        CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
     };
 
     public static readonly Dictionary<int, string> ABILITY_CODE_TO_STRING = new Dictionary<int, string>
@@ -213,6 +215,7 @@ public abstract class Card
         { 30, CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY },
         { 31, CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES },
         { 32, CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY },
+        { 33, CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY },
     };
 
     public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
@@ -347,6 +350,13 @@ public abstract class Card
 [System.Serializable]
 public class CreatureCard : Card
 {
+    //protected int level;
+    //public int Level => level;
+
+    private int attack;
+    private int health;
+    private List<string> abilities;
+
     public CreatureCard(
         string id,
         string name,
@@ -360,14 +370,49 @@ public class CreatureCard : Card
         LoadCodex();
     }
 
+    public CreatureCard(
+        string id,
+        string name,
+        int level,
+        int cost,
+        int attack,
+        int health,
+        List<string> abilities
+    )
+    {
+        this.id = id;
+        this.name = name;
+        this.level = level;
+
+        this.attack = attack;
+        this.health = health;
+        this.abilities = abilities;
+
+        LoadCodex();
+    }
+
     public int GetAttack()
     {
-        return this.cardTemplate.attack;
+        if (this.attack > 0)
+        {
+            return this.attack;
+        }
+        else
+        {
+            return this.cardTemplate.attack;
+        }
     }
 
     public int GetHealth()
     {
-        return this.cardTemplate.health;
+        if (this.health > 0)
+        {
+            return this.health;
+        }
+        else
+        {
+            return this.cardTemplate.health;
+        }
     }
 
     public List<string> GetAbilities()
