@@ -1,9 +1,54 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
+    [SerializeField]
+    private Text usernameText;
+
+    [SerializeField]
+    private Button loginButton;
+
+    [SerializeField]
+    private Button logoutButton;
+
+    private void Awake()
+    {
+        this.usernameText.text = "Not logged in";
+        this.loginButton.onClick.AddListener(OnLoginButtonClick);
+        this.logoutButton.onClick.AddListener(OnLogoutButtonClick);
+
+        SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
+    }
+
+    private void OnLoginButtonClick()
+    {
+        LoginRegisterPanel.Instance.Open();
+    }
+
+    private void OnLogoutButtonClick()
+    {
+        SparkSingleton.Instance.Logout();
+        string playerId = SparkSingleton.Instance.GetPlayerId();
+        Application.LoadLevel("Login");
+    }
+
+    private void RenderUserData()
+    {
+        string playerId = SparkSingleton.Instance.GetPlayerId();
+        if (playerId == null)
+        {
+            this.usernameText.text = "Not logged in";
+        }
+        else
+        {
+            this.usernameText.text = playerId;
+            // Preload decks.
+            DeckStore.Instance().GetDecksWithCallback(null);
+        }
+    }
 
     public void LoadBattle()
     {
