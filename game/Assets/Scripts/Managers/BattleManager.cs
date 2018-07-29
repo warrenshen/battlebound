@@ -1217,23 +1217,44 @@ public class BattleManager : MonoBehaviour
             );
 
             GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
+            player.GetNewCardRank();
             EffectManager.Instance.OnSummonCreatureFinish();
         }
         else
         {
-            Debug.LogError("Invalid card category for summon creature move");
+            Debug.LogError("Invalid card category for summon creature move.");
         }
     }
 
     private void ReceiveMoveSummonCreatureFieldFull(
         string playerId,
-        CreatureCard card,
+        ChallengeCard challengeCard,
         string fieldId
     )
     {
-        // TODO
-        GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-        EffectManager.Instance.OnSummonCreatureFinish();
+        Card card = challengeCard.GetCard();
+        if (card.GetType() == typeof(CreatureCard))
+        {
+            Player player = GetPlayerById(playerId);
+            //GameObject created = new GameObject(card.Name);
+            //BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+            //battleCardObject.Initialize(player, card);
+
+            //Board.Instance.CreateAndPlaceCreature(
+            //    battleCardObject,
+            //    fieldIndex,
+            //    challengeCard.SpawnRank,
+            //    false
+            //);
+
+            GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
+            player.GetNewCardRank();
+            EffectManager.Instance.OnSummonCreatureFinish();
+        }
+        else
+        {
+            Debug.LogError("Invalid card category for summon creature field full move.");
+        }
     }
 
     private void ReceiveMoveSummonCreatureNoCreature(string playerId)
@@ -1569,20 +1590,11 @@ public class BattleManager : MonoBehaviour
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL)
         {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            if (card.GetType() == typeof(SpellCard))
-            {
-                ReceiveMoveSummonCreatureFieldFull(
-                    serverMove.PlayerId,
-                    card as CreatureCard,
-                    serverMove.Attributes.FieldId
-                );
-            }
-            else
-            {
-                Debug.LogError("Invalid card category for summon creature move");
-            }
+            ReceiveMoveSummonCreatureFieldFull(
+                serverMove.PlayerId,
+                serverMove.Attributes.Card,
+                serverMove.Attributes.FieldId
+            );
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE)
         {

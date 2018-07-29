@@ -181,7 +181,6 @@ public class PlayerAvatar : Targetable
 
         int healthBefore = this.health;
         this.health -= amount;
-        this.health = Math.Max(this.health, 0);
 
         this.UpdateStatText();
         int damageTaken = Math.Min(healthBefore, amount);
