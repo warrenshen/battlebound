@@ -46,6 +46,7 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     const opponentExpiredStreak = challengeStateData.expiredStreakByPlayerId[opponentId];
     
     const fields = [
+        "displayName",
         "hasTurn",
         "manaCurrent",
         "manaMax",

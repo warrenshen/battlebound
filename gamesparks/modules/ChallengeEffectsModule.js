@@ -397,6 +397,9 @@ function processLQueue(challengeStateData, effect) {
     var newEffects;
     
     switch (effect.name) {
+        case EFFECT_PLAYER_AVATAR_DIE:
+            newEffects = effectPlayerAvatarDie(challengeStateData, effect);
+            break;
         case CARD_ABILITY_END_TURN_HEAL_TEN:
             newEffects = abilityEndTurnHeal(challengeStateData, effect, 10);
             break;
@@ -473,6 +476,34 @@ function processLQueue(challengeStateData, effect) {
     }
     
     return newEffects;
+}
+
+function effectPlayerAvatarDie(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const loserId = playerId;
+    const winnerId = challengeStateData.opponentIdByPlayerId[loserId];
+    
+    const move = {
+        playerId: winnerId,
+        category: MOVE_CATEGORY_CHALLENGE_OVER,
+    };
+    addChallengeMove(challengeStateData, move);
+    
+    // Hack to allow testing.
+    if (winnerId === "ID_PLAYER" || winnerId === "ID_OPPONENT") {
+        return [];
+    }
+    
+    const winner = Spark.loadPlayer(winnerId);
+    
+    if (winner == null) {
+        setScriptError("Winner player does not exist: " + loserId + ", " + winnerId);
+    }
+    
+    const challenge = Spark.getChallenge(challengeStateData.id);
+    challenge.winChallenge(winner);
+    
+    return [];
 }
 
 function abilityEndTurnHeal(challengeStateData, effect, amount) {
@@ -1046,28 +1077,12 @@ function getEffectsOnCardDeath(challengeStateData, card) {
 
 function getEffectsOnFaceDamageTaken(challengeStateData, playerId, playerState, amount) {
     if (playerState.health <= 0) {
-        const loserId = playerId;
-        const winnerId = challengeStateData.opponentIdByPlayerId[loserId];
-        
-        // Hack to allow testing.
-        if (winnerId === "ID_PLAYER" || winnerId === "ID_OPPONENT") {
-            return [];
-        }
-        
-        const winner = Spark.loadPlayer(winnerId);
-        
-        if (winner == null) {
-            setScriptError("Winner player does not exist: " + loserId + ", " + winnerId);
-        }
-        
-        const move = {
-            playerId: winnerId,
-            category: MOVE_CATEGORY_CHALLENGE_OVER,
-        };
-        addChallengeMove(challengeStateData, move);
-        
-        const challenge = Spark.getChallenge(challengeStateData.id);
-        challenge.winChallenge(winner);
+        return [{
+            playerId: playerId,
+            cardId: null,
+            name: EFFECT_PLAYER_AVATAR_DIE,
+            spawnRank: 0,
+        }];
     }
     
     return [];

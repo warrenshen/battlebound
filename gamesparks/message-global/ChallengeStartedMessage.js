@@ -59,11 +59,15 @@ challengeStateData.expiredStreakByPlayerId = expiredStreakByPlayerId;
 
 challengeStateData.moveTakenThisTurn = 0;
 
+const displayData = challengeStateData.displayData = {};
+//
+
 const HEALTH_START = 300;
 const MANA_START = 20;
 const ARMOR_START = 0;
 
 const challengerData = {
+    displayName: challenger.getUserName(),
     manaCurrent: MANA_START,
     manaMax: MANA_START,
     health: HEALTH_START,
@@ -75,6 +79,7 @@ const challengerData = {
 };
 
 const challengedData = {
+    displayName: challenger.getUserName(),
     manaCurrent: MANA_START,
     manaMax: MANA_START,
     health: HEALTH_START,
