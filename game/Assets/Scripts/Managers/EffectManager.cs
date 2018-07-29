@@ -1666,7 +1666,7 @@ public class EffectManager : MonoBehaviour
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
             case Card.CARD_NAME_SPRAY_N_PRAY:
-                effects = SpellUntargetedSprayNPray(playerId, spellCard.GetChallengeCard());
+                effects = SpellUntargetedSprayNPray(playerId, battleCardObject.GetChallengeCard());
                 break;
             case Card.CARD_NAME_GRAVE_DIGGING:
                 effects = SpellUntargetedGraveDigging(playerId);

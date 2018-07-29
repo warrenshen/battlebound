@@ -745,6 +745,7 @@ public class BoardCreature : Targetable
         challengeCard.SetId(this.creatureCard.Id);
         challengeCard.SetPlayerId(this.owner.Id);
         challengeCard.SetCategory((int)Card.CardType.Creature);
+        challengeCard.SetColor(this.creatureCard.GetClassColor());
         challengeCard.SetName(this.creatureCard.Name);
         //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
         challengeCard.SetLevel(this.creatureCard.Level);

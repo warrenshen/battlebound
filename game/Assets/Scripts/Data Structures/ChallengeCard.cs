@@ -18,6 +18,10 @@ public class ChallengeCard
     public int Category => category;
 
     [SerializeField]
+    private CardTemplate.ClassColor color;
+    public CardTemplate.ClassColor Color => color;
+
+    [SerializeField]
     private string name;
     public string Name => name;
 
@@ -97,6 +101,11 @@ public class ChallengeCard
     public void SetCategory(int category)
     {
         this.category = category;
+    }
+
+    public void SetColor(CardTemplate.ClassColor color)
+    {
+        this.color = color;
     }
 
     public void SetName(string name)
@@ -206,6 +215,10 @@ public class ChallengeCard
         else if (this.category != other.Category)
         {
             return string.Format("Category: {0} vs {1} [{2}]", this.category, other.Category, this.id);
+        }
+        else if (this.color != other.Color)
+        {
+            return string.Format("Color: {0} vs {1} [{2}]", this.color, other.Color, this.id);
         }
         else if (this.name != other.Name)
         {
