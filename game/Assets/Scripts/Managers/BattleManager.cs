@@ -1404,6 +1404,7 @@ public class BattleManager : MonoBehaviour
         }
 
         ChallengeMove serverMove = this.serverMoveQueue[0];
+        this.serverMoves.Add(serverMove);
 
         if (
             (serverMove.PlayerId == this.opponent.Id || serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN || serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN) &&
@@ -1439,7 +1440,6 @@ public class BattleManager : MonoBehaviour
             this.deviceMoveQueue.RemoveAt(0);
         }
 
-        this.serverMoves.Add(serverMove);
         this.serverMoveQueue.RemoveAt(0);
 
         if (

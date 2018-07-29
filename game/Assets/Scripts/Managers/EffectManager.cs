@@ -545,7 +545,7 @@ public class EffectManager : MonoBehaviour
         ChallengeEndState challengeEndState = new ChallengeEndState(
             playerId,
             2,
-            2
+            3
         );
 
         List<ExperienceCard> experienceCards = new List<ExperienceCard>();
