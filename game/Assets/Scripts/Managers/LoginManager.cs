@@ -19,7 +19,6 @@ public class LoginManager : MonoBehaviour
 
     private void Callback()
     {
-        Debug.Log("called");
         if (SparkSingleton.Instance.IsAuthenticated)
         {
             Application.LoadLevel("Menu");

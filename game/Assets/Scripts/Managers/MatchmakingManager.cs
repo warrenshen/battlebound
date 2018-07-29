@@ -124,14 +124,12 @@ public class MatchmakingManager : MonoBehaviour
 
     private void SelectCasualMatch()
     {
-        Debug.Log("Selectin match type casual.");
         this.matchType = MATCH_TYPE_CASUAL;
         FindMatch();
     }
 
     private void SelectRankedMatch()
     {
-        Debug.Log("Selecting match type ranked.");
         this.matchType = MATCH_TYPE_RANKED;
         FindMatch();
     }

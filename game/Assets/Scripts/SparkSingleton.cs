@@ -11,7 +11,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
     public string password = "password";
 
     private bool isAuthenticated;
-    public bool IsAuthenticated;
+    public bool IsAuthenticated => isAuthenticated;
 
     private string playerId;
     private string address;

@@ -34,6 +34,9 @@ public class LoginRegisterPanel : MonoBehaviour
     private InputField registerPasswordInputField;
 
     [SerializeField]
+    private Button registerButton;
+
+    [SerializeField]
     private Button switchButton;
 
     public static LoginRegisterPanel Instance { get; private set; }
@@ -43,6 +46,7 @@ public class LoginRegisterPanel : MonoBehaviour
         Instance = this;
 
         this.loginButton.onClick.AddListener(OnLoginButtonClick);
+        this.registerButton.onClick.AddListener(OnRegisterButtonClick);
         this.switchButton.onClick.AddListener(OnSwitchButtonClick);
 
         ShowRegisterPanel();
@@ -110,10 +114,27 @@ public class LoginRegisterPanel : MonoBehaviour
 
     private void OnRegisterButtonClick()
     {
+        string email = registerEmailInputField.text;
+        string username = registerUsernameInputField.text;
+        string password = registerPasswordInputField.text;
+
+        if (email.Length < 3)
+        {
+            Debug.LogError("Email is not long enough.");
+        }
+        else if (username.Length < 1)
+        {
+            Debug.LogError("Username is not long enough.");
+        }
+        if (password.Length < 8)
+        {
+            Debug.LogError("Password is not long enough.");
+        }
+
         SparkSingleton.Instance.Register(
-            registerEmailInputField.text,
-            registerUsernameInputField.text,
-            registerPasswordInputField.text
+            email,
+            username,
+            password
         );
     }
 
