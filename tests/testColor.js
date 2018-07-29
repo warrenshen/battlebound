@@ -727,7 +727,7 @@ describe("challenge end turn", function() {
                 "id": "ID_PLAYER-1",
                 "level": 1,
                 "category": 0,
-                "color": 0,
+                "color": 1,
                 "attack": 20,
                 "health": 30,
                 "cost": 20,
@@ -746,7 +746,7 @@ describe("challenge end turn", function() {
                 "id": "ID_PLAYER-4",
                 "level": 1,
                 "category": 0,
-                "color": 0,
+                "color": 1,
                 "attack": 10,
                 "health": 10,
                 "cost": 10,
@@ -766,7 +766,7 @@ describe("challenge end turn", function() {
                 "id": "ID_PLAYER-6",
                 "level": 1,
                 "category": 0,
-                "color": 0,
+                "color": 1,
                 "attack": 20,
                 "health": 10,
                 "cost": 10,
@@ -924,6 +924,200 @@ describe("challenge end turn", function() {
                 "id": "ID_PLAYER-1",
                 "level": 1,
                 "category": 0,
+                "color": 1,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "ID_PLAYER-4",
+                "level": 1,
+                "category": 0,
+                "color": 1,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+            ],
+            "deckSize": 1,
+            "deck": [
+              {
+                "id": "ID_PLAYER-6",
+                "level": 1,
+                "category": 1,
+                "color": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              }
+            ],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "deathCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_OPPONENT"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerHand = playerState.hand;
+            assert.equal(playerHand.length, 3);
+
+            assert.equal(playerHand[0].id, "ID_PLAYER-1");
+            assert.equal(playerHand[0].cost, 20);
+
+            assert.equal(playerHand[1].id, "ID_PLAYER-4");
+            assert.equal(playerHand[1].cost, 10);
+
+            assert.equal(playerHand[2].id, "ID_PLAYER-6");
+            assert.equal(playerHand[2].cost, 10);
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 2);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-6");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support mana no change on neutral synergy", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 1,
+            "manaCurrent": 30,
+            "manaMax": 40,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 4,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+          "ID_PLAYER": {
+            "hasTurn": 0,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "ID_PLAYER-1",
+                "level": 1,
+                "category": 0,
                 "color": 0,
                 "attack": 20,
                 "health": 30,
@@ -962,8 +1156,8 @@ describe("challenge end turn", function() {
               {
                 "id": "ID_PLAYER-6",
                 "level": 1,
-                "category": 0,
-                "color": 1,
+                "category": 1,
+                "color": 0,
                 "attack": 20,
                 "health": 10,
                 "cost": 10,
@@ -1129,7 +1323,7 @@ describe("challenge end turn", function() {
               "id": "ID_PLAYER-1",
               "level": 1,
               "category": 0,
-              "color": 0,
+              "color": 1,
               "attack": 20,
               "health": 30,
               "cost": 10,
@@ -1151,7 +1345,7 @@ describe("challenge end turn", function() {
               "id": "ID_PLAYER-4",
               "level": 1,
               "category": 0,
-              "color": 0,
+              "color": 1,
               "attack": 10,
               "health": 10,
               "cost": 0,
@@ -1171,7 +1365,7 @@ describe("challenge end turn", function() {
               "id": "ID_PLAYER-6",
               "level": 1,
               "category": 0,
-              "color": 0,
+              "color": 1,
               "attack": 20,
               "health": 10,
               "cost": 0,
