@@ -16,7 +16,10 @@ public class MenuManager : MonoBehaviour
 
     private void Awake()
     {
-        this.usernameText.text = "Not logged in";
+        if (!SparkSingleton.Instance.IsAuthenticated)
+        {
+            this.usernameText.text = "Not logged in";
+        }
         this.logoutButton.onClick.AddListener(OnLogoutButtonClick);
 
         SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);

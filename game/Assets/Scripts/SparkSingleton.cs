@@ -79,7 +79,14 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
     public void AddAuthenticatedCallback(UnityAction callback)
     {
-        this.authenticatedCallbacks.Add(callback);
+        if (this.isAuthenticated)
+        {
+            callback();
+        }
+        else
+        {
+            this.authenticatedCallbacks.Add(callback);
+        }
     }
 
     public void ClearAuthenticatedCallbacks()
@@ -137,9 +144,20 @@ public class SparkSingleton : Singleton<SparkSingleton>
         request.SetUserName(name);
         request.SetPassword(password);
         request.Send(
-            LoginRegisterPanel.Instance.OnLoginSuccess,
-            LoginRegisterPanel.Instance.OnLoginError
+            OnLoginSuccess,
+            OnLoginError
         );
+    }
+
+    private void OnLoginSuccess(AuthenticationResponse response)
+    {
+        GetPlayerData();
+        LoginRegisterPanel.Instance.OnLoginSuccess(response);
+    }
+
+    private void OnLoginError(AuthenticationResponse response)
+    {
+        LoginRegisterPanel.Instance.OnLoginError(response);
     }
 
     public void LoginDevelopment(string name, string password)
@@ -148,19 +166,19 @@ public class SparkSingleton : Singleton<SparkSingleton>
         request.SetUserName(name);
         request.SetPassword(password);
         request.Send(
-            OnLoginSuccess,
-            OnLoginError
+            OnLoginDevelopmentSuccess,
+            OnLoginDevelopmentError
         );
     }
 
-    private void OnLoginSuccess(AuthenticationResponse response)
+    private void OnLoginDevelopmentSuccess(AuthenticationResponse response)
     {
         //LoadingManager.Instance.LoadNextScene();
         Debug.Log("Logged in.");
 
     }
 
-    private void OnLoginError(AuthenticationResponse response)
+    private void OnLoginDevelopmentError(AuthenticationResponse response)
     {
         Debug.Log("OnLoginError");
         Debug.Log(response.Errors.ToString());
@@ -187,8 +205,19 @@ public class SparkSingleton : Singleton<SparkSingleton>
         request.SetDisplayName(username);
         request.SetPassword(password);
         request.Send(
-            LoginRegisterPanel.Instance.OnRegisterSuccess,
-            LoginRegisterPanel.Instance.OnRegisterError
+            OnRegisterSuccess,
+            OnRegisterError
         );
+    }
+
+    private void OnRegisterSuccess(RegistrationResponse response)
+    {
+        GetPlayerData();
+        LoginRegisterPanel.Instance.OnRegisterSuccess(response);
+    }
+
+    private void OnRegisterError(RegistrationResponse response)
+    {
+        LoginRegisterPanel.Instance.OnRegisterError(response);
     }
 }

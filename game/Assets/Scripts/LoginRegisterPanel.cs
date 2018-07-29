@@ -13,7 +13,7 @@ public class LoginRegisterPanel : MonoBehaviour
     private Transform loginPanel;
 
     [SerializeField]
-    private InputField loginUsernameInputField;
+    private InputField loginEmailInputField;
 
     [SerializeField]
     private InputField loginPasswordInputField;
@@ -83,8 +83,8 @@ public class LoginRegisterPanel : MonoBehaviour
     private void OnLoginButtonClick()
     {
         SparkSingleton.Instance.Login(
-            loginUsernameInputField.text,
-            "password"
+            loginEmailInputField.text,
+            loginPasswordInputField.text
         );
     }
 
