@@ -161,7 +161,10 @@ public class CardObject : MouseWatchable
     public void Recycle()
     {
         if (this.visual != null)
+        {
             ResourceSingleton.Instance.ReturnCardToPool(this.visual);
+        }
+
         Destroy(gameObject);
     }
 }

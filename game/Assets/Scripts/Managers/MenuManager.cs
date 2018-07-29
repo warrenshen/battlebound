@@ -7,7 +7,7 @@ public class MenuManager : MonoBehaviour
 
     public void LoadBattle()
     {
-        Application.LoadLevel("Battle");
+        Application.LoadLevel("Matchmaking");
     }
 
     public void LoadCollection()

@@ -86,15 +86,18 @@ public class MatchmakingManager : MonoBehaviour
         {
             rendered.Recycle();
         }
-        renderedCardObjects = new List<CardObject>();
+
+        this.renderedCardObjects = new List<CardObject>();
 
         foreach (Card card in cards)
         {
             GameObject created = new GameObject(card.Name);
             CardObject cardObject = created.AddComponent<CardObject>();
             cardObject.Initialize(card);
-            renderedCardObjects.Add(cardObject);
+
+            this.renderedCardObjects.Add(cardObject);
         }
+
         PositionCards();
     }
 
@@ -170,5 +173,28 @@ public class MatchmakingManager : MonoBehaviour
     private void OnFindMatchError(LogEventResponse response)
     {
         Debug.LogError("FindMatch request error.");
+        SendForfeitActiveChallengeRequest();
+    }
+
+    public void SendForfeitActiveChallengeRequest()
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("ForfeitActiveChallenge");
+
+        request.Send(
+            OnForfeitActiveChallengeSuccess,
+            OnForfeitActiveChallengeError
+        );
+    }
+
+    private void OnForfeitActiveChallengeSuccess(LogEventResponse response)
+    {
+        Debug.Log("ForfeitActiveChallenge request success.");
+        FindMatch();
+    }
+
+    private void OnForfeitActiveChallengeError(LogEventResponse response)
+    {
+        Debug.LogError("ForfeitActiveChallenge request error.");
     }
 }
