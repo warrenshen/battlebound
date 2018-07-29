@@ -98,6 +98,7 @@
  * }
  * 
  * ChallengeState schema: {
+ *   id: string, // Challenge ID for convenience.
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
  *   opponentIdByPlayerId: { [playerId]: opponentId },
  *   turnCountByPlayerId: { [playerId]: int },
