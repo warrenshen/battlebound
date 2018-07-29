@@ -1532,6 +1532,7 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 30);
             assert.equal(playerState.manaMax, 70);
+            assert.equal(playerState.hand.length, 2);
 
             const playerField = playerState.field;
             assert.equal(playerField[2].id, "C53-ID_PLAYER-9");
@@ -1577,6 +1578,7 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 30);
             assert.equal(playerState.manaMax, 70);
+            assert.equal(playerState.hand.length, 2);
 
             const playerField = playerState.field;
             assert.equal(playerField[0].id, "C53-ID_PLAYER-9");
@@ -1622,6 +1624,7 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
             assert.equal(playerState.manaMax, 70);
+            assert.equal(playerState.hand.length, 2);
 
             const playerField = playerState.field;
             assert.equal(playerField[2].id, "C40-ID_PLAYER-22");
@@ -1667,6 +1670,7 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
             assert.equal(playerState.manaMax, 70);
+            assert.equal(playerState.hand.length, 2);
 
             const playerField = playerState.field;
             assert.equal(playerField[0].id, "C40-ID_PLAYER-22");
@@ -1712,6 +1716,7 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 50);
             assert.equal(playerState.manaMax, 70);
+            assert.equal(playerState.hand.length, 2);
             assert.equal(playerState.health, 80);
             assert.equal(playerState.healthMax, 100);
 
