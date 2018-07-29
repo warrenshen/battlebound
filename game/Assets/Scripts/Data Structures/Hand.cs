@@ -86,6 +86,11 @@ public class Hand
         {
             CardTemplate.ClassColor classColor = battleCardObject.GetClassColor();
 
+            if (classColor == CardTemplate.ClassColor.Neutral)
+            {
+                continue;
+            }
+
             if (classColorToCount.ContainsKey(classColor))
             {
                 classColorToCount[classColor] += 1;
@@ -99,6 +104,11 @@ public class Hand
         foreach (BattleCardObject battleCardObject in this.battleCardObjects)
         {
             CardTemplate.ClassColor classColor = battleCardObject.GetClassColor();
+
+            if (classColor == CardTemplate.ClassColor.Neutral)
+            {
+                continue;
+            }
 
             if (classColorToCount[classColor] >= 3)
             {
