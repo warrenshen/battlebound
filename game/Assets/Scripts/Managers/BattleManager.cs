@@ -706,20 +706,22 @@ public class BattleManager : MonoBehaviour
         GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
 
         LeanTween.move(overlay, overlay.transform.position + overlay.transform.up * -3, CardTween.TWEEN_DURATION);
-        LeanTween.scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION)
-                 .setOnComplete(() =>
-        {
-            overlay.SetActive(false);
+        LeanTween
+            .scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION)
+            .setOnComplete(() =>
+                {
+                    overlay.SetActive(false);
 
-            SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
-            SetPassiveCursor();
+                    SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
+                    SetPassiveCursor();
 
-            if (this.mode != BATTLE_STATE_NORMAL_MODE)
-            {
-                this.activePlayer.MulliganNewTurn();
-                this.mode = BATTLE_STATE_NORMAL_MODE;
-            }
-        });
+                    if (this.mode != BATTLE_STATE_NORMAL_MODE)
+                    {
+                        this.activePlayer.MulliganNewTurn();
+                        EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
+                        this.mode = BATTLE_STATE_NORMAL_MODE;
+                    }
+                });
     }
 
     public void ToggleMulliganCard(BattleCardObject battleCardObject)
