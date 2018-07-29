@@ -69,7 +69,7 @@
  *   playerId: string,
  *   category: int,
  *   name: string,
- *   image: string,
+ *   color: int, // Enum color class.
  *   description: string,
  *   level: int,
  *   cost: int,
@@ -86,6 +86,7 @@
  *   deathRank: int, // Number of cards dead before this card - not set until card is dead.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
  *   abilitiesStart: [int, ...], // Array of enums of abilities card starts with.
+ *   handBuffs: [int, ...], // Array of hand-related buffs.
  *   buffs: [
  *     {
  *       granterId: int, // Card ID granting this buff.

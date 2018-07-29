@@ -79,9 +79,6 @@ const challengerData = {
     mode: PLAYER_STATE_MODE_MULLIGAN,
     mulliganCards: challengerMulligan,
 };
-// challengerHand.forEach(function(drawnCard) {
-//     addCardToPlayer(challengerId, challengerData, drawnCard);    
-// });
 
 const challengedDrawCardsResponse = drawCards(challengedDeck, 3);
 const challengedMulligan = challengedDrawCardsResponse[0];
@@ -100,9 +97,6 @@ const challengedData = {
     mode: PLAYER_STATE_MODE_MULLIGAN,
     mulliganCards: challengedMulligan,
 };
-// challengedHand.forEach(function(drawnCard) {
-//     addCardToPlayer(challengedId, challengedData, drawnCard);    
-// });
 
 if (Spark.getData().challenge.nextPlayer === challengerId) {
     challengerData.hasTurn = 1;
@@ -117,4 +111,4 @@ challengeState[challengedId] = challengedData;
 
 require("PersistChallengeStateModule");
 
-startMulliganTimeEvents(challengeId, [challengerId, challengedId]);
+// startMulliganTimeEvents(challengeId, [challengerId, challengedId]);
