@@ -23,19 +23,17 @@ public class LoginRegisterPanel : MonoBehaviour
         Instance = this;
 
         this.loginButton.onClick.AddListener(OnLoginButtonClick);
-
-        Close();
     }
 
-    private void Close()
-    {
-        this.gameObject.SetActive(false);
-    }
+    //private void Close()
+    //{
+    //    this.gameObject.SetActive(false);
+    //}
 
-    public void Open()
-    {
-        this.gameObject.SetActive(true);
-    }
+    //public void Open()
+    //{
+    //    this.gameObject.SetActive(true);
+    //}
 
     private void OnLoginButtonClick()
     {

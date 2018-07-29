@@ -29,7 +29,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
             return;
         }
 
-        //Login(username, password);
+        LeanTween.init(800);
+
+        //LoginDevelopment(username, password);
 
         ClearAuthenticatedCallbacks();
         this.isAuthenticated = false;
@@ -140,23 +142,35 @@ public class SparkSingleton : Singleton<SparkSingleton>
         );
     }
 
-    //private void OnLoginSuccess(AuthenticationResponse response)
-    //{
-    //    //LoadingManager.Instance.LoadNextScene();
-    //    Debug.Log("Logged in.");
+    public void LoginDevelopment(string name, string password)
+    {
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.SetUserName(name);
+        request.SetPassword(password);
+        request.Send(
+            OnLoginSuccess,
+            OnLoginError
+        );
+    }
 
-    //}
+    private void OnLoginSuccess(AuthenticationResponse response)
+    {
+        //LoadingManager.Instance.LoadNextScene();
+        Debug.Log("Logged in.");
 
-    //private void OnLoginError(AuthenticationResponse response)
-    //{
-    //    Debug.Log("OnLoginError");
-    //    Debug.Log(response.Errors.ToString());
-    //}
+    }
+
+    private void OnLoginError(AuthenticationResponse response)
+    {
+        Debug.Log("OnLoginError");
+        Debug.Log(response.Errors.ToString());
+    }
 
     public void Logout()
     {
         ClearAuthenticatedCallbacks();
 
+        this.isAuthenticated = false;
         this.playerId = null;
         this.address = null;
         this.balance = 0;

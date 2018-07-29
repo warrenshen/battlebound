@@ -17,6 +17,9 @@ public class Player
     private string name;
     public string Name => name;
 
+    private string displayName;
+    public string DisplayName => displayName;
+
     private Deck deck;
     public Deck Deck => deck;
 
@@ -55,10 +58,11 @@ public class Player
 
     private List<Card> replaceMulliganCards;
 
-    public Player(string id, string name)
+    public Player(string id, string name, string displayName)
     {
         this.id = id;
         this.name = name;
+        this.displayName = displayName;
 
         this.hasTurn = false;
         this.deck = GetDeck();
@@ -81,6 +85,7 @@ public class Player
     {
         this.id = playerState.Id;
         this.name = name;
+        this.displayName = playerState.DisplayName;
 
         this.hasTurn = playerState.HasTurn == 1;
         this.deckSize = playerState.DeckSize;

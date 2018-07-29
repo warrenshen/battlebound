@@ -74,11 +74,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         Debug.Log("ChallengeStartedMessage received.");
 
         GSData scriptData = message.ScriptData;
-        this.challengeId = scriptData.GetString("challengeId");
-        Debug.Log("Setting challengeId to: " + this.challengeId);
-        ProcessChallengeScriptData(scriptData);
-
-        this.challengeStarted = true;
+        InitializeChallenge(scriptData);
 
         SceneManager.LoadScene("Battle");
     }
@@ -155,7 +151,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
     )
     {
         int messageNonce = (int)scriptData.GetInt("nonce");
-        //Debug.Log("Got message with nonce: " + messageNonce.ToString());
         if (messageNonce <= this.nonce)
         {
             return;
@@ -493,11 +488,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         Debug.Log("GetActiveChallenge request success.");
 
         GSData scriptData = response.ScriptData;
-        this.challengeId = scriptData.GetString("challengeId");
-        Debug.Log("Setting challengeId to: " + this.challengeId);
-        ProcessChallengeScriptData(scriptData, false);
-
-        this.challengeStarted = true;
+        InitializeChallenge(scriptData);
 
         SceneManager.LoadScene("Battle");
     }
@@ -546,5 +537,15 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.Log("Server vs device opponent state match.");
             Debug.Log("State: " + JsonUtility.ToJson(serverOpponentState));
         }
+    }
+
+    private void InitializeChallenge(GSData scriptData)
+    {
+        this.challengeId = scriptData.GetString("challengeId");
+        Debug.Log("Setting challengeId to: " + this.challengeId);
+
+        ProcessChallengeScriptData(scriptData, false);
+
+        this.challengeStarted = true;
     }
 }

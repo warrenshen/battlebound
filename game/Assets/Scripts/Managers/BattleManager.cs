@@ -146,8 +146,14 @@ public class BattleManager : MonoBehaviour
             {
                 this.spawnCount = BattleSingleton.Instance.SpawnCount;
 
-                this.you = new Player(BattleSingleton.Instance.PlayerState, "Player");
-                this.opponent = new Player(BattleSingleton.Instance.OpponentState, "Enemy");
+                this.you = new Player(
+                    BattleSingleton.Instance.PlayerState,
+                    "Player"
+                );
+                this.opponent = new Player(
+                    BattleSingleton.Instance.OpponentState,
+                    "Enemy"
+                );
 
                 Board.Instance.RegisterPlayer(this.you, BattleSingleton.Instance.PlayerState.Field);
                 Board.Instance.RegisterPlayer(this.opponent, BattleSingleton.Instance.OpponentState.Field);
@@ -170,8 +176,8 @@ public class BattleManager : MonoBehaviour
         {
             this.spawnCount = 0;
 
-            this.you = new Player("Player", "Player");
-            this.opponent = new Player("Enemy", "Enemy");
+            this.you = new Player("Player", "Player", "pl4y3r");
+            this.opponent = new Player("Enemy", "Enemy", "3n3my");
 
             Board.Instance.RegisterPlayer(this.you);
             Board.Instance.RegisterPlayer(this.opponent);

@@ -9,23 +9,25 @@ public class LoginManager : MonoBehaviour
     [SerializeField]
     private Button loginButton;
 
-    [SerializeField]
-    private Button logoutButton;
-
     private void Awake()
     {
         this.usernameText.text = "Not logged in";
         this.loginButton.onClick.AddListener(OnLoginButtonClick);
-        this.logoutButton.onClick.AddListener(OnLogoutButtonClick);
+
+        SparkSingleton.Instance.AddAuthenticatedCallback(Callback);
+    }
+
+    private void Callback()
+    {
+        Debug.Log("called");
+        if (SparkSingleton.Instance.IsAuthenticated)
+        {
+            Application.LoadLevel("Menu");
+        }
     }
 
     private void OnLoginButtonClick()
     {
-        LoginRegisterPanel.Instance.Open();
-    }
-
-    private void OnLogoutButtonClick()
-    {
-        SparkSingleton.Instance.Logout();
+        //LoginRegisterPanel.Instance.Open();
     }
 }

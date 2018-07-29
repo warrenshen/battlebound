@@ -10,6 +10,10 @@ public class PlayerState
     public string Id => id;
 
     [SerializeField]
+    private string displayName;
+    public string DisplayName => displayName;
+
+    [SerializeField]
     private int hasTurn;
     public int HasTurn => hasTurn;
 
