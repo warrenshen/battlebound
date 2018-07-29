@@ -689,6 +689,7 @@ public class BoardCreature : Targetable
     {
         this.raisedCard = true;
         this.visual.SetOpacity(1);
+        this.visual.SetGrayscale(false);
 
         LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 7 + Vector3.down, 0.01f)
                  .setDelay(ActionManager.TWEEN_DURATION)
@@ -707,6 +708,7 @@ public class BoardCreature : Targetable
     {
         ActionManager.Instance.SetCursor(0);
         this.raisedCard = false;
+        this.visual.SetGrayscale(true);
         this.visual.SetOpacity(0.8f);
 
         LeanTween.cancel(this.visual.gameObject);
