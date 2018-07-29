@@ -180,7 +180,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         GS.Reset();
     }
 
-    private void Register(string email, string username, string password)
+    public void Register(string email, string username, string password)
     {
         RegistrationRequest request = new RegistrationRequest();
         request.SetUserName(email);
