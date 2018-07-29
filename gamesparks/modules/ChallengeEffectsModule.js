@@ -321,6 +321,7 @@ function _effectRandomBombshellBombadier(challengeStateData, effect) {
 
     if (randomOpponentTargetableId === TARGET_ID_FACE) {
         damageDone = damageFace(opponentState, 20);
+        newEffects = newEffects.concat(getEffectsOnFaceDamageTaken(challengeStateData, opponentId, opponentState, damageDone));
     } else {
         const defendingCard = opponentField.find(function(fieldCard) { return fieldCard.id === randomOpponentTargetableId });
         if (defendingCard == null) {
@@ -360,6 +361,7 @@ function _effectRandomSprayNPray(challengeStateData, effect) {
 
     if (randomOpponentTargetableId === TARGET_ID_FACE) {
         damageDone = damageFace(opponentState, 10);
+        newEffects = newEffects.concat(getEffectsOnFaceDamageTaken(challengeStateData, opponentId, opponentState, damageDone));
     } else {
         const defendingCard = opponentField.find(function(fieldCard) { return fieldCard.id === randomOpponentTargetableId });
         if (defendingCard == null) {
@@ -596,9 +598,8 @@ function abilityDamagePlayerFace(challengeStateData, effect, amount) {
     const playerId = effect.playerId;
     const playerState = challengeStateData.current[playerId];
     
-    damageFace(playerState, amount);
-    
-    return [];
+    const damageTaken = damageFace(playerState, amount);
+    return getEffectsOnFaceDamageTaken(challengeStateData, playerId, playerState, damageTaken);
 }
 
 function _getAllCreatureCards(challengeStateData, playerId) {
@@ -823,7 +824,8 @@ function abilityDeathRattleAttackFace(challengeStateData, effect, amount) {
 
     var newEffects = [];
     
-    const damageDone = damageFace(opponentState, amount);
+    const damageTaken = damageFace(opponentState, amount);
+    newEffects = newEffects.concat(getEffectsOnFaceDamageTaken(challengeStateData, opponentId, opponentState, damageTaken));
         
     newEffects.push({
         playerId: playerId,
@@ -995,7 +997,7 @@ function getEffectsOnCardDamageDealt(challengeStateData, card, amount) {
 function getEffectsOnCardDamageTaken(challengeStateData, card, amount) {
     var newEffects = [];
     
-    if (hasCardAbilityOrBuff(card, CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY)) {
+    if (hasCardAbilityOrBuff(card, CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY) && amount > 0) {
         newEffects.push({
             playerId: card.playerId,
             cardId: card.id,
@@ -1042,17 +1044,33 @@ function getEffectsOnCardDeath(challengeStateData, card) {
     return newEffects;
 }
 
-function getEffectsOnFaceDamageTaken(challengeStateData, playerState, amount) {
+function getEffectsOnFaceDamageTaken(challengeStateData, playerId, playerState, amount) {
     if (playerState.health <= 0) {
-        const loserId = playerState.id;
+        const loserId = playerId;
         const winnerId = challengeStateData.opponentIdByPlayerId[loserId];
-        const winner = Spark.loadPlayer(winnerId);
         
         // Hack to allow testing.
-        if (challenge != null) {
-            challenge.winChallenge(winner);
+        if (winnerId === "ID_PLAYER" || winnerId === "ID_OPPONENT") {
+            return [];
         }
+        
+        const winner = Spark.loadPlayer(winnerId);
+        
+        if (winner == null) {
+            setScriptError("Winner player does not exist: " + loserId + ", " + winnerId);
+        }
+        
+        const move = {
+            playerId: winnerId,
+            category: MOVE_CATEGORY_CHALLENGE_OVER,
+        };
+        addChallengeMove(challengeStateData, move);
+        
+        const challenge = Spark.getChallenge(challengeStateData.id);
+        challenge.winChallenge(winner);
     }
+    
+    return [];
 }
 
 function processEndTurn(challengeStateData, playerId) {
@@ -1200,6 +1218,7 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
         // Note there is no special logic for lethal when hitting face.
         attackingDamageDone = damageFace(defenderState, attackingCard.attack);
         newEffects = newEffects.concat(getEffectsOnCardDamageDealt(challengeStateData, attackingCard, attackingDamageDone));
+        newEffects = newEffects.concat(getEffectsOnFaceDamageTaken(challengeStateData, fieldId, defenderState, attackingDamageDone));
     } else {
         // Find index of defending card in opponent field.
         const defendingIndex = defenderField.findIndex(function(card) { return card.id === targetId });
@@ -1252,13 +1271,13 @@ const SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
 const SPELL_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
 const SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
 const SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
-const SPELL_NAME_DEATH_NOTICE = "Death Notice";
+const SPELL_NAME_DEATH_NOTE = "Death Note";
 
 const TARGETED_SPELLS_OPPONENT_ONLY = [
     SPELL_NAME_TOUCH_OF_ZEUS,
     SPELL_NAME_DEEP_FREEZE,
     SPELL_NAME_WIDESPREAD_FROSTBITE,
-    SPELL_NAME_DEATH_NOTICE,
+    SPELL_NAME_DEATH_NOTE,
 ];
 const TARGETED_SPELLS_FRIENDLY_ONLY = [
     SPELL_NAME_UNSTABLE_POWER,
@@ -1342,10 +1361,9 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
                 rightCard.isFrozen = 1;
             }
         }
-    } else if (playedCard.name === SPELL_NAME_DEATH_NOTICE) {
-        // TODO: should this count as damage taken?
-        damageDone = damageCardMax(opponentCard);
-        newEffects = newEffects.concat(getEffectsOnCardDamageTaken(challengeStateData, opponentCard, damageDone));
+    } else if (playedCard.name === SPELL_NAME_DEATH_NOTE) {
+        damageCardMax(opponentCard);
+        newEffects = newEffects.concat(getEffectsOnCardDeath(challengeStateData, opponentCard));
     } else {
         setScriptError("Unrecognized spell card name.");
     }

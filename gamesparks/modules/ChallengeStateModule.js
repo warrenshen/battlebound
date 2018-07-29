@@ -5,18 +5,17 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
-require("ChallengeMovesModule");
-
 function _getObfuscatedMoves(moves, playerId, opponentId) {
     return moves.map(function(move) {
         if (move === null) {
             setScriptError("Move is null - did you remember to set move to something?");
         }
+        // We don't use constant below to avoid a double require.
         if (
             move.playerId === opponentId && 
             (
-                move.category === MOVE_CATEGORY_DRAW_CARD ||
-                move.category === MOVE_CATEGORY_DRAW_CARD_MULLIGAN
+                move.category === "MOVE_CATEGORY_DRAW_CARD" ||
+                move.category === "MOVE_CATEGORY_DRAW_CARD_MULLIGAN"
             ) 
         ) {
             return {
@@ -99,6 +98,7 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     const obfuscatedMoves = _getObfuscatedMoves(moves, playerId, opponentId);
     
     return {
+        challengeId: challengeStateData.id,
         nonce: challengeStateData.nonce,
         playerState: filteredPlayerState,
         opponentState: filteredOpponentState,
@@ -123,7 +123,7 @@ function getChallengeStateForPlayer(playerId, challengeId) {
 
     const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
     
-    Spark.setScriptData("challengeId", challengeId);
+    Spark.setScriptData("challengeId", response.challengeId);
     Spark.setScriptData("nonce", response.nonce);
     Spark.setScriptData("playerState", response.playerState);
     Spark.setScriptData("opponentState", response.opponentState);
@@ -150,7 +150,7 @@ function getChallengeStateForPlayerWithPastMoves(playerId, challengeId) {
 
     const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
     
-    Spark.setScriptData("challengeId", challengeId);
+    Spark.setScriptData("challengeId", response.challengeId);
     Spark.setScriptData("nonce", response.nonce);
     Spark.setScriptData("playerState", response.playerState);
     Spark.setScriptData("opponentState", response.opponentState);

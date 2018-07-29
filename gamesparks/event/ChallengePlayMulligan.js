@@ -10,6 +10,7 @@ require("AttackModule");
 require("ChallengeMovesModule");
 require("ChallengeStateModule");
 require("CancelScheduledTimeEventsModule");
+require("ChallengeEffectsModule");
 
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
@@ -98,6 +99,15 @@ if (playerState.mode === PLAYER_STATE_MODE_NORMAL) {
     addChallengeMove(challengeStateData, move);
     
     cancelMulliganTimeEvents(challengeId);
+    
+    // Draw card for starting player.
+    if (playerState.hasTurn === 1) {
+        processStartTurn(challengeStateData, playerId);
+    } else if (opponentState.hasTurn === 1) {
+        processStartTurn(challengeStateData, opponentId);
+    } else {
+        setScriptError("Neither player has turn after mulligan.");
+    }
 }
 
 require("PersistChallengeStateModule");

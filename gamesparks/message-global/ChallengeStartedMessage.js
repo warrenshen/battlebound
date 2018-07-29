@@ -9,7 +9,6 @@
 require("ScriptDataModule");
 require("DeckModule");
 require("AttackModule");
-require("ChallengeMovesModule");
 require("CancelScheduledTimeEventsModule");
 
 const challengeId = Spark.getData().challenge.challengeId;
@@ -30,11 +29,13 @@ const challengerDeck = getActiveDeckByPlayerId(challengerId);
 const challengedDeck = getActiveDeckByPlayerId(challengedId);
 
 const challengeStateData = {};
-const challengeState = challengeStateData.current = {};
+challengeStateData.id = challengeId;
 challengeStateData.moves = [];
 challengeStateData.deadCards = [];
 challengeStateData.spawnCount = 0;
 challengeStateData.deathCount = 0;
+challengeStateData.isFinalByPlayerId = {};
+const challengeState = challengeStateData.current = {};
 
 const opponentIdByPlayerId = {};
 opponentIdByPlayerId[challengerId] = challengedId;
@@ -58,44 +59,29 @@ challengeStateData.expiredStreakByPlayerId = expiredStreakByPlayerId;
 
 challengeStateData.moveTakenThisTurn = 0;
 
-const challengerDrawCardsResponse = drawCards(challengerDeck, 3);
-const challengerMulligan = challengerDrawCardsResponse[0];
-const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
-
 const HEALTH_START = 300;
+const MANA_START = 20;
+const ARMOR_START = 0;
 
 const challengerData = {
-    manaCurrent: 30,
-    manaMax: 30,
+    manaCurrent: MANA_START,
+    manaMax: MANA_START,
     health: HEALTH_START,
     healthMax: HEALTH_START,
-    armor: 0,
+    armor: ARMOR_START,
     // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: [],
-    deck: challengerDeckAfterDraw,
-    deckSize: challengerDeckAfterDraw.length,
-    cardCount: challengerDeck.length,
-    mode: PLAYER_STATE_MODE_MULLIGAN,
-    mulliganCards: challengerMulligan,
 };
 
-const challengedDrawCardsResponse = drawCards(challengedDeck, 3);
-const challengedMulligan = challengedDrawCardsResponse[0];
-const challengedDeckAfterDraw = challengedDrawCardsResponse[1];
 const challengedData = {
-    manaCurrent: 30,
-    manaMax: 30,
+    manaCurrent: MANA_START,
+    manaMax: MANA_START,
     health: HEALTH_START,
     healthMax: HEALTH_START,
-    armor: 0,
+    armor: ARMOR_START,
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: [],
-    deck: challengedDeckAfterDraw,
-    deckSize: challengedDeckAfterDraw.length,
-    cardCount: challengedDeck.length,
-    mode: PLAYER_STATE_MODE_MULLIGAN,
-    mulliganCards: challengedMulligan,
 };
 
 if (Spark.getData().challenge.nextPlayer === challengerId) {
@@ -106,6 +92,42 @@ if (Spark.getData().challenge.nextPlayer === challengerId) {
     challengedData.hasTurn = 1;
 }
 
+// Challenger
+var challengerDrawCardsResponse;
+if (challengerData.hasTurn === 1) {
+    challengerDrawCardsResponse = drawCards(challengerDeck, 3);
+} else {
+    challengerDrawCardsResponse = drawCards(challengerDeck, 4);
+}
+
+const challengerMulligan = challengerDrawCardsResponse[0];
+const challengerDeckAfterDraw = challengerDrawCardsResponse[1];
+
+challengerData.deck = challengerDeckAfterDraw;
+challengerData.deckSize = challengerDeckAfterDraw.length;
+challengerData.cardCount = challengerDeck.length;
+challengerData.mode = PLAYER_STATE_MODE_MULLIGAN;
+challengerData.mulliganCards = challengerMulligan;
+// --
+
+// Challenged
+var challengedDrawCardsResponse;
+if (challengedData.hasTurn === 1) {
+    challengedDrawCardsResponse = drawCards(challengedDeck, 3);
+} else {
+    challengedDrawCardsResponse = drawCards(challengedDeck, 4);
+}
+
+const challengedMulligan = challengedDrawCardsResponse[0];
+const challengedDeckAfterDraw = challengedDrawCardsResponse[1];
+
+challengedData.deck = challengedDeckAfterDraw;
+challengedData.deckSize = challengedDeckAfterDraw.length;
+challengedData.cardCount = challengedDeck.length;
+challengedData.mode = PLAYER_STATE_MODE_MULLIGAN;
+challengedData.mulliganCards = challengedMulligan;
+// --
+    
 challengeState[challengerId] = challengerData;
 challengeState[challengedId] = challengedData;
 

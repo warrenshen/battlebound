@@ -7,7 +7,6 @@
 //
 // ====================================================================================================
 require("DeckModule");
-require("ChallengeMovesModule");
 
 const MATCH_TYPE_CASUAL = 0;
 const MATCH_TYPE_RANKED = 1;
@@ -34,12 +33,13 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
     const challenge = Spark.getChallenge(challengeId);
     const challengeStateData = challenge.getPrivateData("data");
     
-    if (challengeStateData.isFinal == 1) {
-        setScriptError("Challenge already processed - cannot grant experience again.");
-    } else {
-        challengeStateData.isFinal = 1;
-        challenge.setPrivateData("data", challengeStateData);
-    }
+    // if (challengeStateData.isFinalByPlayerId[playerId] == 1) {
+    //     setScriptError("Challenge already processed - cannot grant experience again.");
+    // } else {
+    //     challengeStateData.isFinalByPlayerId[playerId] = 1;
+    //     challenge.setPrivateData("data", challengeStateData);
+    //     Spark.getLog().debug(challengeStateData);
+    // }
     
     const decksDataItem = API.getItem("PlayerDecks", playerId).document();
     const decksData = decksDataItem.getData();
@@ -63,7 +63,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
     const response = handleGrantExperience(expCardIds, decksData, bCards);
     const newDecksData = response[0];
     const newBCards = response[1];
-    const resultCards = response[2];
+    const expCards = response[2];
     
     newBCards.forEach(function(newBCard) {
         var bCardId = newBCard.id;
@@ -92,7 +92,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
         "expPrevious",
     ];
     
-    return getInstancesByCards(resultCards, CARD_FIELDS);
+    return getInstancesByCards(expCards, CARD_FIELDS);
 }
 
 /**
