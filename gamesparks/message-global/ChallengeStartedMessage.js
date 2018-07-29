@@ -41,6 +41,11 @@ opponentIdByPlayerId[challengerId] = challengedId;
 opponentIdByPlayerId[challengedId] = challengerId;
 challengeStateData.opponentIdByPlayerId = opponentIdByPlayerId;
 
+const expCardIdsByPlayerId = {}
+expCardIdsByPlayerId[challengerId] = [];
+expCardIdsByPlayerId[challengedId] = [];
+challengeStateData.expCardIdsByPlayerId = expCardIdsByPlayerId;
+
 const turnCountByPlayerId = {};
 turnCountByPlayerId[challengerId] = 0;
 turnCountByPlayerId[challengedId] = 0;

@@ -85,6 +85,7 @@
  *   spawnRank: int, // Number of cards played before this card - not set until card is played on field.
  *   deathRank: int, // Number of cards dead before this card - not set until card is dead.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
+ *   abilitiesStart: [int, ...], // Array of enums of abilities card starts with.
  *   buffs: [
  *     {
  *       granterId: int, // Card ID granting this buff.
@@ -101,6 +102,7 @@
  *   turnCountByPlayerId: { [playerId]: int },
  *   moveTakenThisTurn: bool, // A bool for whether the active player has made a move this turn.
  *   expiredStreakByPlayerId: { [playerId]: int }, // A counter for how many turns a player has expired in a row.
+ *   expCardIdsByPlayerId: { [playerId]: [string, ...] }, // List of card IDs to gain experience for each player.
  *   current: {
  *     [playerIdOne]: {
  *       id: string, // Player ID for convenience.

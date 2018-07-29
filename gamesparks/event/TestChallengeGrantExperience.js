@@ -14,7 +14,9 @@ const bCards = Spark.getData().bCardsJson;
 const decksData = Spark.getData().decksDataJson;
 
 const challengeStateData = JSON.parse(challengeStateString);
-const response = handleGrantExperience(challengeStateData, playerId, decksData, bCards);
+const expCardIds = challengeStateData.expCardIdsByPlayerId[playerId];
+
+const response = handleGrantExperience(expCardIds, decksData, bCards);
 const newDecksData = response[0];
 const newBCards = response[1];
 const expCards = response[2];

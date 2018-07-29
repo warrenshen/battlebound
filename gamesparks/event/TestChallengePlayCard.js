@@ -6,7 +6,6 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("ChallengeMovesModule");
 require("ChallengePlayCardModule");
 
 const challengeStateString = Spark.getData().challengeStateString;

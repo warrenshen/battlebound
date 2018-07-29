@@ -4,6 +4,7 @@
 //
 // ====================================================================================================
 require("OnChainModule");
+// require("ChallengeCardModule");
  
 const DEFAULT_CARD_FIELDS = [
     "id",
@@ -342,10 +343,26 @@ function getActiveDeckByPlayerId(playerId) {
     
     const instances = getInstancesByCards(bCards.concat(cCards), DEFAULT_CARD_FIELDS);
     instances.forEach(function(instance, index) {
+        const name = instance.name;
+        const level = instance.level;
+        
+        // if (level < 1 || level > 6) {
+        //     setScriptError("Invalid card level.");
+        // }
+        
+        // const levelToStats = CARD_NAME_TO_LEVEL_TO_STATS[name];
+        // if (levelToStats != null) {
+        //     const stats = levelToStats[level];
+        //     instance.cost = stats.cost;
+        //     instance.attack = stats.attack;
+        //     instance.health = stats.health;
+        //     instance.abilities = stats.abilities;
+        // }
+        
         const baseId = instance.id;
         instance.baseId = baseId;
         instance.playerId = playerId;
-        instance.id = baseId + "-" + playerId + "-" + index;
+        instance.id = playerId + "-" + index;
         instance.attackStart = instance.attack;
         instance.costStart = instance.cost;
         instance.healthStart = instance.health;
@@ -354,7 +371,10 @@ function getActiveDeckByPlayerId(playerId) {
         if (instance.abilities == null) {
             instance.abilities = [];
         }
+        
+        instance.abilitiesStart = instance.abilities;
     });
+    
     return instances;
 }
 

@@ -17,6 +17,14 @@ const SHORT_CODE_TO_MATCH_TYPE = {
     RankedChallenge: MATCH_TYPE_RANKED,
 };
 
+const LEVEL_TO_EXP_MAX = {
+    1: 5,
+    2: 10,
+    3: 50,
+    4: 250,
+    5: 1000
+};
+
 /**
  * @return array - array of Card-like objects with levelPrevious and expPrevious fields.
  **/ 
@@ -51,7 +59,8 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
         }
     }
     
-    const response = handleGrantExperience(challengeStateData, playerId, decksData, bCards);
+    const expCardIds = challengeStateData.expCardIdsByPlayerId[playerId];
+    const response = handleGrantExperience(expCardIds, decksData, bCards);
     const newDecksData = response[0];
     const newBCards = response[1];
     const resultCards = response[2];
@@ -90,8 +99,7 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
  * @return array - array of three elements [PlayerDecks instance, array of b-cards, array of exp cards]
  **/
 function handleGrantExperience(
-    challengeStateData,
-    playerId,
+    expCardIds,
     decksData,
     bCards
 ) {
@@ -100,49 +108,16 @@ function handleGrantExperience(
     const bCardIdToBCard = {};
     bCards.forEach(function(bCard) { bCardIdToBCard[bCard.id] = bCard });
     
-    const moves = challengeStateData.moves;
-    const playerMoves = moves.filter(function(move) { return move.playerId === playerId });
-    
-    const expMoveCategories = [
-        MOVE_CATEGORY_PLAY_SPELL_TARGETED,
-        MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
-        MOVE_CATEGORY_CARD_ATTACK,
-    ];
-    
-    const expMoves = playerMoves.filter(function(move) { return expMoveCategories.indexOf(move.category) >= 0 });
-    const expCardIds = expMoves.map(function(move) {
-        var challengeCardId = move.attributes.cardId;
-        var splitResponse = challengeCardId.split("-");
-        if (splitResponse.length != 3) {
-            setScriptError("Split response of challenge card ID is not length 3.");
-        }
-        
-        return splitResponse[0];
-    });
-    
-    // The following logic is so we can dedup card IDs.
-    const expBCardIdsDict = {};
-    expCardIds.forEach(function(cardId) {
-        if (cardId.indexOf("B") === 0) {
-            expBCardIdsDict[cardId] = 0;
-        }
-    });
-    const expCCardIdsDict = {};
-    expCardIds.forEach(function(cardId) {
-        if (cardId.indexOf("C") === 0) {
-            expCCardIdsDict[cardId] = 0;
-        }
-    });
-    
-    const expBCardIds = Object.keys(expBCardIdsDict);
-    const expCCardIds = Object.keys(expCCardIdsDict);
+    const expBCardIds = expCardIds.filter(function(expCardId) { return expCardId.indexOf("B") === 0 });
+    const expCCardIds = expCardIds.filter(function(expCardId) { return expCardId.indexOf("C") === 0 });
     
     const expCards = [];
     const newBCards = [];
     
     expBCardIds.forEach(function(bCardId) {
         if (!bCardIdToBCard[bCardId]) {
-            setScriptError("Card ID " + bCardId + " missing." + JSON.stringify(bCardIdToBCard));
+            Spark.getLog().info("Card ID " + bCardId + " missing." + JSON.stringify(bCardIdToBCard));
+            return;
         }
         
         var bCard = bCardIdToBCard[bCardId];
@@ -156,13 +131,14 @@ function handleGrantExperience(
             bCard.exp = 0;
         }
         if (!bCard.expMax) {
-            bCard.expMax = 10; // TODO;
+            bCard.expMax = LEVEL_TO_EXP_MAX[1];
         }
         
         bCard.exp += 1;
         if (bCard.exp >= bCard.expMax) {
             bCard.level += 1;
             bCard.exp = 0;
+            bCard.expMax = LEVEL_TO_EXP_MAX[bCard.level];
         }
         
         expCard.level = bCard.level;
@@ -175,7 +151,8 @@ function handleGrantExperience(
     
     expCCardIds.forEach(function(cardId) {
         if (!newDecksData.cardByCardId[cardId]) {
-            setScriptError("Card ID " + cardId + " missing." + JSON.stringify(newDecksData));
+            Spark.getLog().info("Card ID " + cardId + " missing." + JSON.stringify(newDecksData));
+            return;
         }
         
         var cCard = newDecksData.cardByCardId[cardId];
@@ -190,13 +167,14 @@ function handleGrantExperience(
             cCard.exp = 0;
         }
         if (!cCard.expMax) {
-            cCard.expMax = 10; // TODO;
+            cCard.expMax = LEVEL_TO_EXP_MAX[1];
         }
         
         cCard.exp += 1;
         if (cCard.exp >= cCard.expMax) {
             cCard.level += 1;
             cCard.exp = 0;
+            cCard.expMax = LEVEL_TO_EXP_MAX[cCard.level];
         }
         
         expCard.level = cCard.level;

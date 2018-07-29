@@ -144,6 +144,9 @@ function getChallengeStateForPlayerWithPastMoves(playerId, challengeId) {
     }
 
     const challengeStateData = challenge.getPrivateData("data");
+    if (challengeStateData == null) {
+        setScriptError("Challenge state data does not exist for challenge: " + challengeId);
+    }
 
     const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
     
