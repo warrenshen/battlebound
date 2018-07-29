@@ -79,6 +79,12 @@ public class DeckStore
 
         foreach (string cardId in cardIds)
         {
+            if (!this.cardIdToCard.ContainsKey(cardId))
+            {
+                Debug.Log("cardIdToCard does not contain: " + cardId);
+                continue;
+            }
+
             deckCards.Add(this.cardIdToCard[cardId]);
         }
 
@@ -234,8 +240,9 @@ public class DeckStore
                     card = StructureCard.GetFromJson(cardData.JSON);
                     break;
                 default:
-                    Debug.LogError("Card has no category/type field!");
-                    return cards;
+                    Debug.LogError(cardData.JSON);
+                    Debug.LogError("Card category is invalid.");
+                    continue;
             }
 
             cards.Add(card);

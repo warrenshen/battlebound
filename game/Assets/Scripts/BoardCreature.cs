@@ -72,12 +72,12 @@ public class BoardCreature : Targetable
     private int spawnRank;
     public int SpawnRank => spawnRank;
 
-    public void Initialize(CreatureCard creatureCard, Player owner, int spawnRank)
+    public void Initialize(BattleCardObject battleCardObject, Player owner, int spawnRank)
     {
         this.owner = owner;
-        this.creatureCard = creatureCard;
+        this.creatureCard = battleCardObject.Card as CreatureCard;
 
-        this.cost = this.creatureCard.GetCost();
+        this.cost = battleCardObject.GetCost();
         this.attack = this.creatureCard.GetAttack();
         this.health = this.creatureCard.GetHealth();
         this.maxHealth = this.creatureCard.GetHealth();
@@ -528,36 +528,56 @@ public class BoardCreature : Targetable
     private void UpdateStatText()
     {
         if (this.visual == null)
+        {
             return;
+        }
 
         HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
         HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
 
         if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
+        {
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        }
         if (!attackText.Value.Equals(this.attack.ToString()))
+        {
             LeanTween.scale(attackText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        }
         if (!healthText.Value.Equals(this.health.ToString()))
+        {
             LeanTween.scale(healthText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        }
 
-        //this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
         this.visual.SetTextFieldWithKey("Title", this.name);
+        this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
         this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
         this.visual.SetTextFieldWithKey("Health", this.health.ToString());
 
         if (this.attack > creatureCard.GetAttack())
+        {
             attackText.TmpObject.color = BoardCreature.LIGHT_GREEN;
+        }
         else if (this.attack < creatureCard.GetAttack())
+        {
             attackText.TmpObject.color = BoardCreature.LIGHT_RED;
+        }
         else
+        {
             attackText.TmpObject.color = Color.white;
+        }
 
         if (this.health > creatureCard.GetHealth())
+        {
             healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
+        }
         else if (this.health < creatureCard.GetHealth())
+        {
             healthText.TmpObject.color = BoardCreature.LIGHT_RED;
+        }
         else
+        {
             attackText.TmpObject.color = Color.white;
+        }
     }
 
     private void RenderStatus()
@@ -748,7 +768,7 @@ public class BoardCreature : Targetable
         challengeCard.SetName(this.creatureCard.Name);
         //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
         challengeCard.SetLevel(this.creatureCard.Level);
-        challengeCard.SetCost(this.creatureCard.GetCost());
+        challengeCard.SetCost(this.cost);
         challengeCard.SetCostStart(this.creatureCard.GetCost());
         challengeCard.SetHealth(this.health);
         challengeCard.SetHealthStart(this.creatureCard.GetHealth());

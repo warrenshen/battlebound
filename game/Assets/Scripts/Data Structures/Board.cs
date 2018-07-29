@@ -100,7 +100,7 @@ public class Board : MonoBehaviour
 
         playingField.Place(boardCreature, index);
         boardCreature.Initialize(
-            battleCardObject.Card as CreatureCard,
+            battleCardObject,
             battleCardObject.Owner,
             spawnRank
         );
