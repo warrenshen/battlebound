@@ -545,46 +545,7 @@ public class EffectManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
-            ChallengeEndState challengeEndState = new ChallengeEndState(
-                playerId,
-                2,
-                3
-            );
-
-            List<ExperienceCard> experienceCards = new List<ExperienceCard>();
-
-            foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
-            {
-                if (
-                    challengeMove.PlayerId == BattleManager.Instance.You.Id &&
-                    challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
-                )
-                {
-                    ChallengeCard challengeCard = challengeMove.Attributes.Card;
-                    ExperienceCard experienceCard = new ExperienceCard(
-                        challengeCard.Id,
-                        challengeCard.Name,
-                        2,
-                        2,
-                        8,
-                        7,
-                        10
-                    );
-
-                    experienceCards.Add(experienceCard);
-                }
-            }
-
-            challengeEndState.SetExperienceCards(experienceCards);
-
-            if (BattleManager.Instance.You.Id == playerId)
-            {
-                BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
-            }
-            else
-            {
-                BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
-            }
+            BattleManager.Instance.MockChallengeEnd(playerId);
         }
     }
 

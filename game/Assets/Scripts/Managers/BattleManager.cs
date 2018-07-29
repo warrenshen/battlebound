@@ -438,6 +438,21 @@ public class BattleManager : MonoBehaviour
     {
         Debug.LogWarning("Surrender action pressed.");
         BattleSingleton.Instance.SendChallengeSurrenderRequest();
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(this.you.Id);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
+        challengeMove.SetRank(GetDeviceMoveRank());
+        AddDeviceMove(challengeMove);
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(this.you.Id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
+            challengeMove.SetRank(GetServerMoveRank());
+            ReceiveChallengeMove(challengeMove);
+        }
     }
 
     private List<Targetable> GetValidTargets(Targetable attacker)
@@ -1269,7 +1284,13 @@ public class BattleManager : MonoBehaviour
         EffectManager.Instance.OnSummonCreatureFinish();
     }
 
-
+    public void ReceiveMoveSurrenderByChoice(string playerId)
+    {
+        if (!FlagHelper.IsServerEnabled())
+        {
+            MockChallengeEnd(playerId);
+        }
+    }
     //{
     //    "id": "C14",
     //  "level": 0,
@@ -1292,8 +1313,6 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Log("Challenge won!");
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-        Debug.Log(JsonUtility.ToJson(experienceCards));
-
         ShowBattleEndFX(experienceCards, true);
     }
 
@@ -1301,8 +1320,6 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Log("Challenge lost...");
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-        Debug.Log(JsonUtility.ToJson(experienceCards));
-
         ShowBattleEndFX(experienceCards, false);
     }
 
@@ -1386,6 +1403,8 @@ public class BattleManager : MonoBehaviour
         ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
+        ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE,
+        ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE,
     };
 
     // Challenge moves to skip since device has already performed them.
@@ -1606,6 +1625,10 @@ public class BattleManager : MonoBehaviour
         {
             ReceiveMoveSummonCreatureNoCreature(serverMove.PlayerId);
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE)
+        {
+            ReceiveMoveSurrenderByChoice(serverMove.PlayerId);
+        }
 
         return serverMove.Rank;
     }
@@ -1715,5 +1738,49 @@ public class BattleManager : MonoBehaviour
     public void SetServerMoves(List<ChallengeMove> serverMoves)
     {
         this.serverMoves = serverMoves;
+    }
+
+    public void MockChallengeEnd(string loserId)
+    {
+        ChallengeEndState challengeEndState = new ChallengeEndState(
+            this.you.Id,
+            2,
+            3
+        );
+
+        List<ExperienceCard> experienceCards = new List<ExperienceCard>();
+
+        foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
+        {
+            if (
+                challengeMove.PlayerId == BattleManager.Instance.You.Id &&
+                challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
+            )
+            {
+                ChallengeCard challengeCard = challengeMove.Attributes.Card;
+                ExperienceCard experienceCard = new ExperienceCard(
+                    challengeCard.Id,
+                    challengeCard.Name,
+                    2,
+                    2,
+                    8,
+                    7,
+                    10
+                );
+
+                experienceCards.Add(experienceCard);
+            }
+        }
+
+        challengeEndState.SetExperienceCards(experienceCards);
+
+        if (BattleManager.Instance.You.Id == loserId)
+        {
+            BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
+        }
+        else
+        {
+            BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+        }
     }
 }
