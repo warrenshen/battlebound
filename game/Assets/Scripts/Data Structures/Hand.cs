@@ -174,7 +174,6 @@ public class Hand
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
 
             RedrawOutline(battleCardObject);
-            //to-do: do something with hypercard stencil here?
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.05f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
