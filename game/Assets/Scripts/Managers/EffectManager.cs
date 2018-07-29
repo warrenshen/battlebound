@@ -1895,24 +1895,27 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        foreach (string effectName in EFFECT_DAMAGE_TAKEN)
+        if (amount > 0)
         {
-            if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
+            foreach (string effectName in EFFECT_DAMAGE_TAKEN)
             {
-                effects.Add(
-                    new Effect(
-                        boardCreature.Owner.Id,
-                        effectName,
-                        boardCreature.GetCardId(),
-                        boardCreature.SpawnRank
-                    )
-                );
+                if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
+                {
+                    effects.Add(
+                        new Effect(
+                            boardCreature.Owner.Id,
+                            effectName,
+                            boardCreature.GetCardId(),
+                            boardCreature.SpawnRank
+                        )
+                    );
+                }
             }
-        }
 
-        if (boardCreature.Health <= 0)
-        {
-            effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
+            if (boardCreature.Health <= 0)
+            {
+                effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
+            }
         }
 
         return effects;

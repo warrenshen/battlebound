@@ -28,8 +28,13 @@ public class FXPoolManager : MonoBehaviour
     private string ResolveName(string initial)
     {
         if (shortToFull.ContainsKey(initial))
+        {
             return shortToFull[initial];
-        else return initial;
+        }
+        else
+        {
+            return initial;
+        }
     }
 
     public bool HasEffect(string effect)
