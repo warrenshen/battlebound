@@ -336,7 +336,7 @@ public class Player
         }
         else if (this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING)
         {
-            BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
+            BattleManager.Instance.SetBoardCenterText("Waiting on opponent mulligan..");
         }
         else
         {
@@ -407,7 +407,7 @@ public class Player
         }
 
         this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
-        BattleManager.Instance.SetBoardCenterText("Waiting on opponent to mulligan..");
+        BattleManager.Instance.SetBoardCenterText("Waiting on opponent mulligan..");
 
         // If not in connected mode, automatically perform mulligan for opponent.
         if (!DeveloperPanel.IsServerEnabled())

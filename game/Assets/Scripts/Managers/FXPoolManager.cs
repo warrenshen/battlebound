@@ -67,6 +67,19 @@ public class FXPoolManager : MonoBehaviour
         }
     }
 
+    private Transform GetEffectHead(string effect)
+    {
+        effect = ResolveName(effect);
+        Transform pool = GetEffectPool(effect);
+        if (pool == null)
+        {
+            Debug.LogError(string.Format("Effect {0} not found!", effect));
+        }
+
+        Transform chosen = pool.GetChild(0);
+        return chosen;
+    }
+
     public GameObject PlayEffect(string effect, Vector3 pos)
     {
         Transform chosen = GetEffect(effect);
@@ -92,7 +105,7 @@ public class FXPoolManager : MonoBehaviour
 
     public Transform AssignEffect(string effect, Transform parent)
     {
-        Transform chosen = GetEffect(effect);
+        Transform chosen = GetEffectHead(effect);
         chosen.parent = parent;
         chosen.localPosition = Vector3.zero;
         chosen.gameObject.SetActive(true);
