@@ -543,7 +543,7 @@ public class EffectManager : MonoBehaviour
         PlayerAvatar playerAvatar = player.Avatar;
         playerAvatar.Die();
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             ChallengeEndState challengeEndState = new ChallengeEndState(
                 playerId,
