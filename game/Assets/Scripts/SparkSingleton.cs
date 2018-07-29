@@ -29,10 +29,11 @@ public class SparkSingleton : Singleton<SparkSingleton>
             return;
         }
 
-        Login(username, password);
+        //Login(username, password);
 
         ClearAuthenticatedCallbacks();
         this.isAuthenticated = false;
+
         GS.Instance.GameSparksAvailable = OnGameSparksAvailable;
         GS.Instance.GameSparksAuthenticated = OnGameSparksAuthenticated;
     }
@@ -41,10 +42,15 @@ public class SparkSingleton : Singleton<SparkSingleton>
     {
         if (available)
         {
-            if (!GS.Instance.Authenticated)
-            {
-                Login(this.username, this.password);
-            }
+            this.playerId = null;
+            this.address = null;
+            this.balance = 0;
+            this.level = 0;
+
+            //if (!GS.Instance.Authenticated)
+            //{
+            //    Login(this.username, this.password);
+            //}
         }
         else
         {
@@ -62,6 +68,11 @@ public class SparkSingleton : Singleton<SparkSingleton>
         {
             Debug.LogWarning("Not authenticated...");
         }
+    }
+
+    public string GetPlayerId()
+    {
+        return this.playerId;
     }
 
     public void AddAuthenticatedCallback(UnityAction callback)
@@ -108,7 +119,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.isAuthenticated = true;
         foreach (UnityAction callback in this.authenticatedCallbacks)
         {
-            Debug.Log("callback");
             callback();
         }
     }
@@ -124,19 +134,36 @@ public class SparkSingleton : Singleton<SparkSingleton>
         AuthenticationRequest request = new AuthenticationRequest();
         request.SetUserName(name);
         request.SetPassword(password);
-        request.Send(OnLoginSuccess, OnLoginError);
+        request.Send(
+            LoginRegisterPanel.Instance.OnLoginSuccess,
+            LoginRegisterPanel.Instance.OnLoginError
+        );
     }
 
-    private void OnLoginSuccess(AuthenticationResponse response)
-    {
-        //LoadingManager.Instance.LoadNextScene();
-        Debug.Log("Logged in.");
-    }
+    //private void OnLoginSuccess(AuthenticationResponse response)
+    //{
+    //    //LoadingManager.Instance.LoadNextScene();
+    //    Debug.Log("Logged in.");
 
-    private void OnLoginError(AuthenticationResponse response)
+    //}
+
+    //private void OnLoginError(AuthenticationResponse response)
+    //{
+    //    Debug.Log("OnLoginError");
+    //    Debug.Log(response.Errors.ToString());
+    //}
+
+    public void Logout()
     {
-        Debug.Log("OnLoginError");
-        Debug.Log(response.Errors.ToString());
+        ClearAuthenticatedCallbacks();
+
+        this.playerId = null;
+        this.address = null;
+        this.balance = 0;
+        this.level = 0;
+
+        GS.GSPlatform.AuthToken = null;
+        GS.Reset();
     }
 
     private void Register(string username, string password)

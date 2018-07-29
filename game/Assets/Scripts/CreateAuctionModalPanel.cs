@@ -28,8 +28,8 @@ public class CreateAuctionModalPanel : MonoBehaviour
     {
         Instance = this;
 
-        cancelButton.onClick.AddListener(Close);
-        submitButton.onClick.AddListener(AuthorizeBidAuction);
+        this.cancelButton.onClick.AddListener(Close);
+        this.submitButton.onClick.AddListener(AuthorizeBidAuction);
 
         Close();
     }

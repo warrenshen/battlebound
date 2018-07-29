@@ -1505,7 +1505,7 @@ public class EffectManager : MonoBehaviour
                     .setEaseInOutCirc()
                     .setOnComplete(() =>
                     {
-                        int damageDone = defendingAvatar.TakeDamage(20);
+                        int damageDone = defendingAvatar.TakeDamage(10);
                         effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
                         bombObject.SetActive(false);
