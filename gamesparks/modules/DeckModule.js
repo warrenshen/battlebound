@@ -4,7 +4,7 @@
 //
 // ====================================================================================================
 require("OnChainModule");
-// require("ChallengeCardModule");
+require("ChallengeCardModule");
  
 const DEFAULT_CARD_FIELDS = [
     "id",
@@ -43,6 +43,7 @@ function getInstancesByCards(cards, cardFields) {
     
     const templateFieldToInstanceField = {
         category: "category",
+        color: "color",
         attack: "attack",
         health: "health",
         cost: "cost",
@@ -371,8 +372,9 @@ function getActiveDeckByPlayerId(playerId) {
         if (instance.abilities == null) {
             instance.abilities = [];
         }
-        
         instance.abilitiesStart = instance.abilities;
+        
+        instance.handBuffs = [];
     });
     
     return instances;

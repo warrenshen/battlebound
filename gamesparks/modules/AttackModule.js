@@ -186,6 +186,7 @@ function drawCardMulliganForPlayer(playerId, playerState) {
         playerState.deckSize = newDeck.length;
         
         playerState.hand.push(drawnCard);
+        _updateHandCardCosts(playerState);
         
         return {
             playerId: playerId,
@@ -240,7 +241,8 @@ function addCardToPlayerHand(playerId, playerState, card) {
         };
     } else {
         playerState.hand.push(card);
-            
+        _updateHandCardCosts(playerState);
+        
         return {
             playerId: playerId,
             category: MOVE_CATEGORY_DRAW_CARD,
@@ -258,6 +260,65 @@ function addCardToPlayerHand(playerId, playerState, card) {
 function addCardToPlayerDeck(playerId, playerState, card) {
     playerState.deck.push(card);
     playerState.deckSize = playerState.deck.length;
+}
+
+
+function removeCardFromHandByIndex(playerState, handIndex) {
+    const hand = playerState.hand;
+    const newHand = hand.slice(0, handIndex).concat(hand.slice(handIndex + 1));
+    playerState.hand = newHand;
+    _updateHandCardCosts(playerState);
+}
+
+const HAND_CARD_DECREASE_COST_BY_COLOR = 0;
+
+function _updateHandCardCosts(playerState) {
+    const colorToCount = {};
+    const hand = playerState.hand;
+    
+    hand.forEach(function(card) {
+        const color = card.color;
+        if (color <= 0) {
+            return;
+        }
+        
+        if (colorToCount[color] != null) {
+            colorToCount[color] += 1;
+        } else {
+            colorToCount[color] = 1;
+        }
+    });
+    
+    hand.forEach(function(card) {
+        const color = card.color;
+        if (color <= 0) {
+            return;
+        }
+        
+        if (colorToCount[color] >= 3) {
+            if (card.handBuffs == null) {
+                card.handBuffs = [];
+            }
+            if (card.handBuffs.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) < 0) {
+                card.handBuffs.push(HAND_CARD_DECREASE_COST_BY_COLOR);
+            }
+        } else {
+            if (card.handBuffs != null && card.handBuffs.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
+                card.handBuffs = card.handBuffs.filter(function(handBuff) {
+                    return handBuff != HAND_CARD_DECREASE_COST_BY_COLOR;
+                });
+            }
+        }
+    });
+    
+    hand.forEach(function(card) {
+        var baseCost = card.costStart;
+        if (card.handBuffs != null && card.handBuffs.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
+            baseCost -= 10;
+        }
+        
+        card.cost = baseCost;
+    });
 }
 
 function addChallengeMove(challengeStateData, move) {

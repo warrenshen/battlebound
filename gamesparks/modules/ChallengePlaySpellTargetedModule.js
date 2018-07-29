@@ -71,6 +71,5 @@ function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attribute
     // opponentState.field = filterDeadResponse[1];
     
     // Remove played card from hand.
-    const newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
-    playerState.hand = newHand;
+    removeCardFromHandByIndex(playerState, handIndex);
 }

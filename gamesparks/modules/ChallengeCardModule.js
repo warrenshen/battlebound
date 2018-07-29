@@ -5,6 +5,13 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+const CARD_COLOR_NEUTRAL = 0;
+const CARD_COLOR_FIRE = 1;
+const CARD_COLOR_EARTH = 2;
+const CARD_COLOR_WATER = 3;
+const CARD_COLOR_DARK = 4;
+const CARD_COLOR_LIGHT = 5;
+
 const CARD_NAME_FIREBUG_CATELYN = "Firebug Catelyn";
 const CARD_NAME_MARSHWATER_SQUEALER = "Marshwater Squealer";
 const CARD_NAME_WATERBORNE_RAZORBACK = "Waterborne Razorback";

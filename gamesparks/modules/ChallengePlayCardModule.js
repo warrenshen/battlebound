@@ -91,8 +91,7 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     addChallengeMove(challengeStateData, move);
     
     // Remove played card from hand.
-    const newHand = playerHand.slice(0, handIndex).concat(playerHand.slice(handIndex + 1));
-    playerState.hand = newHand;
+    removeCardFromHandByIndex(playerState, handIndex);
     
     // Play card onto field.
     playerField[fieldIndex] = playedCard;
