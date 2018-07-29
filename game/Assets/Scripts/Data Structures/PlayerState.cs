@@ -34,6 +34,10 @@ public class PlayerState
     public int Armor => armor;
 
     [SerializeField]
+    private int cardCount;
+    public int CardCount => cardCount;
+
+    [SerializeField]
     private List<ChallengeCard> hand;
     public List<ChallengeCard> Hand => hand;
 
@@ -86,6 +90,11 @@ public class PlayerState
     public void SetArmor(int armor)
     {
         this.armor = armor;
+    }
+
+    public void SetCardCount(int cardCount)
+    {
+        this.cardCount = cardCount;
     }
 
     public void SetHand(List<ChallengeCard> hand)
@@ -151,9 +160,13 @@ public class PlayerState
         {
             return string.Format("Armor: {0} vs {1}", this.armor, other.Armor);
         }
+        else if (this.cardCount != other.CardCount)
+        {
+            return string.Format("CardCount: {0} vs {1}", this.cardCount, other.CardCount);
+        }
         else if (this.deckSize != other.DeckSize)
         {
-            return string.Format("Deck size: {0} vs {1}", this.deckSize, other.DeckSize);
+            return string.Format("DeckSize: {0} vs {1}", this.deckSize, other.DeckSize);
         }
         else if (this.mode != other.Mode)
         {
@@ -162,7 +175,7 @@ public class PlayerState
 
         if (this.hand.Count != other.Hand.Count)
         {
-            return string.Format("Hand size: {0} vs {1}", this.hand.Count, other.Hand.Count);
+            return string.Format("HandSize: {0} vs {1}", this.hand.Count, other.Hand.Count);
         }
         else
         {
