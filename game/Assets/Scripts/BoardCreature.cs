@@ -760,6 +760,7 @@ public class BoardCreature : Targetable
         challengeCard.SetIsSilenced(this.isSilenced ? 1 : 0);
         challengeCard.SetSpawnRank(this.spawnRank);
         challengeCard.SetAbilities(this.abilities);
+        challengeCard.SetAbilitiesStart(this.creatureCard.GetAbilities());
 
         return challengeCard;
     }

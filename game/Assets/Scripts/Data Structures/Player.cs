@@ -101,6 +101,7 @@ public class Player
     {
         List<Card> handCards = playerState.GetCardsHand();
         this.hand = new Hand(this);
+        AddCardsOnResume(handCards);
     }
 
     public void SetMode(int mode)
@@ -580,6 +581,31 @@ public class Player
         );
 
         return battleCardObject;
+    }
+
+    public BattleCardObject AddCardOnResume(Card card)
+    {
+        GameObject created = new GameObject(card.Name);
+        BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
+        createdBattleCard.Initialize(this, card);
+
+        created.transform.parent = GameObject.Find(
+            this.name + " Hand"
+        ).transform;
+
+        this.hand.AddCardObject(createdBattleCard);
+
+        return createdBattleCard;
+    }
+
+    private void AddCardsOnResume(List<Card> cards)
+    {
+        foreach (Card card in cards)
+        {
+            AddCardOnResume(card);
+        }
+
+        this.hand.RepositionCards();
     }
 
     public void ReturnCardToDeck(Card card)

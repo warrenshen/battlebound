@@ -73,6 +73,9 @@ public class ChallengeCard
     private List<string> abilities;
 
     [SerializeField]
+    private List<string> abilitiesStart;
+
+    [SerializeField]
     private int spawnRank;
     public int SpawnRank => spawnRank;
 
@@ -166,6 +169,11 @@ public class ChallengeCard
         this.abilities = abilities;
     }
 
+    public void SetAbilitiesStart(List<string> abilitiesStart)
+    {
+        this.abilitiesStart = abilitiesStart;
+    }
+
     public void SetSpawnRank(int spawnRank)
     {
         this.spawnRank = spawnRank;
@@ -255,7 +263,13 @@ public class ChallengeCard
         string abilitiesDiff = GetAbilitiesDiff(this.abilities, other.abilities);
         if (abilitiesDiff != null)
         {
-            return string.Format("{0} [{1}]", abilitiesDiff, this.id);
+            return string.Format("Abilities: {0} [{1}]", abilitiesDiff, this.id);
+        }
+
+        string abilitiesStartDiff = GetAbilitiesDiff(this.abilitiesStart, other.abilitiesStart);
+        if (abilitiesStartDiff != null)
+        {
+            return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, this.id);
         }
 
         return null;

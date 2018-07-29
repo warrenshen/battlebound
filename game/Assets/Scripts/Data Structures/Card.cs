@@ -494,14 +494,15 @@ public class CreatureCard : Card
         challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
-        challengeCard.SetCost(this.GetCost());
-        challengeCard.SetCostStart(this.GetCost());
-        challengeCard.SetHealth(this.GetHealth());
-        challengeCard.SetHealthStart(this.GetHealth());
-        challengeCard.SetHealthMax(this.GetHealth());
-        challengeCard.SetAttack(this.GetAttack());
-        challengeCard.SetAttackStart(this.GetAttack());
-        challengeCard.SetAbilities(this.GetAbilities());
+        challengeCard.SetCost(GetCost());
+        challengeCard.SetCostStart(GetCost());
+        challengeCard.SetHealth(GetHealth());
+        challengeCard.SetHealthStart(GetHealth());
+        challengeCard.SetHealthMax(GetHealth());
+        challengeCard.SetAttack(GetAttack());
+        challengeCard.SetAttackStart(GetAttack());
+        challengeCard.SetAbilities(GetAbilities());
+        challengeCard.SetAbilitiesStart(GetAbilities());
 
         return challengeCard;
     }

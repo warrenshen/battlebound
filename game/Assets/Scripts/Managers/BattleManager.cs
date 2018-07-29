@@ -1381,7 +1381,11 @@ public class BattleManager : MonoBehaviour
         ChallengeMove serverMove = this.serverMoveQueue[0];
 
         if (
-            (serverMove.PlayerId == this.opponent.Id || serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN || serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN) &&
+            (
+                serverMove.PlayerId == this.opponent.Id ||
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN ||
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN
+            ) &&
             OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
         )
         {
