@@ -30,7 +30,7 @@ public class CardTemplate
 
     public static Color COLOR_FIRE = new Color(1, 0.72f, 0.74f);
     public static Color COLOR_EARTH = new Color(0.72f, 1, 0.72f);
-    public static Color COLOR_WATER = new Color(0.66f, 0.95f, 1);
+    public static Color COLOR_WATER = new Color(0.66f, 0.90f, 1);
     public static Color COLOR_DARK = new Color(0.88f, 0.66f, 1);
     public static Color COLOR_LIGHT = new Color(0.95f, 1, 0.66f);
 

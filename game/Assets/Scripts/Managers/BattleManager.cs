@@ -688,6 +688,7 @@ public class BattleManager : MonoBehaviour
     {
         string targetPointName = String.Format("{0} Mulligan Holder {1}", player.Name, position);
         GameObject targetPoint = GameObject.Find(targetPointName);  //to-do cache this?
+        battleCardObject.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
         battleCardObject.transform.position = targetPoint.transform.position;
         battleCardObject.transform.localScale = Vector3.zero;
 
@@ -786,7 +787,7 @@ public class BattleManager : MonoBehaviour
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
             moveAttributes.SetFieldIndex(index);
             challengeMove.SetMoveAttributes(moveAttributes);
 
@@ -818,7 +819,7 @@ public class BattleManager : MonoBehaviour
 
                 ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
                 moveAttributes.SetCardId(battleCardObject.Card.Id);
-                moveAttributes.SetCard(battleCardObject.GetChallengeCard());
+                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
                 moveAttributes.SetFieldIndex(index);
                 challengeMove.SetMoveAttributes(moveAttributes);
 
@@ -869,7 +870,7 @@ public class BattleManager : MonoBehaviour
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
             moveAttributes.SetFieldId(targetedCreature.Owner.Id);
             moveAttributes.SetTargetId(targetedCreature.GetCardId());
             challengeMove.SetMoveAttributes(moveAttributes);
@@ -939,7 +940,7 @@ public class BattleManager : MonoBehaviour
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
             challengeMove.SetMoveAttributes(moveAttributes);
 
             ReceiveChallengeMove(challengeMove);
@@ -1214,7 +1215,6 @@ public class BattleManager : MonoBehaviour
             );
 
             GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-            player.GetNewCardRank();
             EffectManager.Instance.OnSummonCreatureFinish();
         }
         else
@@ -1229,10 +1229,8 @@ public class BattleManager : MonoBehaviour
         string fieldId
     )
     {
-        Player player = GetPlayerById(playerId);
         // TODO
         GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-        player.GetNewCardRank();
         EffectManager.Instance.OnSummonCreatureFinish();
     }
 
@@ -1381,11 +1379,7 @@ public class BattleManager : MonoBehaviour
         ChallengeMove serverMove = this.serverMoveQueue[0];
 
         if (
-            (
-                serverMove.PlayerId == this.opponent.Id ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN
-            ) &&
+            (serverMove.PlayerId == this.opponent.Id || serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN || serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN) &&
             OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
         )
         {

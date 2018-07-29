@@ -12,11 +12,14 @@ public class Hand
     private string playerId;
     private string name;
 
+    int cardLayer;
+
     public Hand(Player player)
     {
         this.battleCardObjects = new List<BattleCardObject>();
         this.playerId = player.Id;
         this.name = player.Name;
+        this.cardLayer = LayerMask.NameToLayer("Card");
     }
 
     public int Size()
@@ -138,6 +141,10 @@ public class Hand
         HashSet<string> cardIdSet = new HashSet<string>();
         foreach (BattleCardObject battleCardObject in this.battleCardObjects)
         {
+            //set to card layer if needed
+            if (battleCardObject.gameObject.layer != cardLayer)
+                battleCardObject.gameObject.SetLayer(cardLayer);
+
             if (battleCardObject.Card.Id != "HIDDEN" && cardIdSet.Contains(battleCardObject.Card.Id))
             {
                 Debug.LogError("Duplicate card IDs in hand!");

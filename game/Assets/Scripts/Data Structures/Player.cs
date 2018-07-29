@@ -736,7 +736,7 @@ public class Player
         cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_GREEDY_FINGERS, 1));
         cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
         cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_MUDSLINGING, 1));
-        cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_DEATH_NOTICE, 1));
+        cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_DEATH_NOTE, 1));
         cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_SPRAY_N_PRAY, 1));
         cards.Add(new SpellCard(this.name + GetNewCardRank(), Card.CARD_NAME_GRAVE_DIGGING, 1));
 

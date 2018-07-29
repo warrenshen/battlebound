@@ -59,7 +59,7 @@ public abstract class Card
     public const string CARD_NAME_UNSTABLE_POWER = "Unstable Power";
     public const string CARD_NAME_DEEP_FREEZE = "Deep Freeze";
     public const string CARD_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
-    public const string CARD_NAME_DEATH_NOTICE = "Death Notice";
+    public const string CARD_NAME_DEATH_NOTE = "Death Note";
 
     // Spells untargeted.
     public const string CARD_NAME_RIOT_UP = "Riot Up";
@@ -126,7 +126,7 @@ public abstract class Card
         CARD_NAME_UNSTABLE_POWER,
         CARD_NAME_DEEP_FREEZE,
         CARD_NAME_WIDESPREAD_FROSTBITE,
-        CARD_NAME_DEATH_NOTICE,
+        CARD_NAME_DEATH_NOTE,
 
         CARD_NAME_RIOT_UP,
         CARD_NAME_BRR_BRR_BLIZZARD,
@@ -618,7 +618,7 @@ public class SpellCard : Card
         CARD_NAME_UNSTABLE_POWER,
         CARD_NAME_DEEP_FREEZE,
         CARD_NAME_WIDESPREAD_FROSTBITE,
-        CARD_NAME_DEATH_NOTICE,
+        CARD_NAME_DEATH_NOTE,
     };
 
     public static readonly List<string> UNTARGETED_CARD_NAMES = new List<string>

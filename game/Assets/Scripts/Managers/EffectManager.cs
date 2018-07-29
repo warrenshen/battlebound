@@ -1547,7 +1547,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_NAME_WIDESPREAD_FROSTBITE:
                 effects = SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
                 break;
-            case Card.CARD_NAME_DEATH_NOTICE:
+            case Card.CARD_NAME_DEATH_NOTE:
                 effects = SpellTargetedDeathNotice(playerId, targetedCreature);
                 break;
             default:
