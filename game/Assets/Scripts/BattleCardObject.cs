@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [System.Serializable]
 public class BattleCardObject : CardObject
 {
+    public static Vector3 CARD_VISUAL_SIZE = new Vector3(3.55f, 3, 3);
     public const string HAND_CARD_DECREASE_COST_BY_COLOR = "HAND_CARD_DECREASE_COST_BY_COLOR";
 
     [SerializeField]
@@ -73,7 +74,10 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             SetVisualResetValues();
-            this.visual.transform.localScale = 1.33F * this.visual.reset.scale;
+            if (this.visual.transform.localScale.x < 4 && !LeanTween.isTweening(this.visual.gameObject))
+            {
+                LeanTween.scale(this.visual.gameObject, this.visual.transform.localScale * 1.1f, 0.05f);
+            }
             return;
         }
 
@@ -99,6 +103,7 @@ public class BattleCardObject : CardObject
 
         this.visual.transform.Translate(Vector3.up * 3.5f, Space.Self);
         this.visual.transform.Translate(Vector3.forward * 1, Space.Self);
+        this.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
     }
 
     public override void ExitHover()
@@ -106,7 +111,9 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             BattleManager.Instance.SetPassiveCursor();
-            this.visual.transform.localScale = this.visual.reset.scale;
+            //this.visual.transform.localScale = this.visual.reset.scale;
+            LeanTween.cancel(this.visual.gameObject);
+            LeanTween.scale(this.visual.gameObject, CARD_VISUAL_SIZE, 0.05f);
             return;
         }
 
@@ -117,6 +124,7 @@ public class BattleCardObject : CardObject
 
         this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
+        this.gameObject.SetLayer(LayerMask.NameToLayer("Card"));
     }
 
     public override void MouseDown()

@@ -72,6 +72,10 @@ public class BoardCreature : Targetable
     private int spawnRank;
     public int SpawnRank => spawnRank;
 
+    private Color initialOutlineStartColor;
+    private Color initialOutlineEndColor;
+
+
     public void Initialize(BattleCardObject battleCardObject, Player owner, int spawnRank)
     {
         this.owner = owner;
@@ -168,6 +172,9 @@ public class BoardCreature : Targetable
         this.visual.transform.localRotation = Quaternion.identity;
         this.visual.transform.Rotate(0, 180, 0, Space.Self);
         this.visual.transform.localScale = BOARD_CARD_SIZE;
+
+        this.initialOutlineStartColor = this.visual.OutlineColor;
+        this.initialOutlineEndColor = this.visual.OutlineEndColor;
 
         this.visual.SetOpacity(0.8f);
         this.visual.SetBlackAndWhite(true);
@@ -266,7 +273,7 @@ public class BoardCreature : Targetable
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
         Vector3 originalPosition = this.summonAnimation.transform.position;
 
-        LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.25f, 3f).setEasePunch();
+        LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.2f, 2f).setEasePunch();
         LeanTween
             .move(this.summoned, this.transform.position - delta, 0.3F)
             .setEaseOutCubic()
@@ -681,6 +688,7 @@ public class BoardCreature : Targetable
     private void RaiseCardVisual()
     {
         this.raisedCard = true;
+        this.visual.SetOpacity(1);
 
         LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 7 + Vector3.down, 0.01f)
                  .setDelay(ActionManager.TWEEN_DURATION)
@@ -699,6 +707,7 @@ public class BoardCreature : Targetable
     {
         ActionManager.Instance.SetCursor(0);
         this.raisedCard = false;
+        this.visual.SetOpacity(0.8f);
 
         LeanTween.cancel(this.visual.gameObject);
         this.visual.transform.localPosition = Vector3.zero;
@@ -710,6 +719,7 @@ public class BoardCreature : Targetable
     //begin mouse interactions for showing card when hovering
     public override void EnterHover()
     {
+        this.visual.SetOutlineColors(Color.white, this.initialOutlineEndColor);
         if (!this.raisedCard)
         {
             RaiseCardVisual();
@@ -726,6 +736,7 @@ public class BoardCreature : Targetable
 
     public override void ExitHover()
     {
+        this.visual.SetOutlineColors(this.initialOutlineStartColor, this.initialOutlineEndColor);
         if (this.raisedCard)
         {
             LowerCardVisual();

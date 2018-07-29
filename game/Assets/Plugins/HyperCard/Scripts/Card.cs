@@ -867,6 +867,12 @@ namespace HyperCard
             this.Redraw();  //to-do: should REALLY optimize this later, imp!
         }
 
+        public void SetOutlineColors(Color start, Color end)
+        {
+            this.OutlineColor = start;
+            this.OutlineEndColor = end;
+        }
+
         public void SetBlackAndWhite(bool value)
         {
             this.BlackAndWhite = value;
