@@ -19,7 +19,7 @@ public class InspectorControlPanel : MonoBehaviour
     {
         Instance = this;
 
-        this.developmentModeText.text = DeveloperPanel.IsServerEnabled() ? "C" : "D";
+        this.developmentModeText.text = FlagHelper.IsServerEnabled() ? "C" : "D";
         this.toggleInspectorButton.onClick.AddListener(OnToggleInspectorButtonClick);
     }
 

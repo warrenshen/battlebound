@@ -186,7 +186,7 @@ public class Hand
         Player player = BattleManager.Instance.GetPlayerById(this.playerId);
 
         bool shouldSetOutline = player.HasTurn && player.Mana >= battleCardObject.GetCost();
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             shouldSetOutline = shouldSetOutline && player.Id == BattleManager.Instance.You.Id;
         }

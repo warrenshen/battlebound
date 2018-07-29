@@ -324,7 +324,7 @@ public class Player
      */
     public void ResumeMulligan(List<Card> mulliganCards)
     {
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             Debug.LogError("Resume mulligan called when not in connected mode.");
             return;
@@ -388,7 +388,7 @@ public class Player
             cardIds.Add(keptCard.Id);
         }
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
         }
@@ -410,7 +410,7 @@ public class Player
         BattleManager.Instance.SetBoardCenterText("Waiting on opponent mulligan..");
 
         // If not in connected mode, automatically perform mulligan for opponent.
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             string opponentId = Board.Instance.GetOpponentIdByPlayerId(this.id);
 
@@ -495,7 +495,7 @@ public class Player
         this.hand.RemoveByCardId(card.Id);
         ReturnCardToDeck(card);
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             DrawCardMock(true);
         }
@@ -508,7 +508,7 @@ public class Player
         this.hand.RemoveByIndex(index);
         ReturnCardToDeck(card);
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             DrawCardMock(true);
         }
@@ -610,7 +610,7 @@ public class Player
 
     public void ReturnCardToDeck(Card card)
     {
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             this.deck.AddCard(card);
         }

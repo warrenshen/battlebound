@@ -22,9 +22,9 @@ public class DeveloperPanel : EditorWindow
         DeveloperPanel window = EditorWindow.GetWindow(typeof(DeveloperPanel)) as DeveloperPanel;
         window.minSize = new Vector2(100, 100);
         window.flagsFoldout = true;
-        window.useServer = DeveloperPanel.GetFlag(FLAG_USE_SERVER);
-        window.logVerbose = DeveloperPanel.GetFlag(FLAG_LOG_VERBOSE);
-        window.skipMulligan = DeveloperPanel.GetFlag(FLAG_SKIP_MULLIGAN);
+        window.useServer = FlagHelper.GetFlag(FLAG_USE_SERVER);
+        window.logVerbose = FlagHelper.GetFlag(FLAG_LOG_VERBOSE);
+        window.skipMulligan = FlagHelper.GetFlag(FLAG_SKIP_MULLIGAN);
         window.Show();
     }
 
@@ -60,26 +60,5 @@ public class DeveloperPanel : EditorWindow
 
         //done getting values, now save
         PlayerPrefs.Save();
-    }
-
-    public static bool GetFlag(string flag)
-    {
-        int value = PlayerPrefs.GetInt(flag);
-        return value == 1;
-    }
-
-    public static bool IsServerEnabled()
-    {
-        return GetFlag(FLAG_USE_SERVER);
-    }
-
-    public static bool IsLogVerbose()
-    {
-        return GetFlag(FLAG_LOG_VERBOSE);
-    }
-
-    public static bool ShouldSkipMulligan()
-    {
-        return GetFlag(FLAG_SKIP_MULLIGAN);
     }
 }

@@ -417,7 +417,7 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = true;
         StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
 
@@ -609,7 +609,7 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = true;
         StartCoroutine("WaitForDrawCard", new object[1] { rank });
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             player.DrawCardsMock(1);
         }
@@ -790,7 +790,7 @@ public class EffectManager : MonoBehaviour
 
         StartCoroutine("WaitForDrawCard", new object[1] { rank });
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             boardCreature.Owner.DrawCardsMock(1);
         }
@@ -998,7 +998,7 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = true;
         StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             int highestCost = -1;
             ChallengeCard reviveCard = null;
@@ -1824,7 +1824,7 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = true;
         StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
 
-        if (!DeveloperPanel.IsServerEnabled())
+        if (!FlagHelper.IsServerEnabled())
         {
             if (sortedDeadCards.Count <= 0)
             {

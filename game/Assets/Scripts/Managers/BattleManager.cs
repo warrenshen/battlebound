@@ -83,7 +83,7 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             if (!BattleSingleton.Instance.ChallengeStarted)
             {
@@ -140,7 +140,7 @@ public class BattleManager : MonoBehaviour
 
         ChooseRandomSetting();
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             if (this.initialized)
             {
@@ -190,7 +190,7 @@ public class BattleManager : MonoBehaviour
 
     private void GameStart()
     {
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             this.turnIndex = this.players.FindIndex(player => player.HasTurn);
             this.activePlayer = this.players[turnIndex % players.Count];
@@ -203,7 +203,7 @@ public class BattleManager : MonoBehaviour
 
         Player inactivePlayer = Board.Instance.GetOpponentByPlayerId(this.activePlayer.Id);
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             if (this.you.IsModeMulligan())
             {
@@ -231,7 +231,7 @@ public class BattleManager : MonoBehaviour
         {
             this.mode = BATTLE_STATE_MULLIGAN_MODE;
 
-            if (DeveloperPanel.ShouldSkipMulligan())
+            if (FlagHelper.ShouldSkipMulligan())
             {
                 HideMulliganOverlay(this.you);
                 HideMulliganOverlay(this.opponent);
@@ -288,7 +288,7 @@ public class BattleManager : MonoBehaviour
             //Trigger any events as needed
             mouseDownTargetable.MouseDown();
 
-            if (DeveloperPanel.IsServerEnabled() && mouseDownTargetable.Owner.Id != this.you.Id)
+            if (FlagHelper.IsServerEnabled() && mouseDownTargetable.Owner.Id != this.you.Id)
             {
                 return;
             }
@@ -379,7 +379,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             if (this.activePlayer.Id == this.you.Id)
             {
@@ -514,7 +514,7 @@ public class BattleManager : MonoBehaviour
                 AddDeviceMove(challengeMove);
             }
 
-            if (DeveloperPanel.IsServerEnabled())
+            if (FlagHelper.IsServerEnabled())
             {
                 CardAttackAttributes attributes = new CardAttackAttributes(
                     defendingTargetable.GetPlayerId(),
@@ -805,7 +805,7 @@ public class BattleManager : MonoBehaviour
             challengeMove.SetRank(GetDeviceMoveRank());
             AddDeviceMove(challengeMove);
 
-            if (DeveloperPanel.IsServerEnabled())
+            if (FlagHelper.IsServerEnabled())
             {
                 PlayCardAttributes attributes = new PlayCardAttributes(index);
                 BattleSingleton.Instance.SendChallengePlayCardRequest(
@@ -889,7 +889,7 @@ public class BattleManager : MonoBehaviour
             challengeMove.SetRank(GetDeviceMoveRank());
             AddDeviceMove(challengeMove);
 
-            if (DeveloperPanel.IsServerEnabled())
+            if (FlagHelper.IsServerEnabled())
             {
                 PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
                     targetedCreature.Owner.Id,
@@ -957,7 +957,7 @@ public class BattleManager : MonoBehaviour
             challengeMove.SetRank(GetDeviceMoveRank());
             AddDeviceMove(challengeMove);
 
-            if (DeveloperPanel.IsServerEnabled())
+            if (FlagHelper.IsServerEnabled())
             {
                 BattleSingleton.Instance.SendChallengePlaySpellUntargetedRequest(
                     battleCardObject.Card.Id
@@ -1062,7 +1062,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(handIndex);
             battleCardObject.Reinitialize(card);
@@ -1099,7 +1099,7 @@ public class BattleManager : MonoBehaviour
 
         BoardCreature targetedCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
@@ -1135,7 +1135,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
@@ -1352,7 +1352,7 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveChallengeMove(ChallengeMove challengeMove)
     {
-        if (DeveloperPanel.IsLogVerbose())
+        if (FlagHelper.IsLogVerbose())
         {
             Debug.Log("Server move queue: " + challengeMove.Rank);
             Debug.Log(JsonUtility.ToJson(challengeMove));
@@ -1362,7 +1362,7 @@ public class BattleManager : MonoBehaviour
 
     public void AddDeviceMove(ChallengeMove challengeMove)
     {
-        if (DeveloperPanel.IsLogVerbose())
+        if (FlagHelper.IsLogVerbose())
         {
             Debug.Log("Device move queue: " + challengeMove.Rank);
             Debug.Log(JsonUtility.ToJson(challengeMove));
@@ -1666,7 +1666,7 @@ public class BattleManager : MonoBehaviour
         PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
         PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
 
-        if (DeveloperPanel.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
         {
             BattleSingleton.Instance.ComparePlayerStates(
                 devicePlayerState,

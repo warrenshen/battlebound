@@ -63,7 +63,7 @@ public class BattleCardObject : CardObject
 
     private void StartFlippedIfNeeded()
     {
-        if (DeveloperPanel.IsServerEnabled() && this.owner.Id == BattleManager.Instance.Opponent.Id)
+        if (FlagHelper.IsServerEnabled() && this.owner.Id == BattleManager.Instance.Opponent.Id)
         {
             this.visual.transform.Rotate(0, 180, 0, Space.Self);
         }
@@ -81,7 +81,7 @@ public class BattleCardObject : CardObject
             return;
         }
 
-        if (DeveloperPanel.IsServerEnabled() && this.owner.Id != BattleManager.Instance.You.Id)
+        if (FlagHelper.IsServerEnabled() && this.owner.Id != BattleManager.Instance.You.Id)
         {
             return;
         }
