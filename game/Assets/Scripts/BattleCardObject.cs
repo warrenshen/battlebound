@@ -136,7 +136,7 @@ public class BattleCardObject : CardObject
 
         this.visual.transform.Translate(Vector3.up * 3.5f, Space.Self);
         this.visual.transform.Translate(Vector3.forward * 1, Space.Self);
-        //this.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
+        this.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
     }
 
     public override void ExitHover()
@@ -157,7 +157,7 @@ public class BattleCardObject : CardObject
 
         this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
-        //this.gameObject.SetLayer(LayerMask.NameToLayer("Card"));
+        this.gameObject.SetLayer(LayerMask.NameToLayer("Card"));
     }
 
     public override void MouseDown()

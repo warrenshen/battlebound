@@ -1357,17 +1357,21 @@ public class BattleManager : MonoBehaviour
         endOverlay.SetActive(true);
         TextMeshPro title = endOverlay.transform.Find("Title").GetComponent<TextMeshPro>();
         title.transform.localScale = Vector3.zero;
+
+        if (won)
+            title.text = "Victory";
+        else
+            title.text = "Defeat";
+
         LeanTween.scale(title.gameObject, Vector3.one, 1)
             .setOnComplete(() =>
             {
                 if (won)
                 {
-                    title.text = "Victory";
                     endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
                 }
                 else
                 {
-                    title.text = "Defeat";
                     endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
                 }
 

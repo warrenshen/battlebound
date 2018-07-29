@@ -473,10 +473,12 @@ public class BoardCreature : Targetable
         FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
         SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
 
+        Vector3 originalScale = this.visual.transform.localScale;
         float elapsedTime = 0;
         LeanTween.scale(this.summoned, Vector3.zero, duration / 3).setEaseInOutCubic();
         while (elapsedTime < duration)
         {
+            this.visual.transform.localScale = Mathf.Lerp(1, 0, (elapsedTime / duration)) * originalScale;
             this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
