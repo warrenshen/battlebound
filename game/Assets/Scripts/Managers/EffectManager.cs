@@ -938,12 +938,14 @@ public class EffectManager : MonoBehaviour
 
     private ChallengeCard CleanCardForSummon(string playerId, ChallengeCard dirtyCard)
     {
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+
         int spawnRank = BattleManager.Instance.GetNewSpawnRank();
         ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
             JsonUtility.ToJson(dirtyCard)
         );
 
-        spawnCard.SetId(playerId + "-" + spawnRank);
+        spawnCard.SetId(playerId + "-" + player.GetNewCardRank());
         spawnCard.SetCost(spawnCard.CostStart);
         spawnCard.SetAttack(spawnCard.AttackStart);
         spawnCard.SetHealth(spawnCard.HealthStart);

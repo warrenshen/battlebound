@@ -1214,6 +1214,7 @@ public class BattleManager : MonoBehaviour
             );
 
             GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
+            player.GetNewCardRank();
             EffectManager.Instance.OnSummonCreatureFinish();
         }
         else
@@ -1228,8 +1229,10 @@ public class BattleManager : MonoBehaviour
         string fieldId
     )
     {
+        Player player = GetPlayerById(playerId);
         // TODO
         GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
+        player.GetNewCardRank();
         EffectManager.Instance.OnSummonCreatureFinish();
     }
 
