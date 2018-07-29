@@ -936,6 +936,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C23-ID_PLAYER-4");
 
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.hand.length, 4);
+
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
             assert.equal(opponentField[0].isFrozen, 1);
@@ -968,6 +971,8 @@ describe("challenge events", function() {
             assert.equal(lastMoves[0].attributes.cardId, "C20-ID_PLAYER-1");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.hand.length, 4);
+
             const playerField = playerState.field;
             assert.equal(playerField[1].abilities.indexOf(2) >= 0, true);
             assert.equal(playerField[2].abilities.indexOf(2) >= 0, true);
@@ -1004,6 +1009,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[0].attributes.card.name, "Touch of Zeus");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
             assert.equal(lastMoves[0].attributes.targetId, "C2-ID_OPPONENT-2");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.hand.length, 4);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -1042,6 +1050,9 @@ describe("challenge events", function() {
             assert.equal(lastMoves[0].attributes.card.name, "Deep Freeze");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
             assert.equal(lastMoves[0].attributes.targetId, "C2-ID_OPPONENT-2");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.hand.length, 4);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
