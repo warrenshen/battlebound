@@ -177,7 +177,7 @@ public class PlayerAvatar : Targetable
     {
         //to-do check immunity
         LeanTween.scale(gameObject, transform.localScale * 1.1f, 1).setEasePunch();
-
+        this.audioSource.Play();
 
         int healthBefore = this.health;
         this.health -= amount;

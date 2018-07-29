@@ -56,7 +56,7 @@ public class BattleCardObject : CardObject
         {
             this.buffs.Remove(HAND_CARD_DECREASE_COST_BY_COLOR);
             SetHyperCardCost(this.visual, this);
-            this.visual.GetTextFieldWithKey("Cost").TmpObject.color = BoardCreature.LIGHT_RED;
+            this.visual.GetTextFieldWithKey("Cost").TmpObject.color = Color.white;
         }
     }
 

@@ -1300,28 +1300,32 @@ public class BattleManager : MonoBehaviour
     {
         endOverlay.SetActive(true);
         TextMeshPro title = endOverlay.transform.Find("Title").GetComponent<TextMeshPro>();
+        title.transform.localScale = Vector3.zero;
+        LeanTween.scale(title.gameObject, Vector3.one, 1)
+            .setOnComplete(() =>
+            {
+                if (won)
+                {
+                    title.text = "Victory";
+                    endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
+                }
+                else
+                {
+                    title.text = "Defeat";
+                    endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
+                }
 
-        if (won)
-        {
-            title.text = "Victory";
-            endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
-        }
-        else
-        {
-            title.text = "Defeat";
-            endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
-        }
-
-        LeanTween.scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
-             .setDelay(CardTween.TWEEN_DURATION * 3)
-             .setOnComplete(() =>
-             {
-                 LeanTween.moveY(title.gameObject, title.transform.position.y + 3f, CardTween.TWEEN_DURATION)
-                    .setOnComplete(() =>
-                    {
-                        RenderEXPChanges(experienceCards);
-                    });
-             });
+                LeanTween.scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
+                     .setDelay(CardTween.TWEEN_DURATION * 3)
+                     .setOnComplete(() =>
+                     {
+                         LeanTween.moveY(title.gameObject, title.transform.position.y + 3f, CardTween.TWEEN_DURATION)
+                            .setOnComplete(() =>
+                            {
+                                RenderEXPChanges(experienceCards);
+                            });
+                     });
+            });
     }
 
     public void ReceiveChallengeMove(ChallengeMove challengeMove)

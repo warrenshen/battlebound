@@ -922,6 +922,10 @@ namespace HyperCard
 
         public void ResetParams()
         {
+            GetTextFieldWithKey("Cost").TmpObject.color = Color.white;
+            GetTextFieldWithKey("Attack").TmpObject.color = Color.white;
+            GetTextFieldWithKey("Health").TmpObject.color = Color.white;
+
             this.BlackAndWhite = false;
             this.CardOpacity = 1;
             this.EnableOutline = false;
