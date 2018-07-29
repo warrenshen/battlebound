@@ -15,6 +15,8 @@ public class BattleCardObject : CardObject
     private List<string> buffs;
     public List<string> Buffs => buffs;
 
+    private int costFromServer;
+
     public void Initialize(Player player, Card card)
     {
         this.owner = player;
@@ -22,10 +24,41 @@ public class BattleCardObject : CardObject
         this.StartFlippedIfNeeded();
 
         this.buffs = new List<string>();
+        this.costFromServer = -1;
+    }
+
+    public void Reinitialize(ChallengeCard challengeCard)
+    {
+        this.card = challengeCard.GetCard();
+        card.wrapper = this;
+        this.LoadCardArtwork();
+
+        if (this.visual == null)
+        {
+            Debug.LogError("Reinitialize called on card object without card visual.");
+            return;
+        }
+
+        SetHyperCardFromData(this.visual, this.card);
+        SetHyperCardArtwork(this.visual, this.card);
+
+        this.costFromServer = challengeCard.Cost;
+
+        if (this.costFromServer != this.card.GetCost())
+        {
+            SetHyperCardCost(this.visual, this);
+        }
     }
 
     public int GetCost()
     {
+        // If cost is from server - since device cannot
+        // predict cost of cards in opponent hand, use that.
+        if (this.costFromServer >= 0)
+        {
+            return this.costFromServer;
+        }
+
         int cost = this.card.GetCost();
 
         if (this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))

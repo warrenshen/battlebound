@@ -180,23 +180,15 @@ public class SparkSingleton : Singleton<SparkSingleton>
         GS.Reset();
     }
 
-    private void Register(string username, string password)
+    private void Register(string email, string username, string password)
     {
         RegistrationRequest request = new RegistrationRequest();
-        request.SetUserName(username);
+        request.SetUserName(email);
         request.SetDisplayName(username);
         request.SetPassword(password);
-        request.Send(OnRegistrationSuccess, OnRegistrationError);
-    }
-
-    private void OnRegistrationSuccess(RegistrationResponse response)
-    {
-
-    }
-
-    private void OnRegistrationError(RegistrationResponse response)
-    {
-        Debug.Log("OnRegistrationError");
-        Debug.Log(response.Errors.ToString());
+        request.Send(
+            LoginRegisterPanel.Instance.OnRegisterSuccess,
+            LoginRegisterPanel.Instance.OnRegisterError
+        );
     }
 }

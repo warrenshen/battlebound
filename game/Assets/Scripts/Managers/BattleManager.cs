@@ -1080,7 +1080,13 @@ public class BattleManager : MonoBehaviour
         EffectManager.Instance.OnDrawCardFinish();
     }
 
-    private void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
+    private void ReceiveMovePlayMinion(
+        string playerId,
+        string cardId,
+        ChallengeCard challengeCard,
+        int handIndex,
+        int fieldIndex
+    )
     {
         if (this.activePlayer.Id != playerId)
         {
@@ -1091,7 +1097,7 @@ public class BattleManager : MonoBehaviour
         if (FlagHelper.IsServerEnabled())
         {
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(handIndex);
-            battleCardObject.Reinitialize(card);
+            battleCardObject.Reinitialize(challengeCard);
             opponent.PlayCard(battleCardObject);
             this.EnemyPlayCardToBoardAnim(battleCardObject, fieldIndex);
         }
@@ -1111,7 +1117,7 @@ public class BattleManager : MonoBehaviour
     private void ReceiveMovePlaySpellTargeted(
         string playerId,
         string cardId,
-        SpellCard card,
+        ChallengeCard challengeCard,
         int handIndex,
         string fieldId,
         string targetId
@@ -1129,7 +1135,7 @@ public class BattleManager : MonoBehaviour
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            battleCardObject.Reinitialize(card);
+            battleCardObject.Reinitialize(challengeCard);
 
             opponent.PlayCard(battleCardObject);
             EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
@@ -1151,7 +1157,7 @@ public class BattleManager : MonoBehaviour
     private void ReceiveMovePlaySpellUntargeted(
         string playerId,
         string cardId,
-        SpellCard card,
+        ChallengeCard challengeCard,
         int handIndex
     )
     {
@@ -1165,7 +1171,7 @@ public class BattleManager : MonoBehaviour
         {
             int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
             BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            battleCardObject.Reinitialize(card);
+            battleCardObject.Reinitialize(challengeCard);
 
             opponent.PlayCard(battleCardObject);
             EnemyPlaySpellUntargetedAnim(battleCardObject);
@@ -1544,7 +1550,7 @@ public class BattleManager : MonoBehaviour
                 ReceiveMovePlayMinion(
                     serverMove.PlayerId,
                     serverMove.Attributes.CardId,
-                    card as CreatureCard,
+                    serverMove.Attributes.Card,
                     serverMove.Attributes.HandIndex,
                     serverMove.Attributes.FieldIndex
                 );
@@ -1563,7 +1569,7 @@ public class BattleManager : MonoBehaviour
                 ReceiveMovePlaySpellUntargeted(
                     serverMove.PlayerId,
                     serverMove.Attributes.CardId,
-                    card as SpellCard,
+                    serverMove.Attributes.Card,
                     serverMove.Attributes.HandIndex
                 );
             }
@@ -1581,7 +1587,7 @@ public class BattleManager : MonoBehaviour
                 ReceiveMovePlaySpellTargeted(
                     serverMove.PlayerId,
                     serverMove.Attributes.CardId,
-                    card as SpellCard,
+                    serverMove.Attributes.Card,
                     serverMove.Attributes.HandIndex,
                     serverMove.Attributes.FieldId,
                     serverMove.Attributes.TargetId

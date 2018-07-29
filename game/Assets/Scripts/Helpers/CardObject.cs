@@ -44,22 +44,6 @@ public class CardObject : MouseWatchable
         colliderBox.size = CardObject.CARD_BOUNDS;
     }
 
-    public void Reinitialize(Card card)
-    {
-        this.card = card;
-        card.wrapper = this;
-        this.LoadCardArtwork();
-
-        if (this.visual == null)
-        {
-            Debug.LogError("Reinitialize called on card object without card visual.");
-            return;
-        }
-
-        CardObject.SetHyperCardFromData(this.visual, this.card);
-        CardObject.SetHyperCardArtwork(this.visual, this.card);
-    }
-
     protected virtual void LoadCardArtwork()
     {
         this.frontImage = this.card.GetFrontImageTexture();

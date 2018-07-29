@@ -76,7 +76,11 @@ public class BoardCreature : Targetable
     private Color initialOutlineEndColor;
 
 
-    public void Initialize(BattleCardObject battleCardObject, Player owner, int spawnRank)
+    public void Initialize(
+        BattleCardObject battleCardObject,
+        Player owner,
+        int spawnRank
+    )
     {
         this.owner = owner;
         this.creatureCard = battleCardObject.Card as CreatureCard;
