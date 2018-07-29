@@ -493,6 +493,7 @@ public class CreatureCard : Card
         challengeCard.SetId(this.id);
         challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetName(this.name);
+        challengeCard.SetColor(this.GetClassColor());
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(GetCost());
         challengeCard.SetCostStart(GetCost());

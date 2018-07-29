@@ -173,6 +173,32 @@ public class BattleCardObject : CardObject
         this.Recycle();
     }
 
+    public ChallengeCard GetChallengeCard()
+    {
+        ChallengeCard challengeCard = new ChallengeCard();
+        challengeCard.SetId(this.card.Id);
+        challengeCard.SetCategory((int)Card.CardType.Creature);
+        challengeCard.SetColor(this.card.GetClassColor());
+        challengeCard.SetName(this.card.Name);
+        challengeCard.SetLevel(this.card.Level);
+        challengeCard.SetCost(GetCost()); // Note this is calling this' GetCost.
+        challengeCard.SetCostStart(this.card.GetCost());
+
+        if (this.card.GetType() == typeof(CreatureCard))
+        {
+            CreatureCard creatureCard = this.card as CreatureCard;
+            challengeCard.SetHealth(creatureCard.GetHealth());
+            challengeCard.SetHealthStart(creatureCard.GetHealth());
+            challengeCard.SetHealthMax(creatureCard.GetHealth());
+            challengeCard.SetAttack(creatureCard.GetAttack());
+            challengeCard.SetAttackStart(creatureCard.GetAttack());
+            challengeCard.SetAbilities(creatureCard.GetAbilities());
+            challengeCard.SetAbilitiesStart(creatureCard.GetAbilities());
+        }
+
+        return challengeCard;
+    }
+
     private static void SetHyperCardCost(
         HyperCard.Card cardVisual,
         BattleCardObject battleCardObject

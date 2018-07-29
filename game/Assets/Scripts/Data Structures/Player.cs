@@ -643,8 +643,8 @@ public class Player
         {
             for (int i = 0; i < this.hand.Size(); i += 1)
             {
-                Card card = this.hand.GetCardObjectByIndex(i).Card;
-                ChallengeCard challengeCard = card.GetChallengeCard();
+                BattleCardObject battleCardObject = this.hand.GetCardObjectByIndex(i);
+                ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
                 challengeCard.SetPlayerId(this.id);
                 handCards.Add(challengeCard);
             }

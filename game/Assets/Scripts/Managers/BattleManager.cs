@@ -786,7 +786,7 @@ public class BattleManager : MonoBehaviour
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.GetChallengeCard());
             moveAttributes.SetFieldIndex(index);
             challengeMove.SetMoveAttributes(moveAttributes);
 
@@ -818,7 +818,7 @@ public class BattleManager : MonoBehaviour
 
                 ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
                 moveAttributes.SetCardId(battleCardObject.Card.Id);
-                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+                moveAttributes.SetCard(battleCardObject.GetChallengeCard());
                 moveAttributes.SetFieldIndex(index);
                 challengeMove.SetMoveAttributes(moveAttributes);
 
@@ -869,7 +869,7 @@ public class BattleManager : MonoBehaviour
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.GetChallengeCard());
             moveAttributes.SetFieldId(targetedCreature.Owner.Id);
             moveAttributes.SetTargetId(targetedCreature.GetCardId());
             challengeMove.SetMoveAttributes(moveAttributes);
@@ -939,7 +939,7 @@ public class BattleManager : MonoBehaviour
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.GetChallengeCard());
             challengeMove.SetMoveAttributes(moveAttributes);
 
             ReceiveChallengeMove(challengeMove);
