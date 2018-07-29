@@ -1482,7 +1482,7 @@ public class EffectManager : MonoBehaviour
                          .setEaseInOutCirc()
                          .setOnComplete(() =>
                          {
-                             int damageDone = defendingCreature.TakeDamage(20);
+                             int damageDone = defendingCreature.TakeDamage(10);
                              effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
                              bombObject.SetActive(false);

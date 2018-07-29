@@ -115,7 +115,7 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
-        if (this.mode != BATTLE_STATE_MULLIGAN_MODE)
+        if (this.mode != BATTLE_STATE_MULLIGAN_MODE && !EffectManager.IsWaiting())
         {
             WatchMouseActions();
         }
@@ -1051,6 +1051,7 @@ public class BattleManager : MonoBehaviour
         Player player = GetPlayerById(playerId);
         // TODO: animate and remove debug.
         Debug.Log("Receive move draw card deck empty");
+        EffectManager.Instance.OnDrawCardFinish();
     }
 
     private void ReceiveMovePlayMinion(string playerId, string cardId, CreatureCard card, int handIndex, int fieldIndex)
