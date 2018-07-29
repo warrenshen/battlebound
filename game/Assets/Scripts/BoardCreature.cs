@@ -366,7 +366,7 @@ public class BoardCreature : Targetable
         return damageTaken;
     }
 
-    public void DeathNotice()
+    public void DeathNote()
     {
         if (HasAbility(Card.CARD_ABILITY_SHIELD))
         {

@@ -1221,7 +1221,7 @@ describe("challenge events", function() {
               "level": 1,
               "category": 1,
               "cost": 50,
-              "name": "Death Notice",
+              "name": "Death Note",
               "description": "Kill an opponent creature",
               "baseId": "C23",
               "costStart": 50,
@@ -1303,7 +1303,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "C23-ID_PLAYER-4");
-            assert.equal(lastMoves[0].attributes.card.name, "Death Notice");
+            assert.equal(lastMoves[0].attributes.card.name, "Death Note");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
             assert.equal(lastMoves[0].attributes.targetId, "C10-ID_OPPONENT-5");
 

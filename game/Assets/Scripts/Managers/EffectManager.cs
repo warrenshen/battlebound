@@ -1548,7 +1548,7 @@ public class EffectManager : MonoBehaviour
                 effects = SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_DEATH_NOTE:
-                effects = SpellTargetedDeathNotice(playerId, targetedCreature);
+                effects = SpellTargetedDeathNote(playerId, targetedCreature);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
@@ -1623,9 +1623,9 @@ public class EffectManager : MonoBehaviour
         return new List<Effect>();
     }
 
-    private List<Effect> SpellTargetedDeathNotice(string playerId, BoardCreature targetedCreature)
+    private List<Effect> SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
     {
-        targetedCreature.DeathNotice();
+        targetedCreature.DeathNote();
 
         List<Effect> effects = new List<Effect>();
 
