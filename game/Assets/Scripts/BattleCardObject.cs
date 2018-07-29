@@ -179,7 +179,6 @@ public class BattleCardObject : CardObject
     {
         ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.card.Id);
-        challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetColor(this.card.GetClassColor());
         challengeCard.SetName(this.card.Name);
         challengeCard.SetLevel(this.card.Level);
@@ -188,6 +187,8 @@ public class BattleCardObject : CardObject
 
         if (this.card.GetType() == typeof(CreatureCard))
         {
+            challengeCard.SetCategory((int)Card.CardType.Creature);
+
             CreatureCard creatureCard = this.card as CreatureCard;
             challengeCard.SetHealth(creatureCard.GetHealth());
             challengeCard.SetHealthStart(creatureCard.GetHealth());
@@ -196,6 +197,14 @@ public class BattleCardObject : CardObject
             challengeCard.SetAttackStart(creatureCard.GetAttack());
             challengeCard.SetAbilities(creatureCard.GetAbilities());
             challengeCard.SetAbilitiesStart(creatureCard.GetAbilities());
+        }
+        else if (this.card.GetType() == typeof(SpellCard))
+        {
+            challengeCard.SetCategory((int)Card.CardType.Spell);
+        }
+        else
+        {
+            Debug.LogError("Unsupported!");
         }
 
         return challengeCard;

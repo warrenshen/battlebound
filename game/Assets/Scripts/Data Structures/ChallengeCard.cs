@@ -208,81 +208,81 @@ public class ChallengeCard
         {
             return null;
         }
-        else if (this.playerId != other.PlayerId)
-        {
-            return string.Format("PlayerId: {0} vs {1} [{2}]", this.playerId, other.PlayerId, this.id);
-        }
-        else if (this.category != other.Category)
-        {
-            return string.Format("Category: {0} vs {1} [{2}]", this.category, other.Category, this.id);
-        }
-        else if (this.color != other.Color)
-        {
-            return string.Format("Color: {0} vs {1} [{2}]", this.color, other.Color, this.id);
-        }
         else if (this.name != other.Name)
         {
             return string.Format("Name: {0} vs {1} [{2}]", this.name, other.Name, this.id);
         }
+        else if (this.playerId != other.PlayerId)
+        {
+            return string.Format("PlayerId: {0} vs {1} [{2}]", this.playerId, other.PlayerId, string.Format("{0}, {1}", this.id, other.Name));
+        }
+        else if (this.category != other.Category)
+        {
+            return string.Format("Category: {0} vs {1} [{2}]", this.category, other.Category, string.Format("{0}, {1}", this.id, other.Name));
+        }
+        else if (this.color != other.Color)
+        {
+            return string.Format("Color: {0} vs {1} [{2}]", this.color, other.Color, string.Format("{0}, {1}", this.id, other.Name));
+        }
         else if (this.level != other.Level)
         {
-            return string.Format("Level: {0} vs {1} [{2}]", this.level, other.Level, this.id);
+            return string.Format("Level: {0} vs {1} [{2}]", this.level, other.Level, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.cost != other.Cost)
         {
-            return string.Format("Cost: {0} vs {1} [{2}]", this.cost, other.Cost, this.id);
+            return string.Format("Cost: {0} vs {1} [{2}]", this.cost, other.Cost, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.costStart != other.CostStart)
         {
-            return string.Format("CostStart: {0} vs {1} [{2}]", this.costStart, other.CostStart, this.id);
+            return string.Format("CostStart: {0} vs {1} [{2}]", this.costStart, other.CostStart, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.health != other.Health)
         {
-            return string.Format("Health: {0} vs {1} [{2}]", this.health, other.Health, this.id);
+            return string.Format("Health: {0} vs {1} [{2}]", this.health, other.Health, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.healthStart != other.HealthStart)
         {
-            return string.Format("HealthStart: {0} vs {1} [{2}]", this.healthStart, other.HealthStart, this.id);
+            return string.Format("HealthStart: {0} vs {1} [{2}]", this.healthStart, other.HealthStart, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.healthMax != other.HealthMax)
         {
-            return string.Format("HealthMax: {0} vs {1} [{2}]", this.healthMax, other.HealthMax, this.id);
+            return string.Format("HealthMax: {0} vs {1} [{2}]", this.healthMax, other.HealthMax, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.attack != other.Attack)
         {
-            return string.Format("Level: {0} vs {1} [{2}]", this.attack, other.Attack, this.id);
+            return string.Format("Level: {0} vs {1} [{2}]", this.attack, other.Attack, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.attackStart != other.AttackStart)
         {
-            return string.Format("AttackStart: {0} vs {1} [{2}]", this.attackStart, other.AttackStart, this.id);
+            return string.Format("AttackStart: {0} vs {1} [{2}]", this.attackStart, other.AttackStart, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.canAttack != other.CanAttack)
         {
-            return string.Format("CanAttack: {0} vs {1} [{2}]", this.canAttack, other.CanAttack, this.id);
+            return string.Format("CanAttack: {0} vs {1} [{2}]", this.canAttack, other.CanAttack, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.isFrozen != other.IsFrozen)
         {
-            return string.Format("IsFrozen: {0} vs {1} [{2}]", this.isFrozen, other.IsFrozen, this.id);
+            return string.Format("IsFrozen: {0} vs {1} [{2}]", this.isFrozen, other.IsFrozen, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.isSilenced != other.IsSilenced)
         {
-            return string.Format("IsSilenced: {0} vs {1} [{2}]", this.isSilenced, other.IsSilenced, this.id);
+            return string.Format("IsSilenced: {0} vs {1} [{2}]", this.isSilenced, other.IsSilenced, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.spawnRank != other.SpawnRank)
         {
-            return string.Format("SpawnRank: {0} vs {1} [{2}]", this.spawnRank, other.SpawnRank, this.id);
+            return string.Format("SpawnRank: {0} vs {1} [{2}]", this.spawnRank, other.SpawnRank, string.Format("{0}, {1}", this.id, other.Name));
         }
 
         string abilitiesDiff = GetAbilitiesDiff(this.abilities, other.abilities);
         if (abilitiesDiff != null)
         {
-            return string.Format("Abilities: {0} [{1}]", abilitiesDiff, this.id);
+            return string.Format("Abilities: {0} [{1}]", abilitiesDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
 
         string abilitiesStartDiff = GetAbilitiesDiff(this.abilitiesStart, other.abilitiesStart);
         if (abilitiesStartDiff != null)
         {
-            return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, this.id);
+            return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
 
         return null;
