@@ -6,15 +6,19 @@ using System;
 [System.Serializable]
 public class ChallengeEndState
 {
+    [SerializeField]
     private string id;
     public string Id => id;
 
+    [SerializeField]
     private int level;
     public int Level => level;
 
+    [SerializeField]
     private int levelPrevious;
     public int LevelPrevious => levelPrevious;
 
+    [SerializeField]
     private List<ExperienceCard> experienceCards;
     public List<ExperienceCard> ExperienceCards => experienceCards;
 
