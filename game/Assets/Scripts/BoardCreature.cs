@@ -535,7 +535,6 @@ public class BoardCreature : Targetable
 
         if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-
         if (!attackText.Value.Equals(this.attack.ToString()))
             LeanTween.scale(attackText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
         if (!healthText.Value.Equals(this.health.ToString()))

@@ -46,6 +46,7 @@ public class BattleCardObject : CardObject
         {
             this.buffs.Add(HAND_CARD_DECREASE_COST_BY_COLOR);
             SetHyperCardCost(this.visual, this);
+            this.visual.GetTextFieldWithKey("Cost").TmpObject.color = BoardCreature.LIGHT_GREEN;
         }
     }
 
@@ -55,6 +56,7 @@ public class BattleCardObject : CardObject
         {
             this.buffs.Remove(HAND_CARD_DECREASE_COST_BY_COLOR);
             SetHyperCardCost(this.visual, this);
+            this.visual.GetTextFieldWithKey("Cost").TmpObject.color = BoardCreature.LIGHT_RED;
         }
     }
 
@@ -204,6 +206,7 @@ public class BattleCardObject : CardObject
         BattleCardObject battleCardObject
     )
     {
+        LeanTween.scale(cardVisual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * BoardCreature.UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
         cardVisual.SetTextFieldWithKey("Cost", battleCardObject.GetCost().ToString());
 
         cardVisual.Redraw();
