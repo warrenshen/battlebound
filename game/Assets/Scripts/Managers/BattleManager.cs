@@ -1291,7 +1291,7 @@ public class BattleManager : MonoBehaviour
             cardObject.Initialize(card);
 
             Vector3 offset = (index % rowSize) * Vector3.right * 1.8f + (index / rowSize) * Vector3.down * 3.6f;
-            CardTween.move(cardObject, endOverlay.transform.position, CardTween.TWEEN_DURATION);
+            CardTween.move(cardObject, endOverlay.transform.position + offset, CardTween.TWEEN_DURATION);
             ++index;
         }
     }
@@ -1312,7 +1312,7 @@ public class BattleManager : MonoBehaviour
             endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
         }
 
-        LeanTween.scale(title.gameObject, title.transform.localScale / 1.33f, CardTween.TWEEN_DURATION)
+        LeanTween.scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
              .setDelay(CardTween.TWEEN_DURATION * 3)
              .setOnComplete(() =>
              {

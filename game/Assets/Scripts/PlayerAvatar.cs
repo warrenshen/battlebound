@@ -176,7 +176,7 @@ public class PlayerAvatar : Targetable
     public override int TakeDamage(int amount)
     {
         //to-do check immunity
-        LeanTween.scale(gameObject, transform.localScale * 1.1f, 0.5F).setEasePunch();
+        LeanTween.scale(gameObject, transform.localScale * 1.1f, 1).setEasePunch();
 
 
         int healthBefore = this.health;
