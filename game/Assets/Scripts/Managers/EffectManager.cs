@@ -351,7 +351,8 @@ public class EffectManager : MonoBehaviour
     private void AbilityDamageTakenDamagePlayerFace(Effect effect, int amount)
     {
         Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
-        player.TakeDamage(amount);
+        int damageTaken = player.TakeDamage(amount);
+        AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
     }
 
     private void AbilityLifeSteal(Effect effect)
@@ -542,45 +543,48 @@ public class EffectManager : MonoBehaviour
         PlayerAvatar playerAvatar = player.Avatar;
         playerAvatar.Die();
 
-        ChallengeEndState challengeEndState = new ChallengeEndState(
-            playerId,
-            2,
-            3
-        );
-
-        List<ExperienceCard> experienceCards = new List<ExperienceCard>();
-
-        foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
+        if (!DeveloperPanel.IsServerEnabled())
         {
-            if (
-                challengeMove.PlayerId == playerId &&
-                challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
-            )
+            ChallengeEndState challengeEndState = new ChallengeEndState(
+                playerId,
+                2,
+                3
+            );
+
+            List<ExperienceCard> experienceCards = new List<ExperienceCard>();
+
+            foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
             {
-                ChallengeCard challengeCard = challengeMove.Attributes.Card;
-                ExperienceCard experienceCard = new ExperienceCard(
-                    challengeCard.Id,
-                    challengeCard.Name,
-                    2,
-                    2,
-                    8,
-                    7,
-                    10
-                );
+                if (
+                    challengeMove.PlayerId == BattleManager.Instance.You.Id &&
+                    challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
+                )
+                {
+                    ChallengeCard challengeCard = challengeMove.Attributes.Card;
+                    ExperienceCard experienceCard = new ExperienceCard(
+                        challengeCard.Id,
+                        challengeCard.Name,
+                        2,
+                        2,
+                        8,
+                        7,
+                        10
+                    );
 
-                experienceCards.Add(experienceCard);
+                    experienceCards.Add(experienceCard);
+                }
             }
-        }
 
-        challengeEndState.SetExperienceCards(experienceCards);
+            challengeEndState.SetExperienceCards(experienceCards);
 
-        if (BattleManager.Instance.You.Id == playerId)
-        {
-            BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
-        }
-        else
-        {
-            BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+            if (BattleManager.Instance.You.Id == playerId)
+            {
+                BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
+            }
+            else
+            {
+                BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+            }
         }
     }
 
@@ -644,13 +648,15 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDeathRattleAttackFace(Effect effect, int amount)
     {
+        List<Effect> effects = new List<Effect>();
+
         Player targetedPlayer = Board.Instance.GetOpponentByPlayerId(
             effect.PlayerId
         );
 
-        targetedPlayer.TakeDamage(amount);
+        int damageTaken = targetedPlayer.TakeDamage(amount);
+        effects.AddRange(GetEffectsOnFaceDamageTaken(targetedPlayer.Avatar, damageTaken));
 
-        List<Effect> effects = new List<Effect>();
 
         effects.Add(
             new Effect(
@@ -882,11 +888,9 @@ public class EffectManager : MonoBehaviour
     private void AbilityDamagePlayerFace(Effect effect, int amount)
     {
         string playerId = effect.PlayerId;
-
         Player player = BattleManager.Instance.GetPlayerById(playerId);
-        player.TakeDamage(amount);
-
-        // No AddToQueues for now.
+        int damageTaken = player.TakeDamage(amount);
+        AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
     }
 
     private void AbilityHealAdjacent(Effect effect, int amount)
