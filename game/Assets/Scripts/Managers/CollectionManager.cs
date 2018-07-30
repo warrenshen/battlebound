@@ -1,11 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-
-using GameSparks.Core;
-using GameSparks.Api.Requests;
+﻿using System.Collections.Generic;
 using GameSparks.Api.Responses;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -60,16 +54,9 @@ public class CollectionManager : MonoBehaviour
     {
         List<Card> cards = DeckStore.Instance().GetCards();
         this.collection = cards;
-        CreateCardObjects();
 
-        //Create decks by mapping to cards
-        foreach (string deckName in DeckStore.Instance().GetDeckNames())
-        {
-            List<string> cardIds = DeckStore.Instance().GetCardIdsByDeckName(deckName);
-            DeckRaw created = new DeckRaw(deckName, cardIds, DeckRaw.DeckClass.Warrior);
-            decksRaw.Add(created);
-        }
-        this.CreateDecksView();
+        CreateCardObjects();
+        CreateDecksView();
     }
 
     private void Update()
@@ -149,6 +136,7 @@ public class CollectionManager : MonoBehaviour
 
     private void OnBackButton()
     {
+        CreateDecksView();
         RotateToDecks();
     }
 
@@ -156,11 +144,19 @@ public class CollectionManager : MonoBehaviour
     {
         GameObject placeholders = GameObject.Find("Deck Panel Placeholders");
         int count = 0;
-        foreach (DeckRaw deckRaw in decksRaw)
+
+        foreach (string deckName in DeckStore.Instance().GetDeckNames())
         {
             Transform t = placeholders.transform.GetChild(count);
             GameObject created = GameObject.Instantiate(deckPanelPrefab, t.position, t.localRotation);
-            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deckRaw.name;
+            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deckName;
+
+            DeckRaw deckRaw = new DeckRaw(
+                deckName,
+                DeckStore.Instance().GetCardIdsByDeckName(deckName),
+                DeckRaw.DeckClass.Warrior
+            );
+            decksRaw.Add(deckRaw);
             created.GetComponent<DeckPanel>().Initialize(deckRaw);
             ++count;
         }
@@ -218,7 +214,7 @@ public class CollectionManager : MonoBehaviour
 
     private void SaveCallback()
     {
-        // TODO: show some indication of success.
+
     }
 
     private void CreateCardObjects()
