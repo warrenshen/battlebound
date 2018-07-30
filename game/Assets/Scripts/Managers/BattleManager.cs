@@ -378,11 +378,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void OnReturnToMenuClick()
-    {
-        Application.LoadLevel("Menu");
-    }
-
     private void OnEndTurnClick()
     {
         if (this.activePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)   // dont allow end turn button click in non-normal state

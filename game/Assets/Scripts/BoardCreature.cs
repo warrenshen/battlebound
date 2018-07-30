@@ -529,6 +529,11 @@ public class BoardCreature : Targetable
 
     public void Redraw()
     {
+        if (this.visual == null)
+        {
+            return;
+        }
+
         UpdateStatText();
 
         this.visual.SetOutline(CanAttackNow());
@@ -594,7 +599,7 @@ public class BoardCreature : Targetable
         }
         else
         {
-            attackText.TmpObject.color = Color.white;
+            healthText.TmpObject.color = Color.white;
         }
     }
 

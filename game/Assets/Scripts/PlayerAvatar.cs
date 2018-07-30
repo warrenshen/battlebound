@@ -39,8 +39,11 @@ public class PlayerAvatar : Targetable
     private bool frozen;
     public bool Frozen => frozen;
 
-    TextMeshPro textMesh;
+    TextMeshPro healthLabel;
+    TextMeshPro nameLabel;
+
     AudioSource audioSource;
+
 
     public void Initialize(Player player)
     {
@@ -83,20 +86,29 @@ public class PlayerAvatar : Targetable
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = -5;
 
-        //maybe do this manually in prefab later
-        GameObject textHolder = new GameObject("Text Label");
-        textMesh = textHolder.AddComponent<TextMeshPro>();
-        textMesh.fontSize = 4;
-        textMesh.fontStyle = FontStyles.Bold;
-        textMesh.alignment = TextAlignmentOptions.Center;
-        RectTransform textContainer = textMesh.GetComponent<RectTransform>();
-        textContainer.sizeDelta = new Vector2(2, 1);
-        textContainer.anchoredPosition = new Vector3(0, 2.6F, -0.5F);
-        textHolder.transform.SetParent(gameObject.transform, false);
-        textHolder.layer = textHolder.transform.parent.gameObject.layer;
+        CreateLabelOnAvatar(ref this.nameLabel, Vector3.left * 1.05f);
+        CreateLabelOnAvatar(ref this.healthLabel, Vector3.right * 1.05f);
 
+        this.nameLabel.alignment = TextAlignmentOptions.Right;
+        this.healthLabel.alignment = TextAlignmentOptions.Left;
+        this.nameLabel.text = this.owner.DisplayName;
         //already has cylinder collider in scene
         UpdateStatText();
+    }
+
+    private void CreateLabelOnAvatar(ref TextMeshPro assignTo, Vector3 offset)
+    {
+        GameObject textHolder = new GameObject("Health Label");
+        assignTo = textHolder.AddComponent<TextMeshPro>();
+        assignTo.fontSize = 4;
+        assignTo.fontStyle = FontStyles.Bold;
+        assignTo.alignment = TextAlignmentOptions.Center;
+
+        RectTransform textContainer = assignTo.GetComponent<RectTransform>();
+        textContainer.sizeDelta = new Vector2(2, 1);
+        textContainer.anchoredPosition = new Vector3(0, 2.6F, -0.5F) + offset;
+        textHolder.transform.SetParent(gameObject.transform, false);
+        textHolder.layer = textHolder.transform.parent.gameObject.layer;
     }
 
     public override string GetCardId()
@@ -231,7 +243,7 @@ public class PlayerAvatar : Targetable
     private void UpdateStatText()
     {
         float scaleFactor = 1.6f;
-        LeanTween.scale(textMesh.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
-        textMesh.text = String.Format("{0}/{1}", this.health, this.maxHealth);
+        LeanTween.scale(healthLabel.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1).setEasePunch();
+        healthLabel.text = String.Format("{0}/{1}", this.health, this.maxHealth);
     }
 }

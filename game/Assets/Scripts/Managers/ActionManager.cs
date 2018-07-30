@@ -256,4 +256,9 @@ public class ActionManager : MonoBehaviour
     {
         this.active = val;
     }
+
+    private void BackToMenu()
+    {
+        Application.LoadLevel("Menu");
+    }
 }

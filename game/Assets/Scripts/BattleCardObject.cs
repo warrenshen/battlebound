@@ -107,9 +107,10 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             SetVisualResetValues();
-            if (this.visual.transform.localScale.x < 4 && !LeanTween.isTweening(this.visual.gameObject))
+            if (this.visual.transform.localScale.x <= CARD_VISUAL_SIZE.x && !LeanTween.isTweening(this.visual.gameObject))
             {
-                LeanTween.scale(this.visual.gameObject, this.visual.transform.localScale * 1.1f, 0.05f);
+                this.visual.transform.localScale *= 1.1f;
+                //LeanTween.scale(this.visual.gameObject, this.visual.transform.localScale * 1.1f, 0.05f);
             }
             return;
         }
@@ -144,9 +145,9 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             BattleManager.Instance.SetPassiveCursor();
-            //this.visual.transform.localScale = this.visual.reset.scale;
-            LeanTween.cancel(this.visual.gameObject);
-            LeanTween.scale(this.visual.gameObject, CARD_VISUAL_SIZE, 0.05f);
+            this.visual.transform.localScale = this.visual.reset.scale;
+            //LeanTween.cancel(this.visual.gameObject);
+            //LeanTween.scale(this.visual.gameObject, CARD_VISUAL_SIZE, 0.05f);
             return;
         }
 
@@ -175,7 +176,7 @@ public class BattleCardObject : CardObject
         //set defaults of cardobject
         this.SetThisResetValues();
 
-        LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.1f);
+        LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.05f);
         //this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
 
