@@ -21,6 +21,12 @@ public class InspectorControlPanel : MonoBehaviour
 
         this.developmentModeText.text = FlagHelper.IsServerEnabled() ? "C" : "D";
         this.toggleInspectorButton.onClick.AddListener(OnToggleInspectorButtonClick);
+
+#if UNITY_EDITOR
+        this.gameObject.SetActive(true);
+#else
+        this.gameObject.SetActive(false);
+#endif
     }
 
     private void OnToggleInspectorButtonClick()
