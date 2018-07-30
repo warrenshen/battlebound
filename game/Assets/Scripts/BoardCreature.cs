@@ -458,7 +458,7 @@ public class BoardCreature : Targetable
     {
         this.attack += amount;
         // TODO: animate.
-        this.UpdateStatText();
+        UpdateStatText();
     }
 
     public void Die()
@@ -565,6 +565,11 @@ public class BoardCreature : Targetable
         this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
         this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
         this.visual.SetTextFieldWithKey("Health", this.health.ToString());
+
+        if (this.isSilenced)
+        {
+            this.visual.SetTextFieldWithKey("Description", "");
+        }
 
         if (this.attack > creatureCard.GetAttack())
         {
