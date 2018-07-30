@@ -7,6 +7,8 @@ using GameSparks.Api.Responses;
 
 public class SparkSingleton : Singleton<SparkSingleton>
 {
+    private static string PLAYER_PREF_AUTHTOKEN_KEY = "gamesparks.authtoken";
+
     public string username = "nick";
     public string password = "password";
 
@@ -195,6 +197,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.level = 0;
 
         GS.GSPlatform.AuthToken = null;
+        PlayerPrefs.SetString(PLAYER_PREF_AUTHTOKEN_KEY, null);
         GS.Reset();
     }
 
