@@ -769,11 +769,6 @@ public class BoardCreature : Targetable
         }
     }
 
-    public void PlayParticle0()
-    {
-        //Called during attack animation
-    }
-
     private void PlayAudioTakeDamage()
     {
         if (this.audioSources != null && this.audioSources.Length >= 3 && this.audioSources[2] != null)
