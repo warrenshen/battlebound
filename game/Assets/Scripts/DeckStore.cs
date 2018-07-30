@@ -36,6 +36,11 @@ public class DeckStore
         ResetStore();
     }
 
+    public void Logout()
+    {
+        ResetStore();
+    }
+
     private void ResetStore()
     {
         this.containsData = false;

@@ -196,6 +196,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.balance = 0;
         this.level = 0;
 
+        DeckStore.Instance().Logout();
         GS.GSPlatform.AuthToken = null;
         PlayerPrefs.SetString(PLAYER_PREF_AUTHTOKEN_KEY, null);
         GS.Reset();
