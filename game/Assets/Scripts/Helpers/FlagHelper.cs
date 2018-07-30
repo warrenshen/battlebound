@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FlagHelper : MonoBehaviour
 {
@@ -16,16 +14,28 @@ public class FlagHelper : MonoBehaviour
 
     public static bool IsServerEnabled()
     {
+#if UNITY_EDITOR
         return GetFlag(FLAG_USE_SERVER);
+#else
+        return true;
+#endif
     }
 
     public static bool IsLogVerbose()
     {
+#if UNITY_EDITOR
         return GetFlag(FLAG_LOG_VERBOSE);
+#else
+        return Debug.isDebugBuild;
+#endif
     }
 
     public static bool ShouldSkipMulligan()
     {
+#if UNITY_EDITOR
         return GetFlag(FLAG_SKIP_MULLIGAN);
+#else
+        return false;
+#endif
     }
 }

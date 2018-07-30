@@ -11,9 +11,6 @@ public class LoginManager : MonoBehaviour
 
     private void Awake()
     {
-        this.usernameText.text = "Not logged in";
-        this.loginButton.onClick.AddListener(OnLoginButtonClick);
-
         SparkSingleton.Instance.AddAuthenticatedCallback(Callback);
     }
 
