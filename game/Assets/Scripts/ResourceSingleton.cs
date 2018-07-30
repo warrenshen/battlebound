@@ -33,9 +33,20 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
         this.creatureNameToPrefab = new Dictionary<string, GameObject>();
         this.effectNameToPrefab = new Dictionary<string, GameObject>();
+        this.cardNametoTemplate = new Dictionary<string, CardTemplate>();
 
-        string codexPath = Application.dataPath + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar + "codex.txt";
-        this.cardNametoTemplate = CodexHelper.ParseFile(codexPath);
+        TextAsset codexText = (TextAsset)Resources.Load("codex", typeof(TextAsset));
+        string codexString = codexText.text;
+        List<string> codexJsons = new List<string>(codexString.Split('\n'));
+
+        foreach (string codexJson in codexJsons)
+        {
+            if (codexJson.Length > 0)
+            {
+                CardTemplate cardTemplate = JsonUtility.FromJson<CardTemplate>(codexJson);
+                cardNametoTemplate.Add(cardTemplate.name, cardTemplate);
+            }
+        }
 
         this.imageNameToTexture = new Dictionary<string, Texture2D>();
 
