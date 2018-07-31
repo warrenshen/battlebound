@@ -24,6 +24,7 @@ const scoreResponse = scoreRequest.Send();
 const playerRank = scoreResponse.HIGH_SCORE_LB.SCORE_ATTR;
     
 Spark.setScriptData("playerId", playerId);
+Spark.setScriptData("displayName", player.getDisplayName());
 Spark.setScriptData("address", address);
 Spark.setScriptData("balance", balance);
 Spark.setScriptData("activeChallengeId", player.getPrivateData("activeChallengeId"));

@@ -50,7 +50,7 @@ cardIds.forEach(function(cardId) {
     }
 });
 
-if (cardIds.length >= 30) {
+if (cardIds.length > 30) {
     setScriptError("Deck should not have more than 30 cards.");
 }
 

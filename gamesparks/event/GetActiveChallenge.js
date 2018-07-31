@@ -18,10 +18,10 @@ if (activeChallengeId) {
 
     if (challenge.getRunState() !== "RUNNING") {
         player.removePrivateData("activeChallengeId");
-        setScriptError("Challenge is already over.")
+        setScriptError("Challenge is already over.");
     }
 } else {
-    setScriptError("Player does not have an active challenge.")
+    setScriptError("Player does not have an active challenge.");
 }
 
 setScriptSuccess();

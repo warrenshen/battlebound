@@ -32,7 +32,7 @@ function handleChallengeCardAttackCard(challengeStateData, playerId, cardId, att
     // Find index of attacking card in player field.
     const attackingIndex = playerField.findIndex(function(card) { return card.id === cardId });
     if (attackingIndex < 0) {
-        setScriptError("Invalid cardId parameter.");
+        setScriptError("Invalid cardId parameter: " + cardId);
     }
     
     const attackingCard = playerField[attackingIndex];

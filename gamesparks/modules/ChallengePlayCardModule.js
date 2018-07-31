@@ -29,7 +29,7 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     // Find index of card played in hand.
     const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
     if (handIndex < 0) {
-        setScriptError("Invalid cardId parameter");
+        setScriptError("Invalid cardId parameter: " + cardId);
     }
     
     const playedCard = playerHand[handIndex];

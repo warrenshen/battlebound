@@ -20,6 +20,15 @@ function setScriptError(errorMessage) {
     Spark.exit();
 }
 
+function setScriptErrorWithUnlockKey(keyName, errorMessage) {
+    if (keyName == null) {
+        setScriptError("Invalid key name given to function.");
+    }
+    
+    Spark.unlockKeyFully(keyName);
+    setScriptError(errorMessage);
+}
+
 function setScriptSuccess() {
     Spark.setScriptData("statusCode", 200);
     Spark.exit();

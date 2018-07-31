@@ -100,11 +100,18 @@
  * ChallengeState schema: {
  *   id: string, // Challenge ID for convenience.
  *   nonce: int, // A counter incremented every time the ChallengeState is updated.
+ *   mode: int, // What mode battle is in.
  *   opponentIdByPlayerId: { [playerId]: opponentId },
  *   turnCountByPlayerId: { [playerId]: int },
  *   moveTakenThisTurn: bool, // A bool for whether the active player has made a move this turn.
  *   expiredStreakByPlayerId: { [playerId]: int }, // A counter for how many turns a player has expired in a row.
  *   expCardIdsByPlayerId: { [playerId]: [string, ...] }, // List of card IDs to gain experience for each player.
+ *   moves: [Move, ...], // An array of moves by both players in chronological order.
+ *   lastMoves: [Move, ...], // An array of the move(s) in last request of player whose turn it is.
+ *   spawnCount: int, // "Auto-increment" int for any creature spawn by either player.
+ *   deathCount: int, // "Auto-increment" int for any creature death by either player.
+ *   deadCards: [ChallengeCard, ...], // Append-only list of dead cards.
+ *   isFinal: bool (int), // Whether challenge has been post-processed (grant experience, etc).
  *   current: {
  *     [playerIdOne]: {
  *       id: string, // Player ID for convenience.
@@ -126,12 +133,6 @@
  *     },
  *     [playerIdTwo]: ...,
  *   },
- *   moves: [Move, ...], // An array of moves by both players in chronological order.
- *   lastMoves: [Move, ...], // An array of the move(s) in last request of player whose turn it is.
- *   spawnCount: int, // "Auto-increment" int for any creature spawn by either player.
- *   deathCount: int, // "Auto-increment" int for any creature death by either player.
- *   deadCards: [ChallengeCard, ...], // Append-only list of dead cards.
- *   isFinal: bool (int), // Whether challenge has been post-processed (grant experience, etc).
  * }
  * 
  * Move schema: {

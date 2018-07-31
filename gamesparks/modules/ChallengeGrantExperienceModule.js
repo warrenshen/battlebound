@@ -31,15 +31,22 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
     const API = Spark.getGameDataService();
 
     const challenge = Spark.getChallenge(challengeId);
-    const challengeStateData = challenge.getPrivateData("data");
+    if (challenge == null) {
+        setScriptError("Invalid challenge ID.");
+    }
     
-    // if (challengeStateData.isFinalByPlayerId[playerId] == 1) {
-    //     setScriptError("Challenge already processed - cannot grant experience again.");
-    // } else {
-    //     challengeStateData.isFinalByPlayerId[playerId] = 1;
-    //     challenge.setPrivateData("data", challengeStateData);
-    //     Spark.getLog().debug(challengeStateData);
-    // }
+    // This lock call MUST be before the `challenge.getPrivateData` call below.
+    Spark.lockKey(challengeId, 3000);
+    const challengeStateData = challenge.getPrivateData("data");
+    const expCardIds = challengeStateData.expCardIdsByPlayerId[playerId];
+    
+    if (challengeStateData.isFinalByPlayerId[playerId] == 1) {
+        setScriptErrorWithUnlockKey(challengeId, "Challenge already processed - cannot grant experience again.");
+    } else {
+        challengeStateData.isFinalByPlayerId[playerId] = 1;
+        challenge.setPrivateData("data", challengeStateData);
+        Spark.unlockKeyFully(challengeId);
+    }
     
     const decksDataItem = API.getItem("PlayerDecks", playerId).document();
     const decksData = decksDataItem.getData();
@@ -59,7 +66,6 @@ function grantExperienceByPlayerAndChallenge(playerId, challengeId) {
         }
     }
     
-    const expCardIds = challengeStateData.expCardIdsByPlayerId[playerId];
     const response = handleGrantExperience(expCardIds, decksData, bCards);
     const newDecksData = response[0];
     const newBCards = response[1];
