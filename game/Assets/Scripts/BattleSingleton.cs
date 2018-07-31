@@ -275,7 +275,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengeEndTurnError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengeEndTurn request error.");
-        OnChallengeRequestError();
+        OnChallengeRequestError(response, "ChallengeEndTurn");
     }
 
     public void SendChallengePlayMulliganRequest(List<string> cardIds)
@@ -354,7 +354,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengePlayCardError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengePlayCard request error.");
-        OnChallengeRequestError();
+        OnChallengeRequestError(response, "ChallengePlayCard");
     }
 
     public void SendChallengePlaySpellTargetedRequest(
@@ -384,7 +384,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengePlaySpellTargetedError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengePlaySpellTargeted request error.");
-        OnChallengeRequestError();
+        OnChallengeRequestError(response, "ChallengePlaySpellTargeted");
     }
 
     public void SendChallengePlaySpellUntargetedRequest(string cardId)
@@ -410,7 +410,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengePlaySpellUntargetedError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengePlaySpellUntargeted request error.");
-        OnChallengeRequestError();
+        OnChallengeRequestError(response, "ChallengePlaySpell");
     }
 
     public void SendChallengeCardAttackRequest(
@@ -440,12 +440,39 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengeCardAttackError(LogChallengeEventResponse response)
     {
         Debug.LogError("ChallengeCardAttack request error.");
-        OnChallengeRequestError();
+        OnChallengeRequestError(response, "ChallengeCardAttack");
     }
 
-    private void OnChallengeRequestError()
+    private void OnChallengeRequestError(LogChallengeEventResponse response, string requestName)
     {
+        string devicePlayerStateString = JsonUtility.ToJson(BattleManager.Instance.GetPlayerState());
+        string deviceOpponentStateString = JsonUtility.ToJson(BattleManager.Instance.GetOpponentState());
+
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("LogDeviceChallengeError");
+        request.SetEventAttribute("challengeId", this.challengeId);
+        request.SetEventAttribute("eventKey", requestName);
+        request.SetEventAttribute("errorMessage", response.ScriptData.GetString("errorMessage"));
+        request.SetEventAttribute("stackTrace", response.ScriptData.GetString("stackTrace"));
+        request.SetEventAttribute("devicePlayerState", devicePlayerStateString);
+        request.SetEventAttribute("deviceOpponentState", deviceOpponentStateString);
+        request.Send(
+            OnLogDeviceChallengeErrorSuccess,
+            OnLogDeviceChallengeErrorError
+        );
+
+        // TODO: show something to user before doing this.
         SceneManager.LoadScene("Battle");
+    }
+
+    private void OnLogDeviceChallengeErrorSuccess(LogEventResponse response)
+    {
+
+    }
+
+    private void OnLogDeviceChallengeErrorError(LogEventResponse response)
+    {
+
     }
 
     public void SendFindMatchRequest(string matchCode, string deckName)
@@ -454,7 +481,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
         request.SetEventKey("FindMatch");
         request.SetEventAttribute("matchShortCode", "CasualMatch");
         request.SetEventAttribute("playerDeck", deckName);
-
         request.Send(
             OnFindMatchSuccess,
             OnFindMatchError
@@ -496,6 +522,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnGetActiveChallengeError(LogEventResponse response)
     {
         Debug.LogError("GetActiveChallenge request error.");
+        Application.LoadLevel("Menu");
     }
 
     public void ComparePlayerStates(
@@ -509,8 +536,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
-        PlayerState serverPlayerState = BattleSingleton.Instance.PlayerState;
-        PlayerState serverOpponentState = BattleSingleton.Instance.OpponentState;
+        PlayerState serverPlayerState = this.playerState;
+        PlayerState serverOpponentState = this.opponentState;
 
         if (!serverPlayerState.Equals(devicePlayerState))
         {

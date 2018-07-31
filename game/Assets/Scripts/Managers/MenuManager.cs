@@ -9,9 +9,6 @@ public class MenuManager : MonoBehaviour
     private Text usernameText;
 
     [SerializeField]
-    private Button loginButton;
-
-    [SerializeField]
     private Button logoutButton;
 
     private void Awake()

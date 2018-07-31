@@ -1690,7 +1690,7 @@ public class BattleManager : MonoBehaviour
         });
     }
 
-    private PlayerState GetPlayerState()
+    public PlayerState GetPlayerState()
     {
         return this.you.GeneratePlayerState();
     }
@@ -1702,8 +1702,8 @@ public class BattleManager : MonoBehaviour
 
     public void ComparePlayerStates()
     {
-        PlayerState devicePlayerState = BattleManager.Instance.GetPlayerState();
-        PlayerState deviceOpponentState = BattleManager.Instance.GetOpponentState();
+        PlayerState devicePlayerState = GetPlayerState();
+        PlayerState deviceOpponentState = GetOpponentState();
 
         if (FlagHelper.IsServerEnabled())
         {
