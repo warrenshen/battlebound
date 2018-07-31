@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 
 using UnityEngine;
@@ -1788,6 +1787,35 @@ public class BattleManager : MonoBehaviour
         else
         {
             BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+        }
+    }
+
+    public void ShowOpponentChat(int chatId)
+    {
+        Debug.Log(GetChatByChatId(chatId));
+    }
+
+    public static readonly Dictionary<int, string> CHAT_ID_TO_STRING = new Dictionary<int, string>
+    {
+        { 0, "GG" },
+        { 1, "REKT" },
+        { 2, "Wow" },
+        { 3, "Prepare yourself" },
+        { 4, "Heart of the cards" },
+        { 5, "Get good" },
+        { 6, "Well played" },
+    };
+
+    private static string GetChatByChatId(int chatId)
+    {
+        if (CHAT_ID_TO_STRING.ContainsKey(chatId))
+        {
+            return CHAT_ID_TO_STRING[chatId];
+        }
+        else
+        {
+            Debug.LogError(string.Format("Invalid chatId {0}", chatId));
+            return null;
         }
     }
 }
