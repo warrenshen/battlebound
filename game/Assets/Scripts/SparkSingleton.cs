@@ -9,8 +9,11 @@ public class SparkSingleton : Singleton<SparkSingleton>
 {
     private static string PLAYER_PREF_AUTHTOKEN_KEY = "gamesparks.authtoken";
 
-    public string username = "nick";
-    public string password = "password";
+    [SerializeField]
+    private string username = "";
+
+    [SerializeField]
+    private string password = "";
 
     private bool isAuthenticated;
     public bool IsAuthenticated => isAuthenticated;
@@ -33,7 +36,12 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
         LeanTween.init(800);
 
-        //LoginDevelopment(username, password);
+#if UNITY_EDITOR
+        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+        {
+            LoginDevelopment(username, password);
+        }
+#endif
 
         ClearAuthenticatedCallbacks();
         this.isAuthenticated = false;
