@@ -52,7 +52,8 @@ public class DeckStore
     {
         if (this.containsData)
         {
-            callback.Invoke();
+            this.awaitingAction = callback;
+            InvokeAwaitingAction();
         }
         else
         {
