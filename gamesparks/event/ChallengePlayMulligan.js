@@ -31,8 +31,6 @@ if (challenge.getRunState() != "RUNNING") {
 }
 
 const challengeStateData = challenge.getPrivateData("data");
-const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-
 const cardIds = Spark.getData().cardIds;
 
 handleChallengePlayMulligan(challengeStateData, playerId, cardIds);

@@ -11,6 +11,7 @@ require("ChallengeEffectsModule");
 
 function handleChallengePlayMulligan(challengeStateData, playerId, cardIds) {
     const challengeId = challengeStateData.id;
+    const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     
     if (!Array.isArray(cardIds)) {
         setScriptErrorWithUnlockKey(challengeId, "Invalid cardIds parameter - must be an array.");

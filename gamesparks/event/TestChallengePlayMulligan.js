@@ -6,7 +6,7 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("ChallengePlayCardModule");
+require("ChallengePlayMulliganModule");
 
 const challengeStateString = Spark.getData().challengeStateString;
 const playerId = Spark.getData().challengePlayerId;
