@@ -451,9 +451,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("LogDeviceChallengeError");
         request.SetEventAttribute("challengeId", this.challengeId);
-        request.SetEventAttribute("eventKey", requestName);
-        request.SetEventAttribute("errorMessage", response.ScriptData.GetString("errorMessage"));
-        request.SetEventAttribute("stackTrace", response.ScriptData.GetString("stackTrace"));
+        request.SetEventAttribute("requestName", requestName);
+        request.SetEventAttribute("errorMessage", response.Errors.GetString("errorMessage"));
+        request.SetEventAttribute("stackTrace", string.Join(",", response.Errors.GetStringList("stackTrace")));
         request.SetEventAttribute("devicePlayerState", devicePlayerStateString);
         request.SetEventAttribute("deviceOpponentState", deviceOpponentStateString);
         request.Send(
