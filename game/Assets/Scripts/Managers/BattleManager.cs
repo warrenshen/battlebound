@@ -89,7 +89,10 @@ public class BattleManager : MonoBehaviour
             {
                 if (SparkSingleton.Instance.IsAuthenticated)
                 {
-                    SendFindMatchRequest();
+                    BattleSingleton.Instance.SendFindMatchRequest(
+                        MatchmakingManager.MATCH_TYPE_RANKED,
+                        "Deck1"
+                    );
                 }
                 else
                 {
@@ -106,11 +109,6 @@ public class BattleManager : MonoBehaviour
         }
 
         attackCommand.SetWidth(0);
-    }
-
-    private void SendFindMatchRequest()
-    {
-        BattleSingleton.Instance.SendFindMatchRequest(MatchmakingManager.MATCH_TYPE_CASUAL, "Deck1");
     }
 
     private void Update()

@@ -479,7 +479,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("FindMatch");
-        request.SetEventAttribute("matchShortCode", "CasualMatch");
+        request.SetEventAttribute("matchShortCode", matchCode);
         request.SetEventAttribute("playerDeck", deckName);
         request.Send(
             OnFindMatchSuccess,
