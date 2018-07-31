@@ -30,11 +30,13 @@ const challengedDeck = getActiveDeckByPlayerId(challengedId);
 
 const challengeStateData = {};
 challengeStateData.id = challengeId;
+challengeStateData.mode = CHALLENGE_STATE_MODE_MULLIGAN;
 challengeStateData.moves = [];
 challengeStateData.deadCards = [];
 challengeStateData.spawnCount = 0;
 challengeStateData.deathCount = 0;
 challengeStateData.isFinalByPlayerId = {};
+
 const challengeState = challengeStateData.current = {};
 
 const opponentIdByPlayerId = {};
@@ -79,7 +81,7 @@ const challengerData = {
 };
 
 const challengedData = {
-    displayName: challenger.getUserName(),
+    displayName: challenged.getUserName(),
     manaCurrent: MANA_START,
     manaMax: MANA_START,
     health: HEALTH_START,

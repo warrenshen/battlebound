@@ -44,23 +44,57 @@ if (error) {
     setScriptError(error);
 }
 
+var request;
+var response;
+
 if (matchShortCode === "CasualMatch") {
-    var request = new SparkRequests.MatchmakingRequest();
+    // Cancel any in-flight matchmaking request.
+    request = new SparkRequests.MatchmakingRequest();
     request.matchShortCode = matchShortCode;
     request.skill = 0;
-    request.Execute();
+    request.action = "cancel";
+    response = request.Execute();
+    if (response.error != null) {
+        setScriptError(response.error);
+    }
+    
+    // Create new matchmaking request.
+    request = new SparkRequests.MatchmakingRequest();
+    request.matchShortCode = matchShortCode;
+    request.skill = 0;
+    response = request.Execute();
+    
+    if (response.error != null) {
+        setScriptError(response.error);
+    }
 } else if (matchShortCode === "RankedMatch") {
-    var scoreRequest = new SparkRequests.GetLeaderboardEntriesRequest();
-    scoreRequest.leaderboards = ["HIGH_SCORE_LB"];
-    scoreRequest.player = playerId;
-    var response = scoreRequest.Send();
+    // Cancel any in-flight matchmaking request.
+    request = new SparkRequests.MatchmakingRequest();
+    request.matchShortCode = matchShortCode;
+    request.action = "cancel";
+    response = request.Execute();
+    if (response.error != null) {
+        setScriptError(response.error);
+    }
+    
+    // Get player rank for matchmaking.
+    request = new SparkRequests.GetLeaderboardEntriesRequest();
+    request.leaderboards = ["HIGH_SCORE_LB"];
+    request.player = playerId;
+    response = request.Execute();
+    if (response.error != null) {
+        setScriptError(response.error);
+    }
     rankedScore = response.HIGH_SCORE_LB.SCORE_ATTR;
     
-    var request = new SparkRequests.MatchmakingRequest();
+    // Create new matchmaking request.
+    request = new SparkRequests.MatchmakingRequest();
     request.matchShortCode = matchShortCode;
     request.skill = rankedScore;
-    request.Execute();
-    
+    response = request.Execute();
+    if (response.error != null) {
+        setScriptError(response.error);
+    }
 } else {
     setScriptError("Invalid match short code.");
 }

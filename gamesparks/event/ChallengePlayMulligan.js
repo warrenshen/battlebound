@@ -6,11 +6,9 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("AttackModule");
-require("ChallengeMovesModule");
 require("ChallengeStateModule");
 require("CancelScheduledTimeEventsModule");
-require("ChallengeEffectsModule");
+require("ChallengePlayMulliganModule");
 
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
@@ -21,9 +19,15 @@ if (challengeId.length <= 0) {
 }
 
 const challenge = Spark.getChallenge(challengeId);
+if (challenge == null) {
+    setScriptError("Invalid challenge ID.");
+}
+
+// This lock call MUST be before the `challenge.getPrivateData` call below.
+Spark.lockKey(challengeId, 3000);
 
 if (challenge.getRunState() != "RUNNING") {
-    setScriptError("Challenge is not running.");
+    setScriptErrorWithUnlockKey(challengeId, "Challenge is not running.");
 }
 
 const challengeStateData = challenge.getPrivateData("data");
@@ -31,86 +35,15 @@ const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 
 const cardIds = Spark.getData().cardIds;
 
-if (!Array.isArray(cardIds)) {
-    setScriptError("Invalid cardIds parameter - must be an array.");
-}
-
-const challengeState = challengeStateData.current;
-const playerState = challengeState[playerId];
-if (playerState.mode !== PLAYER_STATE_MODE_MULLIGAN) {
-    setScriptError("Player state is not in mulligan mode.");
-}
-
-const mulliganCards = playerState.mulliganCards;
-const mulliganCardIds = mulliganCards.map(function(mulliganCard) { return mulliganCard.id });
-cardIds.forEach(function(cardId) {
-    if (mulliganCardIds.indexOf(cardId) < 0) {
-        setScriptError("Invalid cardIds parameter - a card ID does not exist in mulligan card IDs.");
-    }
-});
-
-// Reset `lastMoves` attribute in ChallengeState.
-challengeStateData.lastMoves = [];
-
-// Indices of cards going back into deck.
-const deckCardIndices = [];
-mulliganCards.forEach(function(mulliganCard, index) {
-    const isDeck = cardIds.indexOf(mulliganCard.id) < 0;
-    if (isDeck) {
-        deckCardIndices.push(index);
-        addCardToPlayerDeck(playerId, playerState, mulliganCard);
-    } else {
-        addCardToPlayerHand(playerId, playerState, mulliganCard);
-    }
-});
-
-var move = {
-    playerId: playerId,
-    category: MOVE_CATEGORY_PLAY_MULLIGAN,
-    attributes: {
-        deckCardIndices: deckCardIndices,
-    },
-};
-addChallengeMove(challengeStateData, move);
-
-// Draw cards into hand to replaces ones put back in deck.
-mulliganCards.forEach(function(mulliganCard, index) {
-    const isDeck = cardIds.indexOf(mulliganCard.id) < 0;
-    if (isDeck) {
-        const move = drawCardMulliganForPlayer(playerId, playerState);
-        addChallengeMove(challengeStateData, move);
-    }
-});
-
-const opponentState = challengeState[opponentId];
-
-if (opponentState.mode === PLAYER_STATE_MODE_MULLIGAN_WAITING) {
-    opponentState.mode = PLAYER_STATE_MODE_NORMAL;
-    playerState.mode = PLAYER_STATE_MODE_NORMAL;
-} else {
-    playerState.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
-}
-playerState.mulliganCards = [];
-
-if (playerState.mode === PLAYER_STATE_MODE_NORMAL) {
-    move = {
-        category: MOVE_CATEGORY_FINISH_MULLIGAN,
-    };
-    addChallengeMove(challengeStateData, move);
-    
-    cancelMulliganTimeEvents(challengeId);
-    
-    // Draw card for starting player.
-    if (playerState.hasTurn === 1) {
-        processStartTurn(challengeStateData, playerId);
-    } else if (opponentState.hasTurn === 1) {
-        processStartTurn(challengeStateData, opponentId);
-    } else {
-        setScriptError("Neither player has turn after mulligan.");
-    }
-}
+handleChallengePlayMulligan(challengeStateData, playerId, cardIds);
 
 require("PersistChallengeStateModule");
+
+Spark.unlockKeyFully(challengeId);
+
+if (challengeStateData.mode === CHALLENGE_STATE_MODE_NORMAL) {
+    cancelMulliganTimeEvents(challengeId);
+}
 
 const playerResponse = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
 const playerMessage = Spark.message("ChallengePlayMulliganMessage");
