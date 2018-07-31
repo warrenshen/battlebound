@@ -87,17 +87,7 @@ public class BattleManager : MonoBehaviour
         {
             if (!BattleSingleton.Instance.ChallengeStarted)
             {
-                if (SparkSingleton.Instance.IsAuthenticated)
-                {
-                    BattleSingleton.Instance.SendFindMatchRequest(
-                        MatchmakingManager.MATCH_TYPE_RANKED,
-                        "Deck1"
-                    );
-                }
-                else
-                {
-                    SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
-                }
+                SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
                 this.initialized = false;
                 return;
             }
@@ -109,6 +99,14 @@ public class BattleManager : MonoBehaviour
         }
 
         attackCommand.SetWidth(0);
+    }
+
+    private void SendFindMatchRequest()
+    {
+        BattleSingleton.Instance.SendFindMatchRequest(
+            MatchmakingManager.MATCH_TYPE_RANKED,
+            "Deck1"
+        );
     }
 
     private void Update()
