@@ -52,8 +52,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
         ChallengeTurnTakenMessage.Listener = ChallengeTurnTakenMessageHandler;
         ChallengeWonMessage.Listener = ChallengeWonMessageHandler;
         ChallengeLostMessage.Listener = ChallengeLostMessageHandler;
-        ScriptMessage_ChallengeTimeRunningOutMessage.Listener = ChallengeTimeRunningOutMessageHandler;
         ScriptMessage_ChallengePlayMulliganMessage.Listener = ChallengePlayMulliganMessageHandler;
+        ScriptMessage_ChallengeTimeRunningOutMessage.Listener = ChallengeTimeRunningOutMessageHandler;
+        ScriptMessage_ChallengeSendChatMessage.Listener = ChallengeSendChatMessageHandler;
     }
 
     private void Update()
@@ -77,16 +78,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
         InitializeChallenge(scriptData);
 
         SceneManager.LoadScene("Battle");
-    }
-
-    private void ChallengePlayMulliganMessageHandler(ScriptMessage_ChallengePlayMulliganMessage message)
-    {
-        Debug.Log("ChallengePlayMulliganMessage received.");
-
-        GSData scriptData = message.Data;
-        this.challengeId = scriptData.GetString("challengeId");
-
-        ProcessChallengeScriptData(scriptData);
     }
 
     private void ChallengeTurnTakenMessageHandler(ChallengeTurnTakenMessage message)
@@ -126,10 +117,32 @@ public class BattleSingleton : Singleton<BattleSingleton>
         }
     }
 
+    private void ChallengePlayMulliganMessageHandler(ScriptMessage_ChallengePlayMulliganMessage message)
+    {
+        GSData scriptData = message.Data;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            ProcessChallengeScriptData(scriptData);
+        }
+    }
+
     private void ChallengeTimeRunningOutMessageHandler(ScriptMessage_ChallengeTimeRunningOutMessage message)
     {
         // Call some function in BattleManager so Nick can react to event.
         Debug.Log("ChallengeTimeRunningOutMessage received.");
+    }
+
+    private void ChallengeSendChatMessageHandler(ScriptMessage_ChallengeSendChatMessage message)
+    {
+        GSData scriptData = message.Data;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            if (scriptData.GetInt("chatId") != null)
+            {
+                int chatId = (int)scriptData.GetInt("chatId");
+                BattleManager.Instance.ShowOpponentChat(chatId);
+            }
+        }
     }
 
     private bool IsMessageChallengeIdValid(GSData scriptData)
@@ -443,13 +456,38 @@ public class BattleSingleton : Singleton<BattleSingleton>
         OnChallengeRequestError(response, "ChallengeCardAttack");
     }
 
+    private void SendChallengeSendChatRequest(int chatId)
+    {
+        if (this.challengeId == null)
+        {
+            Debug.LogWarning("Cannot send ChallengeSendChat request without challengeId set.");
+            return;
+        }
+
+        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        request.SetEventKey("ChallengeSendChat");
+        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("chatId", chatId);
+        request.Send(OnChallengeSendChatSuccess, OnChallengeSendChatError);
+    }
+
+    private void OnChallengeSendChatSuccess(LogChallengeEventResponse response)
+    {
+        Debug.Log("ChallengeSendChat request success.");
+    }
+
+    private void OnChallengeSendChatError(LogChallengeEventResponse response)
+    {
+        Debug.LogError("ChallengeSendChat request error.");
+    }
+
     private void OnChallengeRequestError(LogChallengeEventResponse response, string requestName)
     {
         string devicePlayerStateString = JsonUtility.ToJson(BattleManager.Instance.GetPlayerState());
         string deviceOpponentStateString = JsonUtility.ToJson(BattleManager.Instance.GetOpponentState());
 
         LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("LogDeviceChallengeError");
+        request.SetEventKey("ChallengeLogDeviceError");
         request.SetEventAttribute("challengeId", this.challengeId);
         request.SetEventAttribute("requestName", requestName);
         request.SetEventAttribute("errorMessage", response.Errors.GetString("errorMessage"));
@@ -457,20 +495,20 @@ public class BattleSingleton : Singleton<BattleSingleton>
         request.SetEventAttribute("devicePlayerState", devicePlayerStateString);
         request.SetEventAttribute("deviceOpponentState", deviceOpponentStateString);
         request.Send(
-            OnLogDeviceChallengeErrorSuccess,
-            OnLogDeviceChallengeErrorError
+            OnChallengeLogDeviceErrorSuccess,
+            OnChallengeLogDeviceErrorError
         );
 
         // TODO: show something to user before doing this.
         SceneManager.LoadScene("Battle");
     }
 
-    private void OnLogDeviceChallengeErrorSuccess(LogEventResponse response)
+    private void OnChallengeLogDeviceErrorSuccess(LogEventResponse response)
     {
 
     }
 
-    private void OnLogDeviceChallengeErrorError(LogEventResponse response)
+    private void OnChallengeLogDeviceErrorError(LogEventResponse response)
     {
 
     }
