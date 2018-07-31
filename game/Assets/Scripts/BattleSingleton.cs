@@ -502,7 +502,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("GetActiveChallenge");
-
         request.Send(
             OnGetActiveChallengeSuccess,
             OnGetActiveChallengeError

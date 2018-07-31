@@ -11,8 +11,8 @@ using TMPro;
 
 public class MatchmakingManager : MonoBehaviour
 {
-    public const string MATCH_TYPE_CASUAL = "MATCH_TYPE_CASUAL";
-    public const string MATCH_TYPE_RANKED = "MATCH_TYPE_RANKED";
+    public const string MATCH_TYPE_CASUAL = "CasualMatch";
+    public const string MATCH_TYPE_RANKED = "RankedMatch";
 
     private string matchType = MATCH_TYPE_CASUAL;
     private string matchDeckName;
@@ -145,18 +145,7 @@ public class MatchmakingManager : MonoBehaviour
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("FindMatch");
         request.SetEventAttribute("playerDeck", this.matchDeckName);
-
-        switch (this.matchType)
-        {
-            case MATCH_TYPE_RANKED:
-                request.SetEventAttribute("matchShortCode", "RankedMatch");
-                break;
-            case MATCH_TYPE_CASUAL:
-            default:
-                request.SetEventAttribute("matchShortCode", "CasualMatch");
-                break;
-        }
-
+        request.SetEventAttribute("matchShortCode", this.matchType);
         request.Send(
             OnFindMatchSuccess,
             OnFindMatchError
