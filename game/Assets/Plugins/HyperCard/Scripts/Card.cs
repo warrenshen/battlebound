@@ -325,15 +325,18 @@ namespace HyperCard
             this.OutlineEndColor = copyFrom.OutlineEndColor;
             this.EnableOutline = copyFrom.EnableOutline;
 
-            this.Stencil = copyFrom.Stencil;
-
             this.CardFaceArtworkScale = copyFrom.CardFaceArtworkScale;
             this.CardFaceArtworkOffset = copyFrom.CardFaceArtworkOffset;
             this.CardFaceBackgroundArtworkScale = copyFrom.CardFaceBackgroundArtworkScale;
             this.CardFaceBackgroundArtworkOffset = copyFrom.CardFaceBackgroundArtworkOffset;
 
             this.CardOpacity = copyFrom.CardOpacity;
-            this.TmpTextObjects = copyFrom.TmpTextObjects;
+            this.GetTextFieldWithKey("Cost").Value = copyFrom.GetTextFieldWithKey("Cost").Value;
+            this.GetTextFieldWithKey("Attack").Value = copyFrom.GetTextFieldWithKey("Attack").Value;
+            this.GetTextFieldWithKey("Health").Value = copyFrom.GetTextFieldWithKey("Health").Value;
+            this.GetTextFieldWithKey("Title").Value = copyFrom.GetTextFieldWithKey("Title").Value;
+            this.GetTextFieldWithKey("Rarity").Value = copyFrom.GetTextFieldWithKey("Rarity").Value;
+            this.GetTextFieldWithKey("Description").Value = copyFrom.GetTextFieldWithKey("Description").Value;
 
             this.Redraw();
         }

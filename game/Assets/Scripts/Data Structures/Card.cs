@@ -549,7 +549,8 @@ public class CreatureCard : Card
 
     public string GetEffectPrefab()
     {
-        return this.cardTemplate.effectPrefab;
+        string trimmed = this.cardTemplate.effectPrefab.Substring(this.cardTemplate.effectPrefab.IndexOf('/') + 1);
+        return trimmed;
     }
 
     public override ChallengeCard GetChallengeCard()

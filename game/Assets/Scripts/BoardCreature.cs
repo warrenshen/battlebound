@@ -503,7 +503,10 @@ public class BoardCreature : Targetable
 
         Vector3 originalScale = this.visual.transform.localScale;
         float elapsedTime = 0;
-        LeanTween.scale(this.summoned, Vector3.zero, duration / 3).setEaseInOutCubic();
+        LeanTween.scale(this.summoned, Vector3.zero, duration / 3).setOnComplete(() =>
+        {
+            this.summoned.SetActive(false);
+        });
         while (elapsedTime < duration)
         {
             this.visual.transform.localScale = Mathf.Lerp(1, 0, (elapsedTime / duration)) * originalScale;
