@@ -182,6 +182,11 @@ public class BoardCreature : Targetable
         this.initialOutlineStartColor = this.visual.OutlineColor;
         this.initialOutlineEndColor = this.visual.OutlineEndColor;
 
+        foreach (HyperCard.Card.CustomSpriteParam spriteParam in this.visual.SpriteObjects)
+        {
+            spriteParam.IsAffectedByFilters = false;
+        }
+
         this.visual.SetOpacity(0.8f);
         this.visual.SetBlackAndWhite(true);
         this.visual.Renderer.enabled = true;

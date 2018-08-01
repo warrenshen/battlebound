@@ -572,6 +572,10 @@ public class Player
         GameObject created = new GameObject(card.Name);
         BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
         battleCardObject.Initialize(this, card);
+        foreach (HyperCard.Card.CustomSpriteParam spriteParam in battleCardObject.visual.SpriteObjects)
+        {
+            spriteParam.IsAffectedByFilters = true;
+        }
 
         created.transform.parent = GameObject.Find(
             this.name + " Hand"

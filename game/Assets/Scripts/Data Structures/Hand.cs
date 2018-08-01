@@ -161,19 +161,19 @@ public class Hand
         for (int k = 0; k < size; k++)
         {
             BattleCardObject battleCardObject = this.battleCardObjects[k];
+            RedrawOutline(battleCardObject);
+
             if (ActionManager.Instance.GetDragTarget() == battleCardObject)
             {
                 continue;
             }
             if (LeanTween.isTweening(battleCardObject.gameObject))  //TODO: this is hiding and causing some subtle problems...
             {
-                continue;
+                LeanTween.cancel(battleCardObject.gameObject);
             }
 
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
-
-            RedrawOutline(battleCardObject);
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.15f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
@@ -183,7 +183,7 @@ public class Hand
 
     private void RedrawOutline(BattleCardObject battleCardObject)
     {
-        Player player = BattleManager.Instance.GetPlayerById(this.playerId);
+        Player player = BattleManager.Instance.GetPlayerById(battleCardObject.Owner.Id);
 
         bool shouldSetOutline = player.HasTurn && player.Mana >= battleCardObject.GetCost();
         if (FlagHelper.IsServerEnabled())
@@ -192,6 +192,6 @@ public class Hand
         }
 
         battleCardObject.visual.SetOutline(shouldSetOutline);
-        battleCardObject.visual.Redraw();
+        //battleCardObject.visual.Redraw();
     }
 }
