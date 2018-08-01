@@ -215,6 +215,21 @@ public class Board : MonoBehaviour
         }
     }
 
+    public BoardCreature GetOpponentRandomCreature(string playerId)
+    {
+        string opponentId = this.playerIdToOpponentId[playerId];
+
+        List<BoardCreature> opponentCreatures = GetAliveCreaturesByPlayerId(opponentId);
+
+        if (opponentCreatures.Count <= 0)
+        {
+            return null;
+        }
+
+        int randomIndex = UnityEngine.Random.Range(0, opponentCreatures.Count);
+        return opponentCreatures[randomIndex];
+    }
+
     public Targetable GetOpponentRandomTargetable(string playerId)
     {
         string opponentId = this.playerIdToOpponentId[playerId];

@@ -30,7 +30,7 @@ public class BoardWeapon : MonoBehaviour
         if (!target.IsAvatar)
         {
             BoardCreature targetCreature = target as BoardCreature;
-            damageDone = this.wielder.TakeDamage(targetCreature.Attack);
+            damageDone = this.wielder.TakeDamage(targetCreature.GetAttack());
         }
         //to-do: updated weapon durability rendering
         this.durability -= 1;

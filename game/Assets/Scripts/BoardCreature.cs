@@ -26,18 +26,8 @@ public class BoardCreature : Targetable
     public int Cost => cost;    //e.g. remove all cards with cost 2 or less
 
     [SerializeField]
-    private int attack;
-    public int Attack => attack;
-
-    [SerializeField]
     private int health;
     public int Health => health;
-
-    [SerializeField]
-    protected int maxHealth;
-    public int MaxHealth => maxHealth;
-
-    //Player owner / Owner exists in Targetable class
 
     private CreatureCard creatureCard;
     public CreatureCard CreatureCard => creatureCard;
@@ -88,9 +78,7 @@ public class BoardCreature : Targetable
         this.creatureCard = battleCardObject.Card as CreatureCard;
 
         this.cost = battleCardObject.GetCost();
-        this.attack = this.creatureCard.GetAttack();
         this.health = this.creatureCard.GetHealth();
-        this.maxHealth = this.creatureCard.GetHealth();
         this.abilities = this.creatureCard.GetAbilities();
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
@@ -120,9 +108,7 @@ public class BoardCreature : Targetable
 
         // Use challenge card stats.
         this.cost = challengeCard.Cost;
-        this.attack = challengeCard.Attack;
         this.health = challengeCard.Health;
-        this.maxHealth = challengeCard.HealthMax;
         this.abilities = challengeCard.GetAbilities();
         this.canAttack = challengeCard.CanAttack;
 
@@ -257,6 +243,47 @@ public class BoardCreature : Targetable
     public void DecrementCanAttack()
     {
         this.canAttack -= 1;
+    }
+
+    public int GetAttack()
+    {
+        int attack = this.creatureCard.GetAttack();
+
+        foreach (string buff in this.buffs)
+        {
+            switch (buff)
+            {
+                case Card.BUFF_CATEGORY_UNSTABLE_POWER:
+                    attack += 30;
+                    break;
+                case Card.BUFF_CATEGORY_BESTOWED_VIGOR:
+                    attack += 20;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return attack;
+    }
+
+    public int GetHealthMax()
+    {
+        int health = this.creatureCard.GetHealth();
+
+        foreach (string buff in this.buffs)
+        {
+            switch (buff)
+            {
+                case Card.BUFF_CATEGORY_BESTOWED_VIGOR:
+                    health += 10;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return health;
     }
 
     public void FightAnimationWithCallback(Targetable other, UnityAction onFightFinish)
@@ -407,7 +434,7 @@ public class BoardCreature : Targetable
     {
         int healthBefore = this.health;
         this.health += amount;
-        this.health = Math.Min(this.health, this.maxHealth);
+        this.health = Math.Min(this.health, GetHealthMax());
 
         int amountHealed = Math.Min(this.health - healthBefore, amount);
         if (amountHealed > 0)
@@ -426,8 +453,9 @@ public class BoardCreature : Targetable
     public int HealMax()
     {
         int healthBefore = this.health;
-        this.health = this.maxHealth;
-        return this.maxHealth - healthBefore;
+        int healthMax = GetHealthMax();
+        this.health = healthMax;
+        return healthMax - healthBefore;
     }
 
     public override void OnStartTurn()
@@ -459,13 +487,6 @@ public class BoardCreature : Targetable
     public void SetHealth(int amount)
     {
         this.health = amount;
-    }
-
-    public void AddAttack(int amount)
-    {
-        this.attack += amount;
-        // TODO: animate.
-        UpdateStatText();
     }
 
     public void Die()
@@ -557,6 +578,8 @@ public class BoardCreature : Targetable
             return;
         }
 
+        int attack = GetAttack();
+
         HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
         HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
 
@@ -564,7 +587,7 @@ public class BoardCreature : Targetable
         {
             LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
         }
-        if (!attackText.Value.Equals(this.attack.ToString()))
+        if (!attackText.Value.Equals(attack.ToString()))
         {
             LeanTween.scale(attackText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
         }
@@ -575,7 +598,7 @@ public class BoardCreature : Targetable
 
         this.visual.SetTextFieldWithKey("Title", this.name);
         this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
-        this.visual.SetTextFieldWithKey("Attack", this.attack.ToString());
+        this.visual.SetTextFieldWithKey("Attack", attack.ToString());
         this.visual.SetTextFieldWithKey("Health", this.health.ToString());
 
         if (this.isSilenced)
@@ -583,11 +606,11 @@ public class BoardCreature : Targetable
             this.visual.SetTextFieldWithKey("Description", "");
         }
 
-        if (this.attack > creatureCard.GetAttack())
+        if (attack > creatureCard.GetAttack())
         {
             attackText.TmpObject.color = BoardCreature.LIGHT_GREEN;
         }
-        else if (this.attack < creatureCard.GetAttack())
+        else if (attack < creatureCard.GetAttack())
         {
             attackText.TmpObject.color = BoardCreature.LIGHT_RED;
         }
@@ -596,11 +619,11 @@ public class BoardCreature : Targetable
             attackText.TmpObject.color = Color.white;
         }
 
-        if (this.health > creatureCard.GetHealth())
+        if (this.health > GetHealthMax())
         {
             healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
         }
-        else if (this.health < creatureCard.GetHealth())
+        else if (this.health < GetHealthMax())
         {
             healthText.TmpObject.color = BoardCreature.LIGHT_RED;
         }
@@ -807,8 +830,8 @@ public class BoardCreature : Targetable
         challengeCard.SetCostStart(this.creatureCard.GetCost());
         challengeCard.SetHealth(this.health);
         challengeCard.SetHealthStart(this.creatureCard.GetHealth());
-        challengeCard.SetHealthMax(this.maxHealth);
-        challengeCard.SetAttack(this.attack);
+        challengeCard.SetHealthMax(GetHealthMax());
+        challengeCard.SetAttack(GetAttack());
         challengeCard.SetAttackStart(this.creatureCard.GetAttack());
         challengeCard.SetCanAttack(this.canAttack);
         challengeCard.SetIsFrozen(this.isFrozen);

@@ -930,6 +930,29 @@ public class EffectManager : MonoBehaviour
         return spawnCard;
     }
 
+    private ChallengeCard CleanCardForConvert(string playerId, ChallengeCard dirtyCard)
+    {
+        Player player = BattleManager.Instance.GetPlayerById(playerId);
+
+        ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
+            JsonUtility.ToJson(dirtyCard)
+        );
+
+        spawnCard.SetId(playerId + "-" + player.GetNewCardRank());
+        spawnCard.SetPlayerId(playerId);
+
+        if (spawnCard.GetAbilities().Contains(Card.CARD_ABILITY_CHARGE))
+        {
+            spawnCard.SetCanAttack(1);
+        }
+        else
+        {
+            spawnCard.SetCanAttack(0);
+        }
+
+        return spawnCard;
+    }
+
     private void AbilityReviveHighestCostCreature(Effect effect)
     {
         string playerId = effect.PlayerId;
@@ -1227,8 +1250,9 @@ public class EffectManager : MonoBehaviour
             List<Effect> effects = new List<Effect>();
 
             this.isWaiting = true;
-            attackingCreature.FightAnimationWithCallback(defendingCreature, new UnityAction(
-                () =>
+            attackingCreature.FightAnimationWithCallback(
+                defendingCreature,
+                new UnityAction(() =>
                 {
                     int damageDone;
 
@@ -1238,7 +1262,7 @@ public class EffectManager : MonoBehaviour
                     }
                     else
                     {
-                        damageDone = defendingCreature.TakeDamage(attackingCreature.Attack);
+                        damageDone = defendingCreature.TakeDamage(attackingCreature.GetAttack());
                     }
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
@@ -1251,7 +1275,7 @@ public class EffectManager : MonoBehaviour
                     }
                     else
                     {
-                        damageTaken = attackingCreature.TakeDamage(defendingCreature.Attack);
+                        damageTaken = attackingCreature.TakeDamage(defendingCreature.GetAttack());
                     }
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
@@ -1263,7 +1287,7 @@ public class EffectManager : MonoBehaviour
                     }
                     else if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK))
                     {
-                        adjacentAttack = attackingCreature.Attack;
+                        adjacentAttack = attackingCreature.GetAttack();
                     }
 
                     if (adjacentAttack > 0)
@@ -1315,10 +1339,11 @@ public class EffectManager : MonoBehaviour
             //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
 
             this.isWaiting = true;
-            attackingCreature.FightAnimationWithCallback(defendingAvatar, new UnityAction(
-                () =>
+            attackingCreature.FightAnimationWithCallback(
+                defendingAvatar,
+                new UnityAction(() =>
                 {
-                    int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
+                    int damageDone = defendingAvatar.TakeDamage(attackingCreature.GetAttack());
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
@@ -1364,6 +1389,12 @@ public class EffectManager : MonoBehaviour
         string targetId
     )
     {
+        if (fieldId == null || targetId == null)
+        {
+            Debug.LogError("Invalid parameters given to function.");
+            return;
+        }
+
         if (card.Name == Card.CARD_NAME_BOMBSHELL_BOMBADIER)
         {
             Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, card.Id);
@@ -1383,19 +1414,20 @@ public class EffectManager : MonoBehaviour
                 GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
                 this.isWaiting = true;
-                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                         .setEaseInOutCirc()
-                         .setOnComplete(() =>
-                         {
-                             int damageDone = defendingCreature.TakeDamage(20);
-                             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                LeanTween
+                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                    .setEaseInOutCirc()
+                    .setOnComplete(() =>
+                    {
+                        int damageDone = defendingCreature.TakeDamage(20);
+                        effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                             bombObject.SetActive(false);
+                        bombObject.SetActive(false);
 
-                             AddToQueues(effects);
-                             this.isWaiting = false;
-                             this.isDirty = true;
-                         });
+                        AddToQueues(effects);
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    });
             }
             else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
             {
@@ -1430,7 +1462,6 @@ public class EffectManager : MonoBehaviour
             PlayerAvatar attackingTargetable = BattleManager.Instance.GetPlayerById(playerId).Avatar;
             Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
-
             if (defendingTargetable.GetType() == typeof(BoardCreature))
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
@@ -1439,19 +1470,20 @@ public class EffectManager : MonoBehaviour
                 GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
                 this.isWaiting = true;
-                LeanTween.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                         .setEaseInOutCirc()
-                         .setOnComplete(() =>
-                         {
-                             int damageDone = defendingCreature.TakeDamage(10);
-                             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                LeanTween
+                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                    .setEaseInOutCirc()
+                    .setOnComplete(() =>
+                    {
+                        int damageDone = defendingCreature.TakeDamage(10);
+                        effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                             bombObject.SetActive(false);
+                        bombObject.SetActive(false);
 
-                             AddToQueues(effects);
-                             this.isWaiting = false;
-                             this.isDirty = true;
-                         });
+                        AddToQueues(effects);
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    });
             }
             else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
             {
@@ -1481,9 +1513,103 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError("Unsupported.");
             }
         }
+        else if (card.Name == Card.CARD_NAME_BATTLE_ROYALE)
+        {
+            List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+            List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+
+            List<BoardCreature> allCreatures = new List<BoardCreature>();
+            allCreatures.AddRange(playerCreatures);
+            allCreatures.AddRange(opponentCreatures);
+
+            List<Effect> effects = new List<Effect>();
+
+            foreach (BoardCreature boardCreature in allCreatures)
+            {
+                if (boardCreature.GetPlayerId() == fieldId && boardCreature.GetCardId() == targetId)
+                {
+                    continue;
+                }
+                else
+                {
+                    boardCreature.DeathNote();
+                    boardCreature.Redraw();
+                    effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
+                }
+            }
+
+            AddToQueues(effects);
+            this.isWaiting = false;
+            this.isDirty = true;
+        }
         else
         {
             Debug.LogError("Invalid card for move random target.");
+        }
+    }
+
+    /*
+     * Player is the one converting target to their side.
+     */
+    public void OnConvertCreature(string playerId, string fieldId, string targetId)
+    {
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            fieldId,
+            targetId
+        );
+        ChallengeCard spawnCard = CleanCardForConvert(playerId, boardCreature.GetChallengeCard());
+
+        Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+            fieldId,
+            targetId
+        );
+        boardCreature.Die();
+
+        List<BoardCreature> playerAliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+
+        if (playerAliveCreatures.Count < 6)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+        }
+        else
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+        }
+
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true; // Rendundant call since isWaiting should be true already.
+        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(spawnCard);
+            moveAttributes.SetFieldId(playerId);
+
+            if (spawnIndex < 0)
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+            }
+            else
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+                moveAttributes.SetFieldIndex(spawnIndex);
+            }
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
         }
     }
 
@@ -1515,6 +1641,9 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_NAME_DEATH_NOTE:
                 effects = SpellTargetedDeathNote(playerId, targetedCreature);
                 break;
+            case Card.CARD_NAME_BESTOWED_VIGOR:
+                effects = SpellTargetedBestowedVigor(playerId, targetedCreature);
+                break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
                 break;
@@ -1539,11 +1668,8 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellTargetedUnstablePower(string playerId, BoardCreature targetedCreature)
     {
-        targetedCreature.AddAttack(30);
         targetedCreature.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
-
         targetedCreature.Redraw();
-
         // No triggered effects on unstable power for now.
         return new List<Effect>();
     }
@@ -1591,15 +1717,16 @@ public class EffectManager : MonoBehaviour
     private List<Effect> SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.DeathNote();
+        targetedCreature.Redraw();
+        return GetEffectsOnCreatureDeath(targetedCreature);
+    }
 
-        List<Effect> effects = new List<Effect>();
-
-        if (targetedCreature.Health <= 0)
-        {
-            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
-        }
-
-        return effects;
+    private List<Effect> SpellTargetedBestowedVigor(string playerId, BoardCreature targetedCreature)
+    {
+        targetedCreature.AddBuff(Card.BUFF_CATEGORY_BESTOWED_VIGOR);
+        targetedCreature.Heal(10);
+        targetedCreature.Redraw();
+        return new List<Effect>();
     }
 
     public void OnSpellUntargetedPlay(BattleCardObject battleCardObject)
@@ -1607,6 +1734,7 @@ public class EffectManager : MonoBehaviour
         string playerId = battleCardObject.Owner.Id;
 
         SpellCard spellCard = battleCardObject.Card as SpellCard;
+        ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
 
         List<Effect> effects = new List<Effect>();
 
@@ -1631,10 +1759,16 @@ public class EffectManager : MonoBehaviour
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
             case Card.CARD_NAME_SPRAY_N_PRAY:
-                effects = SpellUntargetedSprayNPray(playerId, battleCardObject.GetChallengeCard());
+                effects = SpellUntargetedSprayNPray(playerId, challengeCard);
                 break;
             case Card.CARD_NAME_GRAVE_DIGGING:
                 effects = SpellUntargetedGraveDigging(playerId);
+                break;
+            case Card.CARD_NAME_THE_SEVEN:
+                effects = SpellUntargetedTheSeven(playerId);
+                break;
+            case Card.CARD_NAME_BATTLE_ROYALE:
+                effects = SpellUntargetedBattleRoyale(playerId, challengeCard);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
@@ -1831,6 +1965,99 @@ public class EffectManager : MonoBehaviour
         return new List<Effect>();
     }
 
+    private List<Effect> SpellUntargetedTheSeven(string playerId)
+    {
+        List<BoardCreature> opponentAliveCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        if (opponentAliveCreatures.Count <= 0)
+        {
+            return new List<Effect>();
+        }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true;
+        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            BoardCreature opponentRandomCreature = Board.Instance.GetOpponentRandomCreature(playerId);
+
+            //if (randomCreature == null)
+            //{
+            //    challengeMove = new ChallengeMove();
+            //    challengeMove.SetPlayerId(playerId);
+            //    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
+            //    challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            //    BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            //}
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetFieldId(opponentRandomCreature.GetPlayerId());
+            moveAttributes.SetTargetId(opponentRandomCreature.GetCardId());
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
+
+        return new List<Effect>();
+    }
+
+    private List<Effect> SpellUntargetedBattleRoyale(string playerId, ChallengeCard challengeCard)
+    {
+        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        List<BoardCreature> allCreatures = new List<BoardCreature>();
+        allCreatures.AddRange(playerCreatures);
+        allCreatures.AddRange(opponentCreatures);
+
+        if (allCreatures.Count <= 0)
+        {
+            return new List<Effect>();
+        }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        this.isWaiting = true;
+        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            int randomIndex = UnityEngine.Random.Range(0, opponentCreatures.Count);
+            BoardCreature randomCreature = allCreatures[randomIndex];
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(challengeCard);
+            moveAttributes.SetFieldId(randomCreature.GetPlayerId());
+            moveAttributes.SetTargetId(randomCreature.GetCardId());
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        }
+
+        return new List<Effect>();
+    }
+
     private List<Effect> GetEffectsOnCreatureDamageDealt(
         BoardCreature boardCreature,
         int amount
@@ -1907,7 +2134,7 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        // If no death ratlle effects, add in card die effect.
+        // If no death rattle effects, add in card die effect.
         // If there are death rattle effects, they will handle card die.
         if (effects.Count <= 0)
         {

@@ -175,7 +175,7 @@ public class PlayerAvatar : Targetable
         if (!other.IsAvatar)
         {
             FXPoolManager.Instance.PlayEffect("SlashVFX", this.transform.position);
-            this.TakeDamage(((BoardCreature)other).Attack);
+            this.TakeDamage(((BoardCreature)other).GetAttack());
 
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later                
                 SoundManager.Instance.PlaySound("HitTauntSFX", other.transform.position);
