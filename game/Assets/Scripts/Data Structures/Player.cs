@@ -165,10 +165,27 @@ public class Player
     {
         RenderMana();
 
-        // TODO: Should cache hand transform.
-        Vector3 targetPosition = GameObject.Find(name + " Hand").transform.position;
-        GameObject light = GameObject.Find("Point Light");
-        LeanTween.move(light, new Vector3(targetPosition.x, targetPosition.y, light.transform.position.z), 0.4f).setEaseOutQuart();
+        Vector3 targetPosition;
+        if (this.name == "Player")
+        {
+            targetPosition = BattleManager.Instance.PlayerHandTransform.position;
+        }
+        else
+        {
+            targetPosition = BattleManager.Instance.EnemyHandTransform.position;
+        }
+
+        LeanTween
+            .move(
+                BattleManager.Instance.LightGameObject,
+                new Vector3(
+                    targetPosition.x,
+                    targetPosition.y,
+                    BattleManager.Instance.LightGameObject.transform.position.z
+                ),
+                0.4f
+            )
+            .setEaseOutQuart();
 
         this.hand.RepositionCards();
     }
@@ -639,57 +656,7 @@ public class Player
         return cardRank;
     }
 
-    public PlayerState GeneratePlayerState()
-    {
-        PlayerState playerState = new PlayerState();
-
-        playerState.SetId(this.id);
-        playerState.SetHasTurn(this.hasTurn ? 1 : 0);
-        playerState.SetManaCurrent(this.mana);
-        playerState.SetManaMax(this.maxMana);
-        playerState.SetHealth(this.avatar.Health);
-        playerState.SetHealthMax(this.avatar.MaxHealth);
-        playerState.SetArmor(this.avatar.Armor);
-        playerState.SetCardCount(this.cardCount);
-        playerState.SetDeckSize(this.deckSize);
-        playerState.SetMode(this.mode);
-
-        List<ChallengeCard> handCards = new List<ChallengeCard>();
-        if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
-        {
-            for (int i = 0; i < this.hand.Size(); i += 1)
-            {
-                BattleCardObject battleCardObject = this.hand.GetCardObjectByIndex(i);
-                ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
-                challengeCard.SetPlayerId(this.id);
-                handCards.Add(challengeCard);
-            }
-        }
-        playerState.SetHand(handCards);
-
-        ChallengeCard[] fieldCards = new ChallengeCard[6];
-        for (int i = 0; i < 6; i += 1)
-        {
-            Board.PlayingField playingField = Board.Instance.GetFieldByPlayerId(this.id);
-            BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
-
-            if (boardCreature == null)
-            {
-                ChallengeCard challengeCard = new ChallengeCard();
-                challengeCard.SetId("EMPTY");
-                fieldCards.SetValue(challengeCard, i);
-            }
-            else
-            {
-                fieldCards.SetValue(boardCreature.GetChallengeCard(), i);
-            }
-        }
-        playerState.SetField(fieldCards);
-
-        return playerState;
-    }
-
-    private string GetNewCardId()
+    public string GetNewCardId()
     {
         return string.Format("{0}-{1}", this.name, GetNewCardRank());
     }
@@ -764,5 +731,55 @@ public class Player
 
         Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
         return chosen;
+    }
+
+    public PlayerState GeneratePlayerState()
+    {
+        PlayerState playerState = new PlayerState();
+
+        playerState.SetId(this.id);
+        playerState.SetHasTurn(this.hasTurn ? 1 : 0);
+        playerState.SetManaCurrent(this.mana);
+        playerState.SetManaMax(this.maxMana);
+        playerState.SetHealth(this.avatar.Health);
+        playerState.SetHealthMax(this.avatar.MaxHealth);
+        playerState.SetArmor(this.avatar.Armor);
+        playerState.SetCardCount(this.cardCount);
+        playerState.SetDeckSize(this.deckSize);
+        playerState.SetMode(this.mode);
+
+        List<ChallengeCard> handCards = new List<ChallengeCard>();
+        if (this.mode != PLAYER_STATE_MODE_MULLIGAN)
+        {
+            for (int i = 0; i < this.hand.Size(); i += 1)
+            {
+                BattleCardObject battleCardObject = this.hand.GetCardObjectByIndex(i);
+                ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
+                challengeCard.SetPlayerId(this.id);
+                handCards.Add(challengeCard);
+            }
+        }
+        playerState.SetHand(handCards);
+
+        ChallengeCard[] fieldCards = new ChallengeCard[6];
+        for (int i = 0; i < 6; i += 1)
+        {
+            Board.PlayingField playingField = Board.Instance.GetFieldByPlayerId(this.id);
+            BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
+
+            if (boardCreature == null)
+            {
+                ChallengeCard challengeCard = new ChallengeCard();
+                challengeCard.SetId("EMPTY");
+                fieldCards.SetValue(challengeCard, i);
+            }
+            else
+            {
+                fieldCards.SetValue(boardCreature.GetChallengeCard(), i);
+            }
+        }
+        playerState.SetField(fieldCards);
+
+        return playerState;
     }
 }

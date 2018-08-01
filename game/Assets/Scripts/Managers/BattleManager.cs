@@ -62,11 +62,22 @@ public class BattleManager : MonoBehaviour
     private Transform enemyDrawCardFixedTransform;
     [SerializeField]
     private Transform enemyDeckTransform;
+    [SerializeField]
+    private Transform enemyHandTransform;
+    public Transform EnemyHandTransform => enemyHandTransform;
 
     [SerializeField]
     private Transform playerDrawCardFixedTransform;
     [SerializeField]
     private Transform playerDeckTransform;
+    [SerializeField]
+    private Transform playerHandTransform;
+    public Transform PlayerHandTransform => playerHandTransform;
+
+    private GameObject lightGameObject;
+    public GameObject LightGameObject => lightGameObject;
+    [SerializeField]
+    private GameObject boardMessageGameObject;
     // --
 
     [SerializeField]
@@ -91,6 +102,8 @@ public class BattleManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        this.lightGameObject = GameObject.Find("Point Light");
 
         if (FlagHelper.IsServerEnabled())
         {
@@ -429,7 +442,6 @@ public class BattleManager : MonoBehaviour
         //do some turn transition render
         SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
         SetPassiveCursor();
-        //to-do: action manager set active = false, but that makes singleplayer broken
 
         activePlayer.NewTurn();
         EffectManager.Instance.OnStartTurn(activePlayer.Id);
@@ -438,7 +450,7 @@ public class BattleManager : MonoBehaviour
     public void SetBoardCenterText(string message)
     {
         // TODO: Cache!
-        GameObject.Find("Board Message").GetComponent<TextMeshPro>().text = message;
+        this.boardMessageGameObject.GetComponent<TextMeshPro>().text = message;
     }
 
     private void Surrender()
