@@ -61,7 +61,14 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private Transform enemyDrawCardFixedTransform;
     [SerializeField]
+    private Transform enemyDeckTransform;
+
+    [SerializeField]
     private Transform playerDrawCardFixedTransform;
+    [SerializeField]
+    private Transform playerDeckTransform;
+    // --
+
     [SerializeField]
     private BasicButton endTurnButton;
 
@@ -430,6 +437,7 @@ public class BattleManager : MonoBehaviour
 
     public void SetBoardCenterText(string message)
     {
+        // TODO: Cache!
         GameObject.Find("Board Message").GetComponent<TextMeshPro>().text = message;
     }
 
@@ -627,13 +635,18 @@ public class BattleManager : MonoBehaviour
                     return false;
                 }
             }
-            else  //not targeted spell, play freely
+            else if (CanPlayUntargetedSpell(target)) //not targeted spell, play freely
             {
                 if (PlayUntargetedSpell(target))
                 {
                     target.Owner.PlayCard(target);
                 }
                 return true;
+            }
+            else
+            {
+                ActionManager.Instance.ResetTarget();
+                return false;
             }
         }
         else if (target.Card.GetType() == typeof(WeaponCard))
@@ -674,9 +687,18 @@ public class BattleManager : MonoBehaviour
 
     public LTDescr AnimateDrawCard(Player player, BattleCardObject battleCardObject)
     {
-        GameObject deckObject = GameObject.Find(String.Format("{0} Deck", player.Name));
-        battleCardObject.transform.position = deckObject.transform.position;
-        battleCardObject.transform.rotation = deckObject.transform.rotation;
+        Transform deckTransform;
+        if (player.Id == this.you.Id)
+        {
+            deckTransform = this.playerDeckTransform;
+        }
+        else
+        {
+            deckTransform = this.enemyDeckTransform;
+        }
+
+        battleCardObject.transform.position = deckTransform.position;
+        battleCardObject.transform.rotation = deckTransform.rotation;
         battleCardObject.visual.Redraw();
 
         Transform pivotPoint;
@@ -775,7 +797,37 @@ public class BattleManager : MonoBehaviour
         this.you.PlayMulligan(this.opponent.Mode);
     }
 
-    public bool CanPlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
+    private bool CanPlayUntargetedSpell(BattleCardObject battleCardObject)
+    {
+        if (battleCardObject.Card.GetType() != typeof(SpellCard))
+        {
+            Debug.LogError("Function passed invalid card - should be spell card");
+            return false;
+        }
+
+        SpellCard card = battleCardObject.Card as SpellCard;
+
+        if (card.Targeted != false)
+        {
+            Debug.LogError("Function passed invalid card - should be spell untargeted card");
+            return false;
+        }
+
+        if (card.Name == Card.CARD_NAME_GRAVE_DIGGING)
+        {
+            return true;
+        }
+        else if (card.Name == Card.CARD_NAME_THE_SEVEN)
+        {
+            return true;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private bool CanPlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
     {
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
@@ -1207,14 +1259,14 @@ public class BattleManager : MonoBehaviour
 
     private void ReceiveMoveRandomTarget(
         string playerId,
-        ChallengeCard card,
+        ChallengeCard challengeCard,
         string fieldId,
         string targetId
     )
     {
         EffectManager.Instance.OnRandomTarget(
             playerId,
-            card,
+            challengeCard,
             fieldId,
             targetId
         );
@@ -1287,6 +1339,15 @@ public class BattleManager : MonoBehaviour
     {
         // TODO
         EffectManager.Instance.OnSummonCreatureFinish();
+    }
+
+    private void ReceiveMoveConvertCreature(
+        string playerId,
+        string fieldId,
+        string targetId
+    )
+    {
+        EffectManager.Instance.OnConvertCreature(playerId, fieldId, targetId);
     }
 
     public void ReceiveMoveSurrenderByChoice(string playerId)
@@ -1638,6 +1699,14 @@ public class BattleManager : MonoBehaviour
         {
             ReceiveMoveSurrenderByChoice(serverMove.PlayerId);
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE)
+        {
+            ReceiveMoveConvertCreature(
+                serverMove.PlayerId,
+                serverMove.Attributes.FieldId,
+                serverMove.Attributes.TargetId
+            );
+        }
 
         return serverMove.Rank;
     }
@@ -1668,11 +1737,12 @@ public class BattleManager : MonoBehaviour
     {
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
         {
-            CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                 .setOnComplete(() =>
-                 {
-                     PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
-                 });
+            CardTween
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                .setOnComplete(() =>
+                {
+                    PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+                });
         });
     }
 
@@ -1680,11 +1750,12 @@ public class BattleManager : MonoBehaviour
     {
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
         {
-            CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                 .setOnComplete(() =>
-                 {
-                     PlayUntargetedSpellFromServer(battleCardObject);
-                 });
+            CardTween
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                .setOnComplete(() =>
+                {
+                    PlayUntargetedSpellFromServer(battleCardObject);
+                });
         });
     }
 
