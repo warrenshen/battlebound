@@ -1849,14 +1849,14 @@ describe("challenge events", function() {
     });
   });
 
-  describe("spells + deathwish", function() {
-    it("should run Bombshell Bombadier's deathwish on touch of zeus", function() {
+  describe("spells", function() {
+    it("should support battle royale", function() {
       const challengeStateData = {
         "current": {
           "ID_OPPONENT": {
             "hasTurn": 0,
-            "manaCurrent": 0,
-            "manaMax": 70,
+            "manaCurrent": 90,
+            "manaMax": 90,
             "health": 100,
             "healthMax": 100,
             "armor": 0,
@@ -1865,34 +1865,55 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "EMPTY"
-              },
-              {
-                "id": "C10-ID_OPPONENT-5",
+                "id": "ID_OPPONENT-0",
                 "playerId": "ID_OPPONENT",
                 "level": 1,
                 "category": 0,
-                "attack": 50,
+                "attack": 20,
                 "health": 10,
-                "cost": 70,
-                "name": "Bombshell Bombadier",
-                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
                 "abilities": [
-                  0,
-                  12
+                  28
                 ],
-                "baseId": "C10",
-                "attackStart": 50,
-                "costStart": 70,
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
                 "buffs": [],
-                "canAttack": 1,
+                "canAttack": 0,
                 "isFrozen": 0,
-                "spawnRank": 2
+                "isSilenced": 0,
+                "spawnRank": 1
               },
               {
                 "id": "EMPTY"
+              },
+              {
+                "id": "ID_OPPONENT-1",
+                "playerId": "ID_OPPONENT",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
+                "abilities": [
+                  28
+                ],
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 2
               },
               {
                 "id": "EMPTY"
@@ -1903,17 +1924,17 @@ describe("challenge events", function() {
             ],
             "hand": [],
             "deckSize": 0,
-            "cardCount": 6,
+            "cardCount": 33,
             "mode": 0,
             "mulliganCards": [],
             "id": "ID_OPPONENT",
             "expiredStreak": 0
           },
           "ID_PLAYER": {
-            "hasTurn": 1,
-            "manaCurrent": 70,
-            "manaMax": 70,
-            "health": 100,
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 60,
             "healthMax": 100,
             "armor": 0,
             "field": [
@@ -1921,28 +1942,55 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C2-ID_PLAYER-2",
+                "id": "ID_PLAYER-18",
                 "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
-                "attack": 30,
-                "health": 30,
-                "cost": 40,
-                "name": "Waterborne Razorback",
-                "description": "Charge; At the end of each turn, recover 20 health",
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
                 "abilities": [
-                  0,
-                  8
+                  28
                 ],
-                "baseId": "C2",
-                "attackStart": 30,
-                "costStart": 40,
-                "healthStart": 50,
-                "healthMax": 50,
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
                 "buffs": [],
-                "canAttack": 1,
+                "canAttack": 0,
                 "isFrozen": 0,
-                "spawnRank": 1
+                "isSilenced": 0,
+                "spawnRank": 3
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "ID_PLAYER-19",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
+                "abilities": [
+                  28
+                ],
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 4
               },
               {
                 "id": "EMPTY"
@@ -1950,34 +1998,28 @@ describe("challenge events", function() {
               {
                 "id": "EMPTY"
               },
-              {
-                "id": "EMPTY"
-              },
-              {
-                "id": "EMPTY"
-              }
             ],
             "hand": [
               {
-                "id": "C19-ID_PLAYER-0",
+                "id": "ID_PLAYER-0",
                 "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 1,
                 "attack": null,
                 "health": null,
-                "cost": 20,
-                "name": "Touch of Zeus",
-                "description": "Deal 20 damage to a creature",
-                "abilities": null,
-                "baseId": "C19",
+                "cost": 50,
+                "name": "Battle Royale",
+                "description": "Destroy all creatures except one random one",
+                "abilities": [],
+                "baseId": "C28",
                 "attackStart": null,
-                "costStart": 20,
+                "costStart": 50,
                 "healthStart": null,
                 "healthMax": null
               },
             ],
-            "deckSize": 1,
-            "cardCount": 8,
+            "deckSize": 0,
+            "cardCount": 32,
             "mode": 0,
             "mulliganCards": [],
             "id": "ID_PLAYER",
@@ -2013,44 +2055,363 @@ describe("challenge events", function() {
         gamesparks.sendWithData(
           "LogEventRequest",
           {
-            eventKey: "TestChallengeCardAttackCard",
+            eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C2-ID_PLAYER-2",
-            attributesJson: {
-              fieldId: "ID_OPPONENT",
-              targetId: "C10-ID_OPPONENT-5",
-            },
+            cardId: "ID_PLAYER-0",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
 
             const lastMoves = challengeStateData.lastMoves;
-            assert.equal(lastMoves.length, 4);
-            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves.length, 2);
+
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-0");
+
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[1].attributes.card.id, "C10-ID_OPPONENT-5");
-            assert.equal(lastMoves[2].attributes.card.id, "C10-ID_OPPONENT-5");
-            assert.equal(lastMoves[3].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-0");
+            assert.equal(lastMoves[1].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.targetId, "ID_PLAYER-18");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
-            const playerField = playerState.field;
-            assert.equal(playerField[1].id, "EMPTY");
+            assert.equal(playerState.manaCurrent, 40);
+            assert.equal(playerState.manaMax, 90);
 
-            assert.equal(playerState.healthMax, 100);
-            assert.equal(playerState.health, 40);
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "ID_PLAYER-18");
+            assert.equal(playerField[3].id, "EMPTY");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
-            assert.equal(opponentField[2].id, "EMPTY");
+            assert.equal(opponentField[1].id, "EMPTY");
+            assert.equal(opponentField[3].id, "EMPTY");
 
-            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
-            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support battle royale with correct deathwish order", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "ID_OPPONENT-0",
+                "playerId": "ID_OPPONENT",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
+                "abilities": [
+                  28
+                ],
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "ID_OPPONENT-5",
+                "playerId": "ID_OPPONENT",
+                "level": 1,
+                "category": 0,
+                "attack": 50,
+                "health": 10,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  0,
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 1,
+                "isFrozen": 0,
+                "spawnRank": 6
+              },
+              {
+                "id": "ID_OPPONENT-1",
+                "playerId": "ID_OPPONENT",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
+                "abilities": [
+                  28
+                ],
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 33,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 60,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "ID_PLAYER-18",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
+                "abilities": [
+                  28
+                ],
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 3
+              },
+              {
+                "id": "ID_PLAYER-6",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 50,
+                "health": 10,
+                "cost": 70,
+                "name": "Bombshell Bombadier",
+                "description": "Charge; Deathrattle: Randomly fire off 3 bombs to enemy units, dealing 10 damage each",
+                "abilities": [
+                  0,
+                  12
+                ],
+                "baseId": "C10",
+                "attackStart": 50,
+                "costStart": 70,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 1,
+                "isFrozen": 0,
+                "spawnRank": 7
+              },
+              {
+                "id": "ID_PLAYER-19",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 30,
+                "name": "Lux",
+                "description": "Warcry: Heal 40 hp to all creatures on board",
+                "abilities": [
+                  28
+                ],
+                "baseId": "C44",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 4
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "ID_PLAYER-0",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 1,
+                "attack": null,
+                "health": null,
+                "cost": 50,
+                "name": "Battle Royale",
+                "description": "Destroy all creatures except one random one",
+                "abilities": [],
+                "baseId": "C28",
+                "attackStart": null,
+                "costStart": 50,
+                "healthStart": null,
+                "healthMax": null
+              },
+            ],
+            "deckSize": 0,
+            "cardCount": 32,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "expCardIdsByPlayerId": {
+          "ID_PLAYER": [],
+          "ID_OPPONENT": [],
+        },
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "deathCount": 0,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-0",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 8);
+
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-0");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-0");
+            assert.equal(lastMoves[1].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.targetId, "ID_PLAYER-18");
+
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_OPPONENT-5");
+            assert.equal(lastMoves[2].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.targetId, "ID_PLAYER-18");
+
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[3].attributes.card.id, "ID_OPPONENT-5");
+            assert.equal(lastMoves[3].attributes.targetId, "TARGET_ID_FACE");
+
+            assert.equal(lastMoves[4].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[4].attributes.card.id, "ID_OPPONENT-5");
+            assert.equal(lastMoves[4].attributes.targetId, "TARGET_ID_FACE");
+
+            assert.equal(lastMoves[5].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[5].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[5].attributes.card.id, "ID_PLAYER-6");
+            assert.equal(lastMoves[5].attributes.targetId, "TARGET_ID_FACE");
+
+            assert.equal(lastMoves[6].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[6].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[6].attributes.card.id, "ID_PLAYER-6");
+            assert.equal(lastMoves[6].attributes.targetId, "TARGET_ID_FACE");
+
+            assert.equal(lastMoves[7].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[7].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[7].attributes.card.id, "ID_PLAYER-6");
+            assert.equal(lastMoves[7].attributes.targetId, "TARGET_ID_FACE");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 40);
+            assert.equal(playerState.manaMax, 90);
+            assert.equal(playerState.health, 20);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "EMPTY");
+            assert.equal(playerField[2].id, "EMPTY");
+            assert.equal(playerField[3].id, "EMPTY");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.health, 40);
+
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[1].id, "EMPTY");
+            assert.equal(opponentField[2].id, "EMPTY");
+            assert.equal(opponentField[3].id, "EMPTY");
+
             resolve();
           }
         );
