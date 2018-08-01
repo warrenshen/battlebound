@@ -250,11 +250,16 @@ public class CollectionManager : MonoBehaviour
         created.transform.position = source.position;
 
         //do visual stuff
-        CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
-        collectionCardObject.InitializeHollow(card);
-        collectionCardObject.visual.Stencil = -100;
-        collectionCardObject.visual.SetGrayscale(true);
-        collectionCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
+        CollectionCardObject grayed = created.AddComponent<CollectionCardObject>();
+        grayed.InitializeHollow(card);
+        grayed.visual.Stencil = -100;
+        foreach (HyperCard.Card.CustomSpriteParam spriteParam in grayed.visual.SpriteObjects)
+        {
+            spriteParam.IsAffectedByFilters = true;
+        }
+        grayed.visual.SetGrayscale(true);
+        grayed.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
+
         return created.transform;
     }
 
