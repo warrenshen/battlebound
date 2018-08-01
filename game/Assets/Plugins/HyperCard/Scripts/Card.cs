@@ -73,7 +73,7 @@ namespace HyperCard
 
             public string Key;
 
-            public TextMeshPro TmpObject;
+            public TMP_Text TmpObject;
 
             public string Value;
 
@@ -313,6 +313,30 @@ namespace HyperCard
         // back
         public Texture2D CardBack;
         public Texture2D CardBackAlpha;
+
+
+        public void Copy(HyperCard.Card copyFrom)
+        {
+            this.CardFaceArtwork = copyFrom.CardFaceArtwork;
+            this.CardFaceBackgroundArtwork = copyFrom.CardFaceBackgroundArtwork;
+            this.CardFaceFrameColor = copyFrom.CardFaceFrameColor;
+
+            this.OutlineColor = copyFrom.OutlineColor;
+            this.OutlineEndColor = copyFrom.OutlineEndColor;
+            this.EnableOutline = copyFrom.EnableOutline;
+
+            this.Stencil = copyFrom.Stencil;
+
+            this.CardFaceArtworkScale = copyFrom.CardFaceArtworkScale;
+            this.CardFaceArtworkOffset = copyFrom.CardFaceArtworkOffset;
+            this.CardFaceBackgroundArtworkScale = copyFrom.CardFaceBackgroundArtworkScale;
+            this.CardFaceBackgroundArtworkOffset = copyFrom.CardFaceBackgroundArtworkOffset;
+
+            this.CardOpacity = copyFrom.CardOpacity;
+            this.TmpTextObjects = copyFrom.TmpTextObjects;
+
+            this.Redraw();
+        }
 
         public void Redraw()
         {
@@ -615,7 +639,7 @@ namespace HyperCard
 
         private IEnumerator ApplyCulling()
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForEndOfFrame();
 
             foreach (var txt in TmpTextObjects.Where(x => x.TmpObject != null))
             {
@@ -625,16 +649,15 @@ namespace HyperCard
 
         private IEnumerator ComputeSprites()
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForEndOfFrame();
 
             foreach (var txt in TmpTextObjects.Where(x => x.TmpObject != null))
             {
                 var mat = new Material(txt.TmpObject.fontSharedMaterial);
                 txt.TmpObject.overrideColorTags = BlackAndWhite;
                 mat.SetFloat("_Stencil", Stencil);
-                mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
+                //mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
                 mat.name = Guid.NewGuid().ToString();
-                //txt.TmpObject.alpha = CardOpacity;
                 txt.TmpObject.fontMaterial = mat;
             }
 

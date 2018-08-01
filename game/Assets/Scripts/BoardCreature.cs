@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
+
 using TMPro;
 
 [System.Serializable]
@@ -700,24 +702,31 @@ public class BoardCreature : Targetable
         return this.buffs.Contains(buff);
     }
 
-
     private void RaiseCardVisual()
     {
         this.raisedCard = true;
         this.visual.SetOpacity(1);
         this.visual.SetGrayscale(false);
 
-        LeanTween.moveLocal(this.visual.gameObject, this.visual.transform.localPosition + Vector3.back * 7 + Vector3.down, 0.01f)
+        LeanTween.rotateX(this.visual.gameObject, 0, ActionManager.TWEEN_DURATION)
                  .setDelay(ActionManager.TWEEN_DURATION)
                  .setOnStart(() =>
-            {
-                ActionManager.Instance.SetCursor(3);
-                this.visual.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
-            });
-        LeanTween.scale(this.visual.gameObject, INSPECT_CARD_SIZE, 0.01f)
-                 .setDelay(ActionManager.TWEEN_DURATION);
-        LeanTween.rotateX(this.visual.gameObject, 15, 0.01f)
-                 .setDelay(ActionManager.TWEEN_DURATION);
+                {
+                    BattleManager.Instance.HoverCard.gameObject.SetActive(true);
+                    BattleManager.Instance.HoverCard.Copy(this.visual);
+                })
+                 .setOnComplete(() =>
+                {
+                    ActionManager.Instance.SetCursor(3);
+                    Vector3 screenPos = Camera.main.WorldToScreenPoint(this.visual.transform.position);
+                    Vector2 hoverOffset = new Vector2(150, 0);
+                    if (screenPos.x > Screen.width / 2)
+                        hoverOffset.x *= -1;
+                    CanvasScaler canvasScaler = BattleManager.Instance.canvas.GetComponent<CanvasScaler>();
+                    float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
+                    float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
+                    BattleManager.Instance.HoverCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(screenPos.x * scaleFactorX, screenPos.y * scaleFactorY) + hoverOffset;
+                });
     }
 
     private void LowerCardVisual()
@@ -726,12 +735,9 @@ public class BoardCreature : Targetable
         this.raisedCard = false;
         this.visual.SetGrayscale(true);
         this.visual.SetOpacity(0.8f);
-
         LeanTween.cancel(this.visual.gameObject);
-        this.visual.transform.localPosition = Vector3.zero;
-        this.visual.transform.rotation = Quaternion.Euler(0, 180, 0);
-        this.visual.transform.localScale = BOARD_CARD_SIZE;
-        this.visual.gameObject.SetLayer(LayerMask.NameToLayer("Battle"));
+        BattleManager.Instance.HoverCard.gameObject.SetActive(false);
+        BattleManager.Instance.HoverCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-1000, -1000);
     }
 
     //begin mouse interactions for showing card when hovering

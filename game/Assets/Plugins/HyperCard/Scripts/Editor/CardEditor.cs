@@ -476,7 +476,7 @@ namespace HyperCard
 
                     EditorStyles.textField.wordWrap = true;
 
-                    GUILayout.Label(string.Format("<color=black><b><size=12>TextMeshPro objects ({0})</size></b></color>", _tmpTextObjects.arraySize), u, GUILayout.ExpandWidth(true));
+                    GUILayout.Label(string.Format("<color=black><b><size=12>TMP_Text objects ({0})</size></b></color>", _tmpTextObjects.arraySize), u, GUILayout.ExpandWidth(true));
 
                     GUILayout.Space(10f);
 
@@ -512,7 +512,7 @@ namespace HyperCard
 
                         displayMode.intValue = isTextArea ? (int)TextMeshProParamDisplayMode.TextArea : (int)TextMeshProParamDisplayMode.Field;
 
-                        tmpObject.objectReferenceValue = EditorGUILayout.ObjectField(tmpObject.objectReferenceValue, typeof(TextMeshPro), true, GUILayout.ExpandWidth(false));
+                        tmpObject.objectReferenceValue = EditorGUILayout.ObjectField(tmpObject.objectReferenceValue, typeof(TMP_Text), true, GUILayout.ExpandWidth(false));
 
                         GUI.backgroundColor = new Color(0.8f, 0f, 0f);
                         if (GUILayout.Button("x", GUILayout.Width(20), GUILayout.Height(20)))

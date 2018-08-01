@@ -71,7 +71,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private List<CardObject> xpCardObjects;
 
+    public HyperCard.Card HoverCard;
+    public Canvas canvas;
     public static BattleManager Instance { get; private set; }
+
 
     public Player GetPlayerById(string playerId)
     {
