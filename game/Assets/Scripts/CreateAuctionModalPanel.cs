@@ -24,6 +24,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
 
     public void Awake()
     {
+        Debug.Log(PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS));
         Instance = this;
 
         this.cancelButton.onClick.AddListener(Close);

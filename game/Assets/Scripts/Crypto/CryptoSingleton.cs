@@ -18,19 +18,19 @@ using Nethereum.Web3.Accounts;
 
 public class CryptoSingleton : Singleton<CryptoSingleton>
 {
-    // 1st
-    //public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
-    //public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
-
-    //2nd
-    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
-    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
+    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS";
+    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE";
 
     private int nonce;
     private string txHash;
 
     private UnityAction<string> updateAddressCallback;
     private UnityAction<string> getChallengeCallback;
+
+    private string GetPublicAddress()
+    {
+        return PlayerPrefs.GetString(PLAYER_PREFS_PUBLIC_ADDRESS);
+    }
 
     public async Task<string> CreateAuction(
         Account account,
@@ -60,7 +60,9 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
 
+        string publicAddress = GetPublicAddress();
         return (string)await SubmitCreateAuctionTransaction(
+            publicAddress,
             signedTx,
             tokenId,
             startingPrice,
@@ -70,6 +72,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
     }
 
     private IEnumerator SubmitCreateAuctionTransaction(
+        string publicAddress,
         string signedTx,
         int tokenId,
         long startingPrice,
@@ -81,6 +84,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("SubmitCreateAuctionTransaction");
+        request.SetEventAttribute("publicAddress", publicAddress);
         request.SetEventAttribute("signedTx", signedTx);
         request.SetEventAttribute("tokenId", tokenId);
         request.SetEventAttribute("startingPrice", startingPrice);
@@ -133,7 +137,9 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
 
+        string publicAddress = GetPublicAddress();
         return (string)await SubmitBidAuctionTransaction(
+            publicAddress,
             signedTx,
             tokenId,
             bidPrice
@@ -141,6 +147,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
     }
 
     private IEnumerator SubmitBidAuctionTransaction(
+        string publicAddress,
         string signedTx,
         int tokenId,
         long bidPrice
@@ -150,6 +157,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("SubmitBidAuctionTransaction");
+        request.SetEventAttribute("publicAddress", publicAddress);
         request.SetEventAttribute("signedTx", signedTx);
         request.SetEventAttribute("tokenId", tokenId);
         request.SetEventAttribute("bidPrice", bidPrice);
@@ -197,13 +205,16 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
 
+        string publicAddress = GetPublicAddress();
         return txHash = (string)await SubmitCancelAuctionTransaction(
+            publicAddress,
             signedTx,
             tokenId
         );
     }
 
     private IEnumerator SubmitCancelAuctionTransaction(
+        string publicAddress,
         string signedTx,
         int tokenId
     )
@@ -212,6 +223,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("SubmitCancelAuctionTransaction");
+        request.SetEventAttribute("publicAddress", publicAddress);
         request.SetEventAttribute("signedTx", signedTx);
         request.SetEventAttribute("tokenId", tokenId);
         request.Send(
@@ -291,7 +303,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         Debug.Log("PA: " + publicAddress);
 
         challenge = "0x" + challenge;
-        Debug.Log("C: " + challenge);
+        //Debug.Log("C: " + challenge);
 
         List<byte> byteList = new List<byte>();
         var bytePrefix = "0x19".HexToByteArray();
@@ -304,12 +316,12 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         Sha3Keccack hasher = new Sha3Keccack();
         var hash = hasher.CalculateHash(byteList.ToArray()).ToHex();
-        Debug.Log("HH: " + hash);
+        //Debug.Log("HH: " + hash);
 
         var signer = new MessageSigner();
 
         string signature = signer.Sign(hash.HexToByteArray(), ethECKey.GetPrivateKey());
-        Debug.Log("Signature: " + signature);
+        //Debug.Log("Signature: " + signature);
 
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("UpdatePlayerAddress");
