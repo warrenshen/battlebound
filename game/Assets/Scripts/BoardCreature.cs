@@ -329,10 +329,14 @@ public class BoardCreature : Targetable
         StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.25f });
         StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.4f });
 
+        StartCoroutine("PlayVFXWithDelay", new object[3] { this.creatureCard.GetEffectPrefab(), other.transform.position, BoardCreature.ATTACK_DELAY });
+        if (this.HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
+        {
+            StartCoroutine("PlayVFXWithDelay", new object[3] { "LifestealVFX", other.transform.position, BoardCreature.ATTACK_DELAY });
+        }
+
         if (!other.IsAvatar)
         {
-            StartCoroutine("PlayVFXWithDelay", new object[3] { this.creatureCard.GetEffectPrefab(), other.transform.position, BoardCreature.ATTACK_DELAY });
-
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
                 StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.5f });
         }
@@ -622,7 +626,7 @@ public class BoardCreature : Targetable
             attackText.TmpObject.color = Color.white;
         }
 
-        if (this.health > GetHealthMax())
+        if (this.health > this.creatureCard.GetHealth() && this.health == GetHealthMax())
         {
             healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
         }

@@ -210,7 +210,8 @@ public class PlayerAvatar : Targetable
         int amountHealed = Math.Min(this.health - healthBefore, amount);
         if (amountHealed > 0)
         {
-            // TODO: animate.
+            TextManager.Instance.ShowTextAtTarget(transform, amountHealed.ToString(), Color.green);
+            FXPoolManager.Instance.PlayEffect("HealPillarVFX", transform.position);
         }
 
         this.UpdateStatText();
