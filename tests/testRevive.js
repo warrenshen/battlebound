@@ -1115,7 +1115,7 @@ describe("challenge events", function() {
           "cardCount": 33,
           "mode": 0,
           "mulliganCards": [],
-          "id": "ID_PLAYER",
+          "id": "ID_OPPONENT",
           "expiredStreak": 0
         },
         "ID_PLAYER": {
@@ -1187,7 +1187,7 @@ describe("challenge events", function() {
           "cardCount": 32,
           "mode": 0,
           "mulliganCards": [],
-          "id": "ID_OPPONENT",
+          "id": "ID_PLAYER",
           "expiredStreak": 0
         },
       },
@@ -1446,6 +1446,338 @@ describe("challenge events", function() {
 
             const playerField = playerState.field;
             assert.equal(playerField.filter(function(fieldCard) { return fieldCard.id != "EMPTY" }).length, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("convert", function() {
+    it("should support the seven", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "ID_OPPONENT-24",
+                "playerId": "ID_OPPONENT",
+                "level": 1,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Seahorse Squire",
+                "description": "Warcry: Heal adjacent creatures by 20 hp",
+                "abilities": [
+                  26
+                ],
+                "baseId": "C40",
+                "attackStart": 20,
+                "costStart": 30,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffs": [],
+                "canAttack": 0,
+                "isFrozen": 1,
+                "isSilenced": 1,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 33,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 60,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "ID_PLAYER-15",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 1,
+                "attack": null,
+                "health": null,
+                "cost": 50,
+                "name": "The Seven",
+                "description": "Convert an enemy creature to your side",
+                "abilities": [],
+                "baseId": "C28",
+                "attackStart": null,
+                "costStart": 50,
+                "healthStart": null,
+                "healthMax": null
+              },
+            ],
+            "deckSize": 0,
+            "cardCount": 32,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "expCardIdsByPlayerId": {
+          "ID_PLAYER": [],
+          "ID_OPPONENT": [],
+        },
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "deathCount": 0,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-15",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 3);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-15");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_CONVERT_CREATURE");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.targetId, "ID_OPPONENT-24");
+
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_SUMMON_CREATURE");
+            assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-32");
+            assert.equal(lastMoves[2].attributes.card.name, "Seahorse Squire");
+            assert.equal(lastMoves[2].attributes.fieldIndex, 5);
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 40);
+            assert.equal(playerState.manaMax, 90);
+
+            const playerField = playerState.field;
+            assert.equal(playerField[5].id, "ID_PLAYER-32");
+            assert.equal(playerField[5].cost, 10);
+            assert.equal(playerField[5].attack, 10);
+            assert.equal(playerField[5].health, 10);
+            assert.equal(playerField[5].isFrozen, 1);
+            assert.equal(playerField[5].isSilenced, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support the seven - no opponent creatures", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              }
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 33,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0
+          },
+          "ID_PLAYER": {
+            "hasTurn": 0,
+            "manaCurrent": 90,
+            "manaMax": 90,
+            "health": 60,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "NOT_EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "ID_PLAYER-15",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 1,
+                "attack": null,
+                "health": null,
+                "cost": 50,
+                "name": "The Seven",
+                "description": "Convert an enemy creature to your side",
+                "abilities": [],
+                "baseId": "C28",
+                "attackStart": null,
+                "costStart": 50,
+                "healthStart": null,
+                "healthMax": null
+              },
+            ],
+            "deckSize": 0,
+            "cardCount": 32,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "expCardIdsByPlayerId": {
+          "ID_PLAYER": [],
+          "ID_OPPONENT": [],
+        },
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 2,
+        "deathCount": 0,
+        "nonce": 14
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellUntargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-15",
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-15");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 40);
+            assert.equal(playerState.manaMax, 90);
 
             resolve();
           }
