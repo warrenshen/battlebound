@@ -14,15 +14,18 @@ public class LeaderboardManager : MonoBehaviour
 
     private void SendGetLeaderboardRequest()
     {
-
+        LeaderboardDataRequest request = new LeaderboardDataRequest();
+        request.SetEntryCount(100);
+        request.SetLeaderboardShortCode("HIGH_SCORE_LB");
+        request.Send(OnGetLeaderboardSuccess, OnGetLeaderboardError);
     }
 
-    private void OnGetLeaderboardSuccess(LogEventResponse response)
+    private void OnGetLeaderboardSuccess(LeaderboardDataResponse response)
     {
         Debug.Log("FindMatch request success.");
     }
 
-    private void OnGetLeaderboardError(LogEventResponse response)
+    private void OnGetLeaderboardError(LeaderboardDataResponse response)
     {
         Debug.LogError("FindMatch request error.");
     }

@@ -23,11 +23,8 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
     //public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
 
     //2nd
-    //public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
-    //public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
-
-    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_MM";
-    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_MM";
+    public const string PLAYER_PREFS_PUBLIC_ADDRESS = "PLAYER_PREFS_PUBLIC_ADDRESS_";
+    public const string PLAYER_PREFS_ENCRYPTED_KEY_STORE = "PLAYER_PREFS_ENCRYPTED_KEY_STORE_";
 
     private int nonce;
     private string txHash;
