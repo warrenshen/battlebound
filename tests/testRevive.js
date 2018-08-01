@@ -1477,10 +1477,10 @@ describe("challenge events", function() {
                 "attack": 10,
                 "health": 10,
                 "cost": 10,
-                "name": "Seahorse Squire",
-                "description": "Warcry: Heal adjacent creatures by 20 hp",
+                "name": "Firebug Catelyn",
+                "description": "Deathwish: damage opponent face by 10",
                 "abilities": [
-                  26
+                  10
                 ],
                 "baseId": "C40",
                 "attackStart": 20,
@@ -1619,7 +1619,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
             assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-32");
-            assert.equal(lastMoves[2].attributes.card.name, "Seahorse Squire");
+            assert.equal(lastMoves[2].attributes.card.name, "Firebug Catelyn");
             assert.equal(lastMoves[2].attributes.fieldIndex, 5);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
@@ -1633,6 +1633,11 @@ describe("challenge events", function() {
             assert.equal(playerField[5].health, 10);
             assert.equal(playerField[5].isFrozen, 1);
             assert.equal(playerField[5].isSilenced, 1);
+
+            // Converted creatures deathwish should not run.
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.health, 100);
+            assert.equal(opponentState.healthMax, 100);
 
             resolve();
           }
