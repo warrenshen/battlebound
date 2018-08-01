@@ -331,7 +331,7 @@ public class BoardCreature : Targetable
 
         if (!other.IsAvatar)
         {
-            StartCoroutine("PlayVFXWithDelay", new object[3] { "SlashVFX", other.transform.position, BoardCreature.ATTACK_DELAY });
+            StartCoroutine("PlayVFXWithDelay", new object[3] { this.creatureCard.GetEffectPrefab(), other.transform.position, BoardCreature.ATTACK_DELAY });
 
             if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
                 StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.5f });

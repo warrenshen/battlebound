@@ -60,7 +60,6 @@ public abstract class Card
     public const string CARD_NAME_DEEP_FREEZE = "Deep Freeze";
     public const string CARD_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
     public const string CARD_NAME_DEATH_NOTE = "Death Note";
-    public const string CARD_NAME_BESTOWED_VIGOR = "Bestowed Vigor";
 
     // Spells untargeted.
     public const string CARD_NAME_RIOT_UP = "Riot Up";
@@ -71,8 +70,6 @@ public abstract class Card
     public const string CARD_NAME_MUDSLINGING = "Mudslinging";
     public const string CARD_NAME_SPRAY_N_PRAY = "Spray n' Pray";
     public const string CARD_NAME_GRAVE_DIGGING = "Grave-digging";
-    public const string CARD_NAME_THE_SEVEN = "The Seven";
-    public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
 
     public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
@@ -130,7 +127,6 @@ public abstract class Card
         CARD_NAME_DEEP_FREEZE,
         CARD_NAME_WIDESPREAD_FROSTBITE,
         CARD_NAME_DEATH_NOTE,
-        CARD_NAME_BESTOWED_VIGOR,
 
         CARD_NAME_RIOT_UP,
         CARD_NAME_BRR_BRR_BLIZZARD,
@@ -140,8 +136,6 @@ public abstract class Card
         CARD_NAME_MUDSLINGING,
         CARD_NAME_SPRAY_N_PRAY,
         CARD_NAME_GRAVE_DIGGING,
-        CARD_NAME_THE_SEVEN,
-        CARD_NAME_BATTLE_ROYALE,
     };
 
     public enum CardType { Creature, Spell, Weapon, Structure };
@@ -319,17 +313,9 @@ public abstract class Card
     }
 
     public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
-    public const string BUFF_CATEGORY_BESTOWED_VIGOR = "BUFF_CATEGORY_BESTOWED_VIGOR";
 
     public static readonly string[] VALID_BUFFS = {
         BUFF_CATEGORY_UNSTABLE_POWER,
-        BUFF_CATEGORY_BESTOWED_VIGOR,
-    };
-
-    public static readonly Dictionary<int, string> BUFF_CODE_TO_STRING = new Dictionary<int, string>
-    {
-        { 1001, BUFF_CATEGORY_UNSTABLE_POWER },
-        { 1002, BUFF_CATEGORY_BESTOWED_VIGOR },
     };
 
     [SerializeField]
@@ -497,20 +483,27 @@ public class CreatureCard : Card
         this.level = level;
 
         LoadTemplateFromCodex();
-        LoadAttackHealth();
     }
 
-    //public static readonly Dictionary<string, Dictionary<int, List<int>>> CREATURE_NAME_TO_LEVEL_TO_STATS = new Dictionary<string, Dictionary<int, List<int>>>
-    //{
-    //    {
-    //        CARD_NAME_BLESSED_NEWBORN,
-    //        new Dictionary<int, List<int>>{ 1, new List<int>{ 10, 10 } },
-    //    }
-    //};
-
-    private void LoadAttackHealth()
+    public CreatureCard(
+        string id,
+        string name,
+        int level,
+        int cost,
+        int attack,
+        int health,
+        List<string> abilities
+    )
     {
+        this.id = id;
+        this.name = name;
+        this.level = level;
 
+        this.attack = attack;
+        this.health = health;
+        this.abilities = abilities;
+
+        LoadTemplateFromCodex();
     }
 
     public int GetAttack()
@@ -677,14 +670,13 @@ public class StructureCard : Card
 [System.Serializable]
 public class SpellCard : Card
 {
-    public static readonly List<string> TARGETED_CARD_NAMES = new List<string>
+    public static readonly List<string> TARGET_CARD_NAMES = new List<string>
     {
         CARD_NAME_TOUCH_OF_ZEUS,
         CARD_NAME_UNSTABLE_POWER,
         CARD_NAME_DEEP_FREEZE,
         CARD_NAME_WIDESPREAD_FROSTBITE,
         CARD_NAME_DEATH_NOTE,
-        CARD_NAME_BESTOWED_VIGOR,
     };
 
     public static readonly List<string> UNTARGETED_CARD_NAMES = new List<string>
@@ -697,8 +689,6 @@ public class SpellCard : Card
         CARD_NAME_MUDSLINGING,
         CARD_NAME_SPRAY_N_PRAY,
         CARD_NAME_GRAVE_DIGGING,
-        CARD_NAME_THE_SEVEN,
-        CARD_NAME_BATTLE_ROYALE,
     };
 
     private bool targeted;      //affects single target or whole board?
@@ -719,7 +709,7 @@ public class SpellCard : Card
         this.name = name;
         this.level = level;
 
-        if (TARGETED_CARD_NAMES.Contains(this.name))
+        if (TARGET_CARD_NAMES.Contains(this.name))
         {
             this.targeted = true;
         }
