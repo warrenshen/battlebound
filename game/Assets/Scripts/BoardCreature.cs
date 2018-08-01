@@ -330,7 +330,7 @@ public class BoardCreature : Targetable
         StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.4f });
 
         StartCoroutine("PlayVFXWithDelay", new object[3] { this.creatureCard.GetEffectPrefab(), other.transform.position, BoardCreature.ATTACK_DELAY });
-        if (this.HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
+        if (HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
         {
             StartCoroutine("PlayVFXWithDelay", new object[3] { "LifestealVFX", other.transform.position, BoardCreature.ATTACK_DELAY });
         }

@@ -559,7 +559,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnGetActiveChallengeError(LogEventResponse response)
     {
         Debug.LogError("GetActiveChallenge request error.");
-        Application.LoadLevel("Menu");
+        // Show prompt to user and ask what they want to do.
     }
 
     public void ComparePlayerStates(

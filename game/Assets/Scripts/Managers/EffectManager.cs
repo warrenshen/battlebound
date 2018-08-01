@@ -414,8 +414,7 @@ public class EffectManager : MonoBehaviour
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        this.isWaiting = true;
-        StartCoroutine("WaitForAttackRandom", new object[1] { challengeMove.Rank });
+        WaitForServerMove(challengeMove.Rank);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -433,15 +432,6 @@ public class EffectManager : MonoBehaviour
             challengeMove.SetMoveAttributes(moveAttributes);
 
             BattleManager.Instance.ReceiveChallengeMove(challengeMove);
-        }
-    }
-
-    private IEnumerator WaitForAttackRandom(object[] args)
-    {
-        int moveRank = (int)args[0];
-        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
-        {
-            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -565,10 +555,7 @@ public class EffectManager : MonoBehaviour
             effect.PlayerId
         );
 
-        int rank = player.DrawCardDevice();
-
-        this.isWaiting = true;
-        StartCoroutine("WaitForDrawCard", new object[1] { rank });
+        WaitForServerMove(player.DrawCardDevice());
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -725,47 +712,30 @@ public class EffectManager : MonoBehaviour
     private void AbilityDeathRattleDrawCard(Effect effect)
     {
         string playerId = effect.PlayerId;
-
         Player player = BattleManager.Instance.GetPlayerById(playerId);
-
         BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
             playerId,
             effect.CardId
         );
 
-        List<Effect> effects = new List<Effect>();
-
-        effects.Add(
+        List<Effect> effects = new List<Effect>
+        {
             new Effect(
                 effect.PlayerId,
                 EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
                 effect.CardId,
                 effect.SpawnRank
             )
-        );
+        };
 
-        this.isWaiting = true;
+        WaitForServerMove(player.DrawCardDevice());
+
         AddToQueues(effects);
-
-        int rank = player.DrawCardDevice();
-
-        StartCoroutine("WaitForDrawCard", new object[1] { rank });
 
         if (!FlagHelper.IsServerEnabled())
         {
             boardCreature.Owner.DrawCardsMock(1);
         }
-    }
-
-    private IEnumerator WaitForDrawCard(object[] args)
-    {
-        int moveRank = (int)args[0];
-        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
-        {
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        // this.isWaiting will be unset by OnDrawCardFinish().
     }
 
     private void AbilityHealFriendlyMax(Effect effect)
@@ -910,7 +880,7 @@ public class EffectManager : MonoBehaviour
             JsonUtility.ToJson(dirtyCard)
         );
 
-        spawnCard.SetId(playerId + "-" + player.GetNewCardRank());
+        spawnCard.SetId(player.GetNewCardId());
         spawnCard.SetCost(spawnCard.CostStart);
         spawnCard.SetAttack(spawnCard.AttackStart);
         spawnCard.SetHealth(spawnCard.HealthStart);
@@ -938,7 +908,7 @@ public class EffectManager : MonoBehaviour
             JsonUtility.ToJson(dirtyCard)
         );
 
-        spawnCard.SetId(playerId + "-" + player.GetNewCardRank());
+        spawnCard.SetId(player.GetNewCardId());
         spawnCard.SetPlayerId(playerId);
 
         if (spawnCard.GetAbilities().Contains(Card.CARD_ABILITY_CHARGE))
@@ -979,8 +949,7 @@ public class EffectManager : MonoBehaviour
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        this.isWaiting = true;
-        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+        WaitForServerMove(challengeMove.Rank);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -1035,15 +1004,6 @@ public class EffectManager : MonoBehaviour
 
                 BattleManager.Instance.ReceiveChallengeMove(challengeMove);
             }
-        }
-    }
-
-    private IEnumerator WaitForSummonCreature(object[] args)
-    {
-        int moveRank = (int)args[0];
-        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
-        {
-            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -1582,8 +1542,7 @@ public class EffectManager : MonoBehaviour
 
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        this.isWaiting = true; // Rendundant call since isWaiting should be true already.
-        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+        WaitForServerMove(challengeMove.Rank);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -1916,8 +1875,7 @@ public class EffectManager : MonoBehaviour
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        this.isWaiting = true;
-        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+        WaitForServerMove(challengeMove.Rank);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -1980,22 +1938,11 @@ public class EffectManager : MonoBehaviour
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        this.isWaiting = true;
-        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+        WaitForServerMove(challengeMove.Rank);
 
         if (!FlagHelper.IsServerEnabled())
         {
             BoardCreature opponentRandomCreature = Board.Instance.GetOpponentRandomCreature(playerId);
-
-            //if (randomCreature == null)
-            //{
-            //    challengeMove = new ChallengeMove();
-            //    challengeMove.SetPlayerId(playerId);
-            //    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
-            //    challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-            //    BattleManager.Instance.ReceiveChallengeMove(challengeMove);
-            //}
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
@@ -2033,8 +1980,7 @@ public class EffectManager : MonoBehaviour
         challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         BattleManager.Instance.AddDeviceMove(challengeMove);
 
-        this.isWaiting = true;
-        StartCoroutine("WaitForSummonCreature", new object[1] { challengeMove.Rank });
+        WaitForServerMove(challengeMove.Rank);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -2191,5 +2137,38 @@ public class EffectManager : MonoBehaviour
     {
         Debug.Log(string.Format("Dead cards count: {0}", deadCards.Count));
         this.deadCards = deadCards;
+    }
+
+    private void WaitForServerMove(int moveRank)
+    {
+        this.isWaiting = true;
+        StartCoroutine("WaitForServerMoveCoroutine", new object[1] { moveRank });
+    }
+
+    private IEnumerator WaitForServerMoveCoroutine(object[] args)
+    {
+        double timeCounter = 0.0;
+
+        int moveRank = (int)args[0];
+        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            timeCounter += 0.1;
+            if (timeCounter >= 5.0)
+            {
+                if (FlagHelper.IsServerEnabled())
+                {
+                    // Reload state from server and reload scene.
+                    BattleSingleton.Instance.SendGetActiveChallengeRequest();
+                }
+                else
+                {
+                    Debug.LogError("Stuck in waiting mode for five seconds.");
+                    this.isWaiting = false;
+                    yield return null;
+                }
+            }
+        }
     }
 }
