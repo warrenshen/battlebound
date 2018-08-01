@@ -70,6 +70,8 @@ public class MarketplaceManager : MonoBehaviour
         {
             SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
         }
+
+        ShowBuyMode();
     }
 
 
@@ -105,6 +107,7 @@ public class MarketplaceManager : MonoBehaviour
         }
 
         this.sellableCards = DeckStore.Instance().ParseCardsFromScriptData(sellableCardsDataList);
+        ShowBuyMode();
     }
 
     private void OnGetMarketplaceDataError(LogEventResponse response)
@@ -114,6 +117,11 @@ public class MarketplaceManager : MonoBehaviour
     }
 
     private void OnBuyModeButtonClick()
+    {
+        ShowBuyMode();
+    }
+
+    private void ShowBuyMode()
     {
         this.mode = MARKETPLACE_MODE_BUY;
         RenderListItems();
