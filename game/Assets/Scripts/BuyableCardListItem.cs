@@ -2,12 +2,13 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 using TMPro;
 
 using Nethereum.Web3.Accounts;
 
-public class BuyableCardListItem : MonoBehaviour
+public class BuyableCardListItem : CardListItem
 {
     [SerializeField]
     private Image cardImage;
@@ -16,7 +17,8 @@ public class BuyableCardListItem : MonoBehaviour
     [SerializeField]
     private Button bidAuctionButton;
 
-    private CardAuction cardAuction;
+    [SerializeField]
+    protected CardAuction cardAuction;
 
     public void Awake()
     {
@@ -26,6 +28,8 @@ public class BuyableCardListItem : MonoBehaviour
     public void InitializeCardAuction(CardAuction cardAuction)
     {
         this.cardAuction = cardAuction;
+        this.card = cardAuction.Card;
+
         Debug.Log(cardAuction.Auction.StartingPrice);
         Debug.Log(cardAuction.Auction.EndingPrice);
         Debug.Log(cardAuction.Auction.Duration);
@@ -72,4 +76,6 @@ public class BuyableCardListItem : MonoBehaviour
             1000L
         );
     }
+
+
 }

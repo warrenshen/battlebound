@@ -1,15 +1,14 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SellableCardListItem : MonoBehaviour
+public class SellableCardListItem : CardListItem
 {
     [SerializeField]
     private Image cardImage;
     [SerializeField]
     private Button createAuctionButton;
-
-    private Card card;
 
     public void Awake()
     {

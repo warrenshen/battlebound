@@ -4,14 +4,15 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Nethereum.Web3.Accounts;
 
-public class CancelableListItem : MonoBehaviour
+public class CancelableListItem : CardListItem
 {
     [SerializeField]
     private Image cardImage;
     [SerializeField]
     private Button cancelAuctionButton;
 
-    private CardAuction cardAuction;
+    [SerializeField]
+    protected CardAuction cardAuction;
 
     public void Awake()
     {
@@ -21,6 +22,7 @@ public class CancelableListItem : MonoBehaviour
     public void InitializeCardAuction(CardAuction cardAuction)
     {
         this.cardAuction = cardAuction;
+        this.card = cardAuction.Card;
 
         Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(cardAuction.Card.GetFrontImage());
         this.cardImage.sprite = Sprite.Create(

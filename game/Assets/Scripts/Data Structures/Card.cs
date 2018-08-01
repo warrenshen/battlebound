@@ -254,6 +254,64 @@ public abstract class Card
         { 33, CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY },
     };
 
+    public static void SetHyperCardArtwork(ref HyperCard.Card cardVisual, Card card)
+    {
+        cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
+        cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
+        cardVisual.SetCardArtwork(
+            card.GetFrontImageTexture(),
+            card.GetBackImageTexture()
+        );
+
+        cardVisual.Stencil = ActionManager.Instance.stencilCount;
+        ActionManager.Instance.stencilCount = Mathf.Max(ActionManager.Instance.stencilCount + 3 % 255, 3);
+    }
+
+    public static void SetHyperCardFromData(ref HyperCard.Card cardVisual, Card card)
+    {
+        //set sprites and set textmeshpro labels using TmpTextObjects (?)
+        cardVisual.SetTextFieldWithKey("Title", card.GetName());
+        cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
+        cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
+        cardVisual.SetFrameColor(CardTemplate.ColorFromClass(card.GetClassColor()));
+
+        switch (card.GetRarity())
+        {
+            case Card.RarityType.Common:
+                cardVisual.SetTextFieldWithKey("Rarity", "N");
+                break;
+            case Card.RarityType.Uncommon:
+                cardVisual.SetTextFieldWithKey("Rarity", "UN");
+                break;
+            case Card.RarityType.Rare:
+                cardVisual.SetTextFieldWithKey("Rarity", "R");
+                break;
+            case Card.RarityType.Epic:
+                cardVisual.SetTextFieldWithKey("Rarity", "EP");
+                break;
+            case Card.RarityType.Legendary:
+                cardVisual.SetTextFieldWithKey("Rarity", "LG");
+                break;
+            case Card.RarityType.Cosmic:
+                cardVisual.SetTextFieldWithKey("Rarity", "CL");
+                break;
+        }
+
+        bool isCreature = card.GetType() == typeof(CreatureCard);
+        if (isCreature)
+        {
+            CreatureCard creatureCard = card as CreatureCard;
+            cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
+            cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
+        }
+        else
+        {
+            cardVisual.SetTextFieldWithKey("Attack", "--");
+            cardVisual.SetTextFieldWithKey("Health", "--");
+        }
+        cardVisual.Redraw();
+    }
+
     public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
 
     public static readonly string[] VALID_BUFFS = {

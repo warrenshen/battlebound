@@ -961,5 +961,6 @@ namespace HyperCard
             this.EnableBackOutline = true; //to-do call methods once redraw is taken out of them
             this.Redraw();
         }
+
     }
 }

@@ -22,6 +22,8 @@ public class MarketplaceManager : MonoBehaviour
     private string gasPriceSuggested;
     public string GasPriceSuggested => gasPriceSuggested;
 
+    public HyperCard.Card showcaseCard;
+
     [SerializeField]
     private Button buyModeButton;
     [SerializeField]

@@ -59,8 +59,8 @@ public class CardObject : MouseWatchable
         cardVisual.transform.localRotation = Quaternion.identity;
         cardVisual.transform.Rotate(0, 180, 0, Space.Self);
 
-        CardObject.SetHyperCardFromData(cardVisual, this.card);
-        CardObject.SetHyperCardArtwork(cardVisual, this.card);
+        Card.SetHyperCardFromData(ref cardVisual, this.card);
+        Card.SetHyperCardArtwork(ref cardVisual, this.card);
 
         return cardVisual;
     }
@@ -82,64 +82,6 @@ public class CardObject : MouseWatchable
     public virtual void Release()
     {
 
-    }
-
-    protected static void SetHyperCardArtwork(HyperCard.Card cardVisual, Card card)
-    {
-        cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
-        cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
-        cardVisual.SetCardArtwork(
-            card.GetFrontImageTexture(),
-            card.GetBackImageTexture()
-        );
-
-        cardVisual.Stencil = ActionManager.Instance.stencilCount;
-        ActionManager.Instance.stencilCount = Mathf.Max(ActionManager.Instance.stencilCount + 3 % 255, 3);
-    }
-
-    protected static void SetHyperCardFromData(HyperCard.Card cardVisual, Card card)
-    {
-        //set sprites and set textmeshpro labels using TmpTextObjects (?)
-        cardVisual.SetTextFieldWithKey("Title", card.GetName());
-        cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
-        cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
-        cardVisual.SetFrameColor(CardTemplate.ColorFromClass(card.GetClassColor()));
-
-        switch (card.GetRarity())
-        {
-            case Card.RarityType.Common:
-                cardVisual.SetTextFieldWithKey("Rarity", "N");
-                break;
-            case Card.RarityType.Uncommon:
-                cardVisual.SetTextFieldWithKey("Rarity", "UN");
-                break;
-            case Card.RarityType.Rare:
-                cardVisual.SetTextFieldWithKey("Rarity", "R");
-                break;
-            case Card.RarityType.Epic:
-                cardVisual.SetTextFieldWithKey("Rarity", "EP");
-                break;
-            case Card.RarityType.Legendary:
-                cardVisual.SetTextFieldWithKey("Rarity", "LG");
-                break;
-            case Card.RarityType.Cosmic:
-                cardVisual.SetTextFieldWithKey("Rarity", "CL");
-                break;
-        }
-
-        bool isCreature = card.GetType() == typeof(CreatureCard);
-        if (isCreature)
-        {
-            CreatureCard creatureCard = card as CreatureCard;
-            cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
-            cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
-        }
-        else
-        {
-            cardVisual.SetTextFieldWithKey("Attack", "--");
-            cardVisual.SetTextFieldWithKey("Health", "--");
-        }
-        cardVisual.Redraw();
     }
 
     public void Recycle()

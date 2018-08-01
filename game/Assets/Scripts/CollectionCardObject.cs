@@ -43,8 +43,8 @@ public class CollectionCardObject : CardObject
 
         cutout = instance.GetComponent<HyperCard.Card>();
 
-        CardObject.SetHyperCardFromData(cutout, this.card);
-        CardObject.SetHyperCardArtwork(cutout, this.card);
+        Card.SetHyperCardFromData(ref cutout, this.card);
+        Card.SetHyperCardArtwork(ref cutout, this.card);
         cutout.gameObject.SetActive(false);
     }
 

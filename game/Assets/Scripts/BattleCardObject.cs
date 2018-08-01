@@ -39,8 +39,8 @@ public class BattleCardObject : CardObject
             return;
         }
 
-        SetHyperCardFromData(this.visual, this.card);
-        SetHyperCardArtwork(this.visual, this.card);
+        Card.SetHyperCardFromData(ref this.visual, this.card);
+        Card.SetHyperCardArtwork(ref this.visual, this.card);
 
         this.costFromServer = challengeCard.Cost;
 
