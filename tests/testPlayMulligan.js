@@ -1047,6 +1047,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 2);
