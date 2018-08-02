@@ -1390,6 +1390,8 @@ public class BattleManager : MonoBehaviour
     public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge won!");
+        GameObject.Destroy(GameObject.Find("BattleSingleton"));
+
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
         ShowBattleEndFX(experienceCards, true);
     }
@@ -1397,6 +1399,8 @@ public class BattleManager : MonoBehaviour
     public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
     {
         Debug.Log("Challenge lost...");
+        GameObject.Destroy(GameObject.Find("BattleSingleton"));
+
         List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
         ShowBattleEndFX(experienceCards, false);
     }
