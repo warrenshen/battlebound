@@ -13,6 +13,8 @@ public class GalleryIdle : MonoBehaviour
 
     void Awake()
     {
+        this.card = Card.CreateByNameAndLevel("qzfad", this.cardName, 0);
+
         this.summonAnimClips = new List<string>();
         this.summonAnimation = this.transform.GetChild(0).GetComponent<Animation>();
 
@@ -38,10 +40,10 @@ public class GalleryIdle : MonoBehaviour
             this.summonAnimation.speed = 1.33f;
         }
     }
+
     // Use this for initialization
     void Start()
     {
-        this.card = Card.CreateByNameAndLevel("qzfad", this.cardName, 0);
         Animate();
     }
 
@@ -55,5 +57,4 @@ public class GalleryIdle : MonoBehaviour
         this.summonAnimation.Play(this.summonAnimClips[0]);
         this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
     }
-
 }
