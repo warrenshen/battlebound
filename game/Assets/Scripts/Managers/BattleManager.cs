@@ -1737,7 +1737,7 @@ public class BattleManager : MonoBehaviour
     {
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
           {
-              CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+              CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
                  .setOnComplete(() =>
                  {
                      PlayCardToBoard(battleCardObject, fieldIndex);
@@ -1750,7 +1750,7 @@ public class BattleManager : MonoBehaviour
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
         {
             CardTween
-                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
                 .setOnComplete(() =>
                 {
                     PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
@@ -1763,7 +1763,7 @@ public class BattleManager : MonoBehaviour
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
         {
             CardTween
-                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
                 .setOnComplete(() =>
                 {
                     PlayUntargetedSpellFromServer(battleCardObject);

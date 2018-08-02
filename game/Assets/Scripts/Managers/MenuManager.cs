@@ -7,6 +7,12 @@ public class MenuManager : MonoBehaviour
 {
     public static float TWEEN_DURATION = 0.05f;
 
+    public Transform gallery;
+    private Transform activeGalleryCreature;
+    private int galleryIndex;
+
+    public HyperCard.Card galleryCard;
+
     [SerializeField]
     private Text usernameText;
 
@@ -22,6 +28,30 @@ public class MenuManager : MonoBehaviour
         this.logoutButton.onClick.AddListener(OnLogoutButtonClick);
 
         SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
+
+        this.galleryIndex = Random.Range(0, gallery.childCount);
+        this.SetGalleryCreature();
+
+        InvokeRepeating("RotateGalleryCreature", 3.0f, 5f);
+    }
+
+    private void SetGalleryCreature()
+    {
+        foreach (Transform child in gallery)
+        {
+            child.gameObject.SetActive(false);
+        }
+        GalleryIdle galleryCreature = gallery.GetChild(this.galleryIndex).GetComponent<GalleryIdle>();
+        galleryCreature.gameObject.SetActive(true);
+
+        Card.SetHyperCardArtwork(ref this.galleryCard, galleryCreature.card);
+        Card.SetHyperCardFromData(ref this.galleryCard, galleryCreature.card);
+    }
+
+    private void RotateGalleryCreature()
+    {
+        this.galleryIndex = (this.galleryIndex + 1) % gallery.childCount;
+        SetGalleryCreature();
     }
 
     private void OnLogoutButtonClick()

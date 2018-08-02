@@ -3,15 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimateIdle : MonoBehaviour
+public class GalleryIdle : MonoBehaviour
 {
+    public string cardName;
     private dynamic summonAnimation;
     private List<string> summonAnimClips;
+
+    public Card card;
 
     void Awake()
     {
         this.summonAnimClips = new List<string>();
-        this.summonAnimation = this.GetComponent<Animation>();
+        this.summonAnimation = this.transform.GetChild(0).GetComponent<Animation>();
+
         if (this.summonAnimation != null)
         {
             foreach (AnimationState state in this.summonAnimation)
@@ -22,7 +26,7 @@ public class AnimateIdle : MonoBehaviour
         }
         else
         {
-            this.summonAnimation = this.GetComponent<Animator>();
+            this.summonAnimation = this.transform.GetChild(0).GetComponent<Animator>();
             if (this.summonAnimation == null)
             {
                 Debug.LogError(String.Format("No animation or animator on gameobject: {0}", this.gameObject.name));
@@ -37,7 +41,19 @@ public class AnimateIdle : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        this.card = Card.CreateByNameAndLevel("qzfad", this.cardName, 0);
+        Animate();
+    }
+
+    private void OnEnable()
+    {
+        Animate();
+    }
+
+    void Animate()
+    {
         this.summonAnimation.Play(this.summonAnimClips[0]);
         this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
     }
+
 }

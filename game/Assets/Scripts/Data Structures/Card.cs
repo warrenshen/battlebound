@@ -262,6 +262,16 @@ public abstract class Card
 
     public static void SetHyperCardArtwork(ref HyperCard.Card cardVisual, Card card)
     {
+        if (card == null)
+        {
+            Debug.LogError("card for SetHyperCardArtwork is null.");
+            return;
+        }
+        else if (cardVisual == null)
+        {
+            Debug.LogError("cardVisual for SetHyperCardArtwork is null.");
+            return;
+        }
         cardVisual.SetFrontTiling(card.GetFrontScale(), card.GetFrontOffset());
         cardVisual.SetBackTiling(card.GetBackScale(), card.GetBackOffset());
         cardVisual.SetCardArtwork(
@@ -275,6 +285,16 @@ public abstract class Card
 
     public static void SetHyperCardFromData(ref HyperCard.Card cardVisual, Card card)
     {
+        if (card == null)
+        {
+            Debug.LogError("card for SetHyperCardArtwork is null.");
+            return;
+        }
+        else if (cardVisual == null)
+        {
+            Debug.LogError("cardVisual for SetHyperCardArtwork is null.");
+            return;
+        }
         //set sprites and set textmeshpro labels using TmpTextObjects (?)
         cardVisual.SetTextFieldWithKey("Title", card.GetName());
         cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
@@ -440,17 +460,17 @@ public abstract class Card
     {
         Card card;
 
-        if (CARD_NAMES_CREATURE.Contains(name))
+        if (CARD_NAMES_CREATURE.Any(item => item.Equals(name)))
         {
             card = new CreatureCard(id, name, level);
         }
-        else if (CARD_NAMES_SPELL.Contains(name))
+        else if (CARD_NAMES_SPELL.Any(item => item.Equals(name)))
         {
             card = new SpellCard(id, name, level);
         }
         else
         {
-            Debug.LogError("Not supported yet.");
+            Debug.LogError("Card:CreateByName, card not found / not supported yet.");
             return null;
         }
 
