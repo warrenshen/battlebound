@@ -1411,6 +1411,318 @@ describe("challenge events", function() {
           "armor": 0,
           "field": [
             {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "ID_OPPONENT",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "ID_PLAYER-2",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 0,
+              "attack": 30,
+              "health": 50,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "ID_PLAYER-3",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 0,
+              "attack": 30,
+              "health": 30,
+              "cost": 40,
+              "name": "Waterborne Razorback",
+              "description": "Charge; At the end of each turn, recover 20 health",
+              "abilities": [
+                0,
+                8
+              ],
+              "baseId": "C2",
+              "attackStart": 30,
+              "costStart": 40,
+              "healthStart": 50,
+              "healthMax": 50,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "spawnRank": 2
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [
+            {
+              "id": "ID_PLAYER-5",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 1,
+              "cost": 10,
+              "name": "Bestowed Vigor",
+              "description": "Give a friendly creature +20/+10",
+              "baseId": "C24",
+              "costStart": 10,
+            },
+            {
+              "id": "ID_PLAYER-6",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 1,
+              "cost": 10,
+              "name": "Unstable Power",
+              "description": "Give a friendly creature +30/+0, it dies next turn",
+              "baseId": "C24",
+              "costStart": 10,
+            },
+            {
+              "id": "ID_PLAYER-7",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 1,
+              "cost": 40,
+              "name": "Silence of the Lambs",
+              "description": "Silence all creatures",
+              "baseId": "C25",
+              "costStart": 40,
+            },
+          ],
+          "deckSize": 1,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "5b0b017502bd4e052f08a28d",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
+      "deadCards": [],
+      "moveTakenThisTurn": 0,
+      "turnCountByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "deathCount": 0,
+      "nonce": 14
+    };
+
+    it("should support bestowed vigor", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellTargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-5",
+            attributesJson: {
+              fieldId: "ID_PLAYER",
+              targetId: "ID_PLAYER-2",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-5");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-5");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_PLAYER-2");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[1].id, "ID_PLAYER-2");
+            assert.equal(playerField[1].attack, 50);
+            assert.equal(playerField[1].attackStart, 30);
+            assert.equal(playerField[1].health, 60);
+            assert.equal(playerField[1].healthMax, 60);
+            assert.equal(playerField[1].healthStart, 50);
+
+            gamesparks.sendWithData(
+              "LogEventRequest",
+              {
+                eventKey: "TestChallengePlaySpellUntargeted",
+                challengeStateString: JSON.stringify(challengeStateData),
+                challengePlayerId: "ID_PLAYER",
+                cardId: "ID_PLAYER-7",
+              },
+              function(response) {
+                const challengeStateData = response.scriptData.challengeStateData;
+
+                const lastMoves = challengeStateData.lastMoves;
+                assert.equal(lastMoves.length, 1);
+                assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+                assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-7");
+                assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-7");
+
+                const playerState = challengeStateData.current["ID_PLAYER"];
+                const playerField = playerState.field;
+                assert.equal(playerField[1].id, "ID_PLAYER-2");
+                assert.equal(playerField[1].attack, 30);
+                assert.equal(playerField[1].attackStart, 30);
+                assert.equal(playerField[1].health, 50);
+                assert.equal(playerField[1].healthMax, 50);
+                assert.equal(playerField[1].healthStart, 50);
+
+                resolve();
+              }
+            );
+          }
+        );
+      });
+    });
+
+    it("should support unstable power", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellTargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-6",
+            attributesJson: {
+              fieldId: "ID_PLAYER",
+              targetId: "ID_PLAYER-3",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-6");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-6");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_PLAYER-3");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[2].id, "ID_PLAYER-3");
+            assert.equal(playerField[2].attack, 60);
+            assert.equal(playerField[2].attackStart, 30);
+            assert.equal(playerField[2].health, 30);
+            assert.equal(playerField[2].healthMax, 50);
+            assert.equal(playerField[2].healthStart, 50);
+
+            gamesparks.sendWithData(
+              "LogEventRequest",
+              {
+                eventKey: "TestChallengePlaySpellUntargeted",
+                challengeStateString: JSON.stringify(challengeStateData),
+                challengePlayerId: "ID_PLAYER",
+                cardId: "ID_PLAYER-7",
+              },
+              function(response) {
+                const challengeStateData = response.scriptData.challengeStateData;
+
+                const lastMoves = challengeStateData.lastMoves;
+                assert.equal(lastMoves.length, 1);
+                assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
+                assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-7");
+                assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-7");
+
+                const playerState = challengeStateData.current["ID_PLAYER"];
+                const playerField = playerState.field;
+                assert.equal(playerField[2].id, "ID_PLAYER-3");
+                assert.equal(playerField[2].attack, 30);
+                assert.equal(playerField[2].attackStart, 30);
+                assert.equal(playerField[2].health, 30);
+                assert.equal(playerField[2].healthMax, 50);
+                assert.equal(playerField[2].healthStart, 50);
+
+                resolve();
+              }
+            );
+          }
+        );
+      });
+    });
+  });
+
+  describe("spells", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
               "id": "C10-ID_OPPONENT-5",
               "playerId": "ID_OPPONENT",
               "level": 1,
