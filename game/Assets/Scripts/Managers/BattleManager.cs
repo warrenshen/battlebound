@@ -746,7 +746,7 @@ public class BattleManager : MonoBehaviour
         battleCardObject.transform.localScale = Vector3.zero;
 
         battleCardObject.visual.SetOutline(true);
-        battleCardObject.visual.Redraw();
+        //battleCardObject.visual.Redraw();
 
         LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
         LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();

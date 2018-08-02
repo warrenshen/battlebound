@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
+    public static float TWEEN_DURATION = 0.05f;
+
     [SerializeField]
     private Text usernameText;
 
@@ -44,7 +46,7 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public void LoadBattle()
+    public void LoadMatchmaking()
     {
         Application.LoadLevel("Matchmaking");
     }
@@ -57,5 +59,17 @@ public class MenuManager : MonoBehaviour
     public void LoadMarketplace()
     {
         Application.LoadLevel("Marketplace");
+    }
+
+    public void HoverEnterEffect(GameObject target)
+    {
+        //LeanTween.scale(target, Vector3.one * 1.1f, TWEEN_DURATION).setEaseInQuad();
+        target.transform.localScale = Vector3.one * 1.1f;
+    }
+
+    public void HoverExitEffect(GameObject target)
+    {
+        //LeanTween.scale(target, Vector3.one, TWEEN_DURATION).setEaseInQuad();
+        target.transform.localScale = Vector3.one;
     }
 }

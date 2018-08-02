@@ -169,7 +169,8 @@ public class Hand
             }
             if (LeanTween.isTweening(battleCardObject.gameObject))  //TODO: this is hiding and causing some subtle problems...
             {
-                LeanTween.cancel(battleCardObject.gameObject);
+                Debug.LogError("Called reposition hand animation while card is currently animating!!");
+                continue;
             }
 
             float pos = -((size - 1) / 2.0f) + k;
