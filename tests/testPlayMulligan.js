@@ -1047,7 +1047,6 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
-            assert.equal(challengeStateData.mode, 1);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 2);
@@ -1056,8 +1055,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 5);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 4);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
@@ -1098,8 +1099,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 4);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 3);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
@@ -1141,8 +1144,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 3);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 2);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
@@ -1180,8 +1185,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 3);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 2);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
@@ -1222,8 +1229,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 0);
 
             resolve();
           }
@@ -1257,8 +1266,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 0);
 
             resolve();
           }
@@ -1669,8 +1680,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 7);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 4);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
@@ -1725,8 +1738,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 5);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 2);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
@@ -1777,8 +1792,10 @@ describe("challenge play mulligan", function() {
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 3);
+
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MULLIGAN");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[0].attributes.deckCardIndices.length, 0);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_FINISH_MULLIGAN");
 
