@@ -8,7 +8,7 @@
 require("DeckModule");
 
 function findAuctionsExceptSeller(address) {
-    address = cleanHex(address).toLowerCase();
+    address = prefixHex(address.toLowerCase());
 
     const API = Spark.getGameDataService();
     
@@ -41,7 +41,7 @@ function findAuctionsExceptSeller(address) {
 
 
 function findAuctionsBySeller(address) {
-    address = cleanHex(address).toLowerCase();
+    address = prefixHex(address.toLowerCase());
     
     const API = Spark.getGameDataService();
     

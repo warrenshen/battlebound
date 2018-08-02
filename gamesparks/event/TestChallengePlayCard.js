@@ -13,6 +13,9 @@ const playerId = Spark.getData().challengePlayerId;
 const cardId = Spark.getData().cardId;
 const attributesJson = Spark.getData().attributesJson;
 
+// Turn on test mode.
+GLOBAL_ENVIRONMENT = 1;
+
 const challengeStateData = JSON.parse(challengeStateString);
 handleChallengePlayCard(challengeStateData, playerId, cardId, attributesJson);
 

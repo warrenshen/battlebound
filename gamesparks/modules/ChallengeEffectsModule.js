@@ -5,6 +5,10 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+
+// 0 = normal, 1 = test.
+var GLOBAL_ENVIRONMENT = 0;
+
 const EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
 const EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
 const EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
@@ -718,8 +722,8 @@ function _getDeadCardsByPlayerId(challengeStateData, playerId) {
     return playerDeadCards;
 }
 
-function _cleanCardForSummon(challengeStateData, deadCard) {
-    const spawnCard = JSON.parse(JSON.stringify(deadCard));
+function _cleanCardForSummon(challengeStateData, dirtyCard) {
+    const spawnCard = JSON.parse(JSON.stringify(dirtyCard));
     const spawnRank = getNewSpawnRank(challengeStateData);
     
     spawnCard.spawnRank = spawnRank;
@@ -746,57 +750,83 @@ function _cleanCardForSummon(challengeStateData, deadCard) {
 }
 
 /*
+ * @para string playerId - new owner of card (player doing the converting)
+ */
+function _cleanCardForConvert(challengeStateData, dirtyCard, playerId) {
+    const spawnCard = JSON.parse(JSON.stringify(dirtyCard));
+    const spawnRank = getNewSpawnRank(challengeStateData);
+    
+    const cardRank = challengeStateData.current[playerId].cardCount;
+    challengeStateData.current[playerId].cardCount += 1;
+    
+    spawnCard.id = playerId + "-" + cardRank;
+    spawnCard.playerId = playerId;
+
+    if (hasCardAbilityOrBuff(spawnCard, CARD_ABILITY_CHARGE)) {
+        spawnCard.canAttack = 1;
+    } else {
+        spawnCard.canAttack = 0;
+    }
+    
+    return spawnCard;
+}
+
+/*
  * @param ChallengeCard|null dirtyCard
  */
 function _attemptSpawnDeadCard(challengeStateData, playerId, dirtyCard) {
-    var move;
-    
     if (dirtyCard == null) {
-        move = {
+        const move = {
             playerId: playerId,
             category: MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE,
             attributes: {
                 fieldId: playerId,
             },
         };
+        addChallengeMove(challengeStateData, move);
+        return MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE;
     } else {
-    
         const spawnCard = _cleanCardForSummon(challengeStateData, dirtyCard);
-        
-        const playerState = challengeStateData.current[playerId];
-        const playerField = playerState.field;
-        
-        const availableIndices = [];
-        playerField.forEach(function(fieldCard, index) {
-            if (fieldCard.id === "EMPTY") {
-                availableIndices.push(index);
-            }
-        });
-        
-        if (availableIndices.length <= 0) {
-            move = {
-                playerId: playerId,
-                category: MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL,
-                attributes: {
-                    card: spawnCard,
-                    fieldId: playerId,
-                },
-            };
-        } else {
-            const randomInt = Math.floor(Math.random() * availableIndices.length);
-            const spawnIndex = availableIndices[randomInt];
-            playerField[spawnIndex] = spawnCard;
-            
-            move = {
-                playerId: playerId,
-                category: MOVE_CATEGORY_SUMMON_CREATURE,
-                attributes: {
-                    card: spawnCard,
-                    fieldId: playerId,
-                    fieldIndex: spawnIndex,
-                },
-            };
+        return _attemptSpawnCardRandomIndex(challengeStateData, playerId, spawnCard);
+    }
+}
+
+function _attemptSpawnCardRandomIndex(challengeStateData, playerId, spawnCard) {
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    
+    const availableIndices = [];
+    playerField.forEach(function(fieldCard, index) {
+        if (fieldCard.id === "EMPTY") {
+            availableIndices.push(index);
         }
+    });
+    
+    var move;
+    
+    if (availableIndices.length <= 0) {
+        move = {
+            playerId: playerId,
+            category: MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL,
+            attributes: {
+                card: spawnCard,
+                fieldId: playerId,
+            },
+        };
+    } else {
+        const randomInt = Math.floor(Math.random() * availableIndices.length);
+        const spawnIndex = availableIndices[randomInt];
+        playerField[spawnIndex] = spawnCard;
+        
+        move = {
+            playerId: playerId,
+            category: MOVE_CATEGORY_SUMMON_CREATURE,
+            attributes: {
+                card: spawnCard,
+                fieldId: playerId,
+                fieldIndex: spawnIndex,
+            },
+        };
     }
     
     addChallengeMove(challengeStateData, move);
@@ -896,14 +926,26 @@ function abilityDeathRattleAttackRandomThree(challengeStateData, effect) {
     return newEffects;
 }
 
+function _selectRandom(targets) {
+    if (!Array.isArray(targets) || targets.length <= 0) {
+        setScriptError("Invalid parameter given to function.");    
+    }
+    
+    if (GLOBAL_ENVIRONMENT === 1) {
+        return targets[0];
+    } else {
+        const randomInt = Math.floor(Math.random() * targets.length);
+        return targets[randomInt];
+    }
+}
+
 function _getRandomTargetableId(playerField) {
     const targetableCards = playerField.filter(function(fieldCard) {
         return fieldCard.id != "EMPTY" && fieldCard.health > 0;
     });
     const targetableIds = targetableCards.map(function(card) { return card.id });
     targetableIds.push(TARGET_ID_FACE);
-    const randomInt = Math.floor(Math.random() * targetableIds.length);
-    return targetableIds[randomInt];
+    return _selectRandom(targetableIds);
 }
 
 function abilityDeathRattleDrawCard(challengeStateData, effect) {
@@ -1287,6 +1329,7 @@ const SPELL_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
 const SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
 const SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
 const SPELL_NAME_DEATH_NOTE = "Death Note";
+const SPELL_NAME_BESTOWED_VIGOR = "Bestowed Vigor";
 
 const TARGETED_SPELLS_OPPONENT_ONLY = [
     SPELL_NAME_TOUCH_OF_ZEUS,
@@ -1296,6 +1339,7 @@ const TARGETED_SPELLS_OPPONENT_ONLY = [
 ];
 const TARGETED_SPELLS_FRIENDLY_ONLY = [
     SPELL_NAME_UNSTABLE_POWER,
+    SPELL_NAME_BESTOWED_VIGOR,
 ];
 const TARGETED_SPELLS_BOTH = [
     
@@ -1310,6 +1354,8 @@ const SPELL_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
 const SPELL_NAME_MUDSLINGING = "Mudslinging";
 const SPELL_NAME_SPRAY_N_PRAY = "Spray n' Pray";
 const SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
+const SPELL_NAME_THE_SEVEN = "The Seven";
+const SPELL_NAME_BATTLE_ROYALE = "Battle Royale";
 
 function processSpellTargetedPlay(challengeStateData, playerId, playedCard, fieldId, targetId) {
     _addExpCard(challengeStateData, playedCard);
@@ -1395,12 +1441,12 @@ function _processSpellTargetedPlayFriendly(challengeStateData, playerId, playedC
     if (playedCard.name === SPELL_NAME_UNSTABLE_POWER) {
         // Give a creature +30, it dies at start of next turn.
         card.attack += 30;
-        card.buffs.push({
-            category: BUFF_CATEGORY_UNSTABLE_POWER,
-            granterId: playedCard.id,
-            attack: 30,
-            abilities: [],
-        });
+        card.buffs.push(BUFF_CATEGORY_UNSTABLE_POWER);
+    } else if (playedCard.name === SPELL_NAME_BESTOWED_VIGOR) {
+        card.attack += 20;
+        card.health += 10;
+        card.healthMax += 10;
+        card.buffs.push(BUFF_CATEGORY_BESTOWED_VIGOR);
     } else {
         setScriptError("Unrecognized spell card name.");
     }
@@ -1498,6 +1544,46 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
         }
         
         const spawnResponse = _attemptSpawnDeadCard(challengeStateData, playerId, reviveCard);
+    } else if (playedCard.name === SPELL_NAME_THE_SEVEN) {
+        const opponentCards = _getOpponentCreatureCards(challengeStateData, playerId);
+        if (opponentCards.length > 0) {
+            var randomCard = _selectRandom(opponentCards);
+            var move = {
+                playerId: playerId,
+                category: MOVE_CATEGORY_CONVERT_CREATURE,
+                attributes: {
+                    fieldId: randomCard.playerId,
+                    targetId: randomCard.id,
+                },
+            };
+            addChallengeMove(challengeStateData, move);
+            
+            var spawnCard = _cleanCardForConvert(challengeStateData, randomCard, playerId);
+            _attemptSpawnCardRandomIndex(challengeStateData, playerId, spawnCard);
+        }
+    } else if (playedCard.name === SPELL_NAME_BATTLE_ROYALE) {
+        const creatureCards = _getAllCreatureCards(challengeStateData, playerId);
+        if (creatureCards.length > 0) {
+            var randomCard = _selectRandom(creatureCards);
+            var move = {
+                playerId: playerId,
+                category: MOVE_CATEGORY_RANDOM_TARGET,
+                attributes: {
+                    card: playedCard,
+                    fieldId: randomCard.playerId,
+                    targetId: randomCard.id,
+                },
+            };
+            addChallengeMove(challengeStateData, move);
+            
+            creatureCards.forEach(function(creatureCard) {
+                if (creatureCard.playerId === randomCard.playerId && creatureCard.id === randomCard.id) {
+                    return;
+                }
+                damageCardMax(creatureCard);
+                newEffects = newEffects.concat(getEffectsOnCardDeath(challengeStateData, creatureCard));
+            });
+        }
     } else {
         setScriptError("Unrecognized spell card name.");
     }
@@ -1505,17 +1591,3 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
     const queues = addToQueues(newEffects);
     processEffectQueues(challengeStateData, queues[0], queues[1], queues[2]);
 }
-
-// } else if (playedCard.name === "Grave-digging") {
-//     const moves = challengeState.moves;
-//     for (var i = 0; i < moves.length; i += 1) {
-//         var currentMove = moves[i];
-//         if (
-//             currentMove.playerId === playerId &&
-//             currentMove.card &&
-//             currentMove.card.playerId === playerId &&
-//             currentMove.card.health <= 0
-//         ) {
-            
-//         }
-//     }

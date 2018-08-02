@@ -12,6 +12,9 @@ const challengeStateString = Spark.getData().challengeStateString;
 const playerId = Spark.getData().challengePlayerId;
 const cardId = Spark.getData().cardId;
 
+// Turn on test mode.
+GLOBAL_ENVIRONMENT = 1;
+
 const challengeStateData = JSON.parse(challengeStateString);
 handlePlaySpellUntargeted(challengeStateData, playerId, cardId);
 

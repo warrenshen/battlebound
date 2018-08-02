@@ -8,12 +8,16 @@
 require("ScriptDataModule");
 require("OnChainModule");
 
-const player = Spark.getPlayer();
-const address = player.getPrivateData("address");
-
 const signedTx = Spark.getData().signedTx;
 const tokenId = Spark.getData().tokenId;
 const bidPrice = Spark.getData().bidPrice;
+
+const player = Spark.getPlayer();
+const address = player.getPrivateData("address");
+
+if (prefixHex(publicAddress.toLowerCase()) != prefixHex(address.toLowerCase())) {
+    setScriptError("Public address does not match player's address.");
+}
 
 if (tokenId < 0) {
     setScriptError("Invalid token ID.");

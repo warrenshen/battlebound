@@ -15,6 +15,7 @@ const CHAT_ID_PREPARE_YOURSELF = 3; // "Prepare yourself"
 const CHAT_ID_HEART_OF_THE_CARDS = 4; // "Heart of the cards"
 const CHAT_ID_GET_GOOD = 5; // "Get good"
 const CHAT_ID_WELL_PLAYED = 6; // "Well played"
+const CHAT_ID_RNG_FAIL = 7; // "RNG fail"
 
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();

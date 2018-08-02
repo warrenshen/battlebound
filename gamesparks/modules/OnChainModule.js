@@ -374,7 +374,7 @@ function submitCreateAuctionTransaction(signedTx) {
     if (responseCode === 200) {
         const error = responseJson.error;
         if (error && error.code) {
-            setScriptError("Insufficient funds to submit transaction.");
+            setScriptError("Error on submit transaction: " + error.message);
         }
         
         return responseJson.result;
