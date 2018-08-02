@@ -703,7 +703,7 @@ function abilitySilenceAllOpponentCreatures(challengeStateData, effect) {
     const opponentCards = _getOpponentCreatureCards(challengeStateData, playerId);
     
     opponentCards.forEach(function(opponentCard) {
-        opponentCard.isSilenced = 1;
+        silenceCard(opponentCard);
     });
     
     return [];
@@ -1438,6 +1438,16 @@ function _processSpellTargetedPlayFriendly(challengeStateData, playerId, playedC
         setScriptError("Invalid fieldId parameter.");
     }
     
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    
+    const fieldIndex = playerField.findIndex(function(card) { return card.id === targetId });
+    if (fieldIndex < 0) {
+        setScriptError("Invalid targetId parameter - card does not exist.");
+    }
+    
+    const card = playerField[fieldIndex];
+    
     if (playedCard.name === SPELL_NAME_UNSTABLE_POWER) {
         // Give a creature +30, it dies at start of next turn.
         card.attack += 30;
@@ -1507,14 +1517,14 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 return;
             }
             
-            fieldCard.isSilenced = 1;
+            silenceCard(fieldCard);
         });
         opponentField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
             }
             
-            fieldCard.isSilenced = 1;
+            silenceCard(fieldCard);
         });
     } else if (playedCard.name === SPELL_NAME_MUDSLINGING) {
         playerField.forEach(function(fieldCard) {
