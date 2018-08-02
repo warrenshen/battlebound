@@ -403,23 +403,15 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (FlagHelper.IsServerEnabled())
-        {
-            if (this.activePlayer.Id == this.you.Id)
-            {
-                ChallengeMove challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(activePlayer.Id);
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
-                challengeMove.SetRank(GetDeviceMoveRank());
-                AddDeviceMove(challengeMove);
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(activePlayer.Id);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
+        challengeMove.SetRank(GetServerMoveRank());
+        ReceiveChallengeMove(challengeMove);
 
-                BattleSingleton.Instance.SendChallengeEndTurnRequest();
-                NextTurn();
-            }
-        }
-        else
+        if (FlagHelper.IsServerEnabled() && this.activePlayer.Id == this.you.Id)
         {
-            NextTurn();
+            BattleSingleton.Instance.SendChallengeEndTurnRequest();
         }
     }
 
@@ -800,12 +792,6 @@ public class BattleManager : MonoBehaviour
 
     public void FinishedMulligan()
     {
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(this.you.Id);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-        challengeMove.SetRank(GetDeviceMoveRank());
-        AddDeviceMove(challengeMove);
-
         this.you.PlayMulligan(this.opponent.Mode);
     }
 
@@ -1082,13 +1068,8 @@ public class BattleManager : MonoBehaviour
      */
     private void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
-        if (playerId != this.opponent.Id)
-        {
-            Debug.LogError("Play mulligan move received from server that is not from opponent.");
-            return;
-        }
-
-        this.opponent.PlayMulliganByIndices(deckCardIndices);
+        Player player = GetPlayerById(playerId);
+        player.PlayMulliganByIndices(deckCardIndices);
     }
 
     private void ReceiveMoveFinishMulligan()
@@ -1113,7 +1094,7 @@ public class BattleManager : MonoBehaviour
     {
         Player player = GetPlayerById(playerId);
         player.AddDrawnCard(card);
-        //ComparePlayerStates(); // We cannot call this directly since EffectManager may still be processing after end turn.
+        //ComparePlayerStates(); // We cannot call theis directly since EffectManager may still be processing after end turn.
     }
 
     private void ReceiveMoveDrawCardMulligan(string playerId, Card card)
@@ -1496,8 +1477,6 @@ public class BattleManager : MonoBehaviour
     // Challenge moves to skip since device has already performed them.
     private static List<string> PLAYER_SKIP_CHALLENGE_MOVES = new List<string>
     {
-        ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN, // What about if ran out of time?
-        ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
         ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
@@ -1518,8 +1497,20 @@ public class BattleManager : MonoBehaviour
         this.serverMoves.Add(serverMove);
 
         if (
-            (serverMove.PlayerId == this.opponent.Id || serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN || serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN) &&
+            serverMove.PlayerId == this.opponent.Id &&
             OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
+        )
+        {
+            this.deviceMoveCount += 1;
+        }
+        else if (
+            serverMove.PlayerId == this.you.Id &&
+            (
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN ||
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN ||
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN ||
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN
+            )
         )
         {
             this.deviceMoveCount += 1;
