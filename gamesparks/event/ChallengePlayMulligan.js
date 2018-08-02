@@ -59,6 +59,8 @@ playerMessage.setMessageData(playerMessageData);
 playerMessage.setPlayerIds([playerId]);
 playerMessage.send();
 
+const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+
 const opponentResponse = getChallengeStateForPlayerNoSet(opponentId, challengeStateData);
 const opponentMessage = Spark.message("ChallengePlayMulliganMessage");
 const opponentMessageData = {};

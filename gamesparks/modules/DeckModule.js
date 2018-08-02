@@ -186,9 +186,9 @@ function createBCardByBCardId(bCardId) {
     
     cardData.id = bCardId;
     cardData.templateId = templateId;
-    cardData.level = 0;
+    cardData.level = 1;
     cardData.exp = 0;
-    cardData.expMax = 10; // TODO;
+    cardData.expMax = 5;
     
     const error = cardDataItem.persistor().persist().error();
     if (error) {

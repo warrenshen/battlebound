@@ -8,7 +8,6 @@
 require("ScriptDataModule");
 require("AuctionModule");
 require("DeckModule");
-require("OnChainModule");
 
 const player = Spark.getPlayer();
 var address = player.getPrivateData("address");

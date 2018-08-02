@@ -67,6 +67,9 @@ function healCardMax(card) {
 
 function silenceCard(card) {
     card.isSilenced = 1;
+    card.attack = card.attackStart;
+    card.healthMax = card.healthStart;
+    card.health = Math.min(card.health, card.healthMax);
 }
 
 /**
@@ -332,7 +335,7 @@ function addChallengeMove(challengeStateData, move) {
 function addChallengeDeadCard(challengeStateData, deadCard) {
     challengeStateData.deadCards.forEach(function(card) {
         if (card.id === deadCard.id) {
-            setScriptError("Cannot add a duplicate card to dead cards.");
+            setScriptError("Cannot add a duplicate card to dead cards, card ID: " + deadCard.id);
         }
     });
     challengeStateData.deadCards.push(deadCard);    
