@@ -249,6 +249,11 @@ public class BoardCreature : Targetable
     {
         int attack = this.creatureCard.GetAttack();
 
+        if (this.isSilenced)
+        {
+            return attack;
+        }
+
         foreach (string buff in this.buffs)
         {
             switch (buff)
@@ -270,6 +275,11 @@ public class BoardCreature : Targetable
     public int GetHealthMax()
     {
         int health = this.creatureCard.GetHealth();
+
+        if (this.isSilenced)
+        {
+            return health;
+        }
 
         foreach (string buff in this.buffs)
         {
@@ -559,6 +569,7 @@ public class BoardCreature : Targetable
     public void Silence()
     {
         this.isSilenced = true;
+        this.health = Math.Min(this.health, GetHealthMax());
         Redraw();
     }
 
