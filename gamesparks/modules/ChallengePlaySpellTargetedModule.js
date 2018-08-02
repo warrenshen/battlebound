@@ -11,7 +11,7 @@ require("ChallengeEffectsModule");
 
 function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attributes) {
     const playerState = challengeStateData.current[playerId];
-    if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
+    if (playerState.mode != PLAYER_STATE_MODE_NORMAL) {
         setScriptError("Player state is not in normal mode.");
     }
     
@@ -40,7 +40,7 @@ function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attribute
         }
     }
     
-    if (playedCard.category !== CARD_CATEGORY_SPELL) {
+    if (playedCard.category != CARD_CATEGORY_SPELL) {
         setScriptError("Invalid card category - must be spell category.");
     }
     

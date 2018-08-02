@@ -86,6 +86,10 @@ if (matchShortCode === "CasualMatch") {
         setScriptError(response.error);
     }
     rankedScore = response.HIGH_SCORE_LB.SCORE_ATTR;
+    if (rankedScore == null) {
+        // New player elo score.
+        rankedScore = 1000;
+    }
     
     // Create new matchmaking request.
     request = new SparkRequests.MatchmakingRequest();
