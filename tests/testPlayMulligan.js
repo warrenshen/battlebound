@@ -1047,6 +1047,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 2);
@@ -1088,6 +1089,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.mode, 2);
@@ -1126,6 +1128,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 2);
@@ -1165,6 +1168,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.mode, 2);
@@ -1203,6 +1207,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 2);
@@ -1238,6 +1243,7 @@ describe("challenge play mulligan", function() {
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.mode, 1);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.mode, 2);
@@ -1683,6 +1689,11 @@ describe("challenge play mulligan", function() {
             assert.equal(lastMoves[6].category, "MOVE_CATEGORY_DRAW_CARD");
             assert.equal(lastMoves[6].playerId, "ID_OPPONENT");
 
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.mode, 0);
+            assert.equal(opponentState.hand.length, 4);
+            assert.equal(opponentState.mulliganCards.length, 0);
+
             resolve();
           }
         );
@@ -1728,6 +1739,11 @@ describe("challenge play mulligan", function() {
             assert.equal(lastMoves[4].category, "MOVE_CATEGORY_DRAW_CARD");
             assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
 
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.mode, 0);
+            assert.equal(opponentState.hand.length, 4);
+            assert.equal(opponentState.mulliganCards.length, 0);
+
             resolve();
           }
         );
@@ -1768,6 +1784,11 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.mode, 0);
+            assert.equal(opponentState.hand.length, 4);
+            assert.equal(opponentState.mulliganCards.length, 0);
 
             resolve();
           }

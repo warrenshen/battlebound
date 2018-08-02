@@ -193,7 +193,7 @@ public class Player
     public void RenderGameStart()
     {
         RenderMana();
-        this.hand.RepositionCards();
+        //this.hand.RepositionCards();
     }
 
     /*
@@ -738,6 +738,7 @@ public class Player
         PlayerState playerState = new PlayerState();
 
         playerState.SetId(this.id);
+        playerState.SetDisplayName(this.displayName);
         playerState.SetHasTurn(this.hasTurn ? 1 : 0);
         playerState.SetManaCurrent(this.mana);
         playerState.SetManaMax(this.maxMana);

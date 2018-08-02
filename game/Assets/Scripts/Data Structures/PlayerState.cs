@@ -66,6 +66,11 @@ public class PlayerState
         this.id = id;
     }
 
+    public void SetDisplayName(string displayName)
+    {
+        this.displayName = displayName;
+    }
+
     public void SetHasTurn(int hasTurn)
     {
         this.hasTurn = hasTurn;
