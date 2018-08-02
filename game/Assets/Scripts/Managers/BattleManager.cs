@@ -403,11 +403,16 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        if (FlagHelper.IsServerEnabled() && this.activePlayer.Id != this.you.Id)
+        {
+            return;
+        }
+
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(activePlayer.Id);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
         challengeMove.SetRank(GetServerMoveRank());
-        ReceiveChallengeMove(challengeMove);
+        AddServerMove(challengeMove);
 
         if (FlagHelper.IsServerEnabled() && this.activePlayer.Id == this.you.Id)
         {
@@ -462,7 +467,7 @@ public class BattleManager : MonoBehaviour
             challengeMove.SetPlayerId(this.you.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
             challengeMove.SetRank(GetServerMoveRank());
-            ReceiveChallengeMove(challengeMove);
+            AddServerMove(challengeMove);
         }
     }
 
@@ -569,7 +574,7 @@ public class BattleManager : MonoBehaviour
                 moveAttributes.SetTargetId(defendingTargetable.GetCardId());
                 challengeMove.SetMoveAttributes(moveAttributes);
 
-                ReceiveChallengeMove(challengeMove);
+                AddServerMove(challengeMove);
             }
 
             if (attackingTargetable.Owner.Id == this.you.Id)
@@ -624,17 +629,24 @@ public class BattleManager : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Battle")))
                 {
-                    // We'll enter this condition if card is actually played,
-                    // otherwise the "playing" will be handled elsewhere.
-                    if (PlayTargetedSpell(target, hit))
+                    if (CanPlayTargetedSpell(target, hit))
                     {
-                        target.Owner.PlayCard(target);
+                        // We'll enter this condition if card is actually played,
+                        // otherwise the "playing" will be handled elsewhere.
+                        if (PlayTargetedSpell(target, hit))
+                        {
+                            target.Owner.PlayCard(target);
+                        }
+                        return true;
                     }
-                    return true;
+                    else
+                    {
+                        ActionManager.Instance.ResetTarget();
+                        return false;
+                    }
                 }
                 else
                 {
-                    Debug.Log("Returning");
                     ActionManager.Instance.ResetTarget();
                     return false;
                 }
@@ -795,6 +807,48 @@ public class BattleManager : MonoBehaviour
         this.you.PlayMulligan(this.opponent.Mode);
     }
 
+    private bool CanPlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
+    {
+        if (battleCardObject.Card.GetType() != typeof(SpellCard))
+        {
+            Debug.LogError("Function passed invalid card - should be spell card");
+            return false;
+        }
+
+        SpellCard card = battleCardObject.Card as SpellCard;
+
+        if (card.Targeted == false)
+        {
+            Debug.LogError("Function passed invalid card - should be spell targeted card");
+            return false;
+        }
+
+        BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
+        if (targetedCreature == null)
+        {
+            return false;
+        }
+
+        string playerId = battleCardObject.Owner.Id;
+
+        if (
+            SpellCard.TARGETED_SPELLS_FRIENDLY_ONLY.Contains(battleCardObject.Card.Name)
+            && playerId != this.activePlayer.Id
+        )
+        {
+            return false;
+        }
+        else if (
+            SpellCard.TARGETED_SPELLS_OPPONENT_ONLY.Contains(battleCardObject.Card.Name)
+            && playerId == this.activePlayer.Id
+        )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private bool CanPlayUntargetedSpell(BattleCardObject battleCardObject)
     {
         if (battleCardObject.Card.GetType() != typeof(SpellCard))
@@ -862,7 +916,7 @@ public class BattleManager : MonoBehaviour
             moveAttributes.SetFieldIndex(index);
             challengeMove.SetMoveAttributes(moveAttributes);
 
-            ReceiveChallengeMove(challengeMove);
+            AddServerMove(challengeMove);
 
             return false;
         }
@@ -895,7 +949,7 @@ public class BattleManager : MonoBehaviour
                 challengeMove.SetMoveAttributes(moveAttributes);
 
                 challengeMove.SetRank(GetServerMoveRank());
-                ReceiveChallengeMove(challengeMove);
+                AddServerMove(challengeMove);
             }
 
             SpawnCardToBoard(battleCardObject, index);
@@ -946,7 +1000,7 @@ public class BattleManager : MonoBehaviour
             moveAttributes.SetTargetId(targetedCreature.GetCardId());
             challengeMove.SetMoveAttributes(moveAttributes);
 
-            ReceiveChallengeMove(challengeMove);
+            AddServerMove(challengeMove);
 
             return false;
         }
@@ -975,7 +1029,7 @@ public class BattleManager : MonoBehaviour
                 challengeMove.SetPlayerId(player.Id);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
                 challengeMove.SetRank(GetServerMoveRank());
-                ReceiveChallengeMove(challengeMove);
+                AddServerMove(challengeMove);
             }
 
             EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
@@ -1014,7 +1068,7 @@ public class BattleManager : MonoBehaviour
             moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
             challengeMove.SetMoveAttributes(moveAttributes);
 
-            ReceiveChallengeMove(challengeMove);
+            AddServerMove(challengeMove);
 
             return false;
         }
@@ -1038,7 +1092,7 @@ public class BattleManager : MonoBehaviour
                 challengeMove.SetPlayerId(player.Id);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
                 challengeMove.SetRank(GetServerMoveRank());
-                ReceiveChallengeMove(challengeMove);
+                AddServerMove(challengeMove);
             }
 
             EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
@@ -1441,9 +1495,41 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveChallengeMove(ChallengeMove challengeMove)
     {
+        // If device's log of server moves contains the new server move
+        // already, skip this move. This can happen because the device adds
+        // its own mock server moves to the log for optimistic rendering.
+        foreach (ChallengeMove serverMove in GetServerMoves())
+        {
+            if (
+                serverMove.PlayerId == this.you.Id &&
+                serverMove.PlayerId == challengeMove.PlayerId &&
+                serverMove.Category == challengeMove.Category &&
+                serverMove.Rank == challengeMove.Rank
+            )
+            {
+                if (FlagHelper.IsLogVerbose())
+                {
+                    Debug.Log("[SKIPPED] Server move queue: " + challengeMove.Rank);
+                    Debug.Log(JsonUtility.ToJson(challengeMove));
+                    return;
+                }
+            }
+        }
+
         if (FlagHelper.IsLogVerbose())
         {
             Debug.Log("Server move queue: " + challengeMove.Rank);
+            Debug.Log(JsonUtility.ToJson(challengeMove));
+        }
+        this.serverMoveQueue.Add(challengeMove);
+        this.serverMoveCount += 1;
+    }
+
+    public void AddServerMove(ChallengeMove challengeMove)
+    {
+        if (FlagHelper.IsLogVerbose())
+        {
+            Debug.Log("[MOCK] Server move queue: " + challengeMove.Rank);
             Debug.Log(JsonUtility.ToJson(challengeMove));
         }
         this.serverMoveQueue.Add(challengeMove);
@@ -1464,7 +1550,7 @@ public class BattleManager : MonoBehaviour
     {
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
         ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN,
-        ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN,
+        ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN, // todo: can predict now?
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
         ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
@@ -1502,6 +1588,7 @@ public class BattleManager : MonoBehaviour
         )
         {
             this.deviceMoveCount += 1;
+            Debug.Log("Device move queue: " + this.deviceMoveCount);
         }
         else if (
             serverMove.PlayerId == this.you.Id &&
@@ -1514,6 +1601,7 @@ public class BattleManager : MonoBehaviour
         )
         {
             this.deviceMoveCount += 1;
+            Debug.Log("Device move queue: " + this.deviceMoveCount);
         }
         else if (this.deviceMoveQueue.Count <= 0)
         {

@@ -263,7 +263,7 @@ public class Player
             challengeMove.SetMoveAttributes(challengeMoveAttributes);
         }
 
-        BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        BattleManager.Instance.AddServerMove(challengeMove);
     }
 
     public void DrawCardsMock(int amount)
@@ -418,7 +418,7 @@ public class Player
         moveAttributes.SetDeckCardIndices(deckCardIndices);
 
         challengeMove.SetMoveAttributes(moveAttributes);
-        BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+        BattleManager.Instance.AddServerMove(challengeMove);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -443,14 +443,14 @@ public class Player
             moveAttributes.SetDeckCardIndices(new List<int>());
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleManager.Instance.AddServerMove(challengeMove);
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(opponentId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
             challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleManager.Instance.AddServerMove(challengeMove);
         }
     }
 

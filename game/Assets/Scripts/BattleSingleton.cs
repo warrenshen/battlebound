@@ -97,7 +97,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             ProcessChallengeScriptData(scriptData);
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
-            Debug.Log(challengeEndStateJson);
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
             BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
         }
@@ -111,7 +110,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             ProcessChallengeScriptData(scriptData);
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
-            Debug.Log(challengeEndStateJson);
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
             BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
         }
@@ -206,7 +204,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             List<ChallengeMove> challengeMoves = new List<ChallengeMove>();
             foreach (GSData moveData in movesData)
             {
-                //Debug.Log(moveData.JSON);
                 challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
             }
 

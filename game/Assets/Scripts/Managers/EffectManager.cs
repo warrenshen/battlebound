@@ -431,7 +431,7 @@ public class EffectManager : MonoBehaviour
             moveAttributes.SetTargetId(randomTargetable.GetCardId());
             challengeMove.SetMoveAttributes(moveAttributes);
 
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleManager.Instance.AddServerMove(challengeMove);
         }
     }
 
@@ -974,7 +974,7 @@ public class EffectManager : MonoBehaviour
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
                 challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
-                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+                BattleManager.Instance.AddServerMove(challengeMove);
             }
             else
             {
@@ -1002,7 +1002,7 @@ public class EffectManager : MonoBehaviour
 
                 challengeMove.SetMoveAttributes(moveAttributes);
 
-                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+                BattleManager.Instance.AddServerMove(challengeMove);
             }
         }
     }
@@ -1568,7 +1568,7 @@ public class EffectManager : MonoBehaviour
 
             challengeMove.SetMoveAttributes(moveAttributes);
 
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleManager.Instance.AddServerMove(challengeMove);
         }
     }
 
@@ -1886,7 +1886,7 @@ public class EffectManager : MonoBehaviour
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
                 challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
-                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+                BattleManager.Instance.AddServerMove(challengeMove);
             }
             else
             {
@@ -1916,7 +1916,7 @@ public class EffectManager : MonoBehaviour
 
                 challengeMove.SetMoveAttributes(moveAttributes);
 
-                BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+                BattleManager.Instance.AddServerMove(challengeMove);
             }
         }
 
@@ -1954,7 +1954,7 @@ public class EffectManager : MonoBehaviour
             moveAttributes.SetTargetId(opponentRandomCreature.GetCardId());
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleManager.Instance.AddServerMove(challengeMove);
         }
 
         return new List<Effect>();
@@ -1998,7 +1998,7 @@ public class EffectManager : MonoBehaviour
             moveAttributes.SetTargetId(randomCreature.GetCardId());
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleManager.Instance.AddServerMove(challengeMove);
         }
 
         return new List<Effect>();

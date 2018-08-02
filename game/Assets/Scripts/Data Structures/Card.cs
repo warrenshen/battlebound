@@ -722,6 +722,25 @@ public class SpellCard : Card
         CARD_NAME_BATTLE_ROYALE,
     };
 
+    public static readonly List<string> TARGETED_SPELLS_OPPONENT_ONLY = new List<string>
+    {
+        CARD_NAME_TOUCH_OF_ZEUS,
+        CARD_NAME_DEEP_FREEZE,
+        CARD_NAME_WIDESPREAD_FROSTBITE,
+        CARD_NAME_DEATH_NOTE,
+    };
+
+    public static readonly List<string> TARGETED_SPELLS_FRIENDLY_ONLY = new List<string>
+    {
+        CARD_NAME_UNSTABLE_POWER,
+        CARD_NAME_BESTOWED_VIGOR,
+    };
+
+    public static readonly List<string> TARGETED_SPELLS_BOTH = new List<string>
+    {
+
+    };
+
     private bool targeted;      //affects single target or whole board?
     public bool Targeted => targeted;
 
