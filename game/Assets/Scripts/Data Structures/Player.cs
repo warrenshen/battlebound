@@ -526,9 +526,7 @@ public class Player
         BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
         createdBattleCard.Initialize(this, card);
 
-        created.transform.parent = GameObject.Find(
-            this.name + " Hand"
-        ).transform;
+        created.transform.parent = GetHandTransform();
 
         this.deckSize -= 1;
         BattleManager.Instance.AnimateDrawCard(this, createdBattleCard)
@@ -550,9 +548,7 @@ public class Player
         BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
         createdBattleCard.Initialize(this, card);
 
-        created.transform.parent = GameObject.Find(
-            this.name + " Hand"
-        ).transform;
+        created.transform.parent = GetHandTransform();
 
         this.deckSize -= 1;
         this.hand.AddCardObject(createdBattleCard);
@@ -571,9 +567,7 @@ public class Player
             spriteParam.IsAffectedByFilters = true;
         }
 
-        created.transform.parent = GameObject.Find(
-            this.name + " Hand"
-        ).transform;
+        created.transform.parent = GetHandTransform();
 
         this.hand.AddCardObject(battleCardObject);
 
@@ -592,9 +586,7 @@ public class Player
         BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
         createdBattleCard.Initialize(this, card);
 
-        created.transform.parent = GameObject.Find(
-            this.name + " Hand"
-        ).transform;
+        created.transform.parent = GetHandTransform();
 
         this.hand.AddCardObject(createdBattleCard);
 
@@ -631,6 +623,18 @@ public class Player
         int cardRank = this.cardCount;
         this.cardCount += 1;
         return cardRank;
+    }
+
+    private Transform GetHandTransform()
+    {
+        if (this.name == "Player")
+        {
+            return BattleManager.Instance.PlayerHandTransform;
+        }
+        else
+        {
+            return BattleManager.Instance.EnemyHandTransform;
+        }
     }
 
     public string GetNewCardId()

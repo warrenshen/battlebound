@@ -533,6 +533,12 @@ public class EffectManager : MonoBehaviour
         PlayerAvatar playerAvatar = player.Avatar;
         playerAvatar.Die();
 
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
         if (!FlagHelper.IsServerEnabled())
         {
             BattleManager.Instance.MockChallengeEnd(playerId);
@@ -2061,7 +2067,7 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> GetEffectsOnCreatureDeath(BoardCreature boardCreature)
     {
-        deadCards.Add(boardCreature.GetChallengeCard());
+        this.deadCards.Add(boardCreature.GetChallengeCard());
 
         List<Effect> effects = new List<Effect>();
 

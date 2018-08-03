@@ -98,7 +98,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
-            BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+            BattleManager.Instance.SetChallengeEndState(challengeEndState);
         }
     }
 
@@ -111,7 +111,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
-            BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
+            BattleManager.Instance.SetChallengeEndState(challengeEndState);
         }
     }
 
