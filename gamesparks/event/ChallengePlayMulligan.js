@@ -39,8 +39,21 @@ require("PersistChallengeStateModule");
 
 Spark.unlockKeyFully(challengeId);
 
+const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+
 if (challengeStateData.mode === CHALLENGE_STATE_MODE_NORMAL) {
     cancelMulliganTimeEvents(challengeId);
+
+    const playerState = challengeStateData.current[playerId];
+    const opponentState = challengeStateData.current[opponentId];
+    
+    if (playerState.hasTurn === 1) {
+        startTurnTimeEvents(challengeId, playerId);
+    } else if (opponentState.hasTurn === 1) {
+        startTurnTimeEvents(challengeId, opponentId);
+    } else {
+        setScriptError("Neither player has turn after mulligan.");
+    }
 }
 
 const playerResponse = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
@@ -58,8 +71,6 @@ playerMessageData.spawnCount = playerResponse.spawnCount;
 playerMessage.setMessageData(playerMessageData);
 playerMessage.setPlayerIds([playerId]);
 playerMessage.send();
-
-const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 
 const opponentResponse = getChallengeStateForPlayerNoSet(opponentId, challengeStateData);
 const opponentMessage = Spark.message("ChallengePlayMulliganMessage");

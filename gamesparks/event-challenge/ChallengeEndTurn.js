@@ -30,15 +30,16 @@ if (isExpired && challengeStateData.moveTakenThisTurn === 0) {
     
     // If expired streak is greater than 2, auto-surrender player.
     if (challengeStateData.expiredStreakByPlayerId[playerId] > 2) {
-        move = {
+        // Reset `lastMoves` attribute in ChallengeState.
+        challengeStateData.lastMoves = [];
+    
+        var move = {
             playerId: playerId,
             category: MOVE_CATEGORY_SURRENDER_BY_EXPIRE,
         };
         addChallengeMove(challengeStateData, move);
 
-        // TODO: log challenge winner in ChallengeState.
-        const opponent = Spark.loadPlayer(opponentId);
-        challenge.winChallenge(opponent);
+        winChallenge(challengeStateData, opponentId);
         isChallengeOver = true;
     }
 } else {
@@ -53,18 +54,7 @@ if (!isChallengeOver) {
     // since this will already be sent because this is a challenge event.
     challenge.consumeTurn(playerId);
     
-    const scheduler = Spark.getScheduler();
-    const opponentRunningKey = "TROM" + ":" + challengeId + ":" + opponentId;
-    const opponentExpiredKey = "TLEM" + ":" + challengeId + ":" + opponentId;
-    const data = {
-        category: TIME_LIMIT_CATEGORY_NORMAL,
-        challengeId: challengeId,
-        opponentId: opponentId,
-        hasTurnPlayerId: opponentId,
-    };
-    // var success;
-    // success = scheduler.inSeconds("TimeRunningOutModule", 60, data, opponentRunningKey);
-    // success = scheduler.inSeconds("TimeLimitExpiredModule", 75, data, opponentExpiredKey);
+    startTurnTimeEvents(challengeId, opponentId);
 }
 
 require("PersistChallengeStateModule");

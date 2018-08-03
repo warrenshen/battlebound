@@ -140,4 +140,4 @@ challengeState[challengedId] = challengedData;
 
 require("PersistChallengeStateModule");
 
-// startMulliganTimeEvents(challengeId, [challengerId, challengedId]);
+startMulliganTimeEvents(challengeId, [challengerId, challengedId]);

@@ -5,6 +5,22 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+function startTurnTimeEvents(challengeId, playerId) {
+    const scheduler = Spark.getScheduler();
+    const runningKey = "TROM" + ":" + challengeId + ":" + playerId;
+    const expiredKey = "TLEM" + ":" + challengeId + ":" + playerId;
+    const data = {
+        category: TIME_LIMIT_CATEGORY_NORMAL,
+        challengeId: challengeId,
+        opponentId: playerId,
+        hasTurnPlayerId: playerId,
+    };
+    
+    var success;
+    success = scheduler.inSeconds("TimeRunningOutModule", 60, data, runningKey);
+    success = scheduler.inSeconds("TimeLimitExpiredModule", 75, data, expiredKey);
+}
+
 function cancelScheduledTimeEvents(challengeId, playerId) {
     const scheduler = Spark.getScheduler();
     // TROM = TimeRunningOutModule.
