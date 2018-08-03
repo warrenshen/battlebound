@@ -1081,7 +1081,7 @@ describe("challenge events", function() {
           "armor": 0,
           "field": [
             {
-              "id": "C10-ID_OPPONENT-5",
+              "id": "ID_OPPONENT-5",
               "playerId": "ID_OPPONENT",
               "level": 1,
               "category": 0,
@@ -1101,10 +1101,11 @@ describe("challenge events", function() {
               "buffs": [],
               "canAttack": 1,
               "isFrozen": 0,
+              "isSilenced": 0,
               "spawnRank": 2
             },
             {
-              "id": "C2-ID_OPPONENT-2",
+              "id": "ID_OPPONENT-2",
               "playerId": "ID_OPPONENT",
               "level": 1,
               "category": 0,
@@ -1122,6 +1123,7 @@ describe("challenge events", function() {
               "buffs": [],
               "canAttack": 1,
               "isFrozen": 0,
+              "isSilenced": 0,
               "spawnRank": 3
             },
             {
@@ -1157,7 +1159,7 @@ describe("challenge events", function() {
               "id": "EMPTY"
             },
             {
-              "id": "C2-ID_PLAYER-2",
+              "id": "ID_PLAYER-2",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
@@ -1181,7 +1183,7 @@ describe("challenge events", function() {
               "spawnRank": 1
             },
             {
-              "id": "C3-ID_PLAYER-5",
+              "id": "ID_PLAYER-5",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
@@ -1216,7 +1218,7 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C23-ID_PLAYER-4",
+              "id": "ID_PLAYER-4",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 1,
@@ -1227,7 +1229,7 @@ describe("challenge events", function() {
               "costStart": 50,
             },
             {
-              "id": "C24-ID_PLAYER-5",
+              "id": "ID_PLAYER-5",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 1,
@@ -1238,7 +1240,7 @@ describe("challenge events", function() {
               "costStart": 30,
             },
             {
-              "id": "C25-ID_PLAYER-6",
+              "id": "ID_PLAYER-6",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 1,
@@ -1247,6 +1249,17 @@ describe("challenge events", function() {
               "description": "Silence all creatures",
               "baseId": "C25",
               "costStart": 40,
+            },
+            {
+              "id": "ID_PLAYER-7",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 1,
+              "cost": 20,
+              "name": "Condemn",
+              "description": "Silence a creatures",
+              "baseId": "C26",
+              "costStart": 20,
             },
           ],
           "deckSize": 1,
@@ -1290,10 +1303,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellTargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C23-ID_PLAYER-4",
+            cardId: "ID_PLAYER-4",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C10-ID_OPPONENT-5",
+              targetId: "ID_OPPONENT-5",
             },
           },
           function(response) {
@@ -1302,10 +1315,10 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C23-ID_PLAYER-4");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-4");
             assert.equal(lastMoves[0].attributes.card.name, "Death Note");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.targetId, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_OPPONENT-5");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -1329,7 +1342,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C24-ID_PLAYER-5",
+            cardId: "ID_PLAYER-5",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1337,17 +1350,17 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C24-ID_PLAYER-5");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-5");
             assert.equal(lastMoves[0].attributes.card.name, "Mudslinging")
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
 
             const playerField = playerState.field;
-            assert.equal(playerField[1].id, "C2-ID_PLAYER-2");
+            assert.equal(playerField[1].id, "ID_PLAYER-2");
             assert.equal(playerField[1].abilities.indexOf(1) >= 0, true);
 
-            assert.equal(playerField[2].id, "C3-ID_PLAYER-5");
+            assert.equal(playerField[2].id, "ID_PLAYER-5");
             assert.equal(playerField[2].abilities.indexOf(1) >= 0, true);
 
             resolve();
@@ -1364,7 +1377,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C25-ID_PLAYER-6",
+            cardId: "ID_PLAYER-6",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1372,25 +1385,64 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
-            assert.equal(lastMoves[0].attributes.cardId, "C25-ID_PLAYER-6");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-6");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 30);
 
             const playerField = playerState.field;
-            assert.equal(playerField[1].id, "C2-ID_PLAYER-2");
+            assert.equal(playerField[1].id, "ID_PLAYER-2");
             assert.equal(playerField[1].isSilenced, 1);
 
-            assert.equal(playerField[2].id, "C3-ID_PLAYER-5");
+            assert.equal(playerField[2].id, "ID_PLAYER-5");
             assert.equal(playerField[2].isSilenced, 1);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
-            assert.equal(opponentField[0].id, "C10-ID_OPPONENT-5");
+            assert.equal(opponentField[0].id, "ID_OPPONENT-5");
             assert.equal(opponentField[0].isSilenced, 1);
 
-            assert.equal(opponentField[1].id, "C2-ID_OPPONENT-2");
+            assert.equal(opponentField[1].id, "ID_OPPONENT-2");
             assert.equal(opponentField[1].isSilenced, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support condemn", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengePlaySpellTargeted",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-7",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "ID_OPPONENT-5",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_TARGETED");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-7");
+            assert.equal(lastMoves[0].attributes.card.name, "Condemn");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_OPPONENT-5");
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "ID_OPPONENT-5");
+            assert.equal(opponentField[0].isSilenced, 1);
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.manaCurrent, 50);
 
             resolve();
           }
