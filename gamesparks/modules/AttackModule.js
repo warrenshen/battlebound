@@ -352,3 +352,25 @@ function getNewDeathRank(challengeStateData) {
     challengeStateData.deathCount += 1;
     return deathRank;
 }
+
+function winChallenge(challengeStateData, winnerId) {
+    const move = {
+        playerId: winnerId,
+        category: MOVE_CATEGORY_CHALLENGE_OVER,
+    };
+    addChallengeMove(challengeStateData, move);
+    
+    // Hack to allow testing.
+    if (winnerId === "ID_PLAYER" || winnerId === "ID_OPPONENT") {
+        return;
+    }
+    
+    const winner = Spark.loadPlayer(winnerId);
+    
+    if (winner == null) {
+        setScriptError("Winner player does not exist: " + loserId + ", " + winnerId);
+    }
+    
+    const challenge = Spark.getChallenge(challengeStateData.id);
+    challenge.winChallenge(winner);
+}
