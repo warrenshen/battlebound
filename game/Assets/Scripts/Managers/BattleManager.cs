@@ -89,6 +89,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private List<CardObject> xpCardObjects;
 
+    private ChallengeEndState challengeEndState;
+
     public HyperCard.Card HoverCard;
     public Canvas canvas;
     public static BattleManager Instance { get; private set; }
@@ -452,20 +454,34 @@ public class BattleManager : MonoBehaviour
 
     private void Surrender()
     {
-        Debug.LogWarning("Surrender action pressed.");
+        string playerId = this.you.Id;
+        string opponentId = this.opponent.Id;
+
         BattleSingleton.Instance.SendChallengeSurrenderRequest();
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(this.you.Id);
+        challengeMove.SetPlayerId(playerId);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
 
+        challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(opponentId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
         if (!FlagHelper.IsServerEnabled())
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(this.you.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
+            challengeMove.SetRank(GetServerMoveRank());
+            AddServerMove(challengeMove);
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(opponentId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
             challengeMove.SetRank(GetServerMoveRank());
             AddServerMove(challengeMove);
         }
@@ -1422,22 +1438,28 @@ public class BattleManager : MonoBehaviour
     //  ]
     //}
 
-    public void ReceiveChallengeWon(ChallengeEndState challengeEndState)
+    public void SetChallengeEndState(ChallengeEndState challengeEndState)
     {
-        Debug.Log("Challenge won!");
-        GameObject.Destroy(GameObject.Find("BattleSingleton"));
-
-        List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-        ShowBattleEndFX(experienceCards, true);
+        this.challengeEndState = challengeEndState;
     }
 
-    public void ReceiveChallengeLost(ChallengeEndState challengeEndState)
+    public void ReceiveMoveChallengeOver(string winnerId)
     {
-        Debug.Log("Challenge lost...");
-        GameObject.Destroy(GameObject.Find("BattleSingleton"));
+        if (this.challengeEndState == null)
+        {
+            Debug.LogError("Function should not be called unless challenge end state is set.");
+            return;
+        }
 
-        List<ExperienceCard> experienceCards = challengeEndState.ExperienceCards;
-        ShowBattleEndFX(experienceCards, false);
+        List<ExperienceCard> experienceCards = this.challengeEndState.ExperienceCards;
+        if (this.you.Id == winnerId)
+        {
+            ShowBattleEndFX(experienceCards, true);
+        }
+        else
+        {
+            ShowBattleEndFX(experienceCards, false);
+        }
     }
 
     private void RenderEXPChanges(List<ExperienceCard> experienceCards)
@@ -1464,9 +1486,13 @@ public class BattleManager : MonoBehaviour
         title.transform.localScale = Vector3.zero;
 
         if (won)
+        {
             title.text = "Victory";
+        }
         else
+        {
             title.text = "Defeat";
+        }
 
         LeanTween.scale(title.gameObject, Vector3.one, 1)
             .setOnComplete(() =>
@@ -1802,6 +1828,10 @@ public class BattleManager : MonoBehaviour
                 serverMove.Attributes.TargetId
             );
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER)
+        {
+            ReceiveMoveChallengeOver(serverMove.PlayerId);
+        }
 
         return serverMove.Rank;
     }
@@ -1925,14 +1955,14 @@ public class BattleManager : MonoBehaviour
 
         List<ExperienceCard> experienceCards = new List<ExperienceCard>();
 
-        foreach (ChallengeMove challengeMove in BattleManager.Instance.GetServerMoves())
+        foreach (ChallengeMove serverMove in BattleManager.Instance.GetServerMoves())
         {
             if (
-                challengeMove.PlayerId == BattleManager.Instance.You.Id &&
-                challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
+                serverMove.PlayerId == BattleManager.Instance.You.Id &&
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
             )
             {
-                ChallengeCard challengeCard = challengeMove.Attributes.Card;
+                ChallengeCard challengeCard = serverMove.Attributes.Card;
                 ExperienceCard experienceCard = new ExperienceCard(
                     challengeCard.Id,
                     challengeCard.Name,
@@ -1951,12 +1981,18 @@ public class BattleManager : MonoBehaviour
 
         if (BattleManager.Instance.You.Id == loserId)
         {
-            BattleManager.Instance.ReceiveChallengeLost(challengeEndState);
+            BattleManager.Instance.SetChallengeEndState(challengeEndState);
         }
         else
         {
-            BattleManager.Instance.ReceiveChallengeWon(challengeEndState);
+            BattleManager.Instance.SetChallengeEndState(challengeEndState);
         }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(loserId));
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
+        challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+        BattleManager.Instance.AddServerMove(challengeMove);
     }
 
     public void ShowOpponentChat(int chatId)
