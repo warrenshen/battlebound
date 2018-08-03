@@ -1426,6 +1426,21 @@ public class BattleManager : MonoBehaviour
         challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
     }
+
+    public void ReceiveMoveSurrenderByExpire(string playerId)
+    {
+        if (!FlagHelper.IsServerEnabled())
+        {
+            MockChallengeEnd(playerId);
+        }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
+        challengeMove.SetRank(GetDeviceMoveRank());
+        AddDeviceMove(challengeMove);
+    }
+
     //{
     //    "id": "C14",
     //  "level": 0,
@@ -1456,6 +1471,8 @@ public class BattleManager : MonoBehaviour
             Debug.LogError("Function should not be called unless challenge end state is set.");
             return;
         }
+
+        GameObject.Destroy(GameObject.Find("BattleSingleton"));
 
         List<ExperienceCard> experienceCards = this.challengeEndState.ExperienceCards;
         if (this.you.Id == winnerId)
@@ -1827,6 +1844,10 @@ public class BattleManager : MonoBehaviour
         {
             ReceiveMoveSurrenderByChoice(serverMove.PlayerId);
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE)
+        {
+            ReceiveMoveSurrenderByExpire(serverMove.PlayerId);
+        }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE)
         {
             ReceiveMoveConvertCreature(
@@ -1838,6 +1859,10 @@ public class BattleManager : MonoBehaviour
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER)
         {
             ReceiveMoveChallengeOver(serverMove.PlayerId);
+        }
+        else
+        {
+            Debug.LogError(string.Format("Unsupported challenge move category: {0}", serverMove.Category));
         }
 
         return serverMove.Rank;

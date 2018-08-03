@@ -520,7 +520,6 @@ public class Player
 
     public void AddDrawnCardMulligan(Card card)
     {
-        Debug.Log("replace");
         this.replaceMulliganCards.Add(card);
     }
 
