@@ -28,11 +28,14 @@ public class MenuManager : MonoBehaviour
         this.logoutButton.onClick.AddListener(OnLogoutButtonClick);
 
         SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
+    }
 
+    private void Start()
+    {
         this.galleryIndex = Random.Range(0, gallery.childCount);
         this.SetGalleryCreature();
 
-        InvokeRepeating("RotateGalleryCreature", 3.0f, 5f);
+        InvokeRepeating("RotateGalleryCreature", 2.0f, 5f);
     }
 
     private void SetGalleryCreature()
