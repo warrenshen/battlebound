@@ -802,7 +802,6 @@ public class BattleManager : MonoBehaviour
         if (battleCardObject.Owner.KeptMulliganCards.Contains(battleCardObject.Card))
         {
             battleCardObject.Owner.KeptMulliganCards.Remove(battleCardObject.Card);
-            battleCardObject.Owner.RemovedMulliganCards.Add(battleCardObject.Card);
 
             //to-do: apply symbol/icon
             battleCardObject.visual.SetGrayscale(true);
@@ -810,7 +809,6 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            battleCardObject.Owner.RemovedMulliganCards.Remove(battleCardObject.Card);
             battleCardObject.Owner.KeptMulliganCards.Add(battleCardObject.Card);
             //visuals
             battleCardObject.visual.SetGrayscale(false);
@@ -1641,7 +1639,8 @@ public class BattleManager : MonoBehaviour
             serverMove.PlayerId == this.you.Id &&
             (
                 serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN ||
+                serverMove.Category == ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE
             )
         )
         {
@@ -1673,6 +1672,12 @@ public class BattleManager : MonoBehaviour
 
                 this.deviceMoveQueue.RemoveAt(0);
                 this.serverMoveQueue.RemoveAt(0);
+
+                if (FlagHelper.IsServerEnabled())
+                {
+                    // TODO: show some prompt to user in this case?
+                    Application.LoadLevel("Battle");
+                }
 
                 return -1;
             }
