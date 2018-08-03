@@ -1627,12 +1627,15 @@ describe("challenge events", function() {
 
                 const playerState = challengeStateData.current["ID_PLAYER"];
                 const playerField = playerState.field;
+
                 assert.equal(playerField[1].id, "ID_PLAYER-2");
+                assert.equal(playerField[1].isSilenced, 1);
                 assert.equal(playerField[1].attack, 30);
                 assert.equal(playerField[1].attackStart, 30);
                 assert.equal(playerField[1].health, 50);
                 assert.equal(playerField[1].healthMax, 50);
                 assert.equal(playerField[1].healthStart, 50);
+                assert.equal(playerField[1].buffs.indexOf(1002) >= 0, true);
 
                 resolve();
               }
@@ -1695,12 +1698,15 @@ describe("challenge events", function() {
 
                 const playerState = challengeStateData.current["ID_PLAYER"];
                 const playerField = playerState.field;
+
                 assert.equal(playerField[2].id, "ID_PLAYER-3");
+                assert.equal(playerField[2].isSilenced, 1);
                 assert.equal(playerField[2].attack, 30);
                 assert.equal(playerField[2].attackStart, 30);
                 assert.equal(playerField[2].health, 30);
                 assert.equal(playerField[2].healthMax, 50);
                 assert.equal(playerField[2].healthStart, 50);
+                assert.equal(playerField[2].buffs.indexOf(1001) >= 0, true);
 
                 resolve();
               }
