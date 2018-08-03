@@ -59,10 +59,6 @@ function handlePlaySpellUntargeted(challengeStateData, playerId, cardId) {
     
     processSpellUntargetedPlay(challengeStateData, playerId, playedCard);
     
-    // const filterDeadResponse = filterDeadCardsFromFields(playerField, opponentField);
-    // playerState.field = filterDeadResponse[0];
-    // opponentState.field = filterDeadResponse[1];
-    
     // Remove played card from hand.
     removeCardFromHandByIndex(playerState, handIndex);
 }

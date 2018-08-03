@@ -17,8 +17,8 @@ function startTurnTimeEvents(challengeId, playerId) {
     };
     
     var success;
-    success = scheduler.inSeconds("TimeRunningOutModule", 60, data, runningKey);
-    success = scheduler.inSeconds("TimeLimitExpiredModule", 75, data, expiredKey);
+    success = scheduler.inSeconds("TimeRunningOutModule", 45, data, runningKey);
+    success = scheduler.inSeconds("TimeLimitExpiredModule", 60, data, expiredKey);
 }
 
 function cancelScheduledTimeEvents(challengeId, playerId) {
@@ -41,8 +41,8 @@ function startMulliganTimeEvents(challengeId, playerIds) {
         playerIds: playerIds,
     };
     var success;
-    success = scheduler.inSeconds("TimeRunningOutModule", 30, data, runningKey);
-    success = scheduler.inSeconds("TimeLimitExpiredModule", 45, data, expiredKey);
+    success = scheduler.inSeconds("TimeRunningOutModule", 45, data, runningKey);
+    success = scheduler.inSeconds("TimeLimitExpiredModule", 60, data, expiredKey);
 }
 
 function cancelMulliganTimeEvents(challengeId) {
