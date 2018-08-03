@@ -6,8 +6,7 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("AttackModule");
-require("ChallengeMovesModule");
+require("ChallengeSurrenderModule");
 
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
@@ -26,14 +25,7 @@ if (challenge.getRunState() != "RUNNING") {
 const challengeStateData = challenge.getPrivateData("data");
 const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
 
-// Reset `lastMoves` attribute in ChallengeState.
-challengeStateData.lastMoves = [];
-
-const move = {
-    playerId: playerId,
-    category: MOVE_CATEGORY_SURRENDER_BY_CHOICE,
-};
-addChallengeMove(challengeStateData, move);
+handleChallengeSurrender(challengeStateData, playerId);
 
 require("PersistChallengeStateModule");
 
