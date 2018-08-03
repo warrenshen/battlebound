@@ -849,14 +849,14 @@ public class BattleManager : MonoBehaviour
 
         if (
             SpellCard.TARGETED_SPELLS_FRIENDLY_ONLY.Contains(battleCardObject.Card.Name)
-            && playerId != this.activePlayer.Id
+            && playerId != targetedCreature.GetPlayerId()
         )
         {
             return false;
         }
         else if (
             SpellCard.TARGETED_SPELLS_OPPONENT_ONLY.Contains(battleCardObject.Card.Name)
-            && playerId == this.activePlayer.Id
+            && playerId == targetedCreature.GetPlayerId()
         )
         {
             return false;
@@ -1419,6 +1419,12 @@ public class BattleManager : MonoBehaviour
         {
             MockChallengeEnd(playerId);
         }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
+        challengeMove.SetRank(GetDeviceMoveRank());
+        AddDeviceMove(challengeMove);
     }
     //{
     //    "id": "C14",
@@ -1575,8 +1581,6 @@ public class BattleManager : MonoBehaviour
     private static List<string> OPPONENT_SERVER_CHALLENGE_MOVES = new List<string>
     {
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
-        ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN,
-        ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN, // todo: can predict now?
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
         ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
@@ -1613,21 +1617,24 @@ public class BattleManager : MonoBehaviour
             OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
         )
         {
-            this.deviceMoveCount += 1;
             Debug.Log("Device move queue: " + this.deviceMoveCount);
+            this.deviceMoveCount += 1;
         }
         else if (
             serverMove.PlayerId == this.you.Id &&
             (
                 serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN ||
                 serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN
             )
         )
         {
-            this.deviceMoveCount += 1;
             Debug.Log("Device move queue: " + this.deviceMoveCount);
+            this.deviceMoveCount += 1;
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN)
+        {
+            Debug.Log("Device move queue: " + this.deviceMoveCount);
+            this.deviceMoveCount += 1;
         }
         else if (this.deviceMoveQueue.Count <= 0)
         {

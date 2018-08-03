@@ -446,7 +446,6 @@ public class Player
             BattleManager.Instance.AddServerMove(challengeMove);
 
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(opponentId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
             challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
@@ -475,6 +474,12 @@ public class Player
                 this.mulliganCards.RemoveAt(i);
 
                 ReplaceCardByMulligan(removeCard, i);
+
+                ChallengeMove challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(this.id);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN);
+                challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+                BattleManager.Instance.AddDeviceMove(challengeMove);
             }
         }
 
@@ -494,7 +499,6 @@ public class Player
 
         foreach (Card card in this.replaceMulliganCards)
         {
-            Debug.Log("calling");
             AddDrawnCard(card);
         }
 
