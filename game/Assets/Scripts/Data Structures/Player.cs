@@ -55,9 +55,6 @@ public class Player
     private List<Card> keptMulliganCards;
     public List<Card> KeptMulliganCards => keptMulliganCards;
 
-    private List<Card> removedMulliganCards;
-    public List<Card> RemovedMulliganCards => removedMulliganCards;
-
     private List<Card> replaceMulliganCards;
 
     public Player(string id, string name, string displayName)
@@ -331,7 +328,6 @@ public class Player
 
         this.mulliganCards = new List<Card>(mulliganCards);
         this.keptMulliganCards = new List<Card>(mulliganCards);
-        this.removedMulliganCards = new List<Card>();
 
         for (int i = 0; i < this.keptMulliganCards.Count; i++)
         {
@@ -494,14 +490,12 @@ public class Player
             return;
         }
 
-        this.keptMulliganCards = new List<Card>();
-        this.removedMulliganCards = new List<Card>();
-
         foreach (Card card in this.replaceMulliganCards)
         {
             AddDrawnCard(card);
         }
 
+        this.keptMulliganCards = new List<Card>();
         this.replaceMulliganCards = new List<Card>();
 
         this.mode = PLAYER_STATE_MODE_NORMAL;
