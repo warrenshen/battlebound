@@ -166,10 +166,11 @@ public class MarketplaceManager : MonoBehaviour
     {
         foreach (CardAuction cardAuction in cardAuctions)
         {
-            GameObject listItemGO = Instantiate(buyableCardListItem) as GameObject;
-            BuyableCardListItem listItem = listItemGO.GetComponent<BuyableCardListItem>();
+            GameObject listItemObject = Instantiate(buyableCardListItem) as GameObject;
+            BuyableCardListItem listItem = listItemObject.GetComponent<BuyableCardListItem>();
             listItem.InitializeCardAuction(cardAuction);
-            listItemGO.transform.SetParent(contentPanel);
+            listItemObject.transform.SetParent(contentPanel);
+            listItemObject.transform.localScale = Vector3.one;
         }
     }
 

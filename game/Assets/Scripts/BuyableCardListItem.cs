@@ -13,7 +13,7 @@ public class BuyableCardListItem : CardListItem
     [SerializeField]
     private Image cardImage;
     [SerializeField]
-    private TextMeshProUGUI priceText;
+    private Text priceText;
     [SerializeField]
     private Button bidAuctionButton;
 

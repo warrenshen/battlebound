@@ -11,6 +11,8 @@ public class MenuManager : MonoBehaviour
     private Transform activeGalleryCreature;
     private int galleryIndex;
 
+    [SerializeField]
+    private string currentView;
     public HyperCard.Card galleryCard;
 
     [SerializeField]
@@ -32,6 +34,7 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        this.currentView = "home";
         this.galleryIndex = Random.Range(0, gallery.childCount);
         this.SetGalleryCreature();
 
@@ -104,5 +107,10 @@ public class MenuManager : MonoBehaviour
     {
         //LeanTween.scale(target, Vector3.one, TWEEN_DURATION).setEaseInQuad();
         target.transform.localScale = Vector3.one;
+    }
+
+    public void ChangeView(string view)
+    {
+        this.currentView = view;
     }
 }
