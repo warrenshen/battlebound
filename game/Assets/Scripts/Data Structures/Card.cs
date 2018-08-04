@@ -53,6 +53,9 @@ public abstract class Card
     public const string CARD_NAME_INFERNO_902 = "INFERNO-902";
     public const string CARD_NAME_CHAR_BOT_451 = "CHAR-BOT-451";
     public const string CARD_NAME_MEGAPUNK = "MegaPUNK";
+    public const string CARD_NAME_DUSK_DWELLER = "Dusk Dweller";
+    public const string CARD_NAME_SUMMONED_DRAGON = "Summoned Dragon";
+    public const string CARD_NAME_PHANTOM_SKULLCRUSHER = "Phantom Skullcrusher";
 
     // Spells targeted.
     public const string CARD_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
@@ -121,6 +124,9 @@ public abstract class Card
         CARD_NAME_INFERNO_902,
         CARD_NAME_CHAR_BOT_451,
         CARD_NAME_MEGAPUNK,
+        CARD_NAME_DUSK_DWELLER,
+        CARD_NAME_SUMMONED_DRAGON,
+        CARD_NAME_PHANTOM_SKULLCRUSHER,
     };
 
     public static readonly List<string> CARD_NAMES_SPELL = new List<string>
@@ -183,6 +189,9 @@ public abstract class Card
     public const string CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES = "CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES";
     public const string CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY = "CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY";
     public const string CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY = "CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY";
+    public const string CARD_ABILITY_DEATH_RATTLE_RESUMMON = "CARD_ABILITY_DEATH_RATTLE_RESUMMON";
+    public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS = "CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS";
+    public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON = "CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON";
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
@@ -220,6 +229,9 @@ public abstract class Card
         CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
         CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
         CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
+        CARD_ABILITY_DEATH_RATTLE_RESUMMON,
+        CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
+        CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
     };
 
     public static readonly Dictionary<int, string> ABILITY_CODE_TO_STRING = new Dictionary<int, string>
@@ -258,6 +270,9 @@ public abstract class Card
         { 31, CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES },
         { 32, CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY },
         { 33, CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY },
+        { 34, CARD_ABILITY_DEATH_RATTLE_RESUMMON },
+        { 35, CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS },
+        { 36, CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON },
     };
 
     public static void SetHyperCardArtwork(ref HyperCard.Card cardVisual, Card card)
