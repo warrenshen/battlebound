@@ -1355,8 +1355,8 @@ public class BattleManager : MonoBehaviour
                 false
             );
 
-            GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-            player.GetNewCardRank();
+            //GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
+            //player.GetNewCardRank();
             EffectManager.Instance.OnSummonCreatureFinish();
         }
         else
@@ -1386,8 +1386,8 @@ public class BattleManager : MonoBehaviour
             //    false
             //);
 
-            GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-            player.GetNewCardRank();
+            //GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
+            //player.GetNewCardRank();
             EffectManager.Instance.OnSummonCreatureFinish();
         }
         else

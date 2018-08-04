@@ -72,6 +72,21 @@ public class Board : MonoBehaviour
         bool shouldWarcry = true
     )
     {
+        List<BoardCreature> aliveCreatures = GetAliveCreaturesByPlayerId(battleCardObject.GetPlayerId());
+        foreach (BoardCreature aliveCreature in aliveCreatures)
+        {
+            if (aliveCreature.GetCardId() == battleCardObject.Card.Id)
+            {
+                Debug.LogError(
+                    string.Format(
+                        "Cannot place creature with card ID of existing creature: {0}",
+                        battleCardObject.GetCardId()
+                    )
+                );
+                return;
+            }
+        }
+
         StartCoroutine(
             "CreateAndPlaceCreatureHelper",
             new object[4]
@@ -180,6 +195,33 @@ public class Board : MonoBehaviour
         int playerIndex = playingField.GetIndexByCardId(cardId);
         int opponentIndex = 5 - playerIndex;
         return GetBoardPlaceByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
+    }
+
+    public int GetIndexByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetIndexByCardId(cardId);
+    }
+
+    public int GetClosestAvailableIndexByPlayerId(string playerId, int index)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        List<int> offsets = new List<int> { 1, -1, 2, -2, 3, -3, 4, -4, 5, -5 };
+
+        foreach (int offset in offsets)
+        {
+            int currentIndex = index + offset;
+            if (currentIndex < 0 || currentIndex > 5)
+            {
+                continue;
+            }
+            if (playingField.GetCreatureByIndex(currentIndex) == null)
+            {
+                return currentIndex;
+            }
+        }
+
+        return -1;
     }
 
     /*

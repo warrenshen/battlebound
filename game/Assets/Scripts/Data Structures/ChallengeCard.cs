@@ -193,6 +193,11 @@ public class ChallengeCard
         return Card.GetAbilityStringsByCodes(this.abilities);
     }
 
+    public List<string> GetAbilitiesStart()
+    {
+        return Card.GetAbilityStringsByCodes(this.abilitiesStart);
+    }
+
     public bool Equals(ChallengeCard other)
     {
         return FirstDiff(other) == null;

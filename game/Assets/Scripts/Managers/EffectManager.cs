@@ -25,18 +25,14 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_RANDOM_TARGET = "EFFECT_RANDOM_TARGET";
     public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
     public const string EFFECT_DRAW_CARD = "EFFECT_DRAW_CARD";
+    public const string EFFECT_SUMMON_CREATURE = "EFFECT_SUMMON_CREATURE";
 
     private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
-        // Deal damage.
         Card.CARD_ABILITY_LIFE_STEAL,
-
-        // Take damage.
         Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
-
-        // Die should be the last "now" effect since all other
-        // "now" should finish before it removes card from board.
         EFFECT_CARD_DIE,
+        EFFECT_SUMMON_CREATURE,
     };
 
     private static readonly List<string> EFFECT_M_PRIORITY_ORDER = new List<string>
@@ -81,6 +77,9 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON,
+        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
+        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
         EFFECT_PLAYER_AVATAR_DIE,
@@ -125,6 +124,9 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
+        Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON,
+        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
+        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
     };
 
     private static readonly List<string> EFFECT_DAMAGE_TAKEN = new List<string>
@@ -152,6 +154,9 @@ public class EffectManager : MonoBehaviour
         private ChallengeCard card;
         public ChallengeCard Card => card;
 
+        private int fieldIndex;
+        public int FieldIndex => fieldIndex;
+
         public Effect(
             string playerId,
             string name,
@@ -163,6 +168,9 @@ public class EffectManager : MonoBehaviour
             this.name = name;
             this.cardId = cardId;
             this.spawnRank = spawnRank;
+            this.value = 0;
+            this.card = null;
+            this.fieldIndex = -1;
         }
 
         public void SetValue(int value)
@@ -173,6 +181,11 @@ public class EffectManager : MonoBehaviour
         public void SetCard(ChallengeCard card)
         {
             this.card = card;
+        }
+
+        public void SetFieldIndex(int fieldIndex)
+        {
+            this.fieldIndex = fieldIndex;
         }
     }
 
@@ -264,6 +277,10 @@ public class EffectManager : MonoBehaviour
 
             if (a.SpawnRank == b.SpawnRank)
             {
+                Debug.Log(a.SpawnRank);
+                Debug.Log(b.SpawnRank);
+                Debug.Log(aOrder);
+                Debug.Log(bOrder);
                 return aOrder < bOrder ? -1 : 1;
             }
             else
@@ -316,17 +333,6 @@ public class EffectManager : MonoBehaviour
         Effect effect = this.hQueue[0];
         this.hQueue.RemoveAt(0);
 
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
-            effect.PlayerId,
-            effect.CardId
-        );
-
-        if (boardCreature == null)
-        {
-            Debug.LogError("Invalid effect - board creature does not exist.");
-            return;
-        }
-
         switch (effect.Name)
         {
             case Card.CARD_ABILITY_LIFE_STEAL:
@@ -336,16 +342,34 @@ public class EffectManager : MonoBehaviour
                 AbilityDamageTakenDamagePlayerFace(effect, 30);
                 break;
             case EFFECT_CARD_DIE:
-                Board.Instance.RemoveCreatureByPlayerIdAndCardId(
-                    effect.PlayerId,
-                    effect.CardId
-                );
-                boardCreature.Die();
+                EffectCardDie(effect);
+                break;
+            case EFFECT_SUMMON_CREATURE:
+                EffectSummonCreature(effect);
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
         }
+    }
+
+    private void EffectCardDie(Effect effect)
+    {
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+        Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+            effect.PlayerId,
+            effect.CardId
+        );
+        boardCreature.Die();
+    }
+
+    private void AbilityLifeSteal(Effect effect)
+    {
+        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
+        player.Heal(effect.Value);
     }
 
     private void AbilityDamageTakenDamagePlayerFace(Effect effect, int amount)
@@ -355,10 +379,55 @@ public class EffectManager : MonoBehaviour
         AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
     }
 
-    private void AbilityLifeSteal(Effect effect)
+    private void EffectSummonCreature(Effect effect)
     {
-        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
-        player.Heal(effect.Value);
+        string playerId = effect.PlayerId;
+        int fieldIndex = effect.FieldIndex;
+        ChallengeCard dirtyCard = effect.Card;
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+
+        if (fieldIndex < 0)
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+        }
+        else
+        {
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+        }
+
+        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
+        BattleManager.Instance.AddDeviceMove(challengeMove);
+
+        WaitForServerMove(challengeMove.Rank);
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            Debug.Log(playerId);
+            ChallengeCard spawnCard = CleanCardForSummon(playerId, dirtyCard);
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(effect.PlayerId);
+            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(spawnCard);
+            moveAttributes.SetFieldId(playerId);
+
+            if (fieldIndex < 0)
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
+            }
+            else
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+                moveAttributes.SetFieldIndex(fieldIndex);
+            }
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleManager.Instance.AddServerMove(challengeMove);
+        }
     }
 
     private void ProcessMQueue()
@@ -516,6 +585,15 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES:
                 AbilitySilenceAllOpponentCreatures(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON:
+                AbilityDeathRattleResummon(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS:
+                AbilityDeathRattleSummonDuskDwellers(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON:
+                AbilityDeathRattleSummonSummonedDragon(effect);
                 break;
             case Card.BUFF_CATEGORY_UNSTABLE_POWER:
                 BuffUnstablePower(effect);
@@ -872,6 +950,11 @@ public class EffectManager : MonoBehaviour
 
     private List<ChallengeCard> GetDeadCardsByPlayerId(string playerId)
     {
+        Debug.Log(this.deadCards.Count);
+        foreach (ChallengeCard deadCard in this.deadCards)
+        {
+            Debug.Log(JsonUtility.ToJson(deadCard));
+        }
         return new List<ChallengeCard>(
             this.deadCards.Where(deadCard => deadCard.PlayerId == playerId)
         );
@@ -880,17 +963,19 @@ public class EffectManager : MonoBehaviour
     private ChallengeCard CleanCardForSummon(string playerId, ChallengeCard dirtyCard)
     {
         Player player = BattleManager.Instance.GetPlayerById(playerId);
-
-        int spawnRank = BattleManager.Instance.GetNewSpawnRank();
         ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
             JsonUtility.ToJson(dirtyCard)
         );
+
+        int spawnRank = BattleManager.Instance.GetNewSpawnRank();
+        spawnCard.SetSpawnRank(spawnRank);
 
         spawnCard.SetId(player.GetNewCardId());
         spawnCard.SetCost(spawnCard.CostStart);
         spawnCard.SetAttack(spawnCard.AttackStart);
         spawnCard.SetHealth(spawnCard.HealthStart);
         spawnCard.SetHealthMax(spawnCard.HealthStart);
+        spawnCard.SetAbilities(spawnCard.GetAbilitiesStart());
         spawnCard.SetIsFrozen(0);
         spawnCard.SetIsSilenced(0);
 
@@ -908,11 +993,12 @@ public class EffectManager : MonoBehaviour
 
     private ChallengeCard CleanCardForConvert(string playerId, ChallengeCard dirtyCard)
     {
+        Debug.Log(dirtyCard.IsSilenced);
         Player player = BattleManager.Instance.GetPlayerById(playerId);
-
         ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
             JsonUtility.ToJson(dirtyCard)
         );
+        Debug.Log(spawnCard.IsSilenced);
 
         spawnCard.SetId(player.GetNewCardId());
         spawnCard.SetPlayerId(playerId);
@@ -1025,6 +1111,120 @@ public class EffectManager : MonoBehaviour
         {
             boardCreature.Silence();
         }
+    }
+
+    private void AbilityDeathRattleResummon(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+        int fieldIndex = Board.Instance.GetIndexByPlayerIdAndCardId(playerId, cardId);
+        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(playerId, cardId);
+
+        List<Effect> effects = new List<Effect>
+        {
+            new Effect(
+                playerId,
+                EFFECT_CARD_DIE,
+                cardId,
+                effect.SpawnRank
+            ),
+        };
+
+        Effect summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            effect.SpawnRank
+        );
+        summonEffect.SetCard(boardCreature.GetChallengeCard());
+        summonEffect.SetFieldIndex(fieldIndex);
+        effects.Add(summonEffect);
+
+        AddToQueues(effects);
+    }
+
+    private void AbilityDeathRattleSummonDuskDwellers(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+        int fieldIndex = Board.Instance.GetIndexByPlayerIdAndCardId(playerId, cardId);
+
+        List<Effect> effects = new List<Effect>
+        {
+            new Effect(
+                playerId,
+                EFFECT_CARD_DIE,
+                cardId,
+                effect.SpawnRank
+            ),
+        };
+
+        CreatureCard duskDweller = new CreatureCard("", "Dusk Dweller", 1);
+
+        Effect summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            effect.SpawnRank
+        );
+        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetFieldIndex(fieldIndex);
+        effects.Add(summonEffect);
+
+        int closestIndex = Board.Instance.GetClosestAvailableIndexByPlayerId(playerId, fieldIndex);
+        summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            effect.SpawnRank
+        );
+        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetFieldIndex(closestIndex);
+        effects.Add(summonEffect);
+
+        AddToQueues(effects);
+    }
+
+    private void AbilityDeathRattleSummonSummonedDragon(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+        int fieldIndex = Board.Instance.GetIndexByPlayerIdAndCardId(playerId, cardId);
+
+        List<Effect> effects = new List<Effect>
+        {
+            new Effect(
+                playerId,
+                EFFECT_CARD_DIE,
+                cardId,
+                effect.SpawnRank
+            ),
+        };
+
+        CreatureCard duskDweller = new CreatureCard("", "Summoned Dragon", 1);
+
+        Effect summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            effect.SpawnRank
+        );
+        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetFieldIndex(fieldIndex);
+        effects.Add(summonEffect);
+
+        int closestIndex = Board.Instance.GetClosestAvailableIndexByPlayerId(playerId, fieldIndex);
+        summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            effect.SpawnRank
+        );
+        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetFieldIndex(closestIndex);
+        effects.Add(summonEffect);
+
+        AddToQueues(effects);
     }
 
     private void BuffUnstablePower(Effect effect)
@@ -1523,8 +1723,6 @@ public class EffectManager : MonoBehaviour
             fieldId,
             targetId
         );
-        ChallengeCard spawnCard = CleanCardForConvert(playerId, boardCreature.GetChallengeCard());
-
         Board.Instance.RemoveCreatureByPlayerIdAndCardId(
             fieldId,
             targetId
@@ -1552,6 +1750,8 @@ public class EffectManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
+            ChallengeCard spawnCard = CleanCardForConvert(playerId, boardCreature.GetChallengeCard());
+
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
             challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
