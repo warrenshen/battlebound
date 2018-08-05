@@ -828,15 +828,15 @@ describe("challenge end turn", function() {
 
             assert.equal(playerHand[0].id, "ID_PLAYER-1");
             assert.equal(playerHand[0].cost, 10);
-            assert.equal(playerHand[0].buffsHand[0], 0);
+            assert.equal(playerHand[0].buffsHand[0], 2000);
 
             assert.equal(playerHand[1].id, "ID_PLAYER-4");
             assert.equal(playerHand[1].cost, 0);
-            assert.equal(playerHand[1].buffsHand[0], 0);
+            assert.equal(playerHand[1].buffsHand[0], 2000);
 
             assert.equal(playerHand[2].id, "ID_PLAYER-6");
             assert.equal(playerHand[2].cost, 0);
-            assert.equal(playerHand[2].buffsHand[0], 0);
+            assert.equal(playerHand[2].buffsHand[0], 2000);
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 2);
@@ -1348,7 +1348,7 @@ describe("challenge end turn", function() {
               "healthStart": 30,
               "healthMax": 30,
               "buffsHand": [
-                0
+                2000
               ]
             },
             {
@@ -1369,7 +1369,7 @@ describe("challenge end turn", function() {
               "healthStart": 10,
               "healthMax": 10,
               "buffsHand": [
-                0
+                2000
               ]
             },
             {
@@ -1390,7 +1390,7 @@ describe("challenge end turn", function() {
               "healthStart": 10,
               "healthMax": 10,
               "buffsHand": [
-                0
+                2000
               ]
             },
             {
@@ -1413,7 +1413,7 @@ describe("challenge end turn", function() {
               "healthStart": 30,
               "healthMax": 30,
               "buffsHand": [
-                0
+                2000
               ]
             },
             {
@@ -1434,7 +1434,7 @@ describe("challenge end turn", function() {
               "healthStart": 10,
               "healthMax": 10,
               "buffsHand": [
-                0
+                2000
               ]
             },
             {
@@ -1455,7 +1455,7 @@ describe("challenge end turn", function() {
               "healthStart": 10,
               "healthMax": 10,
               "buffsHand": [
-                0
+                2000
               ]
             },
           ],
@@ -1529,15 +1529,15 @@ describe("challenge end turn", function() {
 
             assert.equal(playerHand[2].id, "ID_PLAYER-7");
             assert.equal(playerHand[2].cost, 10);
-            assert.equal(playerHand[2].buffsHand[0], 0);
+            assert.equal(playerHand[2].buffsHand[0], 2000);
 
             assert.equal(playerHand[3].id, "ID_PLAYER-8");
             assert.equal(playerHand[3].cost, 0);
-            assert.equal(playerHand[2].buffsHand[0], 0);
+            assert.equal(playerHand[2].buffsHand[0], 2000);
 
             assert.equal(playerHand[4].id, "ID_PLAYER-9");
             assert.equal(playerHand[4].cost, 0);
-            assert.equal(playerHand[2].buffsHand[0], 0);
+            assert.equal(playerHand[2].buffsHand[0], 2000);
 
             const playerField = playerState.field;
             assert.equal(playerField[2].id, "ID_PLAYER-1");
