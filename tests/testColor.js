@@ -725,6 +725,7 @@ describe("challenge end turn", function() {
             "hand": [
               {
                 "id": "ID_PLAYER-1",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 1,
@@ -744,6 +745,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "ID_PLAYER-4",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 1,
@@ -764,6 +766,7 @@ describe("challenge end turn", function() {
             "deck": [
               {
                 "id": "ID_PLAYER-6",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 1,
@@ -922,6 +925,7 @@ describe("challenge end turn", function() {
             "hand": [
               {
                 "id": "ID_PLAYER-1",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 1,
@@ -941,6 +945,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "ID_PLAYER-4",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 1,
@@ -961,6 +966,7 @@ describe("challenge end turn", function() {
             "deck": [
               {
                 "id": "ID_PLAYER-6",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 1,
                 "color": 0,
@@ -1116,6 +1122,7 @@ describe("challenge end turn", function() {
             "hand": [
               {
                 "id": "ID_PLAYER-1",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 0,
@@ -1135,6 +1142,7 @@ describe("challenge end turn", function() {
               },
               {
                 "id": "ID_PLAYER-4",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
                 "color": 0,
@@ -1155,6 +1163,7 @@ describe("challenge end turn", function() {
             "deck": [
               {
                 "id": "ID_PLAYER-6",
+                "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 1,
                 "color": 0,
@@ -1321,6 +1330,7 @@ describe("challenge end turn", function() {
           "hand": [
             {
               "id": "ID_PLAYER-1",
+              "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
               "color": 1,
@@ -1343,6 +1353,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "ID_PLAYER-4",
+              "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
               "color": 1,
@@ -1363,6 +1374,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "ID_PLAYER-6",
+              "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
               "color": 1,
@@ -1383,6 +1395,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "ID_PLAYER-7",
+              "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
               "color": 2,
@@ -1405,6 +1418,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "ID_PLAYER-8",
+              "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
               "color": 2,
@@ -1425,6 +1439,7 @@ describe("challenge end turn", function() {
             },
             {
               "id": "ID_PLAYER-9",
+              "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
               "color": 2,
