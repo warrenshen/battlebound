@@ -16,8 +16,6 @@ public class EffectManager : MonoBehaviour
 
     private UnityAction callback;
 
-    private List<ChallengeCard> deadCards;
-
     public static EffectManager Instance { get; private set; }
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
@@ -212,8 +210,6 @@ public class EffectManager : MonoBehaviour
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
         this.lQueue = new List<Effect>();
-
-        this.deadCards = new List<ChallengeCard>();
     }
 
     // Update is called once per frame
@@ -954,18 +950,6 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    private List<ChallengeCard> GetDeadCardsByPlayerId(string playerId)
-    {
-        Debug.Log(this.deadCards.Count);
-        foreach (ChallengeCard deadCard in this.deadCards)
-        {
-            Debug.Log(JsonUtility.ToJson(deadCard));
-        }
-        return new List<ChallengeCard>(
-            this.deadCards.Where(deadCard => deadCard.PlayerId == playerId)
-        );
-    }
-
     private ChallengeCard CleanCardForSummon(string playerId, ChallengeCard dirtyCard)
     {
         Player player = BattleState.Instance().GetPlayerById(playerId);
@@ -1025,7 +1009,7 @@ public class EffectManager : MonoBehaviour
         string playerId = effect.PlayerId;
 
         List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
-        List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
+        List<ChallengeCard> sortedDeadCards = BattleState.Instance().GetDeadCardsByPlayerId(playerId);
 
         if (sortedDeadCards.Count <= 0)
         {
@@ -2025,7 +2009,7 @@ public class EffectManager : MonoBehaviour
     private List<Effect> SpellUntargetedGraveDigging(string playerId)
     {
         List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
-        List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
+        List<ChallengeCard> sortedDeadCards = BattleState.Instance().GetDeadCardsByPlayerId(playerId);
 
         if (sortedDeadCards.Count <= 0)
         {
@@ -2208,7 +2192,7 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> GetEffectsOnCreatureDeath(BoardCreature boardCreature)
     {
-        this.deadCards.Add(boardCreature.GetChallengeCard());
+        BattleState.Instance().AddDeadCard(boardCreature.GetChallengeCard());
 
         List<Effect> effects = new List<Effect>();
 
@@ -2266,12 +2250,6 @@ public class EffectManager : MonoBehaviour
         }
 
         return effects;
-    }
-
-    public void SetDeadCards(List<ChallengeCard> deadCards)
-    {
-        Debug.Log(string.Format("Dead cards count: {0}", deadCards.Count));
-        this.deadCards = deadCards;
     }
 
     private void WaitForServerMove(int moveRank)

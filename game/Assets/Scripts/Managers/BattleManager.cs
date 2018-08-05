@@ -64,9 +64,7 @@ public class BattleManager : MonoBehaviour
         Instance = this;
 
         this.lightGameObject = GameObject.Find("Point Light");
-        Debug.Log(this.lightGameObject);
-
-        attackCommand.SetWidth(0);
+        this.attackCommand.SetWidth(0);
     }
 
     private void Start()
@@ -86,9 +84,13 @@ public class BattleManager : MonoBehaviour
             BattleState _ = BattleState.InstantiateWithState(
                 BattleSingleton.Instance.PlayerState,
                 BattleSingleton.Instance.OpponentState,
-                BattleSingleton.Instance.SpawnCount
+                BattleSingleton.Instance.MoveCount,
+                BattleSingleton.Instance.SpawnCount,
+                BattleSingleton.Instance.InitDeadCards,
+                BattleSingleton.Instance.InitServerMoves
             );
             Debug.Log("Battle in Connected Development Mode.");
+            BattleState.Instance().GameStart();
         }
         else
         {

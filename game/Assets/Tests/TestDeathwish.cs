@@ -201,8 +201,7 @@ public class TestDeathwish
     {
         BattleState.InstantiateWithState(
             playerState,
-            enemyState,
-            0
+            enemyState
         );
     }
 

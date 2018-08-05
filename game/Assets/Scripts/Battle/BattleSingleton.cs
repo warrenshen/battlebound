@@ -34,6 +34,12 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private int spawnCount;
     public int SpawnCount => spawnCount;
 
+    private List<ChallengeMove> initServerMoves;
+    public List<ChallengeMove> InitServerMoves => initServerMoves;
+
+    private List<ChallengeCard> initDeadCards;
+    public List<ChallengeCard> InitDeadCards => initDeadCards;
+
     // List of moves waiting to be sent to BattleManager.
     private List<ChallengeMove> moveQueue;
 
@@ -224,8 +230,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
             {
                 challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
             }
-
-            BattleState.Instance().SetServerMoves(challengeMoves);
+            this.initServerMoves = challengeMoves;
+        }
+        else
+        {
+            this.initServerMoves = new List<ChallengeMove>();
         }
 
         // Logic to load in existing dead cards for resume challenge case.
@@ -237,8 +246,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
             {
                 deadCards.Add(JsonUtility.FromJson<ChallengeCard>(deadCardData.JSON));
             }
-
-            EffectManager.Instance.SetDeadCards(deadCards);
+            this.initDeadCards = deadCards;
+        }
+        else
+        {
+            this.initDeadCards = new List<ChallengeCard>();
         }
 
         List<GSData> newMovesData = scriptData.GetGSDataList("newMoves");
