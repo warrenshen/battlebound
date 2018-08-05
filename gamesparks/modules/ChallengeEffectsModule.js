@@ -752,8 +752,10 @@ function _cleanCardForSummon(challengeStateData, dirtyCard) {
     spawnCard.healthMax = spawnCard.healthStart;
     spawnCard.isFrozen = 0;
     spawnCard.isSilenced = 0;
+    
     spawnCard.abilities = spawnCard.abilitiesStart;
-    spawnCard.buffs = [];
+    spawnCard.buffsHand = [];
+    spawnCard.buffsField = [];
 
     if (hasCardAbilityOrBuff(spawnCard, CARD_ABILITY_CHARGE)) {
         spawnCard.canAttack = 1;

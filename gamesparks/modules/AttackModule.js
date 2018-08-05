@@ -291,8 +291,6 @@ function removeCardFromHandByIndex(playerState, handIndex) {
     _updateHandCardCosts(playerState);
 }
 
-const HAND_CARD_DECREASE_COST_BY_COLOR = 0;
-
 function _updateHandCardCosts(playerState) {
     const colorToCount = {};
     const hand = playerState.hand;
@@ -320,13 +318,13 @@ function _updateHandCardCosts(playerState) {
             if (card.buffsHand == null) {
                 card.buffsHand = [];
             }
-            if (card.buffsHand.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) < 0) {
-                card.buffsHand.push(HAND_CARD_DECREASE_COST_BY_COLOR);
+            if (card.buffsHand.indexOf(BUFF_HAND_DECREASE_COST_BY_COLOR) < 0) {
+                card.buffsHand.push(BUFF_HAND_DECREASE_COST_BY_COLOR);
             }
         } else {
-            if (card.buffsHand != null && card.buffsHand.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
+            if (card.buffsHand != null && card.buffsHand.indexOf(BUFF_HAND_DECREASE_COST_BY_COLOR) >= 0) {
                 card.buffsHand = card.buffsHand.filter(function(handBuff) {
-                    return handBuff != HAND_CARD_DECREASE_COST_BY_COLOR;
+                    return handBuff != BUFF_HAND_DECREASE_COST_BY_COLOR;
                 });
             }
         }
@@ -334,7 +332,7 @@ function _updateHandCardCosts(playerState) {
     
     hand.forEach(function(card) {
         var baseCost = card.costStart;
-        if (card.buffsHand != null && card.buffsHand.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
+        if (card.buffsHand != null && card.buffsHand.indexOf(BUFF_HAND_DECREASE_COST_BY_COLOR) >= 0) {
             baseCost -= 10;
         }
         
