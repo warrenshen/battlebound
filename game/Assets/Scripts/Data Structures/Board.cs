@@ -74,7 +74,8 @@ public class Board
     public void CreateAndPlaceCreature(
         ChallengeCard challengeCard,
         int fieldIndex,
-        bool shouldWarcry
+        bool shouldWarcry,
+        bool isResume = false
     )
     {
         List<BoardCreature> aliveCreatures =
@@ -96,7 +97,8 @@ public class Board
         PlayingField playingField = this.playerIdToField[challengeCard.PlayerId];
         BoardCreature boardCreature = new BoardCreature(
             challengeCard,
-            fieldIndex
+            fieldIndex,
+            isResume
         );
         playingField.Place(boardCreature, fieldIndex);
         boardCreature.SummonWithCallback(new UnityAction(() =>
@@ -321,7 +323,7 @@ public class Board
                     continue;
                 }
 
-                Board.Instance().CreateAndPlaceCreature(challengeCard, i, false);
+                Board.Instance().CreateAndPlaceCreature(challengeCard, i, false, true);
             }
         }
 

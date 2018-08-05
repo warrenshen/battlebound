@@ -48,12 +48,13 @@ public class BoardCreature : Targetable
 
     public BoardCreature(
         ChallengeCard challengeCard,
-        int fieldIndex
+        int fieldIndex,
+        bool isResume
     )
     {
         this.owner = BattleState.Instance().GetPlayerById(challengeCard.PlayerId);
         this.fieldIndex = fieldIndex;
-        this.card = challengeCard.GetCard() as CreatureCard;
+        this.card = challengeCard.GetCard(false) as CreatureCard;
 
         this.cost = challengeCard.Cost;
         this.health = challengeCard.Health;
@@ -64,7 +65,7 @@ public class BoardCreature : Targetable
         this.isSilenced = challengeCard.IsSilenced == 1;
         this.spawnRank = challengeCard.SpawnRank;
 
-        if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
+        if (!isResume && HasAbility(Card.CARD_ABILITY_CHARGE))
         {
             this.canAttack = 1;
         }

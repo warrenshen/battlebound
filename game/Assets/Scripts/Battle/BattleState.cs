@@ -1076,6 +1076,7 @@ public class BattleState
         if (FlagHelper.IsServerEnabled())
         {
             // TODO: show some prompt to user in this case?
+            Debug.LogWarning("Reload on battle error!");
             Application.LoadLevel("Battle");
         }
         else
