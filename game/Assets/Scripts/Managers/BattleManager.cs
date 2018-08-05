@@ -657,7 +657,15 @@ public class BattleManager : MonoBehaviour
 
     public void FinishedMulligan()
     {
-        BattleState.Instance().You.PlayMulligan(BattleState.Instance().Opponent.Mode);
+        Player you = BattleState.Instance().You;
+        if (you.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+        {
+            BattleState.Instance().You.PlayMulligan(BattleState.Instance().Opponent.Mode);
+        }
+        else
+        {
+            Debug.LogError("Finish mulligan clicked when not in mulligan active mode.");
+        }
     }
 
     private bool CanPlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)

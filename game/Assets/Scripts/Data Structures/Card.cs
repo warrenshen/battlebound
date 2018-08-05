@@ -356,15 +356,26 @@ public abstract class Card
     public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
     public const string BUFF_CATEGORY_BESTOWED_VIGOR = "BUFF_CATEGORY_BESTOWED_VIGOR";
 
-    public static readonly string[] VALID_BUFFS = {
+    public static readonly string[] VALID_BUFFS_FIELD = {
         BUFF_CATEGORY_UNSTABLE_POWER,
         BUFF_CATEGORY_BESTOWED_VIGOR,
     };
 
-    public static readonly Dictionary<int, string> BUFF_CODE_TO_STRING = new Dictionary<int, string>
+    public static readonly Dictionary<int, string> BUFF_FIELD_CODE_TO_STRING = new Dictionary<int, string>
     {
         { 1001, BUFF_CATEGORY_UNSTABLE_POWER },
         { 1002, BUFF_CATEGORY_BESTOWED_VIGOR },
+    };
+
+    public const string BUFF_HAND_DECREASE_COST_BY_COLOR = "BUFF_HAND_DECREASE_COST_BY_COLOR";
+
+    public static readonly string[] VALID_BUFFS_HAND = {
+        BUFF_HAND_DECREASE_COST_BY_COLOR,
+    };
+
+    public static readonly Dictionary<int, string> BUFF_HAND_CODE_TO_STRING = new Dictionary<int, string>
+    {
+        { 2000, BUFF_HAND_DECREASE_COST_BY_COLOR },
     };
 
     [SerializeField]
@@ -516,31 +527,46 @@ public abstract class Card
         return abilityStrings;
     }
 
-    public static List<string> GetBuffStringByCodes(List<string> buffCodes)
+    public static List<string> GetBuffFieldStringsByCodes(List<string> buffFieldCodes)
     {
-        List<string> buffStrings = new List<string>();
-        foreach (string buffCode in buffCodes)
+        List<string> buffFieldStrings = new List<string>();
+        foreach (string buffFieldCode in buffFieldCodes)
         {
-            if (VALID_BUFFS.Contains(buffCode))
+            if (VALID_BUFFS_FIELD.Contains(buffFieldCode))
             {
-                buffStrings.Add(buffCode);
+                buffFieldStrings.Add(buffFieldCode);
             }
             else
             {
-                int buffInt = Int32.Parse(buffCode);
-                buffStrings.Add(ABILITY_CODE_TO_STRING[buffInt]);
+                int buffInt = Int32.Parse(buffFieldCode);
+                buffFieldStrings.Add(BUFF_FIELD_CODE_TO_STRING[buffInt]);
             }
         }
-        return buffStrings;
+        return buffFieldStrings;
+    }
+
+    public static List<string> GetBuffHandStringsByCodes(List<string> buffHandCodes)
+    {
+        List<string> buffHandStrings = new List<string>();
+        foreach (string buffHandCode in buffHandCodes)
+        {
+            if (VALID_BUFFS_HAND.Contains(buffHandCode))
+            {
+                buffHandStrings.Add(buffHandCode);
+            }
+            else
+            {
+                int buffInt = Int32.Parse(buffHandCode);
+                buffHandStrings.Add(BUFF_HAND_CODE_TO_STRING[buffInt]);
+            }
+        }
+        return buffHandStrings;
     }
 }
 
 [System.Serializable]
 public class CreatureCard : Card
 {
-    //protected int level;
-    //public int Level => level;
-
     private int attack;
     private int health;
     private List<string> abilities;
@@ -558,14 +584,6 @@ public class CreatureCard : Card
         LoadTemplateFromCodex();
         LoadAttackHealth();
     }
-
-    //public static readonly Dictionary<string, Dictionary<int, List<int>>> CREATURE_NAME_TO_LEVEL_TO_STATS = new Dictionary<string, Dictionary<int, List<int>>>
-    //{
-    //    {
-    //        CARD_NAME_BLESSED_NEWBORN,
-    //        new Dictionary<int, List<int>>{ 1, new List<int>{ 10, 10 } },
-    //    }
-    //};
 
     private void LoadAttackHealth()
     {
