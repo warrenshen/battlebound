@@ -9,18 +9,13 @@ public class Deck
     private string name;
     public string Name => name;
 
-    [SerializeField]
     private List<Card> cards;
     public List<Card> Cards => cards;
 
-    private DeckRaw.DeckClass hero;
-    public DeckRaw.DeckClass Hero => Hero;
-
-    public Deck(string name, List<Card> cards, DeckRaw.DeckClass hero, Player owner = null)
+    public Deck(string name, List<Card> cards)
     {
         this.name = name;
         this.cards = cards;
-        this.hero = hero;
 
         //todo: SHUFFLE
     }

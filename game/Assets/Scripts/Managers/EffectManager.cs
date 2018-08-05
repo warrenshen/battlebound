@@ -227,12 +227,12 @@ public class EffectManager : MonoBehaviour
             {
                 if (this.isDirty)
                 {
-                    BattleManager.Instance.ComparePlayerStates();
+                    BattleState.Instance().ComparePlayerStates();
                     this.isDirty = false;
                 }
             }
 
-            BattleManager.Instance.ProcessMoveQueue();
+            BattleState.Instance().ProcessMoveQueue();
         }
         else if (this.hQueue.Count > 0)
         {
@@ -277,10 +277,6 @@ public class EffectManager : MonoBehaviour
 
             if (a.SpawnRank == b.SpawnRank)
             {
-                Debug.Log(a.SpawnRank);
-                Debug.Log(b.SpawnRank);
-                Debug.Log(aOrder);
-                Debug.Log(bOrder);
                 return aOrder < bOrder ? -1 : 1;
             }
             else
@@ -355,11 +351,11 @@ public class EffectManager : MonoBehaviour
 
     private void EffectCardDie(Effect effect)
     {
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
-        Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+        Board.Instance().RemoveCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
@@ -368,13 +364,13 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityLifeSteal(Effect effect)
     {
-        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
+        Player player = BattleState.Instance().GetPlayerById(effect.PlayerId);
         player.Heal(effect.Value);
     }
 
     private void AbilityDamageTakenDamagePlayerFace(Effect effect, int amount)
     {
-        Player player = BattleManager.Instance.GetPlayerById(effect.PlayerId);
+        Player player = BattleState.Instance().GetPlayerById(effect.PlayerId);
         int damageTaken = player.TakeDamage(amount);
         AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
     }
@@ -397,10 +393,7 @@ public class EffectManager : MonoBehaviour
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
         }
 
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -409,7 +402,6 @@ public class EffectManager : MonoBehaviour
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(effect.PlayerId);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCard(spawnCard);
@@ -426,7 +418,7 @@ public class EffectManager : MonoBehaviour
             }
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -457,7 +449,7 @@ public class EffectManager : MonoBehaviour
 
     private void EffectCardDieAfterDeathRattle(Effect effect)
     {
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
@@ -468,7 +460,7 @@ public class EffectManager : MonoBehaviour
             return;
         }
 
-        Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+        Board.Instance().RemoveCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
@@ -480,27 +472,23 @@ public class EffectManager : MonoBehaviour
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(effect.PlayerId);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
-            Targetable randomTargetable = Board.Instance.GetOpponentRandomTargetable(effect.PlayerId);
+            Targetable randomTargetable = Board.Instance().GetOpponentRandomTargetable(effect.PlayerId);
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(effect.PlayerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCard(effect.Card);
-            moveAttributes.SetFieldId(randomTargetable.Owner.Id);
+            moveAttributes.SetFieldId(randomTargetable.GetPlayerId());
             moveAttributes.SetTargetId(randomTargetable.GetCardId());
-            challengeMove.SetMoveAttributes(moveAttributes);
 
-            BattleManager.Instance.AddServerMove(challengeMove);
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -607,25 +595,24 @@ public class EffectManager : MonoBehaviour
     private void EffectPlayerAvatarDie(Effect effect)
     {
         string playerId = effect.PlayerId;
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        Player player = BattleState.Instance().GetPlayerById(playerId);
         PlayerAvatar playerAvatar = player.Avatar;
         playerAvatar.Die();
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
+        BattleState.Instance().AddDeviceMove(challengeMove);
 
         if (!FlagHelper.IsServerEnabled())
         {
-            BattleManager.Instance.MockChallengeEnd(playerId);
+            BattleState.Instance().MockChallengeEnd(playerId);
         }
     }
 
     private void AbilityHeal(Effect effect, int amount)
     {
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
@@ -635,7 +622,7 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityDrawCard(Effect effect)
     {
-        Player player = BattleManager.Instance.GetPlayerById(
+        Player player = BattleState.Instance().GetPlayerById(
             effect.PlayerId
         );
 
@@ -649,25 +636,25 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityAttackInFront(Effect effect, int amount)
     {
-        BoardCreature attackingCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature attackingCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
 
         List<Effect> effects = new List<Effect>();
 
-        Transform defendingTransform = Board.Instance.GetInFrontBoardPlaceByPlayerIdAndCardId(
+        Transform defendingTransform = Board.Instance().GetInFrontBoardPlaceByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
 
-        BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
+        BoardCreature defendingCreature = Board.Instance().GetInFrontCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
 
-        string effectName = "FanMeteorsVFX";   //TODO: use attackingCreature.CreatureCard.GetEffectPrefab();
-        FXPoolManager.Instance.PlayEffectLookAt(effectName, attackingCreature.transform, defendingTransform);
+        //string effectName = "FanMeteorsVFX";   //TODO: use attackingCreature.CreatureCard.GetEffectPrefab();
+        //FXPoolManager.Instance.PlayEffectLookAt(effectName, attackingCreature.transform, defendingTransform);
 
         if (defendingCreature != null)
         {
@@ -682,7 +669,7 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        Player targetedPlayer = Board.Instance.GetOpponentByPlayerId(
+        Player targetedPlayer = Board.Instance().GetOpponentByPlayerId(
             effect.PlayerId
         );
 
@@ -707,7 +694,7 @@ public class EffectManager : MonoBehaviour
         string playerId = effect.PlayerId;
         string cardId = effect.CardId;
 
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
 
         List<Effect> effects = new List<Effect>();
 
@@ -741,7 +728,7 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature opponentCreature in opponentCreatures)
         {
@@ -767,8 +754,8 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature boardCreature in playerCreatures)
         {
@@ -796,8 +783,8 @@ public class EffectManager : MonoBehaviour
     private void AbilityDeathRattleDrawCard(Effect effect)
     {
         string playerId = effect.PlayerId;
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        Player player = BattleState.Instance().GetPlayerById(playerId);
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             playerId,
             effect.CardId
         );
@@ -826,7 +813,7 @@ public class EffectManager : MonoBehaviour
     {
         string playerId = effect.PlayerId;
 
-        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> boardCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         foreach (BoardCreature boardCreature in boardCreatures)
         {
             boardCreature.HealMax();
@@ -838,7 +825,7 @@ public class EffectManager : MonoBehaviour
         string playerId = effect.PlayerId;
         string cardId = effect.CardId;
 
-        BoardCreature attackingCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature attackingCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             playerId,
             cardId
         );
@@ -854,7 +841,7 @@ public class EffectManager : MonoBehaviour
         //effectVFX.transform.parent = attackingCreature.transform;
         //effectVFX.transform.Translate(Vector3.back * 1 + Vector3.up * 1, Space.Self);
 
-        Transform defendingTransform = Board.Instance.GetInFrontBoardPlaceByPlayerIdAndCardId(
+        Transform defendingTransform = Board.Instance().GetInFrontBoardPlaceByPlayerIdAndCardId(
             playerId,
             cardId
         );
@@ -868,7 +855,7 @@ public class EffectManager : MonoBehaviour
         //    Debug.LogError("Should render attack in front effect.");
         //}
 
-        BoardCreature defendingCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
+        BoardCreature defendingCreature = Board.Instance().GetInFrontCreatureByPlayerIdAndCardId(
             playerId,
             cardId
         );
@@ -887,7 +874,7 @@ public class EffectManager : MonoBehaviour
         string cardId = effect.CardId;
 
         List<BoardCreature> adjacentCreatures =
-            Board.Instance.GetAdjacentCreaturesByPlayerIdAndCardId(
+            Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
                 playerId,
                 cardId
             );
@@ -903,7 +890,7 @@ public class EffectManager : MonoBehaviour
     private void AbilityDamagePlayerFace(Effect effect, int amount)
     {
         string playerId = effect.PlayerId;
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        Player player = BattleState.Instance().GetPlayerById(playerId);
         int damageTaken = player.TakeDamage(amount);
         AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
     }
@@ -914,7 +901,7 @@ public class EffectManager : MonoBehaviour
         string cardId = effect.CardId;
 
         List<BoardCreature> adjacentCreatures =
-            Board.Instance.GetAdjacentCreaturesByPlayerIdAndCardId(
+            Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
                 playerId,
                 cardId
             );
@@ -935,8 +922,8 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature boardCreature in playerCreatures)
         {
@@ -962,12 +949,12 @@ public class EffectManager : MonoBehaviour
 
     private ChallengeCard CleanCardForSummon(string playerId, ChallengeCard dirtyCard)
     {
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        Player player = BattleState.Instance().GetPlayerById(playerId);
         ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
             JsonUtility.ToJson(dirtyCard)
         );
 
-        int spawnRank = BattleManager.Instance.GetNewSpawnRank();
+        int spawnRank = BattleState.Instance().GetNewSpawnRank();
         spawnCard.SetSpawnRank(spawnRank);
 
         spawnCard.SetId(player.GetNewCardId());
@@ -993,8 +980,7 @@ public class EffectManager : MonoBehaviour
 
     private ChallengeCard CleanCardForConvert(string playerId, ChallengeCard dirtyCard)
     {
-        Debug.Log(dirtyCard.IsSilenced);
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        Player player = BattleState.Instance().GetPlayerById(playerId);
         ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
             JsonUtility.ToJson(dirtyCard)
         );
@@ -1019,17 +1005,18 @@ public class EffectManager : MonoBehaviour
     {
         string playerId = effect.PlayerId;
 
-        List<BoardCreature> aliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
+
+        if (sortedDeadCards.Count <= 0)
+        {
+            return;
+        }
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(effect.PlayerId);
 
-        if (sortedDeadCards.Count <= 0)
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
-        }
-        else if (aliveCreatures.Count < 6)
+        if (aliveCreatures.Count < 6)
         {
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
         }
@@ -1038,10 +1025,7 @@ public class EffectManager : MonoBehaviour
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
         }
 
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -1059,43 +1043,29 @@ public class EffectManager : MonoBehaviour
                 }
             }
 
-            if (reviveCard == null)
-            {
-                challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(effect.PlayerId);
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
-                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+            ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
 
-                BattleManager.Instance.AddServerMove(challengeMove);
+            int spawnIndex = Board.Instance().GetAvailableFieldIndexByPlayerId(playerId);
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(effect.PlayerId);
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(spawnCard);
+            moveAttributes.SetFieldId(playerId);
+
+            if (spawnIndex < 0)
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
             }
             else
             {
-                ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
-
-                int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
-
-                challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(effect.PlayerId);
-                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-                moveAttributes.SetCard(spawnCard);
-                moveAttributes.SetFieldId(playerId);
-
-                if (spawnIndex < 0)
-                {
-                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
-                }
-                else
-                {
-                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
-                    moveAttributes.SetFieldIndex(spawnIndex);
-                }
-
-                challengeMove.SetMoveAttributes(moveAttributes);
-
-                BattleManager.Instance.AddServerMove(challengeMove);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+                moveAttributes.SetFieldIndex(spawnIndex);
             }
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -1105,7 +1075,7 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature boardCreature in opponentCreatures)
         {
@@ -1117,8 +1087,8 @@ public class EffectManager : MonoBehaviour
     {
         string playerId = effect.PlayerId;
         string cardId = effect.CardId;
-        int fieldIndex = Board.Instance.GetIndexByPlayerIdAndCardId(playerId, cardId);
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        int fieldIndex = Board.Instance().GetIndexByPlayerIdAndCardId(playerId, cardId);
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
 
         List<Effect> effects = new List<Effect>
         {
@@ -1147,7 +1117,7 @@ public class EffectManager : MonoBehaviour
     {
         string playerId = effect.PlayerId;
         string cardId = effect.CardId;
-        int fieldIndex = Board.Instance.GetIndexByPlayerIdAndCardId(playerId, cardId);
+        int fieldIndex = Board.Instance().GetIndexByPlayerIdAndCardId(playerId, cardId);
 
         List<Effect> effects = new List<Effect>
         {
@@ -1171,7 +1141,7 @@ public class EffectManager : MonoBehaviour
         summonEffect.SetFieldIndex(fieldIndex);
         effects.Add(summonEffect);
 
-        int closestIndex = Board.Instance.GetClosestAvailableIndexByPlayerId(playerId, fieldIndex);
+        int closestIndex = Board.Instance().GetClosestAvailableIndexByPlayerId(playerId, fieldIndex);
         summonEffect = new Effect(
             playerId,
             EFFECT_SUMMON_CREATURE,
@@ -1189,7 +1159,7 @@ public class EffectManager : MonoBehaviour
     {
         string playerId = effect.PlayerId;
         string cardId = effect.CardId;
-        int fieldIndex = Board.Instance.GetIndexByPlayerIdAndCardId(playerId, cardId);
+        int fieldIndex = Board.Instance().GetIndexByPlayerIdAndCardId(playerId, cardId);
 
         List<Effect> effects = new List<Effect>
         {
@@ -1213,7 +1183,7 @@ public class EffectManager : MonoBehaviour
         summonEffect.SetFieldIndex(fieldIndex);
         effects.Add(summonEffect);
 
-        int closestIndex = Board.Instance.GetClosestAvailableIndexByPlayerId(playerId, fieldIndex);
+        int closestIndex = Board.Instance().GetClosestAvailableIndexByPlayerId(playerId, fieldIndex);
         summonEffect = new Effect(
             playerId,
             EFFECT_SUMMON_CREATURE,
@@ -1229,7 +1199,7 @@ public class EffectManager : MonoBehaviour
 
     private void BuffUnstablePower(Effect effect)
     {
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
@@ -1255,7 +1225,7 @@ public class EffectManager : MonoBehaviour
 
     public void OnStartTurn(string playerId)
     {
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        Player player = BattleState.Instance().GetPlayerById(playerId);
 
         player.Avatar.OnStartTurn();
 
@@ -1271,7 +1241,7 @@ public class EffectManager : MonoBehaviour
             )
         );
 
-        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> boardCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         foreach (BoardCreature boardCreature in boardCreatures)
         {
             // Handles redrawing creature.
@@ -1304,13 +1274,13 @@ public class EffectManager : MonoBehaviour
         //this.isDirty = true;
         this.callback = callback;
 
-        Player player = BattleManager.Instance.GetPlayerById(playerId);
+        Player player = BattleState.Instance().GetPlayerById(playerId);
 
         //player.Avatar.OnEndTurn();
 
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> boardCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         foreach (BoardCreature boardCreature in boardCreatures)
         {
             // Handles redrawing creature.
@@ -1332,14 +1302,14 @@ public class EffectManager : MonoBehaviour
             }
         }
 
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
         foreach (BoardCreature opponentCreature in opponentCreatures)
         {
             if (opponentCreature.HasAbility(Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD))
             {
                 effects.Add(
                     new Effect(
-                        Board.Instance.GetOpponentIdByPlayerId(playerId),
+                        Board.Instance().GetOpponentIdByPlayerId(playerId),
                         Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
                         opponentCreature.GetCardId(),
                         opponentCreature.SpawnRank
@@ -1353,7 +1323,7 @@ public class EffectManager : MonoBehaviour
 
     public void OnCreaturePlay(string playerId, string cardId)
     {
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             playerId,
             cardId
         );
@@ -1458,8 +1428,8 @@ public class EffectManager : MonoBehaviour
 
                     if (adjacentAttack > 0)
                     {
-                        List<BoardCreature> adjacentCreatures = Board.Instance.GetAdjacentCreaturesByPlayerIdAndCardId(
-                            defendingCreature.Owner.Id,
+                        List<BoardCreature> adjacentCreatures = Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
+                        defendingCreature.GetPlayerId(),
                             defendingCreature.GetCardId()
                         );
 
@@ -1513,26 +1483,6 @@ public class EffectManager : MonoBehaviour
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
-                    //effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
-
-                    //int damageReceived = attackingCreature.TakeDamage(defendingCreature.Attack);
-                    //effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageDone));
-                    //effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageDone));
-
-                    //if (attackingCreature.Health <= 0)
-                    //{
-                    //    effects.Add(
-                    //        new Effect(
-                    //            attackingCreature.Owner.Id,
-                    //            EFFECT_CARD_DIE,
-                    //            attackingCreature.GetCardId(),
-                    //            attackingCreature.SpawnRank
-                    //        )
-                    //    );
-
-                    //    effects.AddRange(GetEffectsOnCreatureDeath(attackingCreature));
-                    //}
-
                     // Need to call redraw to update outline for can attack.
                     attackingCreature.Redraw();
 
@@ -1563,8 +1513,8 @@ public class EffectManager : MonoBehaviour
 
         if (card.Name == Card.CARD_NAME_BOMBSHELL_BOMBADIER)
         {
-            Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, card.Id);
-            Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
+            Targetable attackingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(playerId, card.Id);
+            Targetable defendingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
             if (attackingTargetable.GetType() == typeof(PlayerAvatar))
             {
@@ -1576,47 +1526,47 @@ public class EffectManager : MonoBehaviour
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-                List<Effect> effects = new List<Effect>();
-                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                //List<Effect> effects = new List<Effect>();
+                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-                this.isWaiting = true;
-                LeanTween
-                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                    .setEaseInOutCirc()
-                    .setOnComplete(() =>
-                    {
-                        int damageDone = defendingCreature.TakeDamage(20);
-                        effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                //this.isWaiting = true;
+                //LeanTween
+                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                //.setEaseInOutCirc()
+                //.setOnComplete(() =>
+                //{
+                //    int damageDone = defendingCreature.TakeDamage(20);
+                //    effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                        bombObject.SetActive(false);
+                //    bombObject.SetActive(false);
 
-                        AddToQueues(effects);
-                        this.isWaiting = false;
-                        this.isDirty = true;
-                    });
+                //    AddToQueues(effects);
+                //    this.isWaiting = false;
+                //    this.isDirty = true;
+                //});
             }
             else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
             {
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-                List<Effect> effects = new List<Effect>();
-                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                //List<Effect> effects = new List<Effect>();
+                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-                this.isWaiting = true;
-                LeanTween
-                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                    .setEaseInOutCirc()
-                    .setOnComplete(() =>
-                    {
-                        int damageDone = defendingAvatar.TakeDamage(20);
-                        effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
+                //this.isWaiting = true;
+                //LeanTween
+                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                //.setEaseInOutCirc()
+                //.setOnComplete(() =>
+                //{
+                //    int damageDone = defendingAvatar.TakeDamage(20);
+                //    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
-                        bombObject.SetActive(false);
+                //    bombObject.SetActive(false);
 
-                        AddToQueues(effects);
-                        this.isWaiting = false;
-                        this.isDirty = true;
-                    });
+                //    AddToQueues(effects);
+                //    this.isWaiting = false;
+                //    this.isDirty = true;
+                //});
             }
             else
             {
@@ -1625,54 +1575,54 @@ public class EffectManager : MonoBehaviour
         }
         else if (card.Name == Card.CARD_NAME_SPRAY_N_PRAY)
         {
-            PlayerAvatar attackingTargetable = BattleManager.Instance.GetPlayerById(playerId).Avatar;
-            Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
+            PlayerAvatar attackingTargetable = BattleState.Instance().GetPlayerById(playerId).Avatar;
+            Targetable defendingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
             if (defendingTargetable.GetType() == typeof(BoardCreature))
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-                List<Effect> effects = new List<Effect>();
-                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                //List<Effect> effects = new List<Effect>();
+                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-                this.isWaiting = true;
-                LeanTween
-                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                    .setEaseInOutCirc()
-                    .setOnComplete(() =>
-                    {
-                        int damageDone = defendingCreature.TakeDamage(10);
-                        effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                //this.isWaiting = true;
+                //LeanTween
+                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                //.setEaseInOutCirc()
+                //.setOnComplete(() =>
+                //{
+                //    int damageDone = defendingCreature.TakeDamage(10);
+                //    effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
 
-                        bombObject.SetActive(false);
+                //    bombObject.SetActive(false);
 
-                        AddToQueues(effects);
-                        this.isWaiting = false;
-                        this.isDirty = true;
-                    });
+                //    AddToQueues(effects);
+                //    this.isWaiting = false;
+                //    this.isDirty = true;
+                //});
             }
             else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
             {
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-                List<Effect> effects = new List<Effect>();
-                GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                //List<Effect> effects = new List<Effect>();
+                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
 
-                this.isWaiting = true;
-                LeanTween
-                    .move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                    .setEaseInOutCirc()
-                    .setOnComplete(() =>
-                    {
-                        int damageDone = defendingAvatar.TakeDamage(10);
-                        effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
+                //this.isWaiting = true;
+                //LeanTween
+                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
+                //.setEaseInOutCirc()
+                //.setOnComplete(() =>
+                //{
+                //    int damageDone = defendingAvatar.TakeDamage(10);
+                //    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
 
-                        bombObject.SetActive(false);
+                //    bombObject.SetActive(false);
 
-                        AddToQueues(effects);
-                        this.isWaiting = false;
-                        this.isDirty = true;
-                    });
+                //    AddToQueues(effects);
+                //    this.isWaiting = false;
+                //    this.isDirty = true;
+                //});
             }
             else
             {
@@ -1681,8 +1631,8 @@ public class EffectManager : MonoBehaviour
         }
         else if (card.Name == Card.CARD_NAME_BATTLE_ROYALE)
         {
-            List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
-            List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+            List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
+            List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
             List<BoardCreature> allCreatures = new List<BoardCreature>();
             allCreatures.AddRange(playerCreatures);
@@ -1719,21 +1669,20 @@ public class EffectManager : MonoBehaviour
      */
     public void OnConvertCreature(string playerId, string fieldId, string targetId)
     {
-        BoardCreature boardCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             fieldId,
             targetId
         );
-        Board.Instance.RemoveCreatureByPlayerIdAndCardId(
+        Board.Instance().RemoveCreatureByPlayerIdAndCardId(
             fieldId,
             targetId
         );
         boardCreature.Die();
 
-        List<BoardCreature> playerAliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> playerAliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(playerId);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
 
         if (playerAliveCreatures.Count < 6)
         {
@@ -1744,9 +1693,7 @@ public class EffectManager : MonoBehaviour
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
         }
 
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -1754,9 +1701,8 @@ public class EffectManager : MonoBehaviour
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
-            int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
+            int spawnIndex = Board.Instance().GetAvailableFieldIndexByPlayerId(playerId);
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCard(spawnCard);
@@ -1774,7 +1720,7 @@ public class EffectManager : MonoBehaviour
 
             challengeMove.SetMoveAttributes(moveAttributes);
 
-            BattleManager.Instance.AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -1820,8 +1766,8 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellTargetedLightningBolt(string playerId, BoardCreature targetedCreature)
     {
-        SoundManager.Instance.PlaySound("ShockSFX", targetedCreature.transform.position);
-        FXPoolManager.Instance.PlayEffect("LightningBoltVFX", targetedCreature.transform.position);
+        //SoundManager.Instance.PlaySound("ShockSFX", targetedCreature.transform.position);
+        //FXPoolManager.Instance.PlayEffect("LightningBoltVFX", targetedCreature.transform.position);
 
         List<Effect> effects = new List<Effect>();
 
@@ -1854,8 +1800,8 @@ public class EffectManager : MonoBehaviour
     {
         targetedCreature.Freeze(2);
 
-        BoardCreature inFrontCreature = Board.Instance.GetInFrontCreatureByPlayerIdAndCardId(
-            targetedCreature.Owner.Id,
+        BoardCreature inFrontCreature = Board.Instance().GetInFrontCreatureByPlayerIdAndCardId(
+            targetedCreature.GetPlayerId(),
             targetedCreature.GetCardId()
         );
 
@@ -1865,8 +1811,8 @@ public class EffectManager : MonoBehaviour
         }
 
         List<BoardCreature> adjacentCreatures =
-            Board.Instance.GetAdjacentCreaturesByPlayerIdAndCardId(
-                targetedCreature.Owner.Id,
+            Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
+                targetedCreature.GetPlayerId(),
                 targetedCreature.GetCardId()
             );
 
@@ -1946,7 +1892,7 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellUntargetedRiotUp(string playerId)
     {
-        List<BoardCreature> boardCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> boardCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         foreach (BoardCreature boardCreature in boardCreatures)
         {
             boardCreature.GrantShield();
@@ -1959,7 +1905,7 @@ public class EffectManager : MonoBehaviour
     private List<Effect> SpellUntargetedBrrBrrBlizzard(string playerId)
     {
         List<BoardCreature> opponentAliveCreatures =
-            Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+            Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature aliveCreature in opponentAliveCreatures)
         {
@@ -1973,7 +1919,7 @@ public class EffectManager : MonoBehaviour
     private List<Effect> SpellUntargetedRazeToAshes(string playerId)
     {
         List<BoardCreature> opponentAliveCreatures =
-            Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+            Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         List<Effect> effects = new List<Effect>();
 
@@ -2009,8 +1955,8 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature boardCreature in playerCreatures)
         {
@@ -2028,7 +1974,7 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
 
         foreach (BoardCreature boardCreature in playerCreatures)
         {
@@ -2059,17 +2005,18 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellUntargetedGraveDigging(string playerId)
     {
-        List<BoardCreature> aliveCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         List<ChallengeCard> sortedDeadCards = GetDeadCardsByPlayerId(playerId);
+
+        if (sortedDeadCards.Count <= 0)
+        {
+            return new List<Effect>();
+        }
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(playerId);
 
-        if (sortedDeadCards.Count <= 0)
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
-        }
-        else if (aliveCreatures.Count < 6)
+        if (aliveCreatures.Count < 6)
         {
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
         }
@@ -2078,52 +2025,35 @@ public class EffectManager : MonoBehaviour
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
         }
 
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
-            if (sortedDeadCards.Count <= 0)
-            {
-                challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(playerId);
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE);
-                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
+            ChallengeCard reviveCard = sortedDeadCards.Last();
+            ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
 
-                BattleManager.Instance.AddServerMove(challengeMove);
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+
+            int spawnIndex = Board.Instance().GetAvailableFieldIndexByPlayerId(playerId);
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(spawnCard);
+            moveAttributes.SetFieldId(playerId);
+
+            if (spawnIndex < 0)
+            {
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
             }
             else
             {
-                ChallengeCard reviveCard = sortedDeadCards.Last();
-
-                ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
-
-                challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(playerId);
-                challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-                int spawnIndex = Board.Instance.GetAvailableFieldIndexByPlayerId(playerId);
-
-                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-                moveAttributes.SetCard(spawnCard);
-                moveAttributes.SetFieldId(playerId);
-
-                if (spawnIndex < 0)
-                {
-                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
-                }
-                else
-                {
-                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
-                    moveAttributes.SetFieldIndex(spawnIndex);
-                }
-
-                challengeMove.SetMoveAttributes(moveAttributes);
-
-                BattleManager.Instance.AddServerMove(challengeMove);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
+                moveAttributes.SetFieldIndex(spawnIndex);
             }
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+
+            BattleState.Instance().AddServerMove(challengeMove);
         }
 
         return new List<Effect>();
@@ -2131,7 +2061,7 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellUntargetedTheSeven(string playerId)
     {
-        List<BoardCreature> opponentAliveCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentAliveCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         if (opponentAliveCreatures.Count <= 0)
         {
@@ -2141,26 +2071,22 @@ public class EffectManager : MonoBehaviour
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(playerId);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
-            BoardCreature opponentRandomCreature = Board.Instance.GetOpponentRandomCreature(playerId);
+            BoardCreature opponentRandomCreature = Board.Instance().GetOpponentRandomCreature(playerId);
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetFieldId(opponentRandomCreature.GetPlayerId());
             moveAttributes.SetTargetId(opponentRandomCreature.GetCardId());
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
 
         return new List<Effect>();
@@ -2168,8 +2094,8 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellUntargetedBattleRoyale(string playerId, ChallengeCard challengeCard)
     {
-        List<BoardCreature> playerCreatures = Board.Instance.GetAliveCreaturesByPlayerId(playerId);
-        List<BoardCreature> opponentCreatures = Board.Instance.GetOpponentAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
+        List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
         List<BoardCreature> allCreatures = new List<BoardCreature>();
         allCreatures.AddRange(playerCreatures);
@@ -2183,10 +2109,7 @@ public class EffectManager : MonoBehaviour
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(playerId);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-
-        WaitForServerMove(challengeMove.Rank);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -2196,7 +2119,6 @@ public class EffectManager : MonoBehaviour
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCard(challengeCard);
@@ -2204,7 +2126,7 @@ public class EffectManager : MonoBehaviour
             moveAttributes.SetTargetId(randomCreature.GetCardId());
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
 
         return new List<Effect>();
@@ -2220,7 +2142,7 @@ public class EffectManager : MonoBehaviour
         if (boardCreature.HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
         {
             Effect newEffect = new Effect(
-                boardCreature.Owner.Id,
+                boardCreature.GetPlayerId(),
                 Card.CARD_ABILITY_LIFE_STEAL,
                 boardCreature.GetCardId(),
                 boardCreature.SpawnRank
@@ -2247,7 +2169,7 @@ public class EffectManager : MonoBehaviour
                 {
                     effects.Add(
                         new Effect(
-                            boardCreature.Owner.Id,
+                            boardCreature.GetPlayerId(),
                             effectName,
                             boardCreature.GetCardId(),
                             boardCreature.SpawnRank
@@ -2277,7 +2199,7 @@ public class EffectManager : MonoBehaviour
             {
                 effects.Add(
                     new Effect(
-                        boardCreature.Owner.Id,
+                        boardCreature.GetPlayerId(),
                         effectName,
                         boardCreature.GetCardId(),
                         boardCreature.SpawnRank
@@ -2292,7 +2214,7 @@ public class EffectManager : MonoBehaviour
         {
             effects.Add(
                 new Effect(
-                    boardCreature.Owner.Id,
+                    boardCreature.GetPlayerId(),
                     EFFECT_CARD_DIE,
                     boardCreature.GetCardId(),
                     boardCreature.SpawnRank
@@ -2356,7 +2278,7 @@ public class EffectManager : MonoBehaviour
         double timeCounter = 0.0;
 
         int moveRank = (int)args[0];
-        while (BattleManager.Instance.ProcessMoveQueue() != moveRank)
+        while (BattleState.Instance().ProcessMoveQueue() != moveRank)
         {
             yield return new WaitForSeconds(0.1f);
 

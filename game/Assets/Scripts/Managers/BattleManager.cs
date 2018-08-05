@@ -1,59 +1,22 @@
-﻿using System.Collections.Generic;
-using System;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
-
 using TMPro;
 
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
-    private bool initialized;
-    public bool Initialized => initialized;
-
-    private Player you;
-    public Player You => you;
-    private Player opponent;
-    public Player Opponent => opponent;
-
-    [SerializeField]
-    private Player activePlayer;
-    public Player ActivePlayer => activePlayer;
-
-    private int turnIndex;
-    private List<Player> players;
-
-    private Dictionary<string, Player> playerIdToPlayer;
-    public Dictionary<string, Player> PlayerIdToPlayer => playerIdToPlayer;
-
     public int battleLayer;
     public int boardOrBattleLayer;
     //private List<HistoryItem> history;
 
-    [SerializeField]
-    private Targetable mouseDownTargetable;
-    private Targetable mouseUpTargetable;
-    private List<Targetable> validTargets; //used to store/cache valid targets
+    private TargetableObject mouseDownTargetableObject;
+    private TargetableObject mouseUpTargetableObject;
+    private List<TargetableObject> validTargets; //used to store/cache valid targets
 
     public CurvedLineRenderer attackCommand;
-
-    private int mode;
-
-    private const int BATTLE_STATE_NORMAL_MODE = 0;
-    private const int BATTLE_STATE_MULLIGAN_MODE = 1;
-
-    private int spawnCount;
-    public int SpawnCount => spawnCount;
-
-    private int deviceMoveCount;
-    private int serverMoveCount;
-
-    private List<ChallengeMove> serverMoveQueue;
-    private List<ChallengeMove> deviceMoveQueue;
-
-    private List<ChallengeMove> serverMoves;
 
     // Cached transforms.
     [SerializeField]
@@ -89,40 +52,45 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private List<CardObject> xpCardObjects;
 
-    private ChallengeEndState challengeEndState;
-
     public HyperCard.Card HoverCard;
     public Canvas canvas;
+
     public static BattleManager Instance { get; private set; }
-
-
-    public Player GetPlayerById(string playerId)
-    {
-        return this.playerIdToPlayer[playerId];
-    }
 
     private void Awake()
     {
         Instance = this;
 
         this.lightGameObject = GameObject.Find("Point Light");
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            if (!BattleSingleton.Instance.ChallengeStarted)
-            {
-                SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
-                this.initialized = false;
-                return;
-            }
-            else
-            {
-                Debug.Log("BattleManager in Connected Development Mode.");
-                this.initialized = true;
-            }
-        }
+        Debug.Log(this.lightGameObject);
 
         attackCommand.SetWidth(0);
+    }
+
+    private void Start()
+    {
+        battleLayer = LayerMask.NameToLayer("Battle");
+        boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
+        ChooseRandomSetting();
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            BattleState _ = BattleState.Instance();
+            Debug.Log("Battle in Local Development Mode.");
+        }
+        else if (BattleSingleton.Instance.ChallengeStarted)
+        {
+            BattleState _ = BattleState.InstantiateWithState(
+                BattleSingleton.Instance.PlayerState,
+                BattleSingleton.Instance.OpponentState,
+                BattleSingleton.Instance.SpawnCount
+            );
+            Debug.Log("Battle in Connected Development Mode.");
+        }
+        else
+        {
+            SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
+        }
     }
 
     private void SendFindMatchRequest()
@@ -135,141 +103,9 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
-        if (this.mode != BATTLE_STATE_MULLIGAN_MODE && !EffectManager.IsWaiting())
+        if (BattleState.Instance().IsNormalMode() && !EffectManager.IsWaiting())
         {
             WatchMouseActions();
-        }
-    }
-
-    private void Start()
-    {
-        // Initialize server and device move counts to be that of the server,
-        // since we could be resuming a battle.
-        this.serverMoveCount = BattleSingleton.Instance.MoveCount;
-        this.deviceMoveCount = BattleSingleton.Instance.MoveCount;
-
-        this.serverMoveQueue = new List<ChallengeMove>();
-        this.deviceMoveQueue = new List<ChallengeMove>();
-        this.serverMoves = new List<ChallengeMove>();
-
-        this.playerIdToPlayer = new Dictionary<string, Player>();
-        this.players = new List<Player>();
-
-        battleLayer = LayerMask.NameToLayer("Battle");
-        boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
-
-        ChooseRandomSetting();
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            if (this.initialized)
-            {
-                this.spawnCount = BattleSingleton.Instance.SpawnCount;
-
-                this.you = new Player(
-                    BattleSingleton.Instance.PlayerState,
-                    "Player"
-                );
-                this.opponent = new Player(
-                    BattleSingleton.Instance.OpponentState,
-                    "Enemy"
-                );
-
-                Board.Instance.RegisterPlayer(this.you, BattleSingleton.Instance.PlayerState.Field);
-                Board.Instance.RegisterPlayer(this.opponent, BattleSingleton.Instance.OpponentState.Field);
-                Board.Instance.RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
-                Board.Instance.RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
-
-                this.playerIdToPlayer[this.you.Id] = this.you;
-                this.playerIdToPlayer[this.opponent.Id] = this.opponent;
-
-                this.you.Initialize(BattleSingleton.Instance.PlayerState);
-                this.opponent.Initialize(BattleSingleton.Instance.OpponentState);
-
-                this.players.Add(this.you);
-                this.players.Add(this.opponent);
-
-                GameStart();
-            }
-        }
-        else
-        {
-            this.spawnCount = 0;
-
-            this.you = new Player("Player", "Player", "pl4y3r");
-            this.opponent = new Player("Enemy", "Enemy", "3n3my");
-
-            Board.Instance.RegisterPlayer(this.you);
-            Board.Instance.RegisterPlayer(this.opponent);
-            Board.Instance.RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
-            Board.Instance.RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
-
-            this.playerIdToPlayer[this.you.Id] = this.you;
-            this.playerIdToPlayer[this.opponent.Id] = this.opponent;
-
-            this.players.Add(this.you);
-            this.players.Add(this.opponent);
-
-            GameStart();
-        }
-    }
-
-    private void GameStart()
-    {
-        if (FlagHelper.IsServerEnabled())
-        {
-            this.turnIndex = this.players.FindIndex(player => player.HasTurn);
-            this.activePlayer = this.players[turnIndex % players.Count];
-        }
-        else
-        {
-            this.turnIndex = UnityEngine.Random.Range(0, players.Count);
-            this.activePlayer = players[turnIndex % players.Count];
-        }
-
-        Player inactivePlayer = Board.Instance.GetOpponentByPlayerId(this.activePlayer.Id);
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            if (this.you.IsModeMulligan())
-            {
-                this.you.ResumeMulligan(
-                    BattleSingleton.Instance.GetMulliganCards(this.you.Id)
-                );
-                this.opponent.ResumeMulligan(
-                    BattleSingleton.Instance.GetMulliganCards(this.opponent.Id)
-                );
-                this.mode = BATTLE_STATE_MULLIGAN_MODE;
-
-                activePlayer.RenderGameStart();
-                inactivePlayer.RenderGameStart();
-            }
-            else
-            {
-                HideMulliganOverlay(this.you);
-                HideMulliganOverlay(this.opponent);
-
-                activePlayer.RenderTurnStart();
-                inactivePlayer.RenderGameStart();
-            }
-        }
-        else
-        {
-            this.mode = BATTLE_STATE_MULLIGAN_MODE;
-
-            if (FlagHelper.ShouldSkipMulligan())
-            {
-                HideMulliganOverlay(this.you);
-                HideMulliganOverlay(this.opponent);
-
-                this.activePlayer.DrawCardsForce(3);
-                inactivePlayer.DrawCardsForce(4);
-            }
-            else
-            {
-                this.activePlayer.BeginMulligan(this.activePlayer.PopCardsFromDeck(3));
-                inactivePlayer.BeginMulligan(inactivePlayer.PopCardsFromDeck(4));
-            }
         }
     }
 
@@ -286,9 +122,9 @@ public class BattleManager : MonoBehaviour
     private void AttackStartMade(RaycastHit hit)
     {
         ActionManager.Instance.SetActive(false);
-        validTargets = GetValidTargets(mouseDownTargetable);
+        validTargets = GetValidTargets(this.mouseDownTargetableObject);
         //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
-        attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
+        attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
         attackCommand.SetWidth(1.66f);
         //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
         ActionManager.Instance.SetCursor(4);
@@ -305,43 +141,47 @@ public class BattleManager : MonoBehaviour
                 return;
             }
 
-            mouseDownTargetable = hit.collider.GetComponent<Targetable>();
-            if (mouseDownTargetable == null)
+            this.mouseDownTargetableObject = hit.collider.GetComponent<TargetableObject>();
+            if (this.mouseDownTargetableObject == null)
             {
                 Debug.LogError("Raycast hit an object in battle layer that is not of class Targetable...");
                 return;
             }
             //Trigger any events as needed
-            mouseDownTargetable.MouseDown();
+            this.mouseDownTargetableObject.MouseDown();
 
-            if (FlagHelper.IsServerEnabled() && mouseDownTargetable.Owner.Id != this.you.Id)
+            if (
+                FlagHelper.IsServerEnabled() &&
+                this.mouseDownTargetableObject.GetPlayerId() != BattleState.Instance().You.Id
+            )
             {
                 return;
             }
 
-            if (!mouseDownTargetable.CanAttackNow())
+            if (!this.mouseDownTargetableObject.GetTargetable().CanAttackNow())
             {
                 return;
             }
 
-            if (mouseDownTargetable.IsAvatar)
-            {
-                PlayerAvatar avatar = mouseDownTargetable.Owner.Avatar;
-                if (avatar.HasWeapon())
-                {
-                    AttackStartMade(hit);
-                }
-            }
-            else  // must be BoardCreature, otherwise would have returned
-            {
-                AttackStartMade(hit);
-            }
+            //if (this.mouseDownTargetableObject.IsAvatar())
+            //{
+            //    PlayerAvatar avatar = this.mouseDownTargetableObject.Owner.Avatar;
+            //    if (avatar.HasWeapon())
+            //    {
+            //        AttackStartMade(hit);
+            //    }
+            //}
+            //else  // must be BoardCreature, otherwise would have returned
+            //{
+            //    AttackStartMade(hit);
+            //}
+            AttackStartMade(hit);
         }
         else if (Input.GetMouseButtonUp(0))
         {
             RaycastHit hit;
             bool cast = Physics.Raycast(ray, out hit, 100f);
-            if (cast && CheckFight(mouseDownTargetable, hit)) //use battle layer mask
+            if (cast && CheckFight(this.mouseDownTargetableObject, hit)) //use battle layer mask
             {
                 //do something?
             }
@@ -352,8 +192,8 @@ public class BattleManager : MonoBehaviour
             //reset state
             ActionManager.Instance.SetActive(true);
             attackCommand.SetWidth(0);
-            mouseDownTargetable = null;
-            mouseUpTargetable = null;
+            this.mouseDownTargetableObject = null;
+            this.mouseUpTargetableObject = null;
             validTargets = null;
             SetPassiveCursor();
         }
@@ -363,16 +203,21 @@ public class BattleManager : MonoBehaviour
             bool cast = Physics.Raycast(ray, out hit, 100f);
             if (cast)
             {
-                attackCommand.SetPointPositions(mouseDownTargetable.transform.position, hit.point);
-                if (hit.collider.gameObject.layer == battleLayer && mouseDownTargetable != null &&
-                    hit.collider.gameObject != mouseDownTargetable.gameObject && validTargets.Contains(hit.collider.GetComponent<Targetable>()))
-                    ActionManager.Instance.SetCursor(5);
-                else
-                    ActionManager.Instance.SetCursor(4);
+                attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
 
-                //for debugging
-                if (Input.GetKeyUp("space"))
-                    Debug.Log(hit.collider.name);
+                if (
+                    hit.collider.gameObject.layer == battleLayer &&
+                    this.mouseDownTargetableObject != null &&
+                    hit.collider.gameObject != this.mouseDownTargetableObject.gameObject &&
+                    validTargets.Contains(hit.collider.GetComponent<TargetableObject>())
+                )
+                {
+                    ActionManager.Instance.SetCursor(5);
+                }
+                else
+                {
+                    ActionManager.Instance.SetCursor(4);
+                }
             }
         }
         else
@@ -384,11 +229,11 @@ public class BattleManager : MonoBehaviour
 
     public void SetPassiveCursor()
     {
-        if (this.activePlayer.Id == this.you.Id)
+        if (BattleState.Instance().ActivePlayer.Id == BattleState.Instance().You.Id)
         {
             ActionManager.Instance.SetCursor(0);
         }
-        else if (this.activePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)
+        else if (BattleState.Instance().ActivePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)
         {
             ActionManager.Instance.SetCursor(1);
         }
@@ -400,50 +245,30 @@ public class BattleManager : MonoBehaviour
 
     private void OnEndTurnClick()
     {
-        if (this.activePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)   // dont allow end turn button click in non-normal state
+        if (BattleState.Instance().ActivePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)   // dont allow end turn button click in non-normal state
         {
             return;
         }
 
-        if (FlagHelper.IsServerEnabled() && this.activePlayer.Id != this.you.Id)
+        if (FlagHelper.IsServerEnabled() && BattleState.Instance().ActivePlayer.Id != BattleState.Instance().You.Id)
         {
             return;
         }
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(activePlayer.Id);
+        challengeMove.SetPlayerId(BattleState.Instance().ActivePlayer.Id);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_END_TURN);
-        challengeMove.SetRank(GetServerMoveRank());
-        AddServerMove(challengeMove);
+        BattleState.Instance().AddServerMove(challengeMove);
 
-        if (FlagHelper.IsServerEnabled() && this.activePlayer.Id == this.you.Id)
+        if (FlagHelper.IsServerEnabled() && BattleState.Instance().ActivePlayer.Id == BattleState.Instance().You.Id)
         {
             BattleSingleton.Instance.SendChallengeEndTurnRequest();
         }
     }
 
-    private void NextTurn()
+    public void ToggleEndTurnButton()
     {
-        activePlayer.EndTurn();
-        endTurnButton.ToggleState();
-
-        EffectManager.Instance.OnEndTurn(
-            activePlayer.Id,
-            new UnityAction(ActualNextTurn)
-        );
-    }
-
-    private void ActualNextTurn()
-    {
-        turnIndex++;
-        activePlayer = players[turnIndex % players.Count];
-
-        //do some turn transition render
-        SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
-        SetPassiveCursor();
-
-        activePlayer.NewTurn();
-        EffectManager.Instance.OnStartTurn(activePlayer.Id);
+        this.endTurnButton.ToggleState();
     }
 
     public void SetBoardCenterText(string message)
@@ -454,71 +279,69 @@ public class BattleManager : MonoBehaviour
 
     private void Surrender()
     {
-        string playerId = this.you.Id;
-        string opponentId = this.opponent.Id;
+        string playerId = BattleState.Instance().You.Id;
+        string opponentId = BattleState.Instance().Opponent.Id;
 
         BattleSingleton.Instance.SendChallengeSurrenderRequest();
 
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(playerId);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
-        challengeMove.SetRank(GetDeviceMoveRank());
-        AddDeviceMove(challengeMove);
+        BattleState.Instance().AddDeviceMove(challengeMove);
 
         challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(opponentId);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-        BattleManager.Instance.AddDeviceMove(challengeMove);
+        BattleState.Instance().AddDeviceMove(challengeMove);
 
         if (!FlagHelper.IsServerEnabled())
         {
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
-            challengeMove.SetRank(GetServerMoveRank());
-            AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(opponentId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-            challengeMove.SetRank(GetServerMoveRank());
-            AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
-    private List<Targetable> GetValidTargets(Targetable attacker)
+    private List<TargetableObject> GetValidTargets(TargetableObject attacker)
     {
-        List<Targetable> allTargets = new List<Targetable>();
-        foreach (Player player in players)
+        List<TargetableObject> allTargets = new List<TargetableObject>();
+        foreach (Player player in BattleState.Instance().Players)
         {
-            if (player == attacker.Owner)
+            if (player.Id == attacker.GetPlayerId())
             {
                 continue;
             }
 
-            List<BoardCreature> fieldCreatures = Board.Instance.GetAliveCreaturesByPlayerId(player.Id);
-            allTargets.AddRange(fieldCreatures);
-            allTargets.Add(player.Avatar);
+            List<BoardCreature> fieldCreatures = Board.Instance().GetAliveCreaturesByPlayerId(player.Id);
+            List<BoardCreatureObject> fieldCreatureObjects = new List<BoardCreatureObject>(
+                fieldCreatures.Select(fieldCreature => fieldCreature.GetTargetableObject() as BoardCreatureObject)
+            );
+            allTargets.AddRange(fieldCreatureObjects);
+            allTargets.Add(player.Avatar.GetTargetableObject());
         }
 
-        //Debug.LogWarning(allTargets.Count + " enemies found.");
-        List<Targetable> priorityTargets = new List<Targetable>();
+        List<TargetableObject> priorityTargets = new List<TargetableObject>();
         for (int j = 0; j < allTargets.Count; j++)
         {
-            if (allTargets[j].IsAvatar)
+            if (allTargets[j].IsAvatar())
             {
                 continue;
             }
 
-            BoardCreature creature = allTargets[j] as BoardCreature;
-            if (creature.HasAbility(Card.CARD_ABILITY_TAUNT))
+            BoardCreatureObject fieldCreatureObject = allTargets[j] as BoardCreatureObject;
+            if (fieldCreatureObject.HasAbility(Card.CARD_ABILITY_TAUNT))
             {
-                priorityTargets.Add(creature);
+                priorityTargets.Add(fieldCreatureObject);
             }
         }
 
-        if (priorityTargets != null && priorityTargets.Count > 0)
+        if (priorityTargets.Count > 0)
         {
             return priorityTargets;
         }
@@ -529,7 +352,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private bool CheckFight(Targetable attacker, RaycastHit hit)
+    private bool CheckFight(TargetableObject attacker, RaycastHit hit)
     {
         if (!attackCommand.enabled)
         {
@@ -539,65 +362,63 @@ public class BattleManager : MonoBehaviour
         {
             return false;
         }
-        if (mouseDownTargetable == null)
+        if (this.mouseDownTargetableObject == null)
         {
             return false;
         }
 
-        mouseUpTargetable = hit.collider.GetComponent<Targetable>();
-        if (mouseUpTargetable == mouseDownTargetable)
+        this.mouseUpTargetableObject = hit.collider.GetComponent<TargetableObject>();
+        if (this.mouseUpTargetableObject == this.mouseDownTargetableObject)
         {
             //show creature details
             Debug.Log("Show details.");
         }
-        else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(mouseUpTargetable))
+        else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(this.mouseUpTargetableObject))
         {
-            Targetable attackingTargetable = mouseDownTargetable;
-            Targetable defendingTargetable = mouseUpTargetable;
+            TargetableObject attackingTargetableObject = this.mouseDownTargetableObject;
+            TargetableObject defendingTargetableObject = this.mouseUpTargetableObject;
 
             ChallengeMove challengeMove;
 
-            if (attackingTargetable.Owner.Id == this.you.Id)
+            if (attackingTargetableObject.GetPlayerId() == BattleState.Instance().You.Id)
             {
                 challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(attackingTargetable.GetPlayerId());
+                challengeMove.SetPlayerId(attackingTargetableObject.GetPlayerId());
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
-                challengeMove.SetRank(GetDeviceMoveRank());
-                AddDeviceMove(challengeMove);
+                BattleState.Instance().AddDeviceMove(challengeMove);
             }
 
             if (FlagHelper.IsServerEnabled())
             {
                 CardAttackAttributes attributes = new CardAttackAttributes(
-                    defendingTargetable.GetPlayerId(),
-                    defendingTargetable.GetCardId()
+                    attackingTargetableObject.GetPlayerId(),
+                    defendingTargetableObject.GetCardId()
                 );
                 BattleSingleton.Instance.SendChallengeCardAttackRequest(
-                    attackingTargetable.GetCardId(),
+                    attackingTargetableObject.GetCardId(),
                     attributes
                 );
             }
             else
             {
                 challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(attackingTargetable.GetPlayerId());
+                challengeMove.SetPlayerId(attackingTargetableObject.GetPlayerId());
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CARD_ATTACK);
-                challengeMove.SetRank(GetServerMoveRank());
 
                 ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-                moveAttributes.SetCardId(attackingTargetable.GetCardId());
-                moveAttributes.SetFieldId(defendingTargetable.Owner.Id);
-                moveAttributes.SetTargetId(defendingTargetable.GetCardId());
-                challengeMove.SetMoveAttributes(moveAttributes);
+                moveAttributes.SetCardId(attackingTargetableObject.GetCardId());
+                moveAttributes.SetFieldId(defendingTargetableObject.GetPlayerId());
+                moveAttributes.SetTargetId(defendingTargetableObject.GetCardId());
 
-                AddServerMove(challengeMove);
+                challengeMove.SetMoveAttributes(moveAttributes);
+                BattleState.Instance().AddServerMove(challengeMove);
             }
 
-            if (attackingTargetable.Owner.Id == this.you.Id)
+            if (attackingTargetableObject.GetPlayerId() == BattleState.Instance().You.Id)
             {
                 EffectManager.Instance.OnCreatureAttack(
-                    attackingTargetable,
-                    defendingTargetable
+                    attackingTargetableObject.GetTargetable(),
+                    defendingTargetableObject.GetTargetable()
                 );
             }
 
@@ -625,9 +446,9 @@ public class BattleManager : MonoBehaviour
         BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
         float minThreshold = 20;
 
-        //Debug.Log(String.Format("amt={0}, threshold={1}, mousepos={2}, resetpos={3}", GetCardDisplacement(target), Screen.height * minThreshold, target.transform.localPosition, target.reset.position));
         if (target.GetCost() > target.Owner.Mana)
         {
+            Debug.Log("Mana");
             //can't play card due to mana
             ActionManager.Instance.ResetTarget();
             return false;
@@ -685,7 +506,7 @@ public class BattleManager : MonoBehaviour
         {
             target.Owner.Avatar.EquipWeapon(target.Card as WeaponCard);
             target.Owner.PlayCard(target);
-            this.UseCard(target.Owner, target);    //to-do: change to own weapon func
+            UseCard(target);    //to-do: change to own weapon func
             return true;
         }
         else if (Physics.Raycast(ray, out hit, 100f, boardOrBattleLayer) &&
@@ -720,7 +541,7 @@ public class BattleManager : MonoBehaviour
     public LTDescr AnimateDrawCard(Player player, BattleCardObject battleCardObject)
     {
         Transform deckTransform;
-        if (player.Id == this.you.Id)
+        if (player.Id == BattleState.Instance().You.Id)
         {
             deckTransform = this.playerDeckTransform;
         }
@@ -734,7 +555,7 @@ public class BattleManager : MonoBehaviour
         battleCardObject.visual.Redraw();
 
         Transform pivotPoint;
-        if (player.Id == this.you.Id)
+        if (player.Id == BattleState.Instance().You.Id)
         {
             pivotPoint = this.playerDrawCardFixedTransform;
         }
@@ -770,8 +591,9 @@ public class BattleManager : MonoBehaviour
 
         LeanTween.scale(battleCardObject.gameObject, battleCardObject.reset.scale, CardTween.TWEEN_DURATION);
         LeanTween.rotate(battleCardObject.gameObject, Camera.main.transform.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        CardTween.move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad();
+        CardTween
+            .move(battleCardObject, targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F, CardTween.TWEEN_DURATION)
+            .setEaseInQuad();
     }
 
     public void HideMulliganOverlay(Player player)
@@ -782,19 +604,12 @@ public class BattleManager : MonoBehaviour
         LeanTween
             .scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION)
             .setOnComplete(() =>
-                {
-                    overlay.SetActive(false);
+            {
+                overlay.SetActive(false);
 
-                    SetBoardCenterText(string.Format("{0} Turn", this.activePlayer.Name));
-                    SetPassiveCursor();
-
-                    if (this.mode != BATTLE_STATE_NORMAL_MODE)
-                    {
-                        this.activePlayer.MulliganNewTurn();
-                        EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
-                        this.mode = BATTLE_STATE_NORMAL_MODE;
-                    }
-                });
+                SetBoardCenterText(string.Format("{0} Turn", BattleState.Instance().ActivePlayer.Name));
+                SetPassiveCursor();
+            });
     }
 
     public void ToggleMulliganCard(BattleCardObject battleCardObject)
@@ -818,7 +633,7 @@ public class BattleManager : MonoBehaviour
 
     public void FinishedMulligan()
     {
-        this.you.PlayMulligan(this.opponent.Mode);
+        BattleState.Instance().You.PlayMulligan(BattleState.Instance().Opponent.Mode);
     }
 
     private bool CanPlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
@@ -901,7 +716,7 @@ public class BattleManager : MonoBehaviour
 
         Player player = battleCardObject.Owner;
 
-        return Board.Instance.IsBoardPlaceOpen(player.Id, index);
+        return Board.Instance().IsBoardPlaceOpen(player.Id, index);
     }
 
     /*
@@ -917,20 +732,19 @@ public class BattleManager : MonoBehaviour
 
         ChallengeMove challengeMove;
 
-        if (player.Id == this.opponent.Id)
+        if (player.Id == BattleState.Instance().Opponent.Id)
         {
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(player.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
-            challengeMove.SetRank(GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
             moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
             moveAttributes.SetFieldIndex(index);
-            challengeMove.SetMoveAttributes(moveAttributes);
 
-            AddServerMove(challengeMove);
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
 
             return false;
         }
@@ -939,8 +753,7 @@ public class BattleManager : MonoBehaviour
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(player.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
-            challengeMove.SetRank(GetDeviceMoveRank());
-            AddDeviceMove(challengeMove);
+            BattleState.Instance().AddDeviceMove(challengeMove);
 
             if (FlagHelper.IsServerEnabled())
             {
@@ -960,10 +773,9 @@ public class BattleManager : MonoBehaviour
                 moveAttributes.SetCardId(battleCardObject.Card.Id);
                 moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
                 moveAttributes.SetFieldIndex(index);
-                challengeMove.SetMoveAttributes(moveAttributes);
 
-                challengeMove.SetRank(GetServerMoveRank());
-                AddServerMove(challengeMove);
+                challengeMove.SetMoveAttributes(moveAttributes);
+                BattleState.Instance().AddServerMove(challengeMove);
             }
 
             SpawnCardToBoard(battleCardObject, index);
@@ -982,12 +794,17 @@ public class BattleManager : MonoBehaviour
 
     private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
     {
-        int spawnRank = GetNewSpawnRank();
+        int spawnRank = BattleState.Instance().GetNewSpawnRank();
+        ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
+        challengeCard.SetSpawnRank(spawnRank);
 
-        battleCardObject.visual.Renderer.enabled = false;
-        SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
+        UseCard(battleCardObject);
 
-        Board.Instance.CreateAndPlaceCreature(battleCardObject, fieldIndex, spawnRank);
+        Board.Instance().CreateAndPlaceCreature(
+            challengeCard,
+            fieldIndex,
+            true
+        );
     }
 
     /*
@@ -1000,21 +817,20 @@ public class BattleManager : MonoBehaviour
         Player player = battleCardObject.Owner;
         ChallengeMove challengeMove;
 
-        if (player.Id == this.opponent.Id)
+        if (player.Id == BattleState.Instance().Opponent.Id)
         {
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(player.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
-            challengeMove.SetRank(GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
             moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
-            moveAttributes.SetFieldId(targetedCreature.Owner.Id);
+            moveAttributes.SetFieldId(targetedCreature.GetPlayerId());
             moveAttributes.SetTargetId(targetedCreature.GetCardId());
-            challengeMove.SetMoveAttributes(moveAttributes);
 
-            AddServerMove(challengeMove);
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
 
             return false;
         }
@@ -1023,13 +839,12 @@ public class BattleManager : MonoBehaviour
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(player.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
-            challengeMove.SetRank(GetDeviceMoveRank());
-            AddDeviceMove(challengeMove);
+            BattleState.Instance().AddDeviceMove(challengeMove);
 
             if (FlagHelper.IsServerEnabled())
             {
                 PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
-                    targetedCreature.Owner.Id,
+                    targetedCreature.GetPlayerId(),
                     targetedCreature.GetCardId()
                 );
                 BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
@@ -1042,12 +857,11 @@ public class BattleManager : MonoBehaviour
                 challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(player.Id);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
-                challengeMove.SetRank(GetServerMoveRank());
-                AddServerMove(challengeMove);
+                BattleState.Instance().AddServerMove(challengeMove);
             }
 
             EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
-            UseCard(battleCardObject.Owner, battleCardObject);
+            UseCard(battleCardObject);
 
             return true;
         }
@@ -1059,7 +873,7 @@ public class BattleManager : MonoBehaviour
     public void PlayTargetedSpellFromServer(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
         EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
-        UseCard(battleCardObject.Owner, battleCardObject);
+        UseCard(battleCardObject);
     }
 
     /*
@@ -1070,19 +884,18 @@ public class BattleManager : MonoBehaviour
         Player player = battleCardObject.Owner;
         ChallengeMove challengeMove;
 
-        if (player.Id == this.opponent.Id)
+        if (player.Id == BattleState.Instance().Opponent.Id)
         {
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(player.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
-            challengeMove.SetRank(GetServerMoveRank());
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
             moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
-            challengeMove.SetMoveAttributes(moveAttributes);
 
-            AddServerMove(challengeMove);
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
 
             return false;
         }
@@ -1091,8 +904,7 @@ public class BattleManager : MonoBehaviour
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(player.Id);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
-            challengeMove.SetRank(GetDeviceMoveRank());
-            AddDeviceMove(challengeMove);
+            BattleState.Instance().AddDeviceMove(challengeMove);
 
             if (FlagHelper.IsServerEnabled())
             {
@@ -1105,12 +917,11 @@ public class BattleManager : MonoBehaviour
                 challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(player.Id);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
-                challengeMove.SetRank(GetServerMoveRank());
-                AddServerMove(challengeMove);
+                BattleState.Instance().AddServerMove(challengeMove);
             }
 
             EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
-            UseCard(battleCardObject.Owner, battleCardObject);
+            UseCard(battleCardObject);
 
             return true;
         }
@@ -1122,365 +933,14 @@ public class BattleManager : MonoBehaviour
     public void PlayUntargetedSpellFromServer(BattleCardObject battleCardObject)
     {
         EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
-        UseCard(battleCardObject.Owner, battleCardObject);
+        UseCard(battleCardObject);
     }
 
-    public void UseCard(Player player, BattleCardObject battleCardObject)
+    public void UseCard(BattleCardObject battleCardObject)
     {
-        battleCardObject.Recycle();
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
-    }
-
-    /*
-     * @param List<int> deckCardIndices - indices of cards opponent chose to put back in deck
-     */
-    private void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
-    {
-        Player player = GetPlayerById(playerId);
-        player.PlayMulliganByIndices(deckCardIndices);
-    }
-
-    private void ReceiveMoveFinishMulligan()
-    {
-        this.you.FinishMulligan();
-        this.opponent.FinishMulligan();
-        ComparePlayerStates(); // Compare state at the end of mulligan.
-    }
-
-    private void ReceiveMoveEndTurn(string playerId)
-    {
-        if (this.activePlayer.Id != playerId)
-        {
-            Debug.LogError("Device active player does not match challenge move player.");
-            return;
-        }
-
-        NextTurn();
-    }
-
-    private void ReceiveMoveDrawCard(string playerId, Card card)
-    {
-        Player player = GetPlayerById(playerId);
-        player.AddDrawnCard(card);
-        //ComparePlayerStates(); // We cannot call theis directly since EffectManager may still be processing after end turn.
-    }
-
-    private void ReceiveMoveDrawCardMulligan(string playerId, Card card)
-    {
-        Player player = GetPlayerById(playerId);
-        player.AddDrawnCardMulligan(card);
-        //ComparePlayerStates(); // We cannot call this directly since EffectManager may still be processing after end turn.
-    }
-
-    private void ReceiveMoveDrawCardHandFull(string playerId, Card card)
-    {
-        Player player = GetPlayerById(playerId);
-        player.AddDrawnCardHandFull(card);
-    }
-
-    private void ReceiveMoveDrawCardDeckEmpty(string playerId)
-    {
-        Player player = GetPlayerById(playerId);
-        // TODO: animate and remove debug.
-        Debug.Log("Receive move draw card deck empty");
-        EffectManager.Instance.OnDrawCardFinish();
-    }
-
-    private void ReceiveMovePlayMinion(
-        string playerId,
-        string cardId,
-        ChallengeCard challengeCard,
-        int handIndex,
-        int fieldIndex
-    )
-    {
-        if (this.activePlayer.Id != playerId)
-        {
-            Debug.LogError("Device active player does not match challenge move player.");
-            return;
-        }
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(handIndex);
-            battleCardObject.Reinitialize(challengeCard);
-            opponent.PlayCard(battleCardObject);
-            this.EnemyPlayCardToBoardAnim(battleCardObject, fieldIndex);
-        }
-        else
-        {
-            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (battleCardObject == null)
-            {
-                Debug.LogError(String.Format("Server demanded card to play, but none of id {0} was found.", cardId));
-                return;
-            }
-            opponent.PlayCard(battleCardObject);
-            this.EnemyPlayCardToBoardAnim(battleCardObject, fieldIndex);
-        }
-    }
-
-    private void ReceiveMovePlaySpellTargeted(
-        string playerId,
-        string cardId,
-        ChallengeCard challengeCard,
-        int handIndex,
-        string fieldId,
-        string targetId
-    )
-    {
-        if (this.activePlayer.Id != playerId)
-        {
-            Debug.LogError("Device active player does not match challenge move player.");
-            return;
-        }
-
-        BoardCreature targetedCreature = Board.Instance.GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            battleCardObject.Reinitialize(challengeCard);
-
-            opponent.PlayCard(battleCardObject);
-            EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
-        }
-        else
-        {
-            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (battleCardObject == null)
-            {
-                Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
-                return;
-            }
-
-            opponent.PlayCard(battleCardObject);
-            EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
-        }
-    }
-
-    private void ReceiveMovePlaySpellUntargeted(
-        string playerId,
-        string cardId,
-        ChallengeCard challengeCard,
-        int handIndex
-    )
-    {
-        if (this.activePlayer.Id != playerId)
-        {
-            Debug.LogError("Device active player does not match challenge move player.");
-            return;
-        }
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            int opponentHandIndex = opponent.GetOpponentHandIndex(handIndex);
-            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(opponentHandIndex);
-            battleCardObject.Reinitialize(challengeCard);
-
-            opponent.PlayCard(battleCardObject);
-            EnemyPlaySpellUntargetedAnim(battleCardObject);
-        }
-        else
-        {
-            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
-            if (battleCardObject == null)
-            {
-                Debug.LogError(String.Format("Demanded card to play, but none of id {0} was found.", cardId));
-                return;
-            }
-
-            opponent.PlayCard(battleCardObject);
-            EnemyPlaySpellUntargetedAnim(battleCardObject);
-        }
-    }
-
-    private void ReceiveMoveCardAttack(
-        string playerId,
-        string cardId,
-        string fieldId,
-        string targetId
-    )
-    {
-        if (this.activePlayer.Id != playerId)
-        {
-            Debug.LogError("Device active player does not match challenge move player.");
-            return;
-        }
-
-        Targetable attackingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(playerId, cardId);
-        Targetable defendingTargetable = Board.Instance.GetTargetableByPlayerIdAndCardId(fieldId, targetId);
-
-        EffectManager.Instance.OnCreatureAttack(
-            attackingTargetable,
-            defendingTargetable
-        );
-    }
-
-    private void ReceiveMoveRandomTarget(
-        string playerId,
-        ChallengeCard challengeCard,
-        string fieldId,
-        string targetId
-    )
-    {
-        EffectManager.Instance.OnRandomTarget(
-            playerId,
-            challengeCard,
-            fieldId,
-            targetId
-        );
-    }
-
-    private void ReceiveMoveSummonCreature(
-        string playerId,
-        ChallengeCard challengeCard,
-        string fieldId,
-        int fieldIndex
-    )
-    {
-        Card card = challengeCard.GetCard();
-        if (card.GetType() == typeof(CreatureCard))
-        {
-            Player player = GetPlayerById(playerId);
-            GameObject created = new GameObject(card.Name);
-            BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
-            battleCardObject.Initialize(player, card);
-
-            Board.Instance.CreateAndPlaceCreature(
-                battleCardObject,
-                fieldIndex,
-                challengeCard.SpawnRank,
-                false
-            );
-
-            //GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-            //player.GetNewCardRank();
-            EffectManager.Instance.OnSummonCreatureFinish();
-        }
-        else
-        {
-            Debug.LogError("Invalid card category for summon creature move.");
-        }
-    }
-
-    private void ReceiveMoveSummonCreatureFieldFull(
-        string playerId,
-        ChallengeCard challengeCard,
-        string fieldId
-    )
-    {
-        Card card = challengeCard.GetCard();
-        if (card.GetType() == typeof(CreatureCard))
-        {
-            Player player = GetPlayerById(playerId);
-            //GameObject created = new GameObject(card.Name);
-            //BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
-            //battleCardObject.Initialize(player, card);
-
-            //Board.Instance.CreateAndPlaceCreature(
-            //    battleCardObject,
-            //    fieldIndex,
-            //    challengeCard.SpawnRank,
-            //    false
-            //);
-
-            //GetNewSpawnRank(); // Increment spawn count since summon is a spawn.
-            //player.GetNewCardRank();
-            EffectManager.Instance.OnSummonCreatureFinish();
-        }
-        else
-        {
-            Debug.LogError("Invalid card category for summon creature field full move.");
-        }
-    }
-
-    private void ReceiveMoveSummonCreatureNoCreature(string playerId)
-    {
-        // TODO
-        EffectManager.Instance.OnSummonCreatureFinish();
-    }
-
-    private void ReceiveMoveConvertCreature(
-        string playerId,
-        string fieldId,
-        string targetId
-    )
-    {
-        EffectManager.Instance.OnConvertCreature(playerId, fieldId, targetId);
-    }
-
-    public void ReceiveMoveSurrenderByChoice(string playerId)
-    {
-        if (!FlagHelper.IsServerEnabled())
-        {
-            MockChallengeEnd(playerId);
-        }
-
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(playerId));
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(GetDeviceMoveRank());
-        AddDeviceMove(challengeMove);
-    }
-
-    public void ReceiveMoveSurrenderByExpire(string playerId)
-    {
-        if (!FlagHelper.IsServerEnabled())
-        {
-            MockChallengeEnd(playerId);
-        }
-
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(playerId));
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(GetDeviceMoveRank());
-        AddDeviceMove(challengeMove);
-    }
-
-    //{
-    //    "id": "C14",
-    //  "level": 0,
-    //  "levelPrevious": 0,
-    //  "exp": 2,
-    //  "expMax": 10,
-    //  "expPrevious": 1,
-    //  "category": 0,
-    //  "attack": 60,
-    //  "health": 60,
-    //  "cost": 70,
-    //  "name": "Fireborn Menace",
-    //  "description": "Battlecry: Deal 20 damage to any minion in front",
-    //  "abilities": [
-    //    16
-    //  ]
-    //}
-
-    public void SetChallengeEndState(ChallengeEndState challengeEndState)
-    {
-        this.challengeEndState = challengeEndState;
-    }
-
-    public void ReceiveMoveChallengeOver(string winnerId)
-    {
-        if (this.challengeEndState == null)
-        {
-            Debug.LogError("Function should not be called unless challenge end state is set.");
-            return;
-        }
-
-        GameObject.Destroy(GameObject.Find("BattleSingleton"));
-
-        List<ExperienceCard> experienceCards = this.challengeEndState.ExperienceCards;
-        if (this.you.Id == winnerId)
-        {
-            ShowBattleEndFX(experienceCards, true);
-        }
-        else
-        {
-            ShowBattleEndFX(experienceCards, false);
-        }
+        battleCardObject.visual.Renderer.enabled = false;
+        battleCardObject.Recycle();
     }
 
     private void RenderEXPChanges(List<ExperienceCard> experienceCards)
@@ -1515,7 +975,8 @@ public class BattleManager : MonoBehaviour
             title.text = "Defeat";
         }
 
-        LeanTween.scale(title.gameObject, Vector3.one, 1)
+        LeanTween
+            .scale(title.gameObject, Vector3.one, 1)
             .setOnComplete(() =>
             {
                 if (won)
@@ -1527,375 +988,48 @@ public class BattleManager : MonoBehaviour
                     endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
                 }
 
-                LeanTween.scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
-                     .setDelay(CardTween.TWEEN_DURATION * 3)
-                     .setOnComplete(() =>
-                     {
-                         LeanTween.moveY(title.gameObject, title.transform.position.y + 3f, CardTween.TWEEN_DURATION)
-                            .setOnComplete(() =>
-                            {
-                                RenderEXPChanges(experienceCards);
-                            });
-                     });
+                LeanTween
+                    .scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
+                    .setDelay(CardTween.TWEEN_DURATION * 3)
+                    .setOnComplete(() =>
+                    {
+                        LeanTween
+                            .moveY(title.gameObject, title.transform.position.y + 3f, CardTween.TWEEN_DURATION)
+                           .setOnComplete(() =>
+                           {
+                               RenderEXPChanges(experienceCards);
+                           });
+                    });
             });
-    }
-
-    public void ReceiveChallengeMove(ChallengeMove challengeMove)
-    {
-        // If device's log of server moves contains the new server move
-        // already, skip this move. This can happen because the device adds
-        // its own mock server moves to the log for optimistic rendering.
-        foreach (ChallengeMove serverMove in GetServerMoves())
-        {
-            if (
-                serverMove.PlayerId == this.you.Id &&
-                serverMove.PlayerId == challengeMove.PlayerId &&
-                serverMove.Category == challengeMove.Category &&
-                serverMove.Rank == challengeMove.Rank
-            )
-            {
-                if (FlagHelper.IsLogVerbose())
-                {
-                    Debug.Log("[SKIPPED] Server move queue: " + challengeMove.Rank);
-                    Debug.Log(JsonUtility.ToJson(challengeMove));
-                    return;
-                }
-            }
-        }
-
-        if (FlagHelper.IsLogVerbose())
-        {
-            Debug.Log("Server move queue: " + challengeMove.Rank);
-            Debug.Log(JsonUtility.ToJson(challengeMove));
-        }
-        this.serverMoveQueue.Add(challengeMove);
-        this.serverMoveCount += 1;
-    }
-
-    public void AddServerMove(ChallengeMove challengeMove)
-    {
-        if (FlagHelper.IsLogVerbose())
-        {
-            Debug.Log("[MOCK] Server move queue: " + challengeMove.Rank);
-            Debug.Log(JsonUtility.ToJson(challengeMove));
-        }
-        this.serverMoveQueue.Add(challengeMove);
-    }
-
-    public void AddDeviceMove(ChallengeMove challengeMove)
-    {
-        if (FlagHelper.IsLogVerbose())
-        {
-            Debug.Log("Device move queue: " + challengeMove.Rank);
-            Debug.Log(JsonUtility.ToJson(challengeMove));
-        }
-        this.deviceMoveQueue.Add(challengeMove);
-    }
-
-    // Challenge moves that cannot be predicted by device.
-    private static List<string> OPPONENT_SERVER_CHALLENGE_MOVES = new List<string>
-    {
-        ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
-        ChallengeMove.MOVE_CATEGORY_END_TURN,
-        ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
-        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
-        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
-        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
-        ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE,
-        ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE,
-    };
-
-    // Challenge moves to skip since device has already performed them.
-    private static List<string> PLAYER_SKIP_CHALLENGE_MOVES = new List<string>
-    {
-        ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
-        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
-        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
-        ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
-    };
-
-    /*
-     * @return int - rank of move processed, -1 if no move processed
-     */
-    public int ProcessMoveQueue()
-    {
-        if (this.serverMoveQueue.Count <= 0)
-        {
-            return -1;
-        }
-
-        ChallengeMove serverMove = this.serverMoveQueue[0];
-        this.serverMoves.Add(serverMove);
-
-        if (
-            serverMove.PlayerId == this.opponent.Id &&
-            OPPONENT_SERVER_CHALLENGE_MOVES.Contains(serverMove.Category)
-        )
-        {
-            Debug.Log("Device move queue: " + this.deviceMoveCount);
-            this.deviceMoveCount += 1;
-        }
-        else if (
-            serverMove.PlayerId == this.you.Id &&
-            (
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN ||
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE
-            )
-        )
-        {
-            Debug.Log("Device move queue: " + this.deviceMoveCount);
-            this.deviceMoveCount += 1;
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN)
-        {
-            Debug.Log("Device move queue: " + this.deviceMoveCount);
-            this.deviceMoveCount += 1;
-        }
-        else if (this.deviceMoveQueue.Count <= 0)
-        {
-            return -1;
-        }
-        else
-        {
-            ChallengeMove deviceMove = this.deviceMoveQueue[0];
-            if (
-                deviceMove.PlayerId != serverMove.PlayerId ||
-                deviceMove.Category != serverMove.Category ||
-                deviceMove.Rank != serverMove.Rank
-            )
-            {
-                Debug.LogError("Device move does not match server move.");
-                Debug.LogWarning(string.Format("PlayerId: {0} vs {1}.", deviceMove.PlayerId, serverMove.PlayerId));
-                Debug.LogWarning(string.Format("Category: {0} vs {1}.", deviceMove.Category, serverMove.Category));
-                Debug.LogWarning(string.Format("Rank: {0} vs {1}.", deviceMove.Rank, serverMove.Rank));
-
-                this.deviceMoveQueue.RemoveAt(0);
-                this.serverMoveQueue.RemoveAt(0);
-
-                if (FlagHelper.IsServerEnabled())
-                {
-                    // TODO: show some prompt to user in this case?
-                    Application.LoadLevel("Battle");
-                }
-
-                return -1;
-            }
-
-            this.deviceMoveQueue.RemoveAt(0);
-        }
-
-        this.serverMoveQueue.RemoveAt(0);
-
-        if (
-            serverMove.PlayerId == this.you.Id &&
-            PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
-        )
-        {
-            return -1;
-        }
-
-        if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN)
-        {
-            ReceiveMovePlayMulligan(
-                serverMove.PlayerId,
-                serverMove.Attributes.DeckCardIndices
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN)
-        {
-            ReceiveMoveFinishMulligan();
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_END_TURN)
-        {
-            ReceiveMoveEndTurn(
-                serverMove.PlayerId
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD)
-        {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            ReceiveMoveDrawCard(
-                serverMove.PlayerId,
-                card
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN)
-        {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            ReceiveMoveDrawCardMulligan(
-                serverMove.PlayerId,
-                card
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_HAND_FULL)
-        {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            ReceiveMoveDrawCardHandFull(
-                serverMove.PlayerId,
-                card
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY)
-        {
-            ReceiveMoveDrawCardDeckEmpty(
-                serverMove.PlayerId
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY)
-        {
-            Debug.LogError("Not supported.");
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
-        {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            if (card.GetType() == typeof(CreatureCard))
-            {
-                ReceiveMovePlayMinion(
-                    serverMove.PlayerId,
-                    serverMove.Attributes.CardId,
-                    serverMove.Attributes.Card,
-                    serverMove.Attributes.HandIndex,
-                    serverMove.Attributes.FieldIndex
-                );
-            }
-            else
-            {
-                Debug.LogError("Invalid card category for play minion move");
-            }
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
-        {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            if (card.GetType() == typeof(SpellCard))
-            {
-                ReceiveMovePlaySpellUntargeted(
-                    serverMove.PlayerId,
-                    serverMove.Attributes.CardId,
-                    serverMove.Attributes.Card,
-                    serverMove.Attributes.HandIndex
-                );
-            }
-            else
-            {
-                Debug.LogError("Invalid card category for play spell general move");
-            }
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
-        {
-            Card card = serverMove.Attributes.Card.GetCard();
-
-            if (card.GetType() == typeof(SpellCard))
-            {
-                ReceiveMovePlaySpellTargeted(
-                    serverMove.PlayerId,
-                    serverMove.Attributes.CardId,
-                    serverMove.Attributes.Card,
-                    serverMove.Attributes.HandIndex,
-                    serverMove.Attributes.FieldId,
-                    serverMove.Attributes.TargetId
-                );
-            }
-            else
-            {
-                Debug.LogError("Invalid card category for play spell targeted move");
-            }
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CARD_ATTACK)
-        {
-            ReceiveMoveCardAttack(
-                serverMove.PlayerId,
-                serverMove.Attributes.CardId,
-                serverMove.Attributes.FieldId,
-                serverMove.Attributes.TargetId
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET)
-        {
-            ReceiveMoveRandomTarget(
-                serverMove.PlayerId,
-                serverMove.Attributes.Card,
-                serverMove.Attributes.FieldId,
-                serverMove.Attributes.TargetId
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE)
-        {
-            ReceiveMoveSummonCreature(
-                serverMove.PlayerId,
-                serverMove.Attributes.Card,
-                serverMove.Attributes.FieldId,
-                serverMove.Attributes.FieldIndex
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL)
-        {
-            ReceiveMoveSummonCreatureFieldFull(
-                serverMove.PlayerId,
-                serverMove.Attributes.Card,
-                serverMove.Attributes.FieldId
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_NO_CREATURE)
-        {
-            ReceiveMoveSummonCreatureNoCreature(serverMove.PlayerId);
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE)
-        {
-            ReceiveMoveSurrenderByChoice(serverMove.PlayerId);
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE)
-        {
-            ReceiveMoveSurrenderByExpire(serverMove.PlayerId);
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CONVERT_CREATURE)
-        {
-            ReceiveMoveConvertCreature(
-                serverMove.PlayerId,
-                serverMove.Attributes.FieldId,
-                serverMove.Attributes.TargetId
-            );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER)
-        {
-            ReceiveMoveChallengeOver(serverMove.PlayerId);
-        }
-        else
-        {
-            Debug.LogError(string.Format("Unsupported challenge move category: {0}", serverMove.Category));
-        }
-
-        return serverMove.Rank;
     }
 
     private LTDescr AnimateCardPlayed(BattleCardObject battleCardObject)
     {
-        LeanTween.rotateLocal(battleCardObject.visual.gameObject, new Vector3(0, 180, 0), CardTween.TWEEN_DURATION)
-                 .setEaseInQuad();
-        LeanTween.rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad();
-        return CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad();
+        LeanTween
+            .rotateLocal(battleCardObject.visual.gameObject, new Vector3(0, 180, 0), CardTween.TWEEN_DURATION)
+            .setEaseInQuad();
+        LeanTween
+            .rotate(battleCardObject.gameObject, this.enemyPlayCardFixedTransform.rotation.eulerAngles, CardTween.TWEEN_DURATION)
+            .setEaseInQuad();
+        return CardTween
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
+                .setEaseInQuad();
     }
 
-    private void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
+    public void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
     {
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
           {
-              CardTween.move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
-                 .setOnComplete(() =>
-                 {
-                     PlayCardToBoard(battleCardObject, fieldIndex);
-                 });
+              CardTween
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
+                .setOnComplete(() =>
+                {
+                    PlayCardToBoard(battleCardObject, fieldIndex);
+                });
           });
     }
 
-    private void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, BoardCreature targetedCreature)
+    public void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
         {
@@ -1908,7 +1042,7 @@ public class BattleManager : MonoBehaviour
         });
     }
 
-    private void EnemyPlaySpellUntargetedAnim(BattleCardObject battleCardObject)
+    public void EnemyPlaySpellUntargetedAnim(BattleCardObject battleCardObject)
     {
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
         {
@@ -1919,117 +1053,6 @@ public class BattleManager : MonoBehaviour
                     PlayUntargetedSpellFromServer(battleCardObject);
                 });
         });
-    }
-
-    public PlayerState GetPlayerState()
-    {
-        return this.you.GeneratePlayerState();
-    }
-
-    public PlayerState GetOpponentState()
-    {
-        return this.opponent.GeneratePlayerState();
-    }
-
-    public void ComparePlayerStates()
-    {
-        PlayerState devicePlayerState = GetPlayerState();
-        PlayerState deviceOpponentState = GetOpponentState();
-
-        if (FlagHelper.IsServerEnabled())
-        {
-            BattleSingleton.Instance.ComparePlayerStates(
-                devicePlayerState,
-                deviceOpponentState,
-                this.deviceMoveCount
-            );
-        }
-    }
-
-    public int GetDeviceMoveRank()
-    {
-        int rank = this.deviceMoveCount;
-        this.deviceMoveCount += 1;
-        return rank;
-    }
-
-    public int GetServerMoveRank()
-    {
-        int rank = this.serverMoveCount;
-        this.serverMoveCount += 1;
-        return rank;
-    }
-
-    public bool CanReceiveChallengeMove()
-    {
-        return true;
-    }
-
-    public int GetNewSpawnRank()
-    {
-        int spawnRank = this.spawnCount;
-        this.spawnCount += 1;
-        return spawnRank;
-    }
-
-    public List<ChallengeMove> GetServerMoves()
-    {
-        return this.serverMoves;
-    }
-
-    public void SetServerMoves(List<ChallengeMove> serverMoves)
-    {
-        this.serverMoves = serverMoves;
-    }
-
-    public void MockChallengeEnd(string loserId)
-    {
-        ChallengeEndState challengeEndState = new ChallengeEndState(
-            this.you.Id,
-            2,
-            3
-        );
-
-        List<ExperienceCard> experienceCards = new List<ExperienceCard>();
-
-        foreach (ChallengeMove serverMove in BattleManager.Instance.GetServerMoves())
-        {
-            if (
-                serverMove.PlayerId == BattleManager.Instance.You.Id &&
-                serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION
-            )
-            {
-                ChallengeCard challengeCard = serverMove.Attributes.Card;
-                ExperienceCard experienceCard = new ExperienceCard(
-                    challengeCard.Id,
-                    challengeCard.Name,
-                    2,
-                    2,
-                    8,
-                    7,
-                    10
-                );
-
-                experienceCards.Add(experienceCard);
-            }
-        }
-
-        challengeEndState.SetExperienceCards(experienceCards);
-
-        if (BattleManager.Instance.You.Id == loserId)
-        {
-            BattleManager.Instance.SetChallengeEndState(challengeEndState);
-        }
-        else
-        {
-            BattleManager.Instance.SetChallengeEndState(challengeEndState);
-        }
-
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance.GetOpponentIdByPlayerId(loserId));
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-        BattleManager.Instance.AddServerMove(challengeMove);
     }
 
     public void ShowOpponentChat(int chatId)

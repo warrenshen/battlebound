@@ -41,7 +41,7 @@ public class BasicButton : ObjectUI
         {
             this.inactiveSprite = Sprite.Create(this.inactiveImage, new Rect(0.0f, 0.0f, this.inactiveImage.width, this.inactiveImage.height), new Vector2(0.5f, 0.5f), 100.0f);
         }
-        if (BattleManager.Instance != null && BattleManager.Instance.ActivePlayer != BattleManager.Instance.You)
+        if (BattleState.Instance() != null && BattleState.Instance().ActivePlayer != BattleState.Instance().You)
         {
             this.ToggleState();
         }

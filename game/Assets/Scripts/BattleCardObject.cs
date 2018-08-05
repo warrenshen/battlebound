@@ -19,12 +19,13 @@ public class BattleCardObject : CardObject
 
     public void Initialize(Player player, Card card)
     {
-        this.owner = player;
         base.Initialize(card);
-        this.StartFlippedIfNeeded();
 
+        this.owner = player;
         this.buffs = new List<string>();
         this.costFromServer = -1;
+
+        StartFlippedIfNeeded();
     }
 
     public void Reinitialize(ChallengeCard challengeCard)
@@ -90,7 +91,7 @@ public class BattleCardObject : CardObject
         {
             this.buffs.Add(HAND_CARD_DECREASE_COST_BY_COLOR);
             SetHyperCardCost(this.visual, this);
-            this.visual.GetTextFieldWithKey("Cost").TmpObject.color = BoardCreature.LIGHT_GREEN;
+            this.visual.GetTextFieldWithKey("Cost").TmpObject.color = BoardCreatureObject.LIGHT_GREEN;
         }
     }
 
@@ -106,7 +107,7 @@ public class BattleCardObject : CardObject
 
     private void StartFlippedIfNeeded()
     {
-        if (FlagHelper.IsServerEnabled() && this.owner.Id == BattleManager.Instance.Opponent.Id)
+        if (FlagHelper.IsServerEnabled() && this.owner.Id == BattleState.Instance().Opponent.Id)
         {
             this.visual.transform.Rotate(0, 180, 0, Space.Self);
         }
@@ -125,7 +126,7 @@ public class BattleCardObject : CardObject
             return;
         }
 
-        if (FlagHelper.IsServerEnabled() && this.owner.Id != BattleManager.Instance.You.Id)
+        if (FlagHelper.IsServerEnabled() && this.owner.Id != BattleState.Instance().You.Id)
         {
             return;
         }
@@ -224,13 +225,14 @@ public class BattleCardObject : CardObject
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-        this.Recycle();
+        Recycle();
     }
 
     public ChallengeCard GetChallengeCard()
     {
         ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.card.Id);
+        challengeCard.SetPlayerId(this.owner.Id);
         challengeCard.SetColor(this.card.GetClassColor());
         challengeCard.SetName(this.card.Name);
         challengeCard.SetLevel(this.card.Level);
@@ -267,7 +269,11 @@ public class BattleCardObject : CardObject
         BattleCardObject battleCardObject
     )
     {
-        LeanTween.scale(cardVisual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * BoardCreature.UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+        LeanTween.scale(
+            cardVisual.GetTextFieldWithKey("Cost").TmpObject.gameObject,
+            Vector3.one * BoardCreatureObject.UPDATE_STATS_GROWTH_FACTOR,
+            0.5F
+        ).setEasePunch();
         cardVisual.SetTextFieldWithKey("Cost", battleCardObject.GetCost().ToString());
 
         cardVisual.Redraw();

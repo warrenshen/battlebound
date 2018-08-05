@@ -609,7 +609,7 @@ public class CreatureCard : Card
         return challengeCard;
     }
 
-    public static new CreatureCard GetFromJson(string json)
+    public static CreatureCard GetFromJson(string json)
     {
         CreatureCard creatureCard = JsonUtility.FromJson<CreatureCard>(json);
         creatureCard.LoadTemplateFromCodex();
@@ -662,7 +662,7 @@ public class WeaponCard : Card
         return challengeCard;
     }
 
-    public static new WeaponCard GetFromJson(string json)
+    public static WeaponCard GetFromJson(string json)
     {
         WeaponCard weaponCard = JsonUtility.FromJson<WeaponCard>(json);
         weaponCard.LoadTemplateFromCodex();
@@ -702,7 +702,7 @@ public class StructureCard : Card
         return challengeCard;
     }
 
-    public static new StructureCard GetFromJson(string json)
+    public static StructureCard GetFromJson(string json)
     {
         StructureCard structureCard = JsonUtility.FromJson<StructureCard>(json);
         structureCard.LoadTemplateFromCodex();
@@ -799,7 +799,7 @@ public class SpellCard : Card
         return challengeCard;
     }
 
-    public static new SpellCard GetFromJson(string json)
+    public static SpellCard GetFromJson(string json)
     {
         SpellCard spellCard = JsonUtility.FromJson<SpellCard>(json);
         spellCard.LoadTemplateFromCodex();
