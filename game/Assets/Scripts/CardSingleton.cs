@@ -47,7 +47,6 @@ public class CardSingleton : Singleton<CardSingleton>
             summon.AddComponent<GalleryIdle>();
             summon.SetActive(false);
             summonPool.Add(creaturePrefabName, summon);
-            Debug.Log(creaturePrefabName);
         }
     }
 
