@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
-
-using TMPro;
 
 [System.Serializable]
 public class BoardCreature : Targetable
@@ -22,12 +18,6 @@ public class BoardCreature : Targetable
     private int health;
     public int Health => health;
 
-    private List<string> buffs;
-    public List<string> Buffs => buffs;
-
-    private List<string> abilities;
-    public List<string> Abilities => abilities;
-
     private bool isSilenced;
     public bool IsSilenced => isSilenced;
 
@@ -41,6 +31,12 @@ public class BoardCreature : Targetable
     public int CanAttack => canAttack;
 
     private int maxAttacks;
+
+    private List<string> abilities;
+    public List<string> Abilities => abilities;
+
+    private List<string> buffsField;
+    private List<string> buffsHand;
 
     private CreatureCard card;
 
@@ -71,7 +67,8 @@ public class BoardCreature : Targetable
         }
 
         this.maxAttacks = 1;
-        this.buffs = new List<string>();
+        this.buffsField = challengeCard.GetBuffsField();
+        this.buffsHand = challengeCard.GetBuffsHand();
 
         if (BattleSingleton.Instance.IsEnvironmentTest())
         {
@@ -140,7 +137,7 @@ public class BoardCreature : Targetable
             return attack;
         }
 
-        foreach (string buff in this.buffs)
+        foreach (string buff in this.buffsField)
         {
             switch (buff)
             {
@@ -167,7 +164,7 @@ public class BoardCreature : Targetable
             return health;
         }
 
-        foreach (string buff in this.buffs)
+        foreach (string buff in this.buffsField)
         {
             switch (buff)
             {
@@ -391,12 +388,12 @@ public class BoardCreature : Targetable
             return;
         }
 
-        this.buffs.Add(buff);
+        this.buffsField.Add(buff);
     }
 
     public bool HasBuff(string buff)
     {
-        return this.buffs.Contains(buff);
+        return this.buffsField.Contains(buff);
     }
 
     public ChallengeCard GetChallengeCard()
@@ -423,7 +420,8 @@ public class BoardCreature : Targetable
         challengeCard.SetSpawnRank(this.spawnRank);
         challengeCard.SetAbilities(this.abilities);
         challengeCard.SetAbilitiesStart(this.card.GetAbilities());
-        challengeCard.SetBuffsField(this.buffs);
+        challengeCard.SetBuffsHand(this.buffsHand);
+        challengeCard.SetBuffsField(this.buffsField);
 
         return challengeCard;
     }

@@ -238,6 +238,7 @@ public class BattleCardObject : CardObject
         challengeCard.SetCost(GetCost()); // Note this is calling this' GetCost.
         challengeCard.SetCostStart(this.card.GetCost());
         challengeCard.SetBuffsHand(this.buffs);
+        challengeCard.SetBuffsField(new List<string>());
 
         if (this.card.GetType() == typeof(CreatureCard))
         {

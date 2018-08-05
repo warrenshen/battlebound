@@ -65,6 +65,7 @@ public class BattleManager : MonoBehaviour
 
         this.lightGameObject = GameObject.Find("Point Light");
         this.attackCommand.SetWidth(0);
+        this.validTargets = new List<TargetableObject>();
     }
 
     private void Start()
@@ -127,7 +128,7 @@ public class BattleManager : MonoBehaviour
     private void AttackStartMade(RaycastHit hit)
     {
         ActionManager.Instance.SetActive(false);
-        validTargets = GetValidTargets(this.mouseDownTargetableObject);
+        this.validTargets = GetValidTargets(this.mouseDownTargetableObject);
         //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
         attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
         attackCommand.SetWidth(1.66f);
@@ -214,12 +215,13 @@ public class BattleManager : MonoBehaviour
             {
                 //do something?
             }
+
             //reset state
             ActionManager.Instance.SetActive(true);
-            attackCommand.SetWidth(0);
+            this.attackCommand.SetWidth(0);
             this.mouseDownTargetableObject = null;
             this.mouseUpTargetableObject = null;
-            validTargets = null;
+            this.validTargets = new List<TargetableObject>();
             SetPassiveCursor();
         }
         else if (attackCommand.lineRenderer.startWidth > 0 && Input.GetMouseButton(0))  //battle/fight arrow
@@ -234,7 +236,7 @@ public class BattleManager : MonoBehaviour
                     hit.collider.gameObject.layer == battleLayer &&
                     this.mouseDownTargetableObject != null &&
                     hit.collider.gameObject != this.mouseDownTargetableObject.gameObject &&
-                    validTargets.Contains(hit.collider.GetComponent<TargetableObject>())
+                    this.validTargets.Contains(hit.collider.GetComponent<TargetableObject>())
                 )
                 {
                     ActionManager.Instance.SetCursor(5);
@@ -335,9 +337,10 @@ public class BattleManager : MonoBehaviour
 
     private List<TargetableObject> GetValidTargets(TargetableObject attacker)
     {
-        List<TargetableObject> allTargets = new List<TargetableObject>();
+        List<TargetableObject> targetableObjects = new List<TargetableObject>();
         foreach (Player player in BattleState.Instance().Players)
         {
+            Debug.Log(attacker.GetPlayerId());
             if (player.Id == attacker.GetPlayerId())
             {
                 continue;
@@ -347,33 +350,32 @@ public class BattleManager : MonoBehaviour
             List<BoardCreatureObject> fieldCreatureObjects = new List<BoardCreatureObject>(
                 fieldCreatures.Select(fieldCreature => fieldCreature.GetTargetableObject() as BoardCreatureObject)
             );
-            allTargets.AddRange(fieldCreatureObjects);
-            allTargets.Add(player.Avatar.GetTargetableObject());
+            targetableObjects.AddRange(fieldCreatureObjects);
+            targetableObjects.Add(player.Avatar.GetTargetableObject());
         }
 
-        List<TargetableObject> priorityTargets = new List<TargetableObject>();
-        for (int j = 0; j < allTargets.Count; j++)
+        List<TargetableObject> priorityTargetableObjects = new List<TargetableObject>();
+        foreach (TargetableObject targetableObject in targetableObjects)
         {
-            if (allTargets[j].IsAvatar())
+            if (targetableObject.IsAvatar())
             {
                 continue;
             }
 
-            BoardCreatureObject fieldCreatureObject = allTargets[j] as BoardCreatureObject;
-            if (fieldCreatureObject.HasAbility(Card.CARD_ABILITY_TAUNT))
+            BoardCreatureObject boardCreatureObject = targetableObject as BoardCreatureObject;
+            if (boardCreatureObject.HasAbility(Card.CARD_ABILITY_TAUNT))
             {
-                priorityTargets.Add(fieldCreatureObject);
+                priorityTargetableObjects.Add(boardCreatureObject);
             }
         }
 
-        if (priorityTargets.Count > 0)
+        if (priorityTargetableObjects.Count > 0)
         {
-            return priorityTargets;
+            return priorityTargetableObjects;
         }
         else
         {
-            //Debug.LogWarning("No priority targets found. " + priorityTargets.Count);
-            return allTargets;
+            return targetableObjects;
         }
     }
 
@@ -397,8 +399,11 @@ public class BattleManager : MonoBehaviour
         {
             //show creature details
             Debug.Log("Show details.");
+            return false;
         }
-        else if (validTargets != null && validTargets.Count > 0 && validTargets.Contains(this.mouseUpTargetableObject))
+
+        Debug.Log(validTargets.Count);
+        if (validTargets.Count > 0 && validTargets.Contains(this.mouseUpTargetableObject))
         {
             TargetableObject attackingTargetableObject = this.mouseDownTargetableObject;
             TargetableObject defendingTargetableObject = this.mouseUpTargetableObject;
