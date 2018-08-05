@@ -1125,7 +1125,7 @@ describe("challenge end turn", function() {
               "costStart": 20,
               "healthStart": 20,
               "healthMax": 20,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 1
@@ -1145,7 +1145,7 @@ describe("challenge end turn", function() {
               "costStart": 20,
               "healthStart": 20,
               "healthMax": 20,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 1,
               "spawnRank": 1
@@ -1208,7 +1208,7 @@ describe("challenge end turn", function() {
               "costStart": 50,
               "healthStart": 60,
               "healthMax": 60,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 1,
               "spawnRank": 5
@@ -1231,7 +1231,7 @@ describe("challenge end turn", function() {
               "costStart": 50,
               "healthStart": 60,
               "healthMax": 60,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 2,
               "spawnRank": 6
@@ -1254,7 +1254,7 @@ describe("challenge end turn", function() {
               "costStart": 50,
               "healthStart": 60,
               "healthMax": 60,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 7
@@ -1374,7 +1374,7 @@ describe("challenge end turn", function() {
                 "costStart": 50,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -1605,7 +1605,7 @@ describe("challenge end turn", function() {
                 "costStart": 50,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -1873,7 +1873,7 @@ describe("challenge end turn", function() {
                 "costStart": 20,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [
+                "buffsField": [
                   1001
                 ],
                 "canAttack": 0,

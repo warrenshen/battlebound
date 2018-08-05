@@ -682,7 +682,7 @@ describe("challenge events", function() {
               "costStart": 70,
               "healthStart": 30,
               "healthMax": 30,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 2
@@ -703,7 +703,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 3
@@ -759,7 +759,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 1
@@ -783,7 +783,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 0
@@ -1098,7 +1098,7 @@ describe("challenge events", function() {
               "costStart": 20,
               "healthStart": 30,
               "healthMax": 30,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "isSilenced": 0,
@@ -1120,7 +1120,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "isSilenced": 0,
@@ -1177,7 +1177,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 1
@@ -1201,7 +1201,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 0
@@ -1519,7 +1519,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 1
@@ -1543,7 +1543,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 2
@@ -1687,7 +1687,7 @@ describe("challenge events", function() {
                 assert.equal(playerField[1].health, 50);
                 assert.equal(playerField[1].healthMax, 50);
                 assert.equal(playerField[1].healthStart, 50);
-                assert.equal(playerField[1].buffs.indexOf(1002) >= 0, true);
+                assert.equal(playerField[1].buffsField.indexOf(1002) >= 0, true);
 
                 resolve();
               }
@@ -1758,7 +1758,7 @@ describe("challenge events", function() {
                 assert.equal(playerField[2].health, 30);
                 assert.equal(playerField[2].healthMax, 50);
                 assert.equal(playerField[2].healthStart, 50);
-                assert.equal(playerField[2].buffs.indexOf(1001) >= 0, true);
+                assert.equal(playerField[2].buffsField.indexOf(1001) >= 0, true);
 
                 resolve();
               }
@@ -1798,7 +1798,7 @@ describe("challenge events", function() {
               "costStart": 20,
               "healthStart": 30,
               "healthMax": 30,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 2
@@ -1819,7 +1819,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 3
@@ -1875,7 +1875,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 1
@@ -1899,7 +1899,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 0
@@ -2098,7 +2098,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 1
@@ -2122,7 +2122,7 @@ describe("challenge events", function() {
               "costStart": 40,
               "healthStart": 50,
               "healthMax": 50,
-              "buffs": [],
+              "buffsField": [],
               "canAttack": 1,
               "isFrozen": 0,
               "spawnRank": 0
@@ -2252,7 +2252,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2279,7 +2279,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2329,7 +2329,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2356,7 +2356,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2497,7 +2497,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2522,7 +2522,7 @@ describe("challenge events", function() {
                 "costStart": 70,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 1,
                 "isFrozen": 0,
                 "spawnRank": 6
@@ -2545,7 +2545,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2595,7 +2595,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
@@ -2620,7 +2620,7 @@ describe("challenge events", function() {
                 "costStart": 70,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 1,
                 "isFrozen": 0,
                 "spawnRank": 7
@@ -2643,7 +2643,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 0,
                 "isSilenced": 0,
