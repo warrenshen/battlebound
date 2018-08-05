@@ -12,6 +12,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     public const float ATTACK_DELAY = 0.66F;
 
     private static Vector3 BOARD_CARD_SIZE = new Vector3(5, 3.7F, 1);
+    private static Vector3 COLLIDER_SIZE = new Vector3(3.5F, 4.5F, 1);
     private static Vector3 INSPECT_CARD_SIZE = new Vector3(5, 4.28F, 1);
 
     public static Color LIGHT_GREEN = new Color(0.33F, 1, 0.33F);
@@ -72,9 +73,8 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         );
         yield return new WaitForSeconds(0.2f);
 
-        BoxCollider newCollider = this.gameObject.AddComponent<BoxCollider>() as BoxCollider;
-        newCollider.size = new Vector3(1, 1, 1);
-        newCollider.size *= BOARD_GROW_FACTOR;
+        BoxCollider creatureCollider = this.gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        creatureCollider.size = COLLIDER_SIZE;
 
         this.visual = VisualizeCard();
         SummonCreature();
@@ -260,9 +260,6 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         cardVisual.transform.localRotation = Quaternion.identity;
         cardVisual.transform.Rotate(0, 180, 0, Space.Self);
         cardVisual.transform.localScale = BOARD_CARD_SIZE;
-
-        //this.initialOutlineStartColor = this.visual.OutlineColor;
-        //this.initialOutlineEndColor = this.visual.OutlineEndColor;
 
         foreach (HyperCard.Card.CustomSpriteParam spriteParam in cardVisual.SpriteObjects)
         {
@@ -548,7 +545,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
     public override void ExitHover()
     {
-        this.visual.SetOutlineColors(this.initialOutlineStartColor, this.initialOutlineEndColor);
+        this.visual.SetOutlineColors(this.visual.InitialOutlineStartColor, this.visual.InitialOutlineEndColor);
         if (this.raisedCard)
         {
             LowerCardVisual();

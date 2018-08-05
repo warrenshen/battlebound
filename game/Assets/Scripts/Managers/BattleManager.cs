@@ -8,6 +8,8 @@ using TMPro;
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
+    private static float CARD_DISPLACEMENT_THRESHOLD = 30;
+
     public int battleLayer;
     public int boardOrBattleLayer;
     //private List<HistoryItem> history;
@@ -130,9 +132,29 @@ public class BattleManager : MonoBehaviour
         ActionManager.Instance.SetCursor(4);
     }
 
+    private void ComputeOutlineColors()
+    {
+        if (Input.GetMouseButton(0) && ActionManager.Instance.HasDragTarget())
+        {
+            BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
+            if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
+            {
+                target.visual.SetOutlineColors(Color.cyan, Color.green);
+            }
+            else
+            {
+                target.visual.SetOutlineColors(target.visual.InitialOutlineStartColor, target.visual.InitialOutlineEndColor);
+            }
+        }
+    }
+
     private void WatchMouseActions()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        this.ComputeOutlineColors();
+
+        //begin exclusive logic checks
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
@@ -197,7 +219,7 @@ public class BattleManager : MonoBehaviour
             validTargets = null;
             SetPassiveCursor();
         }
-        else if (attackCommand.lineRenderer.startWidth > 0 && Input.GetMouseButton(0))
+        else if (attackCommand.lineRenderer.startWidth > 0 && Input.GetMouseButton(0))  //battle/fight arrow
         {
             RaycastHit hit;
             bool cast = Physics.Raycast(ray, out hit, 100f);
@@ -444,7 +466,6 @@ public class BattleManager : MonoBehaviour
         }
 
         BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
-        float minThreshold = 20;
 
         if (target.GetCost() > target.Owner.Mana)
         {
@@ -453,7 +474,7 @@ public class BattleManager : MonoBehaviour
             ActionManager.Instance.ResetTarget();
             return false;
         }
-        else if (GetCardDisplacement(target) < minThreshold)   //to-do: review this
+        else if (GetCardDisplacement(target) < CARD_DISPLACEMENT_THRESHOLD)   //to-do: review this
         {
             //didn't displace card enough to activate
             ActionManager.Instance.ResetTarget();

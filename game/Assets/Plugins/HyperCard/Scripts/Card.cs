@@ -41,6 +41,15 @@ namespace HyperCard
     [Serializable]
     public class Card : MonoBehaviour
     {
+        // Begin Nick Extensions
+        private Color initialOutlineStartColor;
+        public Color InitialOutlineStartColor => initialOutlineStartColor;
+
+        private Color initialOutlineEndColor;
+        public Color InitialOutlineEndColor => initialOutlineEndColor;
+        // End Nick ext.
+
+
         public Renderer Renderer
         {
             get { return GetComponent<MeshRenderer>(); } // Renderer
@@ -633,6 +642,8 @@ namespace HyperCard
             StartCoroutine(ApplyCulling());
 
             _fxOffTime = UnityEngine.Random.Range(PeriodicalFxDelayOffMin, PeriodicalFxDelayOffMax);
+            this.initialOutlineStartColor = this.OutlineColor;
+            this.initialOutlineEndColor = this.OutlineEndColor;
         }
 
         private void OnEnable()
@@ -879,11 +890,29 @@ namespace HyperCard
             _index += 1;
         }
 
-        public void SetCardArtwork(Texture2D fore, Texture2D back)
+        public void SetCardArtwork(Texture2D front, Texture2D back)
         {
-            this.CardFaceArtwork = fore;
+            this.CardFaceArtwork = front;
             this.CardFaceBackgroundArtwork = back;
-            this.Redraw();  //to-do: should REALLY optimize this later, imp!
+
+            Renderer.material.SetTexture("_CardForeground", this.CardFaceArtwork);
+            Renderer.material.SetTexture("_CardBackground", this.CardFaceArtwork);
+        }
+        public void SetFrontTiling(Vector2 scale, Vector2 offset)
+        {
+            this.CardFaceArtworkScale = scale;
+            this.CardFaceArtworkOffset = offset;
+
+            Renderer.material.SetTextureOffset("_CardForeground", CardFaceArtworkOffset);
+            Renderer.material.SetTextureScale("_CardForeground", CardFaceArtworkScale);
+        }
+        public void SetBackTiling(Vector2 scale, Vector2 offset)
+        {
+            this.CardFaceBackgroundArtworkScale = scale;
+            this.CardFaceBackgroundArtworkOffset = offset;
+
+            Renderer.material.SetTextureOffset("_CardBackground", CardFaceBackgroundArtworkOffset);
+            Renderer.material.SetTextureScale("_CardBackground", CardFaceBackgroundArtworkScale);
         }
 
         public void SetOutline(bool value)
@@ -897,6 +926,8 @@ namespace HyperCard
         {
             this.OutlineColor = start;
             this.OutlineEndColor = end;
+            Renderer.material.SetColor("_OutlineColor", this.OutlineColor);
+            Renderer.material.SetColor("_OutlineEndColor", this.OutlineEndColor);
         }
 
         public void SetBlackAndWhite(bool value)
@@ -909,16 +940,6 @@ namespace HyperCard
             SetBlackAndWhite(value);
         }
 
-        public void SetFrontTiling(Vector2 scale, Vector2 offset)
-        {
-            this.CardFaceArtworkScale = scale;
-            this.CardFaceArtworkOffset = offset;
-        }
-        public void SetBackTiling(Vector2 scale, Vector2 offset)
-        {
-            this.CardFaceBackgroundArtworkScale = scale;
-            this.CardFaceBackgroundArtworkOffset = offset;
-        }
         public void SetOpacity(float opacity)
         {
             this.CardOpacity = opacity;
