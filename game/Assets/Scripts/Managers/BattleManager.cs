@@ -79,6 +79,7 @@ public class BattleManager : MonoBehaviour
         {
             BattleState _ = BattleState.Instance();
             Debug.Log("Battle in Local Development Mode.");
+            EffectManager.Instance.ReadyUp();
         }
         else if (BattleSingleton.Instance.ChallengeStarted)
         {
