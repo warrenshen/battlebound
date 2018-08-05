@@ -211,12 +211,12 @@ public class ChallengeCard
 
     public List<string> GetBuffsHand()
     {
-        return Card.GetBuffStringByCodes(this.buffsHand);
+        return Card.GetBuffHandStringsByCodes(this.buffsHand);
     }
 
     public List<string> GetBuffsField()
     {
-        return Card.GetBuffStringByCodes(this.buffsField);
+        return Card.GetBuffFieldStringsByCodes(this.buffsField);
     }
 
     public bool Equals(ChallengeCard other)
@@ -311,13 +311,13 @@ public class ChallengeCard
             return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
 
-        string buffsHandDiff = GetAbilitiesDiff(this.buffsHand, other.buffsHand);
+        string buffsHandDiff = GetBuffsHandDiff(this.buffsHand, other.buffsHand);
         if (buffsHandDiff != null)
         {
             return string.Format("BuffsHand: {0} [{1}]", buffsHandDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
 
-        string buffsFieldDiff = GetAbilitiesDiff(this.buffsField, other.buffsField);
+        string buffsFieldDiff = GetBuffsFieldDiff(this.buffsField, other.buffsField);
         if (abilitiesStartDiff != null)
         {
             return string.Format("BuffsField: {0} [{1}]", buffsFieldDiff, string.Format("{0}, {1}", this.id, other.Name));
@@ -353,28 +353,49 @@ public class ChallengeCard
         return null;
     }
 
-    private static string GetBuffsDiff(List<string> abilityCodes, List<string> abilitiesTwo)
+    private static string GetBuffsHandDiff(List<string> buffsHandCodes, List<string> buffsHandTwo)
     {
-        if (abilityCodes == null)
+        if (buffsHandCodes == null)
         {
-            abilityCodes = new List<string>();
+            buffsHandCodes = new List<string>();
         }
 
-        List<string> abilitiesOne = Card.GetAbilityStringsByCodes(abilityCodes);
+        List<string> buffsHandOne = Card.GetBuffHandStringsByCodes(buffsHandCodes);
 
-        if (abilitiesTwo == null)
+        if (buffsHandTwo == null)
         {
-            abilitiesTwo = new List<string>();
+            buffsHandTwo = new List<string>();
         }
 
-        abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
-        abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
-
-        List<string> exceptOneAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
-        List<string> exceptTwoAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
-        if (exceptOneAbilities.Count > 0 || exceptTwoAbilities.Count > 0)
+        List<string> exceptOneBuffsHand = buffsHandOne.Except(buffsHandTwo).ToList();
+        List<string> exceptTwoBuffsHand = buffsHandTwo.Except(buffsHandOne).ToList();
+        if (exceptOneBuffsHand.Count > 0 || exceptTwoBuffsHand.Count > 0)
         {
-            return string.Format("Abilities: {0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
+            return string.Format("BuffsHand: {0} vs {1}", string.Join(",", buffsHandOne), string.Join(",", buffsHandTwo));
+        }
+
+        return null;
+    }
+
+    private static string GetBuffsFieldDiff(List<string> buffsFieldCodes, List<string> buffsFieldTwo)
+    {
+        if (buffsFieldCodes == null)
+        {
+            buffsFieldCodes = new List<string>();
+        }
+
+        List<string> buffsFieldOne = Card.GetAbilityStringsByCodes(buffsFieldCodes);
+
+        if (buffsFieldTwo == null)
+        {
+            buffsFieldTwo = new List<string>();
+        }
+
+        List<string> exceptOneBuffsField = buffsFieldOne.Except(buffsFieldTwo).ToList();
+        List<string> exceptTwoBuffsField = buffsFieldTwo.Except(buffsFieldOne).ToList();
+        if (exceptOneBuffsField.Count > 0 || exceptTwoBuffsField.Count > 0)
+        {
+            return string.Format("BuffsField: {0} vs {1}", string.Join(",", buffsFieldOne), string.Join(",", buffsFieldTwo));
         }
 
         return null;

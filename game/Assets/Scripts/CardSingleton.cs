@@ -75,7 +75,6 @@ public class CardSingleton : Singleton<CardSingleton>
 
     public GameObject GetSummonFromPool(string name)
     {
-        Debug.Log(String.Format("Attempting to get {0}", name));
         return summonPool[name];
     }
 

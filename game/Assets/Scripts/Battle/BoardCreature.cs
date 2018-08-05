@@ -385,7 +385,7 @@ public class BoardCreature : Targetable
 
     public void AddBuff(string buff)
     {
-        if (Array.IndexOf(Card.VALID_BUFFS, buff) < 0)
+        if (Array.IndexOf(Card.VALID_BUFFS_FIELD, buff) < 0)
         {
             Debug.LogError("Invalid buff.");
             return;

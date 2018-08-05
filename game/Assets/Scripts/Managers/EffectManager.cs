@@ -965,9 +965,12 @@ public class EffectManager : MonoBehaviour
         spawnCard.SetAttack(spawnCard.AttackStart);
         spawnCard.SetHealth(spawnCard.HealthStart);
         spawnCard.SetHealthMax(spawnCard.HealthStart);
-        spawnCard.SetAbilities(spawnCard.GetAbilitiesStart());
         spawnCard.SetIsFrozen(0);
         spawnCard.SetIsSilenced(0);
+
+        spawnCard.SetAbilities(spawnCard.GetAbilitiesStart());
+        spawnCard.SetBuffsHand(new List<string>());
+        spawnCard.SetBuffsField(new List<string>());
 
         if (spawnCard.GetAbilities().Contains(Card.CARD_ABILITY_CHARGE))
         {

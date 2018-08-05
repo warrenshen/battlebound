@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class BattleCardObject : CardObject
 {
     public static Vector3 CARD_VISUAL_SIZE = new Vector3(3.55f, 3, 3);
-    public const string HAND_CARD_DECREASE_COST_BY_COLOR = "HAND_CARD_DECREASE_COST_BY_COLOR";
 
     [SerializeField]
     protected Player owner;
@@ -72,7 +71,7 @@ public class BattleCardObject : CardObject
 
         int cost = this.card.GetCost();
 
-        if (this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
+        if (this.buffs.Contains(Card.BUFF_HAND_DECREASE_COST_BY_COLOR))
         {
             cost -= 10;
         }
@@ -87,9 +86,9 @@ public class BattleCardObject : CardObject
 
     public void GrantDecreaseCostByColor()
     {
-        if (!this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
+        if (!this.buffs.Contains(Card.BUFF_HAND_DECREASE_COST_BY_COLOR))
         {
-            this.buffs.Add(HAND_CARD_DECREASE_COST_BY_COLOR);
+            this.buffs.Add(Card.BUFF_HAND_DECREASE_COST_BY_COLOR);
             SetHyperCardCost(this.visual, this);
             this.visual.GetTextFieldWithKey("Cost").TmpObject.color = BoardCreatureObject.LIGHT_GREEN;
         }
@@ -97,9 +96,9 @@ public class BattleCardObject : CardObject
 
     public void RemoveDecreaseCostByColor()
     {
-        if (this.buffs.Contains(HAND_CARD_DECREASE_COST_BY_COLOR))
+        if (this.buffs.Contains(Card.BUFF_HAND_DECREASE_COST_BY_COLOR))
         {
-            this.buffs.Remove(HAND_CARD_DECREASE_COST_BY_COLOR);
+            this.buffs.Remove(Card.BUFF_HAND_DECREASE_COST_BY_COLOR);
             SetHyperCardCost(this.visual, this);
             this.visual.GetTextFieldWithKey("Cost").TmpObject.color = Color.white;
         }
@@ -238,6 +237,7 @@ public class BattleCardObject : CardObject
         challengeCard.SetLevel(this.card.Level);
         challengeCard.SetCost(GetCost()); // Note this is calling this' GetCost.
         challengeCard.SetCostStart(this.card.GetCost());
+        challengeCard.SetBuffsHand(this.buffs);
 
         if (this.card.GetType() == typeof(CreatureCard))
         {
@@ -251,7 +251,6 @@ public class BattleCardObject : CardObject
             challengeCard.SetAttackStart(creatureCard.GetAttack());
             challengeCard.SetAbilities(creatureCard.GetAbilities());
             challengeCard.SetAbilitiesStart(creatureCard.GetAbilities());
-            challengeCard.SetBuffsHand(this.buffs);
         }
         else if (this.card.GetType() == typeof(SpellCard))
         {
