@@ -52,7 +52,7 @@ public class CardObject : MouseWatchable
 
     protected HyperCard.Card VisualizeCard()
     {
-        HyperCard.Card cardVisual = ResourceSingleton.Instance.TakeCardFromPool();
+        HyperCard.Card cardVisual = CardSingleton.Instance.TakeCardFromPool();
 
         cardVisual.transform.parent = this.transform;
         cardVisual.transform.localPosition = Vector3.zero;
@@ -88,7 +88,7 @@ public class CardObject : MouseWatchable
     {
         if (this.visual != null)
         {
-            ResourceSingleton.Instance.ReturnCardToPool(this.visual);
+            CardSingleton.Instance.ReturnCardToPool(this.visual);
         }
 
         Destroy(gameObject);

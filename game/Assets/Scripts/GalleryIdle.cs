@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Linq;
+
 public class GalleryIdle : MonoBehaviour
 {
     public string cardName;
@@ -11,9 +13,11 @@ public class GalleryIdle : MonoBehaviour
 
     public Card card;
 
+    private static System.Random random = new System.Random();
+
     void Awake()
     {
-        this.card = Card.CreateByNameAndLevel("qzfad", this.cardName, 0);
+        this.card = Card.CreateByNameAndLevel(RandomString(5), this.cardName, 0);
 
         this.summonAnimClips = new List<string>();
         this.summonAnimation = this.transform.GetChild(0).GetComponent<Animation>();
@@ -56,5 +60,12 @@ public class GalleryIdle : MonoBehaviour
     {
         this.summonAnimation.Play(this.summonAnimClips[0]);
         this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
+    }
+
+    public static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+          .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 }
