@@ -473,19 +473,25 @@ public abstract class Card
 
     public static Card CreateByNameAndLevel(string id, string name, int level)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            Debug.LogError("Invalid name parameter.");
+            return null;
+        }
+
         Card card;
 
-        if (CARD_NAMES_CREATURE.Any(item => item.Equals(name)))
+        if (CARD_NAMES_CREATURE.Contains(name))
         {
             card = new CreatureCard(id, name, level);
         }
-        else if (CARD_NAMES_SPELL.Any(item => item.Equals(name)))
+        else if (CARD_NAMES_SPELL.Contains(name))
         {
             card = new SpellCard(id, name, level);
         }
         else
         {
-            Debug.LogError("Card:CreateByName, card not found / not supported yet.");
+            Debug.LogError(string.Format("Card:CreateByName, card {0} not found / not supported yet.", name));
             return null;
         }
 
