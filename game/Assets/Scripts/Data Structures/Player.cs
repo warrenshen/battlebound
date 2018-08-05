@@ -679,20 +679,20 @@ public class Player
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PHANTOM_SKULLCRUSHER, 1));
 
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_UNSTABLE_POWER, 4));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_TOUCH_OF_ZEUS, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RAZE_TO_ASHES, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEEP_FREEZE, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BRR_BRR_BLIZZARD, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RIOT_UP, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_WIDESPREAD_FROSTBITE, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GREEDY_FINGERS, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_TOUCH_OF_ZEUS, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RAZE_TO_ASHES, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEEP_FREEZE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BRR_BRR_BLIZZARD, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RIOT_UP, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_WIDESPREAD_FROSTBITE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GREEDY_FINGERS, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_MUDSLINGING, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEATH_NOTE, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SPRAY_N_PRAY, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GRAVE_DIGGING, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_MUDSLINGING, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEATH_NOTE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SPRAY_N_PRAY, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GRAVE_DIGGING, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_THE_SEVEN, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BATTLE_ROYALE, 1));
 
         Deck chosen = new Deck(deckName, cards);

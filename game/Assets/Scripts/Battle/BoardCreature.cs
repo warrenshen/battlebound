@@ -423,6 +423,7 @@ public class BoardCreature : Targetable
         challengeCard.SetSpawnRank(this.spawnRank);
         challengeCard.SetAbilities(this.abilities);
         challengeCard.SetAbilitiesStart(this.card.GetAbilities());
+        challengeCard.SetBuffsField(this.buffs);
 
         return challengeCard;
     }

@@ -251,6 +251,7 @@ public class BattleCardObject : CardObject
             challengeCard.SetAttackStart(creatureCard.GetAttack());
             challengeCard.SetAbilities(creatureCard.GetAbilities());
             challengeCard.SetAbilitiesStart(creatureCard.GetAbilities());
+            challengeCard.SetBuffsHand(this.buffs);
         }
         else if (this.card.GetType() == typeof(SpellCard))
         {
