@@ -16,6 +16,8 @@ public class EffectManager : MonoBehaviour
 
     private UnityAction callback;
 
+    private IFXManager fXManager;
+
     public static EffectManager Instance { get; private set; }
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
@@ -210,6 +212,15 @@ public class EffectManager : MonoBehaviour
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
         this.lQueue = new List<Effect>();
+
+        if (BattleSingleton.Instance.IsEnvironmentTest())
+        {
+            this.fXManager = new FXManagerMock();
+        }
+        else
+        {
+            this.fXManager = new FXManager();
+        }
     }
 
     // Update is called once per frame
@@ -668,8 +679,11 @@ public class EffectManager : MonoBehaviour
             effect.CardId
         );
 
-        //string effectName = "FanMeteorsVFX";   //TODO: use attackingCreature.CreatureCard.GetEffectPrefab();
-        //FXPoolManager.Instance.PlayEffectLookAt(effectName, attackingCreature.transform, defendingTransform);
+        this.fXManager.PlayEffectLookAt(
+            "FanMeteorsVFX",
+            attackingCreature.GetTargetableObject().transform,
+            defendingTransform
+        );
 
         if (defendingCreature != null)
         {
@@ -1532,47 +1546,49 @@ public class EffectManager : MonoBehaviour
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-                //List<Effect> effects = new List<Effect>();
-                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                this.isWaiting = true;
 
-                //this.isWaiting = true;
-                //LeanTween
-                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                //.setEaseInOutCirc()
-                //.setOnComplete(() =>
-                //{
-                //    int damageDone = defendingCreature.TakeDamage(20);
-                //    effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                this.fXManager.ThrowEffectWithCallback(
+                    "ExplosivePropVFX",
+                    attackingTargetable.GetTargetableObject().transform.position,
+                    defendingTargetable.GetTargetableObject().transform.position,
+                    () =>
+                    {
+                        int damageDone = defendingCreature.TakeDamage(20);
+                        List<Effect> effects = GetEffectsOnCreatureDamageTaken(
+                            defendingCreature,
+                            damageDone
+                        );
+                        AddToQueues(effects);
 
-                //    bombObject.SetActive(false);
-
-                //    AddToQueues(effects);
-                //    this.isWaiting = false;
-                //    this.isDirty = true;
-                //});
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    }
+                );
             }
             else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
             {
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-                //List<Effect> effects = new List<Effect>();
-                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                this.isWaiting = true;
 
-                //this.isWaiting = true;
-                //LeanTween
-                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                //.setEaseInOutCirc()
-                //.setOnComplete(() =>
-                //{
-                //    int damageDone = defendingAvatar.TakeDamage(20);
-                //    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
+                this.fXManager.ThrowEffectWithCallback(
+                    "ExplosivePropVFX",
+                    attackingTargetable.GetTargetableObject().transform.position,
+                    defendingTargetable.GetTargetableObject().transform.position,
+                    () =>
+                    {
+                        int damageDone = defendingAvatar.TakeDamage(20);
+                        List<Effect> effects = GetEffectsOnFaceDamageTaken(
+                        defendingAvatar,
+                            damageDone
+                        );
+                        AddToQueues(effects);
 
-                //    bombObject.SetActive(false);
-
-                //    AddToQueues(effects);
-                //    this.isWaiting = false;
-                //    this.isDirty = true;
-                //});
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    }
+                );
             }
             else
             {
@@ -1588,47 +1604,49 @@ public class EffectManager : MonoBehaviour
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-                //List<Effect> effects = new List<Effect>();
-                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                this.isWaiting = true;
 
-                //this.isWaiting = true;
-                //LeanTween
-                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                //.setEaseInOutCirc()
-                //.setOnComplete(() =>
-                //{
-                //    int damageDone = defendingCreature.TakeDamage(10);
-                //    effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+                this.fXManager.ThrowEffectWithCallback(
+                    "ExplosivePropVFX",
+                    attackingTargetable.GetTargetableObject().transform.position,
+                    defendingTargetable.GetTargetableObject().transform.position,
+                    () =>
+                    {
+                        int damageDone = defendingCreature.TakeDamage(10);
+                        List<Effect> effects = GetEffectsOnCreatureDamageTaken(
+                            defendingCreature,
+                            damageDone
+                        );
+                        AddToQueues(effects);
 
-                //    bombObject.SetActive(false);
-
-                //    AddToQueues(effects);
-                //    this.isWaiting = false;
-                //    this.isDirty = true;
-                //});
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    }
+                );
             }
             else if (defendingTargetable.GetType() == typeof(PlayerAvatar))
             {
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-                //List<Effect> effects = new List<Effect>();
-                //GameObject bombObject = FXPoolManager.Instance.PlayEffect("ExplosivePropVFX", attackingTargetable.transform.position);
+                this.isWaiting = true;
 
-                //this.isWaiting = true;
-                //LeanTween
-                //.move(bombObject, defendingTargetable.transform.position, ActionManager.TWEEN_DURATION * 3)
-                //.setEaseInOutCirc()
-                //.setOnComplete(() =>
-                //{
-                //    int damageDone = defendingAvatar.TakeDamage(10);
-                //    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
+                this.fXManager.ThrowEffectWithCallback(
+                    "ExplosivePropVFX",
+                    attackingTargetable.GetTargetableObject().transform.position,
+                    defendingTargetable.GetTargetableObject().transform.position,
+                    () =>
+                    {
+                        int damageDone = defendingAvatar.TakeDamage(10);
+                        List<Effect> effects = GetEffectsOnFaceDamageTaken(
+                        defendingAvatar,
+                            damageDone
+                        );
+                        AddToQueues(effects);
 
-                //    bombObject.SetActive(false);
-
-                //    AddToQueues(effects);
-                //    this.isWaiting = false;
-                //    this.isDirty = true;
-                //});
+                        this.isWaiting = false;
+                        this.isDirty = true;
+                    }
+                );
             }
             else
             {
