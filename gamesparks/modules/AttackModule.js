@@ -37,8 +37,10 @@ function damageCardMax(card) {
  * @return int - damage done to card
  **/
 function damageCardWithLethal(card, damage) {
-    if (card.abilities.indexOf(CARD_ABILITY_SHIELD) >= 0) {
-        card.abilities = card.abilities.filter(function(ability) { ability != CARD_ABILITY_SHIELD });
+    if (hasCardAbilityOrBuff(card, CARD_ABILITY_SHIELD)) {
+        card.abilities = card.abilities.filter(function(ability) {
+            return ability != CARD_ABILITY_SHIELD;
+        });
         return 0;
     } else {
         return damageCardMax(card);
