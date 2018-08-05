@@ -22,7 +22,9 @@ scoreRequest.leaderboards = ["HIGH_SCORE_LB"];
 scoreRequest.player = playerId;
 const scoreResponse = scoreRequest.Send();
 const playerRank = scoreResponse.HIGH_SCORE_LB.SCORE_ATTR;
-    
+
+const GAME_VERSION_LATEST = "0.1";
+
 Spark.setScriptData("playerId", playerId);
 Spark.setScriptData("displayName", player.getDisplayName());
 Spark.setScriptData("address", address);
@@ -31,5 +33,6 @@ Spark.setScriptData("activeChallengeId", player.getPrivateData("activeChallengeI
 Spark.setScriptData("infoByMatchType", player.getPrivateData("infoByMatchType"));
 Spark.setScriptData("level", player.getPrivateData("level"));
 Spark.setScriptData("rank", playerRank);
+Spark.setScriptData("latestVersion", GAME_VERSION_LATEST);
 
 setScriptSuccess();

@@ -77,12 +77,6 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
         
         // TODO: maybe should not set to 1 for all cards.
         fieldCard.canAttack = 1;
-        
-        // fieldCard.buffs.forEach(function(buff) {
-        //     if (buff.category === BUFF_CATEGORY_UNSTABLE_POWER) {
-        //         fieldCard.health = 0;
-        //     }
-        // });
     }
     
     // Player with next turn should start with no move taken.

@@ -58,7 +58,7 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
     CARD_ABILITY_DEATH_RATTLE_RESUMMON,
     CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
-    CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
+    CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
     CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
     EFFECT_PLAYER_AVATAR_DIE,
@@ -100,24 +100,8 @@ const EFFECTS_DEATH_RATTLE = [
     CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
     CARD_ABILITY_DEATH_RATTLE_RESUMMON,
     CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
-    CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
+    CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
 ];
-
-function hasCardAbilityOrBuff(card, abilityOrBuff) {
-    if (card.isSilenced == 1) {
-        return false;
-    }
-
-    if (card.abilities && card.abilities.indexOf(abilityOrBuff) >= 0) {
-        return true;
-    }
-
-    if (card.buffs && card.buffs.indexOf(abilityOrBuff) >= 0) {
-        return true;
-    }
-
-    return false;
-}
 
 function addToQueues(newEffects) {
     if (!Array.isArray(newEffects)) {
@@ -514,8 +498,8 @@ function processLQueue(challengeStateData, effect) {
         case CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS:
             newEffects = abilityDeathRattleSummonDuskDwellers(challengeStateData, effect);
             break;
-        case CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON:
-            newEffects = abilityDeathRattleSummonSummonedDragon(challengeStateData, effect);
+        case CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
+            newEffects = abilityDeathRattleSummonSummonedDragons(challengeStateData, effect);
             break;
         case EFFECT_CHANGE_TURN_DRAW_CARD:
         case CARD_ABILITY_END_TURN_DRAW_CARD:
@@ -1116,7 +1100,7 @@ function abilityDeathRattleSummonDuskDwellers(challengeStateData, effect) {
     ];
 }
 
-function abilityDeathRattleSummonSummonedDragon(challengeStateData, effect) {
+function abilityDeathRattleSummonSummonedDragons(challengeStateData, effect) {
     const playerId = effect.playerId;
     const cardId = effect.cardId;
 
@@ -1592,12 +1576,12 @@ function _processSpellTargetedPlayFriendly(challengeStateData, playerId, playedC
     if (playedCard.name === SPELL_NAME_UNSTABLE_POWER) {
         // Give a creature +30, it dies at start of next turn.
         card.attack += 30;
-        card.buffs.push(BUFF_CATEGORY_UNSTABLE_POWER);
+        card.buffsField.push(BUFF_CATEGORY_UNSTABLE_POWER);
     } else if (playedCard.name === SPELL_NAME_BESTOWED_VIGOR) {
         card.attack += 20;
         card.health += 10;
         card.healthMax += 10;
-        card.buffs.push(BUFF_CATEGORY_BESTOWED_VIGOR);
+        card.buffsField.push(BUFF_CATEGORY_BESTOWED_VIGOR);
     } else {
         setScriptError("Unrecognized spell card name.");
     }

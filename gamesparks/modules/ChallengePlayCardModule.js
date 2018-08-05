@@ -56,13 +56,6 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
         setScriptError("Invalid fieldIndex parameter - card exists at fieldIndex.");
     }
     
-    if (!Array.isArray(playedCard.abilities)) {
-        playedCard.abilities = [];
-    }
-    if (!Array.isArray(playedCard.buffs)) {
-        playedCard.buffs = [];    
-    }
-    
     if (playedCard.abilities.indexOf(CARD_ABILITY_CHARGE) >= 0) {
         playedCard.canAttack = 1;
     } else {

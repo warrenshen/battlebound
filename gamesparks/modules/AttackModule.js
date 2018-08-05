@@ -5,6 +5,22 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+function hasCardAbilityOrBuff(card, abilityOrBuff) {
+    if (card.isSilenced == 1) {
+        return false;
+    }
+
+    if (card.abilities && card.abilities.indexOf(abilityOrBuff) >= 0) {
+        return true;
+    }
+
+    if (card.buffsField && card.buffsField.indexOf(abilityOrBuff) >= 0) {
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * @return int - damage done to card
  **/
@@ -93,14 +109,14 @@ function _removeBuffsFromCard(card, deadCardIds) {
     }
     
     const newBuffs = [];
-    card.buffs.forEach(function(buff) {
+    card.buffsField.forEach(function(buff) {
         if (deadCardIds.indexOf(buff.granterId) >= 0) {
             card.attack -= buff.attack;
         } else {
             newBuffs.push(buff);
         }
     });
-    card.buffs = newBuffs;
+    card.buffsField = newBuffs;
     return card;
 }
 
@@ -301,15 +317,15 @@ function _updateHandCardCosts(playerState) {
         }
         
         if (colorToCount[color] >= 3) {
-            if (card.handBuffs == null) {
-                card.handBuffs = [];
+            if (card.buffsHand == null) {
+                card.buffsHand = [];
             }
-            if (card.handBuffs.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) < 0) {
-                card.handBuffs.push(HAND_CARD_DECREASE_COST_BY_COLOR);
+            if (card.buffsHand.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) < 0) {
+                card.buffsHand.push(HAND_CARD_DECREASE_COST_BY_COLOR);
             }
         } else {
-            if (card.handBuffs != null && card.handBuffs.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
-                card.handBuffs = card.handBuffs.filter(function(handBuff) {
+            if (card.buffsHand != null && card.buffsHand.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
+                card.buffsHand = card.buffsHand.filter(function(handBuff) {
                     return handBuff != HAND_CARD_DECREASE_COST_BY_COLOR;
                 });
             }
@@ -318,7 +334,7 @@ function _updateHandCardCosts(playerState) {
     
     hand.forEach(function(card) {
         var baseCost = card.costStart;
-        if (card.handBuffs != null && card.handBuffs.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
+        if (card.buffsHand != null && card.buffsHand.indexOf(HAND_CARD_DECREASE_COST_BY_COLOR) >= 0) {
             baseCost -= 10;
         }
         

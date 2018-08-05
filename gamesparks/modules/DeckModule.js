@@ -374,7 +374,8 @@ function getActiveDeckByPlayerId(playerId) {
         }
         instance.abilitiesStart = instance.abilities;
         
-        instance.handBuffs = [];
+        instance.buffsHand = [];
+        instance.buffsField = [];
     });
     
     return instances;
