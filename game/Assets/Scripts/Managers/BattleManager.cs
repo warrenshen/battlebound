@@ -676,8 +676,8 @@ public class BattleManager : MonoBehaviour
             return false;
         }
 
-        BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
-        if (targetedCreature == null)
+        BoardCreatureObject targetedCreatureObject = hit.collider.GetComponent<BoardCreatureObject>();
+        if (targetedCreatureObject == null)
         {
             return false;
         }
@@ -686,14 +686,14 @@ public class BattleManager : MonoBehaviour
 
         if (
             SpellCard.TARGETED_SPELLS_FRIENDLY_ONLY.Contains(battleCardObject.Card.Name)
-            && playerId != targetedCreature.GetPlayerId()
+            && playerId != targetedCreatureObject.GetPlayerId()
         )
         {
             return false;
         }
         else if (
             SpellCard.TARGETED_SPELLS_OPPONENT_ONLY.Contains(battleCardObject.Card.Name)
-            && playerId == targetedCreature.GetPlayerId()
+            && playerId == targetedCreatureObject.GetPlayerId()
         )
         {
             return false;
@@ -836,7 +836,7 @@ public class BattleManager : MonoBehaviour
      */
     public bool PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
     {
-        BoardCreature targetedCreature = hit.collider.GetComponent<BoardCreature>();
+        BoardCreatureObject targetedCreatureObject = hit.collider.GetComponent<BoardCreatureObject>();
 
         Player player = battleCardObject.Owner;
         ChallengeMove challengeMove;
@@ -850,8 +850,8 @@ public class BattleManager : MonoBehaviour
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
             moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
-            moveAttributes.SetFieldId(targetedCreature.GetPlayerId());
-            moveAttributes.SetTargetId(targetedCreature.GetCardId());
+            moveAttributes.SetFieldId(targetedCreatureObject.GetPlayerId());
+            moveAttributes.SetTargetId(targetedCreatureObject.GetCardId());
 
             challengeMove.SetMoveAttributes(moveAttributes);
             BattleState.Instance().AddServerMove(challengeMove);
@@ -868,8 +868,8 @@ public class BattleManager : MonoBehaviour
             if (FlagHelper.IsServerEnabled())
             {
                 PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
-                    targetedCreature.GetPlayerId(),
-                    targetedCreature.GetCardId()
+                    targetedCreatureObject.GetPlayerId(),
+                    targetedCreatureObject.GetCardId()
                 );
                 BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
                     battleCardObject.Card.Id,
@@ -884,7 +884,10 @@ public class BattleManager : MonoBehaviour
                 BattleState.Instance().AddServerMove(challengeMove);
             }
 
-            EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
+            EffectManager.Instance.OnSpellTargetedPlay(
+                battleCardObject,
+                targetedCreatureObject.GetTargetable() as BoardCreature
+            );
             UseCard(battleCardObject);
 
             return true;

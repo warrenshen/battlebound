@@ -191,7 +191,7 @@ public abstract class Card
     public const string CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY = "CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY";
     public const string CARD_ABILITY_DEATH_RATTLE_RESUMMON = "CARD_ABILITY_DEATH_RATTLE_RESUMMON";
     public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS = "CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS";
-    public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON = "CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON";
+    public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS = "CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS";
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
@@ -231,7 +231,7 @@ public abstract class Card
         CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         CARD_ABILITY_DEATH_RATTLE_RESUMMON,
         CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
-        CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
+        CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
     };
 
     public static readonly Dictionary<int, string> ABILITY_CODE_TO_STRING = new Dictionary<int, string>
@@ -272,7 +272,7 @@ public abstract class Card
         { 33, CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY },
         { 34, CARD_ABILITY_DEATH_RATTLE_RESUMMON },
         { 35, CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS },
-        { 36, CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON },
+        { 36, CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS },
     };
 
     public static void SetHyperCardArtwork(ref HyperCard.Card cardVisual, Card card)
@@ -514,6 +514,24 @@ public abstract class Card
             }
         }
         return abilityStrings;
+    }
+
+    public static List<string> GetBuffStringByCodes(List<string> buffCodes)
+    {
+        List<string> buffStrings = new List<string>();
+        foreach (string buffCode in buffCodes)
+        {
+            if (VALID_BUFFS.Contains(buffCode))
+            {
+                buffStrings.Add(buffCode);
+            }
+            else
+            {
+                int buffInt = Int32.Parse(buffCode);
+                buffStrings.Add(ABILITY_CODE_TO_STRING[buffInt]);
+            }
+        }
+        return buffStrings;
     }
 }
 

@@ -74,19 +74,20 @@ public class ChallengeCard
     public int IsSilenced => isSilenced;
 
     [SerializeField]
+    private int spawnRank;
+    public int SpawnRank => spawnRank;
+
+    [SerializeField]
     private List<string> abilities;
 
     [SerializeField]
     private List<string> abilitiesStart;
 
     [SerializeField]
-    private int spawnRank;
-    public int SpawnRank => spawnRank;
+    private List<string> buffsHand;
 
-    // TODO
-    //[SerializeField]
-    //private List<Buff> buffs;
-    //public List<Buff> Buffs => buffs;
+    [SerializeField]
+    private List<string> buffsField;
 
     public void SetId(string id)
     {
@@ -173,6 +174,11 @@ public class ChallengeCard
         this.isSilenced = isSilenced;
     }
 
+    public void SetSpawnRank(int spawnRank)
+    {
+        this.spawnRank = spawnRank;
+    }
+
     public void SetAbilities(List<string> abilities)
     {
         this.abilities = abilities;
@@ -183,9 +189,14 @@ public class ChallengeCard
         this.abilitiesStart = abilitiesStart;
     }
 
-    public void SetSpawnRank(int spawnRank)
+    public void SetBuffsHand(List<string> buffsHand)
     {
-        this.spawnRank = spawnRank;
+        this.buffsHand = buffsHand;
+    }
+
+    public void SetBuffsField(List<string> buffsField)
+    {
+        this.buffsField = buffsField;
     }
 
     public List<string> GetAbilities()
@@ -196,6 +207,16 @@ public class ChallengeCard
     public List<string> GetAbilitiesStart()
     {
         return Card.GetAbilityStringsByCodes(this.abilitiesStart);
+    }
+
+    public List<string> GetBuffsHand()
+    {
+        return Card.GetBuffStringByCodes(this.buffsHand);
+    }
+
+    public List<string> GetBuffsField()
+    {
+        return Card.GetBuffStringByCodes(this.buffsField);
     }
 
     public bool Equals(ChallengeCard other)
@@ -290,10 +311,49 @@ public class ChallengeCard
             return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
 
+        string buffsHandDiff = GetAbilitiesDiff(this.buffsHand, other.buffsHand);
+        if (buffsHandDiff != null)
+        {
+            return string.Format("BuffsHand: {0} [{1}]", buffsHandDiff, string.Format("{0}, {1}", this.id, other.Name));
+        }
+
+        string buffsFieldDiff = GetAbilitiesDiff(this.buffsField, other.buffsField);
+        if (abilitiesStartDiff != null)
+        {
+            return string.Format("BuffsField: {0} [{1}]", buffsFieldDiff, string.Format("{0}, {1}", this.id, other.Name));
+        }
+
         return null;
     }
 
     private static string GetAbilitiesDiff(List<string> abilityCodes, List<string> abilitiesTwo)
+    {
+        if (abilityCodes == null)
+        {
+            abilityCodes = new List<string>();
+        }
+
+        List<string> abilitiesOne = Card.GetAbilityStringsByCodes(abilityCodes);
+
+        if (abilitiesTwo == null)
+        {
+            abilitiesTwo = new List<string>();
+        }
+
+        abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
+        abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
+
+        List<string> exceptOneAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
+        List<string> exceptTwoAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
+        if (exceptOneAbilities.Count > 0 || exceptTwoAbilities.Count > 0)
+        {
+            return string.Format("Abilities: {0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
+        }
+
+        return null;
+    }
+
+    private static string GetBuffsDiff(List<string> abilityCodes, List<string> abilitiesTwo)
     {
         if (abilityCodes == null)
         {

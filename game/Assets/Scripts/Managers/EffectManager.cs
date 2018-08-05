@@ -78,7 +78,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
         Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
-        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
+        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
         EFFECT_PLAYER_AVATAR_DIE,
@@ -125,7 +125,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
         Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
-        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON,
+        Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
     };
 
     private static readonly List<string> EFFECT_DAMAGE_TAKEN = new List<string>
@@ -595,7 +595,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS:
                 AbilityDeathRattleSummonDuskDwellers(effect);
                 break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGON:
+            case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
                 AbilityDeathRattleSummonSummonedDragon(effect);
                 break;
             case Card.BUFF_CATEGORY_UNSTABLE_POWER:
