@@ -11,8 +11,6 @@ using Nethereum.Web3.Accounts;
 public class BuyableCardListItem : CardListItem
 {
     [SerializeField]
-    private Image cardImage;
-    [SerializeField]
     private Text priceText;
     [SerializeField]
     private Button bidAuctionButton;
@@ -20,8 +18,9 @@ public class BuyableCardListItem : CardListItem
     [SerializeField]
     protected CardAuction cardAuction;
 
-    public void Awake()
+    public new void Awake()
     {
+        base.Awake();
         this.bidAuctionButton.onClick.AddListener(OnBidAuctionButtonClick);
     }
 

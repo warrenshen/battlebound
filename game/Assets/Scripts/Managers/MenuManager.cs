@@ -7,9 +7,12 @@ public class MenuManager : MonoBehaviour
 {
     public static float TWEEN_DURATION = 0.05f;
 
+    public UMP_Manager UMP;
+
     public Transform gallery;
-    private Transform activeGalleryCreature;
     private int galleryIndex;
+
+    public Transform marketplacePreview;
 
     [SerializeField]
     private string currentView;
@@ -21,8 +24,11 @@ public class MenuManager : MonoBehaviour
     [SerializeField]
     private Button logoutButton;
 
+    public static MenuManager Instance { get; private set; }
+
     private void Awake()
     {
+        Instance = this;
         if (!SparkSingleton.Instance.IsAuthenticated)
         {
             this.usernameText.text = "Not logged in";
@@ -109,8 +115,11 @@ public class MenuManager : MonoBehaviour
         target.transform.localScale = Vector3.one;
     }
 
-    public void ChangeView(string view)
+    public void ViewMarketplace()
     {
-        this.currentView = view;
+        UMP.ChangeWindow(5);
+        if (gallery.gameObject.activeSelf == true)
+            gallery.gameObject.SetActive(false);
+        marketplacePreview.gameObject.SetActive(true);
     }
 }

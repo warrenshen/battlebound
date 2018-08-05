@@ -6,12 +6,11 @@ using UnityEngine.UI;
 public class SellableCardListItem : CardListItem
 {
     [SerializeField]
-    private Image cardImage;
-    [SerializeField]
     private Button createAuctionButton;
 
-    public void Awake()
+    public new void Awake()
     {
+        base.Awake();
         this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
     }
 

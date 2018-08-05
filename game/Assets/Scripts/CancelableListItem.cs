@@ -7,15 +7,14 @@ using Nethereum.Web3.Accounts;
 public class CancelableListItem : CardListItem
 {
     [SerializeField]
-    private Image cardImage;
-    [SerializeField]
     private Button cancelAuctionButton;
 
     [SerializeField]
     protected CardAuction cardAuction;
 
-    public void Awake()
+    public new void Awake()
     {
+        base.Awake();
         this.cancelAuctionButton.onClick.AddListener(OnCancelAuctionButtonClick);
     }
 
