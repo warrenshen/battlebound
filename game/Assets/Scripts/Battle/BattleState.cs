@@ -50,7 +50,8 @@ public class BattleState
         {
             instance = new BattleState();
         }
-        EffectManager.Instance.ReadyUp();
+        // Note we do not call EffectManager.Instance.ReadyUp here,
+        // as we leave that to the BattleManager.
         return instance;
     }
 
@@ -102,7 +103,10 @@ public class BattleState
         Board.Instance().RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
         Board.Instance().RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
 
-        GameStart();
+        if (!FlagHelper.IsServerEnabled())
+        {
+            GameStart();
+        }
     }
 
     private BattleState(
@@ -324,7 +328,7 @@ public class BattleState
         PlayerState devicePlayerState = GetPlayerState();
         PlayerState deviceOpponentState = GetOpponentState();
 
-        if (FlagHelper.IsServerEnabled())
+        if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsServerEnabled())
         {
             bool doesMatch = BattleSingleton.Instance.ComparePlayerStates(
                 devicePlayerState,

@@ -190,6 +190,18 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    public static bool IsWaiting()
+    {
+        if (Instance != null)
+        {
+            return Instance.isWaiting || !Instance.isReady;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -2254,18 +2266,6 @@ public class EffectManager : MonoBehaviour
         }
 
         return effects;
-    }
-
-    public static bool IsWaiting()
-    {
-        if (Instance != null)
-        {
-            return Instance.isWaiting;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     public void SetDeadCards(List<ChallengeCard> deadCards)
