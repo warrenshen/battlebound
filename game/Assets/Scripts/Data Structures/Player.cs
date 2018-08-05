@@ -170,7 +170,6 @@ public class Player
             targetPosition = BattleManager.Instance.EnemyHandTransform.position;
         }
 
-        Debug.Log(BattleManager.Instance.LightGameObject);
         LeanTween
             .move(
                 BattleManager.Instance.LightGameObject,

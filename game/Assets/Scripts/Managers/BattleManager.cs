@@ -416,7 +416,7 @@ public class BattleManager : MonoBehaviour
             if (FlagHelper.IsServerEnabled())
             {
                 CardAttackAttributes attributes = new CardAttackAttributes(
-                    attackingTargetableObject.GetPlayerId(),
+                    defendingTargetableObject.GetPlayerId(),
                     defendingTargetableObject.GetCardId()
                 );
                 BattleSingleton.Instance.SendChallengeCardAttackRequest(
