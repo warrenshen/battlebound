@@ -8,6 +8,12 @@ using GameSparks.Api.Messages;
 
 public class BattleSingleton : Singleton<BattleSingleton>
 {
+    public const int ENVIRONMENT_NORMAL = 0;
+    public const int ENVIRONMENT_TEST = 1;
+
+    private int environment;
+    public int Environment => environment;
+
     private PlayerState playerState;
     public PlayerState PlayerState => playerState;
 
@@ -40,6 +46,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
+        this.environment = ENVIRONMENT_NORMAL;
+
         this.challengeStarted = false;
 
         this.moveCount = 0;
@@ -63,6 +71,16 @@ public class BattleSingleton : Singleton<BattleSingleton>
         {
             EmitChallengeMove();
         }
+    }
+
+    public void SetEnvironmentTest()
+    {
+        this.environment = ENVIRONMENT_TEST;
+    }
+
+    public bool IsEnvironmentTest()
+    {
+        return this.environment == ENVIRONMENT_TEST;
     }
 
     private void ChallengeIssuedMessageHandler(ChallengeIssuedMessage message)
@@ -98,7 +116,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
-            BattleManager.Instance.SetChallengeEndState(challengeEndState);
+            BattleState.Instance().SetChallengeEndState(challengeEndState);
         }
     }
 
@@ -111,7 +129,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
-            BattleManager.Instance.SetChallengeEndState(challengeEndState);
+            BattleState.Instance().SetChallengeEndState(challengeEndState);
         }
     }
 
@@ -207,7 +225,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
                 challengeMoves.Add(JsonUtility.FromJson<ChallengeMove>(moveData.JSON));
             }
 
-            BattleManager.Instance.SetServerMoves(challengeMoves);
+            BattleState.Instance().SetServerMoves(challengeMoves);
         }
 
         // Logic to load in existing dead cards for resume challenge case.
@@ -250,11 +268,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     public void EmitChallengeMove()
     {
-        if (BattleManager.Instance.CanReceiveChallengeMove())
+        if (BattleState.Instance().CanReceiveChallengeMove())
         {
             ChallengeMove challengeMove = this.moveQueue[0];
             this.moveQueue.RemoveAt(0);
-            BattleManager.Instance.ReceiveChallengeMove(challengeMove);
+            BattleState.Instance().ReceiveChallengeMove(challengeMove);
         }
     }
 
@@ -480,8 +498,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void OnChallengeRequestError(LogChallengeEventResponse response, string requestName)
     {
-        string devicePlayerStateString = JsonUtility.ToJson(BattleManager.Instance.GetPlayerState());
-        string deviceOpponentStateString = JsonUtility.ToJson(BattleManager.Instance.GetOpponentState());
+        string devicePlayerStateString = JsonUtility.ToJson(BattleState.Instance().GetPlayerState());
+        string deviceOpponentStateString = JsonUtility.ToJson(BattleState.Instance().GetOpponentState());
 
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("ChallengeLogDeviceError");
@@ -559,7 +577,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         // Show prompt to user and ask what they want to do.
     }
 
-    public void ComparePlayerStates(
+    public bool ComparePlayerStates(
         PlayerState devicePlayerState,
         PlayerState deviceOpponentState,
         int deviceMoveCount
@@ -567,8 +585,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         if (this.moveCount != deviceMoveCount)
         {
-            return;
+            return true;
         }
+
+        bool doesMatch = true;
 
         PlayerState serverPlayerState = this.playerState;
         PlayerState serverOpponentState = this.opponentState;
@@ -579,11 +599,15 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Server: " + JsonUtility.ToJson(serverPlayerState));
             Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
             Debug.LogWarning("First diff: " + serverPlayerState.FirstDiff(devicePlayerState));
+            doesMatch = false;
         }
         else
         {
-            Debug.Log("Server vs device player state match.");
-            Debug.Log("State: " + JsonUtility.ToJson(serverPlayerState));
+            if (FlagHelper.IsLogVerbose())
+            {
+                Debug.Log("Server vs device player state match.");
+                Debug.Log("State: " + JsonUtility.ToJson(serverPlayerState));
+            }
         }
 
         if (!serverOpponentState.Equals(deviceOpponentState))
@@ -592,12 +616,18 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Server: " + JsonUtility.ToJson(serverOpponentState));
             Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
             Debug.LogWarning("First diff: " + serverOpponentState.FirstDiff(deviceOpponentState));
+            doesMatch = false;
         }
         else
         {
-            Debug.Log("Server vs device opponent state match.");
-            Debug.Log("State: " + JsonUtility.ToJson(serverOpponentState));
+            if (FlagHelper.IsLogVerbose())
+            {
+                Debug.Log("Server vs device opponent state match.");
+                Debug.Log("State: " + JsonUtility.ToJson(serverOpponentState));
+            }
         }
+
+        return doesMatch;
     }
 
     private void InitializeChallenge(GSData scriptData)

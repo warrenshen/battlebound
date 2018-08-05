@@ -17,7 +17,7 @@ public class FXPoolManager : MonoBehaviour
         //init conversion
         this.shortToFull[Card.CARD_ABILITY_SHIELD] = "DivineShieldVFX";
         this.shortToFull[Card.CARD_ABILITY_TAUNT] = "TauntVFX";
-        this.shortToFull[BoardCreature.FROZEN_STATUS] = "FrozenVFX";
+        this.shortToFull[BoardCreatureObject.FROZEN_STATUS] = "FrozenVFX";
 
         foreach (Transform effect in transform)
         {

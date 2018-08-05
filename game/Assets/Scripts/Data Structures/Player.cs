@@ -71,13 +71,11 @@ public class Player
         this.maxMana = 20;
 
         this.cardCount = this.deckSize;
+        this.replaceMulliganCards = new List<Card>();
 
         this.hand = new Hand(this);
-
-        this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
-        this.avatar.Initialize(this);
-
-        this.replaceMulliganCards = new List<Card>();
+        this.avatar = new PlayerAvatar(this);
+        this.mode = PLAYER_STATE_MODE_NORMAL;
     }
 
     public Player(PlayerState playerState, string name)
@@ -93,12 +91,10 @@ public class Player
         this.maxMana = playerState.ManaMax;
 
         this.cardCount = playerState.CardCount;
-
-        this.avatar = GameObject.Find(String.Format("{0} Avatar", this.name)).GetComponent<PlayerAvatar>();
-        this.avatar.Initialize(this, playerState);
-        this.mode = playerState.Mode;
-
         this.replaceMulliganCards = new List<Card>();
+
+        this.avatar = new PlayerAvatar(this, playerState);
+        this.mode = playerState.Mode;
     }
 
     public void Initialize(PlayerState playerState)
@@ -174,6 +170,7 @@ public class Player
             targetPosition = BattleManager.Instance.EnemyHandTransform.position;
         }
 
+        Debug.Log(BattleManager.Instance.LightGameObject);
         LeanTween
             .move(
                 BattleManager.Instance.LightGameObject,
@@ -200,11 +197,8 @@ public class Player
      */
     public int DrawCardDevice()
     {
-        int rank = BattleManager.Instance.GetDeviceMoveRank();
-
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
-        challengeMove.SetRank(rank);
 
         if (this.deckSize <= 0)
         {
@@ -222,15 +216,13 @@ public class Player
             }
         }
 
-        BattleManager.Instance.AddDeviceMove(challengeMove);
-        return rank;
+        return BattleState.Instance().AddDeviceMove(challengeMove);
     }
 
     private void DrawCardMock(bool isMulligan = false)
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
-        challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
         if (this.deckSize <= 0)
         {
@@ -260,7 +252,7 @@ public class Player
             challengeMove.SetMoveAttributes(challengeMoveAttributes);
         }
 
-        BattleManager.Instance.AddServerMove(challengeMove);
+        BattleState.Instance().AddServerMove(challengeMove);
     }
 
     public void DrawCardsMock(int amount)
@@ -279,9 +271,8 @@ public class Player
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
-        challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        BattleManager.Instance.AddDeviceMove(challengeMove);
+        BattleState.Instance().AddDeviceMove(challengeMove);
 
         DrawCardMock();
     }
@@ -408,13 +399,12 @@ public class Player
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-        challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
         ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
         moveAttributes.SetDeckCardIndices(deckCardIndices);
 
         challengeMove.SetMoveAttributes(moveAttributes);
-        BattleManager.Instance.AddServerMove(challengeMove);
+        BattleState.Instance().AddServerMove(challengeMove);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -427,25 +417,22 @@ public class Player
         // If not in connected mode, automatically perform mulligan for opponent.
         if (!FlagHelper.IsServerEnabled())
         {
-            string opponentId = Board.Instance.GetOpponentIdByPlayerId(this.id);
+            string opponentId = Board.Instance().GetOpponentIdByPlayerId(this.id);
 
             challengeMove = new ChallengeMove();
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(opponentId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
 
             moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetDeckCardIndices(new List<int>());
 
             challengeMove.SetMoveAttributes(moveAttributes);
-            BattleManager.Instance.AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
 
             challengeMove = new ChallengeMove();
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
-            challengeMove.SetRank(BattleManager.Instance.GetServerMoveRank());
-
-            BattleManager.Instance.AddServerMove(challengeMove);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -474,8 +461,7 @@ public class Player
                 ChallengeMove challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(this.id);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD_MULLIGAN);
-                challengeMove.SetRank(BattleManager.Instance.GetDeviceMoveRank());
-                BattleManager.Instance.AddDeviceMove(challengeMove);
+                BattleState.Instance().AddDeviceMove(challengeMove);
             }
         }
 
@@ -500,7 +486,7 @@ public class Player
 
         this.mode = PLAYER_STATE_MODE_NORMAL;
 
-        BattleManager.Instance.HideMulliganOverlay(this);
+        BattleState.Instance().EndMulligan(this);
 
         RenderTurnStart();
     }
@@ -509,7 +495,7 @@ public class Player
     {
         this.hand.RemoveByIndex(index);
         ReturnCardToDeck(card);
-        BattleManager.Instance.UseCard(this, card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
+        BattleManager.Instance.UseCard(card.wrapper as BattleCardObject); //to-do, plays incorrect sound for now, b/c use card plays "play card" sound, maybe decouple
     }
 
     public void AddDrawnCardMulligan(Card card)
@@ -710,7 +696,7 @@ public class Player
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BATTLE_ROYALE, 1));
 
-        Deck chosen = new Deck(deckName, cards, DeckRaw.DeckClass.Hunter, owner: this);
+        Deck chosen = new Deck(deckName, cards);
         return chosen;
     }
 
@@ -746,7 +732,7 @@ public class Player
         ChallengeCard[] fieldCards = new ChallengeCard[6];
         for (int i = 0; i < 6; i += 1)
         {
-            Board.PlayingField playingField = Board.Instance.GetFieldByPlayerId(this.id);
+            Board.PlayingField playingField = Board.Instance().GetFieldByPlayerId(this.id);
             BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
 
             if (boardCreature == null)

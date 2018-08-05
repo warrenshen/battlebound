@@ -42,20 +42,20 @@ public class PlayerState
     public int CardCount => cardCount;
 
     [SerializeField]
-    private List<ChallengeCard> hand;
-    public List<ChallengeCard> Hand => hand;
-
-    [SerializeField]
     private int deckSize;
     public int DeckSize => deckSize;
 
     [SerializeField]
-    private ChallengeCard[] field;
-    public ChallengeCard[] Field => field;
-
-    [SerializeField]
     private int mode;
     public int Mode => mode;
+
+    [SerializeField]
+    private List<ChallengeCard> hand;
+    public List<ChallengeCard> Hand => hand;
+
+    [SerializeField]
+    private ChallengeCard[] field;
+    public ChallengeCard[] Field => field;
 
     [SerializeField]
     private List<ChallengeCard> mulliganCards;

@@ -1,27 +1,30 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
-[System.Serializable]
-public class Board : MonoBehaviour
+public class Board
 {
-    [SerializeField]
     private Dictionary<string, string> playerIdToOpponentId;
 
-    [SerializeField]
     private Dictionary<string, PlayingField> playerIdToField;
 
-    [SerializeField]
     private Dictionary<string, PlayerAvatar> playerIdToAvatar;
 
-    public static Board Instance { get; private set; }
+    private static Board instance;
 
-    private void Awake()
+    public static Board Instance()
     {
-        Instance = this;
+        if (instance == null)
+        {
+            instance = new Board();
+        }
+        return instance;
+    }
 
+    public Board()
+    {
         this.playerIdToOpponentId = new Dictionary<string, string>();
         this.playerIdToField = new Dictionary<string, PlayingField>();
         this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
@@ -36,9 +39,10 @@ public class Board : MonoBehaviour
 
     public void RegisterPlayer(Player player, ChallengeCard[] fieldCards)
     {
-        PlayingField playingField = new PlayingField(player, fieldCards);
+        PlayingField playingField = new PlayingField(player);
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
+        playingField.SpawnCardsFromChallengeState(fieldCards);
     }
 
     public void RegisterPlayerOpponent(string playerId, string opponentId)
@@ -53,7 +57,12 @@ public class Board : MonoBehaviour
 
     public Player GetOpponentByPlayerId(string playerId)
     {
-        return BattleManager.Instance.GetPlayerById(GetOpponentIdByPlayerId(playerId));
+        BattleState battleState = BattleState.Instance();
+        if (battleState == null)
+        {
+            throw new Exception("BattleState does not exist.");
+        }
+        return battleState.GetPlayerById(GetOpponentIdByPlayerId(playerId));
     }
 
     public bool IsBoardPlaceOpen(string playerId, int index)
@@ -62,77 +71,44 @@ public class Board : MonoBehaviour
         return playingField.IsPlaceEmpty(index);
     }
 
-    /*
-     * Do NOT use to spawn creatures when resuming games.
-     */
     public void CreateAndPlaceCreature(
-        BattleCardObject battleCardObject,
-        int index,
-        int spawnRank,
-        bool shouldWarcry = true
+        ChallengeCard challengeCard,
+        int fieldIndex,
+        bool shouldWarcry
     )
     {
-        List<BoardCreature> aliveCreatures = GetAliveCreaturesByPlayerId(battleCardObject.GetPlayerId());
+        List<BoardCreature> aliveCreatures =
+            GetAliveCreaturesByPlayerId(challengeCard.PlayerId);
         foreach (BoardCreature aliveCreature in aliveCreatures)
         {
-            if (aliveCreature.GetCardId() == battleCardObject.Card.Id)
+            if (aliveCreature.GetCardId() == challengeCard.Id)
             {
                 Debug.LogError(
                     string.Format(
                         "Cannot place creature with card ID of existing creature: {0}",
-                        battleCardObject.GetCardId()
+                        challengeCard.Id
                     )
                 );
                 return;
             }
         }
 
-        StartCoroutine(
-            "CreateAndPlaceCreatureHelper",
-            new object[4]
-                {
-                    battleCardObject,
-                    index,
-                    spawnRank,
-                    shouldWarcry
-                }
+        PlayingField playingField = this.playerIdToField[challengeCard.PlayerId];
+        BoardCreature boardCreature = new BoardCreature(
+            challengeCard,
+            fieldIndex
         );
-    }
-
-    private IEnumerator CreateAndPlaceCreatureHelper(object[] args)
-    {
-        BattleCardObject battleCardObject = args[0] as BattleCardObject;
-        int index = (int)args[1];
-        int spawnRank = (int)args[2];
-        bool shouldWarcry = (bool)args[3];
-
-        PlayingField playingField = this.playerIdToField[battleCardObject.Owner.Id];
-        Transform boardPlace = playingField.GetBoardPlaceByIndex(index);
-
-        GameObject boardCreatureObject = new GameObject(battleCardObject.Card.Name);
-        boardCreatureObject.transform.position = boardPlace.position;
-        BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
-
-        playingField.Place(boardCreature, index);
-        boardCreature.Initialize(
-            battleCardObject,
-            battleCardObject.Owner,
-            spawnRank
-        );
-
-        FXPoolManager.Instance.PlayEffect("SpawnVFX", boardPlace.position + new Vector3(0f, 0f, -0.1f));
-        yield return new WaitForSeconds(0.2f);
-
-        boardCreature.Summon(battleCardObject);
-        battleCardObject.Recycle();
-
-        if (shouldWarcry)
+        playingField.Place(boardCreature, fieldIndex);
+        boardCreature.SummonWithCallback(new UnityAction(() =>
         {
-            EffectManager.Instance.OnCreaturePlay(
-                boardCreature.Owner.Id,
-                boardCreature.GetCardId()
-            );
-        }
+            if (shouldWarcry)
+            {
+                EffectManager.Instance.OnCreaturePlay(
+                    boardCreature.GetPlayerId(),
+                    boardCreature.GetCardId()
+                );
+            }
+        }));
     }
 
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
@@ -143,7 +119,7 @@ public class Board : MonoBehaviour
 
     private void RemoveCreature(BoardCreature creature)
     {
-        PlayingField selected = this.playerIdToField[creature.Owner.Id];
+        PlayingField selected = this.playerIdToField[creature.GetPlayerId()];
         selected.Remove(creature);
     }
 
@@ -280,7 +256,7 @@ public class Board : MonoBehaviour
 
         List<BoardCreature> opponentCreatures = GetAliveCreaturesByPlayerId(opponentId);
         opponentTargetables.AddRange(opponentCreatures);
-        opponentTargetables.Add(BattleManager.Instance.GetPlayerById(opponentId).Avatar);
+        opponentTargetables.Add(BattleState.Instance().GetPlayerById(opponentId).Avatar);
 
         int randomIndex = UnityEngine.Random.Range(0, opponentTargetables.Count);
         return opponentTargetables[randomIndex];
@@ -312,39 +288,29 @@ public class Board : MonoBehaviour
         [SerializeField]
         private Dictionary<int, Transform> indexToBoardPlace;
 
-        private string playerId;
-
         public PlayingField(Player player)
         {
-            this.playerId = player.Id;
             this.creatures = new BoardCreature[6];
             this.indexToBoardPlace = new Dictionary<int, Transform>();
 
             CacheBoardPlaces(player);
-        }
-
-        public PlayingField(Player player, ChallengeCard[] fieldCards)
-        {
-            this.playerId = player.Id;
-            this.creatures = new BoardCreature[6];
-            this.indexToBoardPlace = new Dictionary<int, Transform>();
-
-            CacheBoardPlaces(player);
-            SpawnCardsFromChallengeState(player, fieldCards);
         }
 
         private void CacheBoardPlaces(Player player)
         {
-            for (int i = 0; i < 6; i += 1)
+            if (!BattleSingleton.Instance.IsEnvironmentTest())
             {
-                Transform boardPlace = GameObject.Find(
-                    String.Format("{0} {1}", player.Name, i)
-                ).transform;
-                this.indexToBoardPlace[i] = boardPlace;
+                for (int i = 0; i < 6; i += 1)
+                {
+                    Transform boardPlace = GameObject.Find(
+                        String.Format("{0} {1}", player.Name, i)
+                    ).transform;
+                    this.indexToBoardPlace[i] = boardPlace;
+                }
             }
         }
 
-        private void SpawnCardsFromChallengeState(Player player, ChallengeCard[] fieldCards)
+        public void SpawnCardsFromChallengeState(ChallengeCard[] fieldCards)
         {
             for (int i = 0; i < 6; i += 1)
             {
@@ -355,36 +321,8 @@ public class Board : MonoBehaviour
                     continue;
                 }
 
-                SpawnCreatureFromChallengeCard(
-                    player,
-                    challengeCard,
-                    i
-                );
+                Board.Instance().CreateAndPlaceCreature(challengeCard, i, false);
             }
-        }
-
-        private void SpawnCreatureFromChallengeCard(
-            Player player,
-            ChallengeCard challengeCard,
-            int index
-        )
-        {
-            // TODO: could use Board's CreateAndPlaceCreature with shouldWarcry false.
-            Transform boardPlace = GetBoardPlaceByIndex(index);
-
-            CreatureCard creatureCard = challengeCard.GetCard(false) as CreatureCard;
-
-            GameObject created = new GameObject(creatureCard.Name);
-            BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
-            battleCardObject.Initialize(player, creatureCard);
-
-            GameObject boardCreatureObject = new GameObject(battleCardObject.Card.Name);
-            boardCreatureObject.transform.position = boardPlace.position;
-            BoardCreature boardCreature = boardCreatureObject.AddComponent<BoardCreature>();
-            boardCreature.InitializeFromChallengeCard(battleCardObject, challengeCard);
-
-            battleCardObject.Recycle();
-            Place(boardCreature, index);
         }
 
         public bool Place(BoardCreature creature, int index)
@@ -425,7 +363,6 @@ public class Board : MonoBehaviour
 
         public void Remove(BoardCreature creature)
         {
-            creature.Die();
             for (int i = 0; i < creatures.Length; i++)
             {
                 if (creatures[i] == creature)

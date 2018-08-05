@@ -5,7 +5,7 @@ public class CardObject : MouseWatchable
 {
     protected static Vector3 CARD_BOUNDS = new Vector3(2.3F, 3.5F, 0.2F);
 
-    [SerializeField]
+    //[SerializeField]
     protected Card card;
     public Card Card => card;
 
@@ -33,11 +33,11 @@ public class CardObject : MouseWatchable
         card.wrapper = this;
 
         //make render changes according to card class here
-        this.LoadCardArtwork();
-        this.visual = this.VisualizeCard();
+        LoadCardArtwork();
+        this.visual = VisualizeCard();
 
-        this.SetThisResetValues();
-        this.SetVisualResetValues();
+        SetThisResetValues();
+        SetVisualResetValues();
 
         //set sprite etc here
         colliderBox = gameObject.AddComponent<BoxCollider>() as BoxCollider;

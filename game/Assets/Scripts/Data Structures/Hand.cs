@@ -9,16 +9,11 @@ public class Hand
     [SerializeField]
     private List<BattleCardObject> battleCardObjects;
 
-    private string playerId;
-    private string name;
-
     int cardLayer;
 
     public Hand(Player player)
     {
         this.battleCardObjects = new List<BattleCardObject>();
-        this.playerId = player.Id;
-        this.name = player.Name;
         this.cardLayer = LayerMask.NameToLayer("Card");
     }
 
@@ -184,12 +179,12 @@ public class Hand
 
     private void RedrawOutline(BattleCardObject battleCardObject)
     {
-        Player player = BattleManager.Instance.GetPlayerById(battleCardObject.Owner.Id);
+        Player player = BattleState.Instance().GetPlayerById(battleCardObject.Owner.Id);
 
         bool shouldSetOutline = player.HasTurn && player.Mana >= battleCardObject.GetCost();
         if (FlagHelper.IsServerEnabled())
         {
-            shouldSetOutline = shouldSetOutline && player.Id == BattleManager.Instance.You.Id;
+            shouldSetOutline = shouldSetOutline && player.Id == BattleState.Instance().You.Id;
         }
 
         battleCardObject.visual.SetOutline(shouldSetOutline);

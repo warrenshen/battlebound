@@ -5,6 +5,7 @@ using UnityEngine;
 public class ResourceSingleton : Singleton<ResourceSingleton>
 {
     private Dictionary<string, GameObject> creatureNameToPrefab;
+
     private Dictionary<string, GameObject> effectNameToPrefab;
 
     private Dictionary<string, CardTemplate> cardNametoTemplate;

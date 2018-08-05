@@ -10,37 +10,23 @@ using TMPro;
 [System.Serializable]
 public class BoardCreature : Targetable
 {
-    public const float UPDATE_STATS_GROWTH_FACTOR = 1.4F;
-    public const float ATTACK_DELAY = 0.66F;
+    private Player owner;
+    public Player Owner => owner;
 
-    private static Vector3 BOARD_CARD_SIZE = new Vector3(5, 3.7F, 1);
-    private static Vector3 INSPECT_CARD_SIZE = new Vector3(5, 4.28F, 1);
+    private int fieldIndex;
+    public int FieldIndex => fieldIndex;
 
-    public static Color LIGHT_GREEN = new Color(0.33F, 1, 0.33F);
-    public static Color LIGHT_RED = new Color(1, 0.33F, 0.33F);
-
-    public const string FROZEN_STATUS = "FROZEN_STATUS";
-
-    [SerializeField]
     private int cost;           //cost retained for conditional removal cards
     public int Cost => cost;    //e.g. remove all cards with cost 2 or less
 
-    [SerializeField]
     private int health;
     public int Health => health;
-
-    private CreatureCard creatureCard;
-    public CreatureCard CreatureCard => creatureCard;
 
     private List<string> buffs;
     public List<string> Buffs => buffs;
 
-    [SerializeField]
     private List<string> abilities;
     public List<string> Abilities => abilities;
-
-    private Dictionary<string, GameObject> abilitiesVFX;
-    private Dictionary<string, GameObject> statusVFX;
 
     private bool isSilenced;
     public bool IsSilenced => isSilenced;
@@ -48,195 +34,100 @@ public class BoardCreature : Targetable
     private int isFrozen;
     public int IsFrozen => isFrozen;
 
-    private bool raisedCard;
-
-    Material dissolve;
-
-    private HyperCard.Card visual;
-    private const float BOARD_GROW_FACTOR = 1.25f;
-
-    private GameObject summoned;
-    private dynamic summonAnimation;
-    private List<string> summonAnimClips;
-
-    private AudioSource[] audioSources;
-
     private int spawnRank;
     public int SpawnRank => spawnRank;
 
-    private Color initialOutlineStartColor;
-    private Color initialOutlineEndColor;
+    private int canAttack;
+    public int CanAttack => canAttack;
 
+    private int maxAttacks;
 
-    public void Initialize(
-        BattleCardObject battleCardObject,
-        Player owner,
-        int spawnRank
+    private CreatureCard card;
+
+    IBoardCreatureObject boardCreatureObject;
+
+    public BoardCreature(
+        ChallengeCard challengeCard,
+        int fieldIndex
     )
     {
-        this.owner = owner;
-        this.creatureCard = battleCardObject.Card as CreatureCard;
+        this.owner = BattleState.Instance().GetPlayerById(challengeCard.PlayerId);
+        this.fieldIndex = fieldIndex;
+        this.card = challengeCard.GetCard() as CreatureCard;
 
-        this.cost = battleCardObject.GetCost();
-        this.health = this.creatureCard.GetHealth();
-        this.abilities = this.creatureCard.GetAbilities();
+        this.cost = challengeCard.Cost;
+        this.health = challengeCard.Health;
+        this.abilities = challengeCard.GetAbilities();
+
+        this.canAttack = challengeCard.CanAttack;
+        this.isFrozen = challengeCard.IsFrozen;
+        this.isSilenced = challengeCard.IsSilenced == 1;
+        this.spawnRank = challengeCard.SpawnRank;
 
         if (this.abilities.Contains(Card.CARD_ABILITY_CHARGE))
         {
             this.canAttack = 1;
         }
-        else
-        {
-            this.canAttack = 0;
-        }
-
-        this.isFrozen = 0;
-        this.isSilenced = false;
-
-        this.spawnRank = spawnRank;
 
         InitializeHelper();
-    }
-
-    public void InitializeFromChallengeCard(
-        BattleCardObject battleCardObject,
-        ChallengeCard challengeCard
-    )
-    {
-        this.owner = battleCardObject.Owner;
-        this.creatureCard = battleCardObject.Card as CreatureCard;
-
-        // Use challenge card stats.
-        this.cost = challengeCard.Cost;
-        this.health = challengeCard.Health;
-        this.abilities = challengeCard.GetAbilities();
-        this.canAttack = challengeCard.CanAttack;
-
-        this.isFrozen = challengeCard.IsFrozen;
-        this.isSilenced = challengeCard.IsSilenced == 1;
-
-        this.spawnRank = challengeCard.SpawnRank;
-
-        InitializeHelper();
-        Summon(battleCardObject);
     }
 
     private void InitializeHelper()
     {
         this.maxAttacks = 1;
-
-        this.gameObject.layer = 9;
-
-        this.statusVFX = new Dictionary<string, GameObject>();
-        this.abilitiesVFX = new Dictionary<string, GameObject>();
-
         this.buffs = new List<string>();
-    }
 
-    public void Summon(BattleCardObject battleCardObject)
-    {
-        BoxCollider newCollider = gameObject.AddComponent<BoxCollider>() as BoxCollider;
-        BoxCollider oldCollider = battleCardObject.GetComponent<BoxCollider>() as BoxCollider;
-        newCollider.size = oldCollider.size + new Vector3(0, 0, 1);
-        newCollider.size *= BOARD_GROW_FACTOR;
-        newCollider.center = oldCollider.center;
-
-        this.RepurposeCardVisual(battleCardObject);
-        this.SummonCreature();
-
-        //method calls
-        Redraw();
-
-        //post-collider-construction visuals
-        transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
-    }
-
-    private void RepurposeCardVisual(BattleCardObject previousOwner)
-    {
-        this.visual = previousOwner.visual;
-        previousOwner.visual = null;
-
-        this.visual.gameObject.SetLayer(9);
-
-        this.visual.transform.parent = this.transform;
-        this.visual.transform.localPosition = Vector3.zero;
-        this.visual.transform.localRotation = Quaternion.identity;
-        this.visual.transform.Rotate(0, 180, 0, Space.Self);
-        this.visual.transform.localScale = BOARD_CARD_SIZE;
-
-        this.initialOutlineStartColor = this.visual.OutlineColor;
-        this.initialOutlineEndColor = this.visual.OutlineEndColor;
-
-        foreach (HyperCard.Card.CustomSpriteParam spriteParam in this.visual.SpriteObjects)
+        if (BattleSingleton.Instance.IsEnvironmentTest())
         {
-            spriteParam.IsAffectedByFilters = false;
-        }
-
-        this.visual.SetOpacity(0.8f);
-        this.visual.SetBlackAndWhite(true);
-        this.visual.Renderer.enabled = true;
-    }
-
-    private void SummonCreature()
-    {
-        SoundManager.Instance.PlaySound("SummonSFX", transform.position);
-
-        GameObject prefab = ResourceSingleton.Instance.GetCreaturePrefabByName(this.name);
-
-        GameObject created = Instantiate(prefab) as GameObject;
-        created.transform.parent = this.transform;
-        created.transform.localPosition = new Vector3(0, 0, -0.3f);
-        created.transform.Rotate(-15, 0, 0, Space.Self);
-
-        if (this.owner.Id != BattleManager.Instance.You.Id)
-        {
-            created.transform.Rotate(30, 180, 0, Space.Self);
-        }
-
-        this.audioSources = created.GetComponents<AudioSource>();
-        this.summonAnimClips = new List<string>();
-
-        this.summoned = created.transform.GetChild(0).gameObject;
-        this.summonAnimation = this.summoned.GetComponent<Animation>();
-        if (this.summonAnimation != null)
-        {
-            foreach (AnimationState state in this.summonAnimation)
-            {
-                state.speed = 5f;
-                this.summonAnimClips.Add(state.clip.name);
-            }
+            this.boardCreatureObject = new BoardCreatureMock();
         }
         else
         {
-            this.summonAnimation = this.summoned.GetComponent<Animator>();
-            if (this.summonAnimation == null)
-            {
-                Debug.LogError(String.Format("No animation or animator on gameobject: {0}", this.gameObject.name));
-            }
-            foreach (AnimationClip clip in this.summonAnimation.runtimeAnimatorController.animationClips)
-            {
-                this.summonAnimClips.Add(clip.name);
-            }
-            this.summonAnimation.speed = 1.33f;
+            GameObject boardCreatureGameObject = new GameObject(GetCardId());
+            this.boardCreatureObject =
+                boardCreatureGameObject.AddComponent<BoardCreatureObject>();
+            this.boardCreatureObject.Initialize(this);
         }
-        this.summonAnimation.Play(this.summonAnimClips[0]);
-        this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
     }
 
-    public override string GetCardId()
+    public void SummonWithCallback(UnityAction callback)
     {
-        return this.creatureCard.Id;
+        this.boardCreatureObject.SummonWithCallback(callback);
     }
 
-    public override string GetPlayerId()
+    public string GetCardId()
+    {
+        return this.card.Id;
+    }
+
+    public string GetPlayerId()
     {
         return this.owner.Id;
     }
 
-    public override bool CanAttackNow()
+    public bool CanAttackNow()
     {
         return this.owner.HasTurn && this.isFrozen <= 0 && this.canAttack > 0;
+    }
+
+    public TargetableObject GetTargetableObject()
+    {
+        return this.boardCreatureObject as TargetableObject;
+    }
+
+    public CreatureCard GetCard()
+    {
+        return this.card;
+    }
+
+    public string GetCardName()
+    {
+        return GetCard().Name;
+    }
+
+    public void Redraw()
+    {
+        this.boardCreatureObject.Redraw();
     }
 
     public void DecrementCanAttack()
@@ -246,7 +137,7 @@ public class BoardCreature : Targetable
 
     public int GetAttack()
     {
-        int attack = this.creatureCard.GetAttack();
+        int attack = this.card.GetAttack();
 
         if (this.isSilenced)
         {
@@ -273,7 +164,7 @@ public class BoardCreature : Targetable
 
     public int GetHealthMax()
     {
-        int health = this.creatureCard.GetHealth();
+        int health = this.card.GetHealth();
 
         if (this.isSilenced)
         {
@@ -297,84 +188,16 @@ public class BoardCreature : Targetable
 
     public void FightAnimationWithCallback(Targetable other, UnityAction onFightFinish)
     {
-        if (this.audioSources != null && this.audioSources.Length >= 2 && this.audioSources[1] != null)
-        {
-            this.audioSources[1].PlayDelayed(BoardCreature.ATTACK_DELAY / 3); //sound
-        }
-        else
-        {
-            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
-        }
-
-        if (this.summonAnimClips != null && this.summonAnimClips.Count >= 2)
-        {
-            this.summonAnimation.Play(summonAnimClips[0]);
-            this.summonAnimation.CrossFade(summonAnimClips[1], 3F);    //should group with sound as a method
-        }
-        else
-        {
-            Debug.LogWarning(string.Format("Missing summon animation for card {0}", this.name));
-        }
-
-        //move/animate
-        Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-        Vector3 originalPosition = this.summonAnimation.transform.position;
-
-        LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.2f, 2f).setEasePunch();
-        LeanTween
-            .move(this.summoned, this.transform.position - delta, 0.3F)
-            .setEaseOutCubic()
-            .setDelay(BoardCreature.ATTACK_DELAY)
-            .setOnComplete(
-                () =>
-                {
-                    LeanTween
-                        .move(this.summoned, originalPosition, 0.3F)
-                        .setEaseInCubic();
-                    onFightFinish();
-                }
+        this.boardCreatureObject.FightAnimationWithCallback(
+            other.GetTargetableObject(),
+            onFightFinish
         );
-
-        StartCoroutine("PlaySoundWithDelay", new object[3] { "PunchSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.25f });
-        StartCoroutine("PlaySoundWithDelay", new object[3] { "SlashSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.4f });
-
-        StartCoroutine("PlayVFXWithDelay", new object[3] { this.creatureCard.GetEffectPrefab(), other.transform.position, BoardCreature.ATTACK_DELAY });
-        if (HasAbility(Card.CARD_ABILITY_LIFE_STEAL))
-        {
-            StartCoroutine("PlayVFXWithDelay", new object[3] { "LifestealVFX", other.transform.position, BoardCreature.ATTACK_DELAY });
-        }
-
-        if (!other.IsAvatar)
-        {
-            if (((BoardCreature)other).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
-                StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, BoardCreature.ATTACK_DELAY + 0.5f });
-        }
-    }
-
-    IEnumerator PlayVFXWithDelay(object[] args)
-    {
-        string VFXName = (string)args[0];
-        Vector3 location = (Vector3)args[1];
-        float delay = (float)args[2];
-
-        yield return new WaitForSeconds(delay);
-        FXPoolManager.Instance.PlayEffect(VFXName, location);
-    }
-
-    IEnumerator PlaySoundWithDelay(object[] args)
-    {
-        string spellName = (string)args[0];
-        Vector3 location = (Vector3)args[1];
-        float delay = (float)args[2];
-
-        yield return new WaitForSeconds(delay);
-        SoundManager.Instance.PlaySound(spellName, location);
     }
 
     /*
      * @return int - amount of damage taken
      */
-    public override int TakeDamage(int amount)
+    public int TakeDamage(int amount)
     {
         int damageTaken = 0;
 
@@ -385,18 +208,17 @@ public class BoardCreature : Targetable
         }
         else
         {
-            LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.1f, 1F).setEasePunch();
-
             int healthBefore = this.health;
             this.health -= amount;
-
-            PlayAudioTakeDamage();
-
             damageTaken = Math.Min(healthBefore, amount);
-            TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
         }
 
-        Redraw();
+        if (damageTaken > 0)
+        {
+            this.boardCreatureObject.TakeDamage(damageTaken);
+            this.boardCreatureObject.Redraw();
+        }
+
         return damageTaken;
     }
 
@@ -413,14 +235,12 @@ public class BoardCreature : Targetable
         {
             int healthBefore = this.health;
             this.health = 0;
-
-            PlayAudioTakeDamage();
-
             damageTaken = healthBefore;
-            TextManager.Instance.ShowTextAtTarget(this.transform, damageTaken.ToString(), Color.red);
         }
 
-        Redraw();
+        this.boardCreatureObject.TakeDamage(damageTaken);
+        this.boardCreatureObject.Redraw();
+
         return damageTaken;
     }
 
@@ -435,28 +255,27 @@ public class BoardCreature : Targetable
         int healthBefore = this.health;
         this.health = 0;
 
-        PlayAudioTakeDamage();
-
-        Redraw();
+        this.boardCreatureObject.TakeDamage(healthBefore);
+        this.boardCreatureObject.Redraw();
     }
 
     /*
      * @return int - amount of health healed
      */
-    public override int Heal(int amount)
+    public int Heal(int amount)
     {
         int healthBefore = this.health;
         this.health += amount;
         this.health = Math.Min(this.health, GetHealthMax());
 
         int amountHealed = Math.Min(this.health - healthBefore, amount);
+
         if (amountHealed > 0)
         {
-            TextManager.Instance.ShowTextAtTarget(transform, amountHealed.ToString(), Color.green);
-            FXPoolManager.Instance.PlayEffect("HealPillarVFX", transform.position);
+            this.boardCreatureObject.Heal(amountHealed);
+            this.boardCreatureObject.Redraw();
         }
 
-        Redraw();
         return amountHealed;
     }
 
@@ -468,20 +287,33 @@ public class BoardCreature : Targetable
         int healthBefore = this.health;
         int healthMax = GetHealthMax();
         this.health = healthMax;
-        return healthMax - healthBefore;
+
+        int amountHealed = healthMax - healthBefore;
+
+        if (amountHealed > 0)
+        {
+            this.boardCreatureObject.Heal(amountHealed);
+            this.boardCreatureObject.Redraw();
+        }
+
+        return amountHealed;
     }
 
-    public override void OnStartTurn()
+    public void Die()
+    {
+        this.boardCreatureObject.Die();
+    }
+
+    public void OnStartTurn()
     {
         this.canAttack = this.maxAttacks;
-
-        Redraw();
+        this.boardCreatureObject.Redraw();
     }
 
     public void OnEndTurn()
     {
         DecrementIsFrozen();
-        Redraw();
+        this.boardCreatureObject.Redraw();
     }
 
     private bool DecrementIsFrozen()
@@ -502,40 +334,12 @@ public class BoardCreature : Targetable
         this.health = amount;
     }
 
-    public void Die()
-    {
-        //to-do, delay creature death
-        StartCoroutine("Dissolve", 2);
-    }
-
-    private IEnumerator Dissolve(float duration)
-    {
-        this.noInteraction = true;
-        FXPoolManager.Instance.PlayEffect("CreatureDeathVFX", this.transform.position);
-        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
-
-        Vector3 originalScale = this.visual.transform.localScale;
-        float elapsedTime = 0;
-        LeanTween.scale(this.summoned, Vector3.zero, duration / 3).setOnComplete(() =>
-        {
-            this.summoned.SetActive(false);
-        });
-        while (elapsedTime < duration)
-        {
-            this.visual.transform.localScale = Mathf.Lerp(1, 0, (elapsedTime / duration)) * originalScale;
-            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
-            elapsedTime += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        Destroy(gameObject);
-    }
-
     public void GrantShield()
     {
         if (!HasAbility(Card.CARD_ABILITY_SHIELD))
         {
             this.abilities.Add(Card.CARD_ABILITY_SHIELD);
-            Redraw();
+            this.boardCreatureObject.Redraw();
         }
     }
 
@@ -548,6 +352,7 @@ public class BoardCreature : Targetable
         }
 
         this.abilities.Remove(Card.CARD_ABILITY_SHIELD);
+        this.boardCreatureObject.Redraw();
     }
 
     public void GrantTaunt()
@@ -555,170 +360,21 @@ public class BoardCreature : Targetable
         if (!HasAbility(Card.CARD_ABILITY_TAUNT))
         {
             this.abilities.Add(Card.CARD_ABILITY_TAUNT);
-            Redraw();
+            this.boardCreatureObject.Redraw();
         }
     }
 
     public void Freeze(int amount)
     {
         this.isFrozen += amount;
-        Redraw();
+        this.boardCreatureObject.Redraw();
     }
 
     public void Silence()
     {
         this.isSilenced = true;
         this.health = Math.Min(this.health, GetHealthMax());
-        Redraw();
-    }
-
-    public void Redraw()
-    {
-        if (this.visual == null)
-        {
-            return;
-        }
-
-        UpdateStatText();
-
-        this.visual.SetOutline(CanAttackNow());
-        this.visual.Redraw();
-
-        RenderStatus();
-        RenderAbilitiesAndBuffs();
-    }
-
-    private void UpdateStatText()
-    {
-        if (this.visual == null)
-        {
-            return;
-        }
-
-        int attack = GetAttack();
-
-        HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
-        HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
-
-        if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(this.cost.ToString()))
-        {
-            LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        }
-        if (!attackText.Value.Equals(attack.ToString()))
-        {
-            LeanTween.scale(attackText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        }
-        if (!healthText.Value.Equals(this.health.ToString()))
-        {
-            LeanTween.scale(healthText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
-        }
-
-        this.visual.SetTextFieldWithKey("Title", this.name);
-        this.visual.SetTextFieldWithKey("Cost", this.cost.ToString());
-        this.visual.SetTextFieldWithKey("Attack", attack.ToString());
-        this.visual.SetTextFieldWithKey("Health", this.health.ToString());
-
-        if (this.isSilenced)
-        {
-            this.visual.SetTextFieldWithKey("Description", "");
-        }
-
-        if (attack > creatureCard.GetAttack())
-        {
-            attackText.TmpObject.color = BoardCreature.LIGHT_GREEN;
-        }
-        else if (attack < creatureCard.GetAttack())
-        {
-            attackText.TmpObject.color = BoardCreature.LIGHT_RED;
-        }
-        else
-        {
-            attackText.TmpObject.color = Color.white;
-        }
-
-        if (this.health > this.creatureCard.GetHealth() && this.health == GetHealthMax())
-        {
-            healthText.TmpObject.color = BoardCreature.LIGHT_GREEN;
-        }
-        else if (this.health < GetHealthMax())
-        {
-            healthText.TmpObject.color = BoardCreature.LIGHT_RED;
-        }
-        else
-        {
-            healthText.TmpObject.color = Color.white;
-        }
-    }
-
-    private void RenderStatus()
-    {
-        float MAX_RANDOM_DELAY = 0.8F;
-
-        //for frozen or silenced etc status
-        if (this.isFrozen > 0)
-        {
-            if (!this.statusVFX.ContainsKey(BoardCreature.FROZEN_STATUS))
-            {
-                this.summonAnimation.enabled = false;
-                this.statusVFX[BoardCreature.FROZEN_STATUS] = FXPoolManager.Instance.AssignEffect(BoardCreature.FROZEN_STATUS, this.transform).gameObject;
-                this.statusVFX[BoardCreature.FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
-                LeanTween.scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
-                         .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-                         .setEaseOutCubic()
-                         .setOnStart(() =>
-                {
-                    SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
-                });
-            }
-        }
-        else
-        {
-            if (this.statusVFX.ContainsKey(BoardCreature.FROZEN_STATUS))
-            {
-                LeanTween.scale(this.statusVFX[BoardCreature.FROZEN_STATUS], Vector3.zero, ActionManager.TWEEN_DURATION)
-                         .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-                         .setEaseInCubic().setOnComplete(() =>
-                {
-                    SoundManager.Instance.PlaySound("UnfreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: -0.3F);
-                    FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
-                    FXPoolManager.Instance.UnassignEffect(BoardCreature.FROZEN_STATUS, this.statusVFX[BoardCreature.FROZEN_STATUS]);
-                    this.summonAnimation.enabled = true;
-                    this.statusVFX.Remove(BoardCreature.FROZEN_STATUS);
-                });
-            }
-        }
-    }
-
-    private void RenderAbilitiesAndBuffs()
-    {
-        //doing additions
-        foreach (string ability in this.abilities)
-        {
-            if (abilitiesVFX.ContainsKey(ability))
-            {
-                continue;
-            }
-            if (!FXPoolManager.Instance.HasEffect(ability))
-            {
-                continue;
-            }
-
-            abilitiesVFX[ability] = FXPoolManager.Instance.AssignEffect(ability, this.transform).gameObject;
-        }
-
-        //do removals
-        foreach (string ability in new List<string>(this.abilitiesVFX.Keys))
-        {
-            if (HasAbility(ability))
-            {
-                continue;
-            }
-
-            //if not continue, needs removal
-            GameObject effect = abilitiesVFX[ability];
-            FXPoolManager.Instance.UnassignEffect(ability, effect);
-            abilitiesVFX.Remove(ability);
-        }
+        this.boardCreatureObject.Redraw();
     }
 
     public bool HasAbility(string ability)
@@ -747,91 +403,6 @@ public class BoardCreature : Targetable
         return this.buffs.Contains(buff);
     }
 
-    private void RaiseCardVisual()
-    {
-        this.raisedCard = true;
-        this.visual.SetOpacity(1);
-        this.visual.SetGrayscale(false);
-
-        LeanTween.rotateX(this.visual.gameObject, 0, ActionManager.TWEEN_DURATION)
-                 .setDelay(ActionManager.TWEEN_DURATION)
-                 .setOnStart(() =>
-                {
-                    BattleManager.Instance.HoverCard.gameObject.SetActive(true);
-                    BattleManager.Instance.HoverCard.Copy(this.visual);
-                })
-                 .setOnComplete(() =>
-                {
-                    ActionManager.Instance.SetCursor(3);
-                    Vector3 screenPos = Camera.main.WorldToScreenPoint(this.visual.transform.position);
-                    Vector2 hoverOffset = new Vector2(150, 0);
-                    if (screenPos.x > Screen.width / 2)
-                        hoverOffset.x *= -1;
-                    CanvasScaler canvasScaler = BattleManager.Instance.canvas.GetComponent<CanvasScaler>();
-                    float scaleFactorX = canvasScaler.referenceResolution.x / Screen.width;
-                    float scaleFactorY = canvasScaler.referenceResolution.y / Screen.height;
-                    BattleManager.Instance.HoverCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(screenPos.x * scaleFactorX, screenPos.y * scaleFactorY) + hoverOffset;
-                });
-    }
-
-    private void LowerCardVisual()
-    {
-        ActionManager.Instance.SetCursor(0);
-        this.raisedCard = false;
-        this.visual.SetGrayscale(true);
-        this.visual.SetOpacity(0.8f);
-        LeanTween.cancel(this.visual.gameObject);
-        BattleManager.Instance.HoverCard.gameObject.SetActive(false);
-        BattleManager.Instance.HoverCard.GetComponent<RectTransform>().anchoredPosition = new Vector2(-1000, -1000);
-    }
-
-    //begin mouse interactions for showing card when hovering
-    public override void EnterHover()
-    {
-        this.visual.SetOutlineColors(Color.white, this.initialOutlineEndColor);
-        if (!this.raisedCard)
-        {
-            RaiseCardVisual();
-        }
-    }
-
-    public override void MouseUp()
-    {
-        if (!this.raisedCard)
-        {
-            RaiseCardVisual();
-        }
-    }
-
-    public override void ExitHover()
-    {
-        this.visual.SetOutlineColors(this.initialOutlineStartColor, this.initialOutlineEndColor);
-        if (this.raisedCard)
-        {
-            LowerCardVisual();
-        }
-    }
-
-    public override void MouseDown()
-    {
-        if (this.owner.Id == BattleManager.Instance.ActivePlayer.Id && this.raisedCard)
-        {
-            LowerCardVisual();
-        }
-    }
-
-    private void PlayAudioTakeDamage()
-    {
-        if (this.audioSources != null && this.audioSources.Length >= 3 && this.audioSources[2] != null)
-        {
-            this.audioSources[2].PlayDelayed(ATTACK_DELAY / 2);
-        }
-        else
-        {
-            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
-        }
-    }
-
     public ChallengeCard GetChallengeCard()
     {
         ChallengeCard challengeCard = new ChallengeCard();
@@ -839,23 +410,23 @@ public class BoardCreature : Targetable
         challengeCard.SetId(GetCardId());
         challengeCard.SetPlayerId(GetPlayerId());
         challengeCard.SetCategory((int)Card.CardType.Creature);
-        challengeCard.SetColor(this.creatureCard.GetClassColor());
-        challengeCard.SetName(this.creatureCard.Name);
+        challengeCard.SetColor(this.card.GetClassColor());
+        challengeCard.SetName(this.card.Name);
         //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
-        challengeCard.SetLevel(this.creatureCard.Level);
+        challengeCard.SetLevel(this.card.Level);
         challengeCard.SetCost(this.cost);
-        challengeCard.SetCostStart(this.creatureCard.GetCost());
+        challengeCard.SetCostStart(this.card.GetCost());
         challengeCard.SetHealth(this.health);
-        challengeCard.SetHealthStart(this.creatureCard.GetHealth());
+        challengeCard.SetHealthStart(this.card.GetHealth());
         challengeCard.SetHealthMax(GetHealthMax());
         challengeCard.SetAttack(GetAttack());
-        challengeCard.SetAttackStart(this.creatureCard.GetAttack());
+        challengeCard.SetAttackStart(this.card.GetAttack());
         challengeCard.SetCanAttack(this.canAttack);
         challengeCard.SetIsFrozen(this.isFrozen);
         challengeCard.SetIsSilenced(this.isSilenced ? 1 : 0);
         challengeCard.SetSpawnRank(this.spawnRank);
         challengeCard.SetAbilities(this.abilities);
-        challengeCard.SetAbilitiesStart(this.creatureCard.GetAbilities());
+        challengeCard.SetAbilitiesStart(this.card.GetAbilities());
 
         return challengeCard;
     }
