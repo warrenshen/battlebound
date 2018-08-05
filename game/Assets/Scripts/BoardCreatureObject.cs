@@ -243,7 +243,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
     private HyperCard.Card VisualizeCard()
     {
-        HyperCard.Card cardVisual = ResourceSingleton.Instance.TakeCardFromPool();
+        HyperCard.Card cardVisual = CardSingleton.Instance.TakeCardFromPool();
 
         cardVisual.transform.parent = this.transform;
         cardVisual.transform.localPosition = Vector3.zero;
