@@ -50,6 +50,7 @@ public class BattleState
         {
             instance = new BattleState();
         }
+        EffectManager.Instance.ReadyUp();
         return instance;
     }
 
@@ -72,6 +73,7 @@ public class BattleState
             playerState,
             opponentState
         );
+        EffectManager.Instance.ReadyUp();
         return instance;
     }
 

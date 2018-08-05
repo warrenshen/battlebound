@@ -10,8 +10,9 @@ public class EffectManager : MonoBehaviour
     private List<Effect> mQueue; // Medium priority.
     private List<Effect> lQueue; // Low priority.
 
-    private bool isWaiting;
-    private bool isDirty;
+    private bool isReady; // Ready => process queues.
+    private bool isWaiting; // Waiting => wait for server move.
+    private bool isDirty; // Dirty => compare device vs server state when queues empty.
 
     private UnityAction callback;
 
@@ -193,6 +194,7 @@ public class EffectManager : MonoBehaviour
     {
         Instance = this;
 
+        this.isReady = false;
         this.isWaiting = false;
 
         this.hQueue = new List<Effect>();
@@ -205,7 +207,7 @@ public class EffectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.isWaiting)
+        if (this.isWaiting || !this.isReady)
         {
             return;
         }
@@ -246,6 +248,11 @@ public class EffectManager : MonoBehaviour
         {
             ProcessLQueue();
         }
+    }
+
+    public void ReadyUp()
+    {
+        this.isReady = true;
     }
 
     private void AddToQueues(Effect effect)

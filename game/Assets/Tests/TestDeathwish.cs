@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class TestDeathRattle
+public class TestDeathwish
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",
@@ -23,21 +23,24 @@ public class TestDeathRattle
         ""field"": [
             {
                 ""id"": ""ID_PLAYER-5"",
+                ""playerId"": ""ID_PLAYER"",
                 ""level"": 1,
                 ""category"": 0,
                 ""color"": 1,
-                ""attack"": 10,
+                ""attack"": 20,
                 ""health"": 10,
-                ""cost"": 10,
+                ""cost"": 20,
                 ""name"": ""Firebug Catelyn"",
                 ""description"": """",
-                ""abilities"": [],
-                ""attackStart"": 10,
-                ""costStart"": 10,
+                ""abilities"": [
+                    10
+                ],
+                ""attackStart"": 20,
+                ""costStart"": 20,
                 ""healthStart"": 10,
                 ""healthMax"": 10,
                 ""buffs"": [],
-                ""canAttack"": 1,
+                ""canAttack"": 0,
                 ""isFrozen"": 0,
                 ""spawnRank"": 3
             },
@@ -60,7 +63,7 @@ public class TestDeathRattle
                 ""healthStart"": 60,
                 ""healthMax"": 60,
                 ""buffs"": [],
-                ""canAttack"": 1,
+                ""canAttack"": 0,
                 ""isFrozen"": 0,
                 ""isSilenced"": 0,
                 ""spawnRank"": 4
@@ -113,7 +116,7 @@ public class TestDeathRattle
                 ""healthStart"": 20,
                 ""healthMax"": 20,
                 ""buffs"": [],
-                ""canAttack"": 0,
+                ""canAttack"": 1,
                 ""isFrozen"": 0,
                 ""spawnRank"": 0
             },
@@ -135,7 +138,7 @@ public class TestDeathRattle
                 ""healthStart"": 20,
                 ""healthMax"": 20,
                 ""buffs"": [],
-                ""canAttack"": 0,
+                ""canAttack"": 1,
                 ""isFrozen"": 0,
                 ""spawnRank"": 1
             },
@@ -144,20 +147,20 @@ public class TestDeathRattle
                 ""playerId"": ""ID_ENEMY"",
                 ""level"": 1,
                 ""category"": 0,
-                ""attack"": 20,
-                ""health"": 20,
+                ""attack"": 40,
+                ""health"": 30,
                 ""cost"": 20,
-                ""name"": ""Young Kyo"",
+                ""name"": ""Ritual Hatchling"",
                 ""description"": """",
                 ""abilities"": [
-                    15
+                    24
                 ],
-                ""attackStart"": 20,
+                ""attackStart"": 40,
                 ""costStart"": 20,
-                ""healthStart"": 20,
-                ""healthMax"": 20,
+                ""healthStart"": 30,
+                ""healthMax"": 30,
                 ""buffs"": [],
-                ""canAttack"": 0,
+                ""canAttack"": 1,
                 ""isFrozen"": 0,
                 ""spawnRank"": 2
             },
@@ -177,10 +180,6 @@ public class TestDeathRattle
     ResourceSingleton resourceSingleton;
     BattleSingleton battleSingleton;
     EffectManager effectManager;
-
-    Board board;
-    Player player;
-    Player enemy;
 
     PlayerState playerState = JsonUtility.FromJson<PlayerState>(PLAYER_STATE);
     PlayerState enemyState = JsonUtility.FromJson<PlayerState>(ENEMY_STATE);
@@ -209,31 +208,65 @@ public class TestDeathRattle
         );
     }
 
-    [TearDown]
-    public void TearDown()
+    [UnityTest]
+    public IEnumerator DamageEnemyFaceDeathwishTest()
     {
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-5");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-3");
 
+        EffectManager.Instance.OnCreatureAttack(
+            enemyCreature,
+            playerCreature
+        );
+
+        yield return null;
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
+        Assert.AreEqual(null, enemyCreature);
+
+        yield return null;
+
+        PlayerAvatar enemyAvatar = BattleState.Instance().Opponent.Avatar;
+        Assert.AreEqual(90, enemyAvatar.Health);
+
+        yield return null;
+
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
+        Assert.AreEqual(null, playerCreature);
     }
 
-    //[Test]
-    //public void MonoBehaviorsExistTest()
-    //{
-    //    Assert.AreEqual(0, this.battleManager.GetServerMoves().Count);
-    //}
+    [UnityTest]
+    public IEnumerator DamageAllEnemyCreaturesDeathwishTest()
+    {
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-12");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-3");
 
-    // A UnityTest behaves like a coroutine in PlayMode
-    // and allows you to yield null to skip a frame in EditMode
-    //[UnityTest]
-    //public IEnumerator NewTestScriptWithEnumeratorPasses()
-    //{
-    //    // Use the Assert class to test conditions.
-    //    // yield to skip a frame
-    //    yield return null;
+        EffectManager.Instance.OnCreatureAttack(
+            enemyCreature,
+            playerCreature
+        );
 
-    //    BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-    //    Assert.AreEqual("ID_PLAYER-4", playerCreature.GetCardId());
+        yield return null;
 
-    //    BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-    //    Assert.AreEqual("ID_ENEMY-3", enemyCreature.GetCardId());
-    //}
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
+        Assert.AreEqual(null, enemyCreature);
+
+        yield return null;
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 1);
+        Assert.AreEqual(0, enemyCreature.Health);
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 2);
+        Assert.AreEqual(10, enemyCreature.Health);
+
+        yield return null;
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 1);
+        Assert.AreEqual(null, enemyCreature);
+
+        yield return null;
+
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 1);
+        Assert.AreEqual(null, playerCreature);
+    }
 }

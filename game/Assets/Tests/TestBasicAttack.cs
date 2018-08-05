@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
-public class NewTestScript
+public class TestBasicAttack
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",
@@ -121,10 +119,6 @@ public class NewTestScript
     BattleSingleton battleSingleton;
     EffectManager effectManager;
 
-    Board board;
-    Player player;
-    Player enemy;
-
     PlayerState playerState = JsonUtility.FromJson<PlayerState>(PLAYER_STATE);
     PlayerState enemyState = JsonUtility.FromJson<PlayerState>(ENEMY_STATE);
 
@@ -210,18 +204,11 @@ public class NewTestScript
         //this.board.RegisterPlayer(enemy);
     }
 
-    [TearDown]
-    public void TearDown()
-    {
-
-    }
-
     [Test]
-    public void NewTestScriptSimplePasses()
+    public void BattleStateTest()
     {
-        //Assert.AreEqual("ID_PLAYER", player.Id);
-        // Use the Assert class to test conditions.
-        Assert.AreEqual(false, BattleSingleton.Instance.ChallengeStarted);
+        Assert.AreEqual("ID_PLAYER", BattleState.Instance().You.Id);
+        Assert.AreEqual("ID_ENEMY", BattleState.Instance().Opponent.Id);
         Assert.AreEqual(0, BattleState.Instance().SpawnCount);
     }
 
@@ -235,8 +222,8 @@ public class NewTestScript
         Assert.AreEqual("ID_ENEMY-3", enemyCreature.GetCardId());
     }
 
-    [Test]
-    public void CreatureAttackCreatureTest()
+    [UnityTest]
+    public IEnumerator CreatureAttackCreatureTest()
     {
         BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
         BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
@@ -245,43 +232,15 @@ public class NewTestScript
             playerCreature,
             enemyCreature
         );
+
+        yield return null;
 
         playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        Assert.AreEqual(null, playerCreature.GetCardId());
+        Assert.AreEqual(null, playerCreature);
+
+        yield return null;
 
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-        Assert.AreEqual(null, enemyCreature.GetCardId());
-    }
-
-    // A UnityTest behaves like a coroutine in PlayMode
-    // and allows you to yield null to skip a frame in EditMode
-    [UnityTest]
-    public IEnumerator NewTestScriptWithEnumeratorPasses()
-    {
-        // Use the Assert class to test conditions.
-        // yield to skip a frame
-        yield return null;
-
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        Assert.AreEqual("ID_PLAYER-4", playerCreature.GetCardId());
-
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-        Assert.AreEqual("ID_ENEMY-3", enemyCreature.GetCardId());
-    }
-
-    [UnityTest]
-    public IEnumerator NewTestScriptWithEnumeratorPass()
-    {
-        // Use the Assert class to test conditions.
-        // yield to skip a frame
-        yield return null;
-
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-
-        EffectManager.Instance.OnCreatureAttack(
-            playerCreature,
-            enemyCreature
-        );
+        Assert.AreEqual(null, enemyCreature);
     }
 }
