@@ -69,11 +69,6 @@ public class BoardCreature : Targetable
             this.canAttack = 1;
         }
 
-        InitializeHelper();
-    }
-
-    private void InitializeHelper()
-    {
         this.maxAttacks = 1;
         this.buffs = new List<string>();
 
