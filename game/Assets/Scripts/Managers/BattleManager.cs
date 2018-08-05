@@ -338,45 +338,29 @@ public class BattleManager : MonoBehaviour
     private List<TargetableObject> GetValidTargets(TargetableObject attacker)
     {
         List<TargetableObject> targetableObjects = new List<TargetableObject>();
+        List<TargetableObject> priorityTargetableObjects = new List<TargetableObject>();
+
         foreach (Player player in BattleState.Instance().Players)
         {
-            Debug.Log(attacker.GetPlayerId());
             if (player.Id == attacker.GetPlayerId())
             {
                 continue;
             }
 
-            List<BoardCreature> fieldCreatures = Board.Instance().GetAliveCreaturesByPlayerId(player.Id);
-            List<BoardCreatureObject> fieldCreatureObjects = new List<BoardCreatureObject>(
-                fieldCreatures.Select(fieldCreature => fieldCreature.GetTargetableObject() as BoardCreatureObject)
-            );
-            targetableObjects.AddRange(fieldCreatureObjects);
+            List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(player.Id);
+            foreach (BoardCreature aliveCreature in aliveCreatures)
+            {
+                if (aliveCreature.HasAbility(Card.CARD_ABILITY_TAUNT))
+                {
+                    priorityTargetableObjects.Add(aliveCreature.GetTargetableObject());
+                }
+                targetableObjects.Add(aliveCreature.GetTargetableObject());
+            }
+
             targetableObjects.Add(player.Avatar.GetTargetableObject());
         }
 
-        List<TargetableObject> priorityTargetableObjects = new List<TargetableObject>();
-        foreach (TargetableObject targetableObject in targetableObjects)
-        {
-            if (targetableObject.IsAvatar())
-            {
-                continue;
-            }
-
-            BoardCreatureObject boardCreatureObject = targetableObject as BoardCreatureObject;
-            if (boardCreatureObject.HasAbility(Card.CARD_ABILITY_TAUNT))
-            {
-                priorityTargetableObjects.Add(boardCreatureObject);
-            }
-        }
-
-        if (priorityTargetableObjects.Count > 0)
-        {
-            return priorityTargetableObjects;
-        }
-        else
-        {
-            return targetableObjects;
-        }
+        return priorityTargetableObjects.Count > 0 ? priorityTargetableObjects : targetableObjects;
     }
 
     private bool CheckFight(TargetableObject attacker, RaycastHit hit)
@@ -402,7 +386,6 @@ public class BattleManager : MonoBehaviour
             return false;
         }
 
-        Debug.Log(validTargets.Count);
         if (validTargets.Count > 0 && validTargets.Contains(this.mouseUpTargetableObject))
         {
             TargetableObject attackingTargetableObject = this.mouseDownTargetableObject;
