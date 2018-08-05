@@ -13,6 +13,7 @@ public class MenuManager : MonoBehaviour
     private int galleryIndex;
 
     public Transform marketplacePreview;
+    public GameObject marketplacePreviewSummon;
 
     [SerializeField]
     private string currentView;
@@ -121,5 +122,17 @@ public class MenuManager : MonoBehaviour
         if (gallery.gameObject.activeSelf == true)
             gallery.gameObject.SetActive(false);
         marketplacePreview.gameObject.SetActive(true);
+    }
+
+    public void SetMarketplacePreview(Card card)
+    {
+        this.marketplacePreviewSummon.SetActive(false);  //assumes that initial value is set via inspector
+        Vector3 position = this.marketplacePreviewSummon.transform.position;
+
+        this.marketplacePreviewSummon = CardSingleton.Instance.GetSummonFromPool(card.GetName());
+        this.marketplacePreviewSummon.transform.position = position;
+        this.marketplacePreviewSummon.transform.localScale = new Vector3(4, 5, 1);
+        this.marketplacePreviewSummon.transform.LookAt(Camera.main.transform);
+        this.marketplacePreviewSummon.SetActive(true);
     }
 }

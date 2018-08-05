@@ -102,4 +102,9 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
         return this.imageNameToTexture[imageName];
     }
+
+    public List<string> GetCreatureNames()
+    {
+        return new List<string>(creatureNameToPrefab.Keys);
+    }
 }

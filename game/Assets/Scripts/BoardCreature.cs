@@ -188,7 +188,6 @@ public class BoardCreature : Targetable
         created.transform.parent = this.transform;
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
         created.transform.Rotate(-15, 0, 0, Space.Self);
-        //created.transform.LookAt(Camera.main.transform);
 
         if (this.owner.Id != BattleManager.Instance.You.Id)
         {

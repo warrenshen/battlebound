@@ -26,6 +26,7 @@ public class CardListItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         Card.SetHyperCardArtwork(ref MarketplaceManager.Instance.showcaseCard, this.card);
         Card.SetHyperCardFromData(ref MarketplaceManager.Instance.showcaseCard, this.card);
         MenuManager.Instance.HoverEnterEffect(this.gameObject);
+        MenuManager.Instance.SetMarketplacePreview(card);
         ActionManager.Instance.SetCursor(1);
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,17 +8,20 @@ public class CardSingleton : Singleton<CardSingleton>
     private GameObject cardPrefab;
 
     private Stack<HyperCard.Card> cardVisualPool;
-    private static int CARD_POOL_SIZE = 90;
+    private static int CARD_POOL_SIZE = 40;
 
+    [SerializeField]
     private Dictionary<string, GameObject> summonPool;
 
     private new void Awake()
     {
         base.Awake();
 
+        this.summonPool = new Dictionary<string, GameObject>();
+        this.cardVisualPool = new Stack<HyperCard.Card>();
+
         this.cardPrefab = Resources.Load("Prefabs/Card") as GameObject;
 
-        this.cardVisualPool = new Stack<HyperCard.Card>();
         Transform cardPoolRoot = new GameObject("Card Pool").transform;
         cardPoolRoot.transform.parent = this.transform;
 
@@ -29,7 +33,22 @@ public class CardSingleton : Singleton<CardSingleton>
             HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
             cardVisualPool.Push(cardVisual);
         }
+    }
 
+    public void Start()
+    {
+        Transform summonPoolRoot = new GameObject("Summon Pool").transform;
+        summonPoolRoot.transform.parent = this.transform;
+
+        foreach (string creaturePrefabName in ResourceSingleton.Instance.GetCreatureNames())
+        {
+            GameObject summon = GameObject.Instantiate(ResourceSingleton.Instance.GetCreaturePrefabByName(creaturePrefabName), summonPoolRoot);
+            summon.transform.parent = summonPoolRoot;
+            summon.AddComponent<GalleryIdle>();
+            summon.SetActive(false);
+            summonPool.Add(creaturePrefabName, summon);
+            Debug.Log(creaturePrefabName);
+        }
     }
 
     public HyperCard.Card TakeCardFromPool()
@@ -50,6 +69,12 @@ public class CardSingleton : Singleton<CardSingleton>
         cardVisual.transform.parent = this.transform;
         cardVisualPool.Push(cardVisual);
         cardVisual.gameObject.SetActive(false);
+    }
+
+    public GameObject GetSummonFromPool(string name)
+    {
+        Debug.Log(String.Format("Attempting to get {0}", name));
+        return summonPool[name];
     }
 
     public GameObject GetCardPrefab()
