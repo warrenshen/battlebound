@@ -722,7 +722,7 @@ describe("challenge events", function() {
           ],
           "hand": [
             {
-              "id": "C45-ID_PLAYER-10",
+              "id": "ID_PLAYER-10",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 0,
@@ -741,7 +741,7 @@ describe("challenge events", function() {
               "healthMax": 60,
             },
             {
-              "id": "C28-ID_PLAYER-15",
+              "id": "ID_PLAYER-15",
               "playerId": "ID_PLAYER",
               "level": 1,
               "category": 1,
@@ -795,7 +795,7 @@ describe("challenge events", function() {
           "costStart": 20,
           "healthStart": 10,
           "healthMax": 10,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -820,7 +820,7 @@ describe("challenge events", function() {
           "costStart": 20,
           "healthStart": 30,
           "healthMax": 30,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -828,7 +828,7 @@ describe("challenge events", function() {
           "deathRank": 1
         },
         {
-          "id": "C38-ID_PLAYER-17",
+          "id": "ID_PLAYER-17",
           "level": 1,
           "category": 0,
           "attack": 20,
@@ -846,7 +846,7 @@ describe("challenge events", function() {
           "costStart": 30,
           "healthStart": 30,
           "healthMax": 30,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -871,7 +871,7 @@ describe("challenge events", function() {
           "costStart": 30,
           "healthStart": 30,
           "healthMax": 30,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -879,7 +879,7 @@ describe("challenge events", function() {
           "deathRank": 3
         },
         {
-          "id": "C46-ID_PLAYER-9",
+          "id": "ID_PLAYER-9",
           "level": 1,
           "category": 0,
           "attack": 60,
@@ -902,7 +902,8 @@ describe("challenge events", function() {
           "costStart": 50,
           "healthStart": 40,
           "healthMax": 40,
-          "buffs": [],
+          "buffsField": [1001],
+          "buffsField": [2000],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -910,7 +911,7 @@ describe("challenge events", function() {
           "deathRank": 4
         },
         {
-          "id": "C30-ID_PLAYER-25",
+          "id": "ID_PLAYER-25",
           "level": 1,
           "category": 0,
           "attack": 20,
@@ -927,7 +928,7 @@ describe("challenge events", function() {
           "costStart": 40,
           "healthStart": 50,
           "healthMax": 50,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 1,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -957,7 +958,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlayCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C45-ID_PLAYER-10",
+            cardId: "ID_PLAYER-10",
             attributesJson: {
               fieldIndex: 0,
             },
@@ -970,7 +971,7 @@ describe("challenge events", function() {
 
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_MINION");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C45-ID_PLAYER-10");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-10");
             assert.equal(lastMoves[0].attributes.fieldIndex, 0);
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
@@ -986,6 +987,8 @@ describe("challenge events", function() {
             assert.equal(lastMoves[1].attributes.card.abilities.indexOf(5) >= 0, true);
             assert.equal(lastMoves[1].attributes.card.abilities.indexOf(6) >= 0, true);
             assert.equal(lastMoves[1].attributes.card.abilities.indexOf(1) >= 0, false);
+            assert.equal(lastMoves[1].attributes.card.buffsField.length, 0);
+            assert.equal(lastMoves[1].attributes.card.buffsHand.length, 0);
             assert.equal(lastMoves[1].attributes.fieldIndex >= 0, true);
             assert.equal(lastMoves[1].attributes.fieldIndex <= 5, true);
 
@@ -994,7 +997,7 @@ describe("challenge events", function() {
             assert.equal(playerState.manaMax, 90);
 
             const playerField = playerState.field;
-            assert.equal(playerField[0].id, "C45-ID_PLAYER-10");
+            assert.equal(playerField[0].id, "ID_PLAYER-10");
             assert.equal(playerField.filter(function(fieldCard) { return fieldCard.id != "EMPTY" }).length, 2);
 
             resolve();
@@ -1011,7 +1014,7 @@ describe("challenge events", function() {
             eventKey: "TestChallengePlaySpellUntargeted",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C28-ID_PLAYER-15",
+            cardId: "ID_PLAYER-15",
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1020,7 +1023,7 @@ describe("challenge events", function() {
             assert.equal(lastMoves.length, 2);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
             assert.equal(lastMoves[0].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[0].attributes.card.id, "C28-ID_PLAYER-15");
+            assert.equal(lastMoves[0].attributes.card.id, "ID_PLAYER-15");
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
@@ -1220,7 +1223,7 @@ describe("challenge events", function() {
           "costStart": 20,
           "healthStart": 10,
           "healthMax": 10,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -1245,7 +1248,7 @@ describe("challenge events", function() {
           "costStart": 20,
           "healthStart": 30,
           "healthMax": 30,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -1271,7 +1274,7 @@ describe("challenge events", function() {
           "costStart": 30,
           "healthStart": 30,
           "healthMax": 30,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -1296,7 +1299,7 @@ describe("challenge events", function() {
           "costStart": 30,
           "healthStart": 30,
           "healthMax": 30,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -1322,7 +1325,7 @@ describe("challenge events", function() {
           "costStart": 50,
           "healthStart": 40,
           "healthMax": 40,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 0,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -1347,7 +1350,7 @@ describe("challenge events", function() {
           "costStart": 40,
           "healthStart": 50,
           "healthMax": 50,
-          "buffs": [],
+          "buffsField": [],
           "canAttack": 1,
           "isFrozen": 0,
           "isSilenced": 0,
@@ -1487,7 +1490,7 @@ describe("challenge events", function() {
                 "costStart": 30,
                 "healthStart": 30,
                 "healthMax": 30,
-                "buffs": [],
+                "buffsField": [],
                 "canAttack": 0,
                 "isFrozen": 1,
                 "isSilenced": 1,
