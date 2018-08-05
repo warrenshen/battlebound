@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using GameSparks.Core;
@@ -18,6 +19,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private bool isAuthenticated;
     public bool IsAuthenticated => isAuthenticated;
 
+    private bool isLatestVersion;
+    public bool IsLatestVersion => isLatestVersion;
+
     private string playerId;
     private string address;
     private long balance;
@@ -33,6 +37,8 @@ public class SparkSingleton : Singleton<SparkSingleton>
         {
             return;
         }
+
+        this.isLatestVersion = false;
 
         LeanTween.init(800);
 
@@ -74,7 +80,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
     {
         if (GS.Instance.Authenticated)
         {
-            GetPlayerData();
+            SendGetPlayerDataRequest();
         }
         else
         {
@@ -104,8 +110,55 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.authenticatedCallbacks = new List<UnityAction>();
     }
 
-    private void GetPlayerData()
+    private void SendGetGameVersionRequest()
     {
+
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("GetGameVersion");
+        request.Send(OnGetGameVersionSuccess, OnGetGameVersionError);
+    }
+
+    private void OnGetGameVersionSuccess(LogEventResponse response)
+    {
+        GSData scriptData = response.ScriptData;
+        string version = scriptData.GetString("version");
+
+        try
+        {
+            float versionFloat = float.Parse(version);
+            if (Application.version == version)
+            {
+                this.isLatestVersion = true;
+            }
+        }
+        catch (FormatException)
+        {
+            Debug.LogError("Invalid version from server");
+        }
+
+        if (FlagHelper.IsLogVerbose())
+        {
+            if (this.isLatestVersion)
+            {
+                Debug.Log("Game version is latest.");
+            }
+            else
+            {
+                Debug.Log("Game version is NOT latest.");
+            }
+        }
+    }
+
+    private void OnGetGameVersionError(LogEventResponse response)
+    {
+        Debug.LogError("GetGameVersion request error.");
+    }
+
+    private void SendGetPlayerDataRequest()
+    {
+        // Redundant but just to be sure variable is false.
+        this.isLatestVersion = false;
+
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("GetPlayerData");
         request.Send(OnGetPlayerDataSuccess, OnGetPlayerDataError);
@@ -114,6 +167,34 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private void OnGetPlayerDataSuccess(LogEventResponse response)
     {
         GSData scriptData = response.ScriptData;
+
+        string latestVersion = scriptData.GetString("latestVersion");
+        try
+        {
+            float versionFloat = float.Parse(latestVersion);
+            if (Application.version == latestVersion)
+            {
+                this.isLatestVersion = true;
+            }
+        }
+        catch (FormatException)
+        {
+            this.isLatestVersion = false;
+            Debug.LogError("Invalid version from server");
+        }
+
+        if (FlagHelper.IsLogVerbose())
+        {
+            if (this.isLatestVersion)
+            {
+                Debug.Log("Game version is latest.");
+            }
+            else
+            {
+                Debug.Log("Game version is NOT latest.");
+            }
+        }
+
         this.playerId = scriptData.GetString("playerId");
         this.address = scriptData.GetString("address");
 
@@ -161,7 +242,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
     private void OnLoginSuccess(AuthenticationResponse response)
     {
-        GetPlayerData();
+        SendGetPlayerDataRequest();
         LoginRegisterPanel.Instance.OnLoginSuccess(response);
     }
 
@@ -224,7 +305,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
     private void OnRegisterSuccess(RegistrationResponse response)
     {
-        GetPlayerData();
+        SendGetPlayerDataRequest();
         LoginRegisterPanel.Instance.OnRegisterSuccess(response);
     }
 
