@@ -165,8 +165,7 @@ public class TestDivineShield
     {
         BattleState.InstantiateWithState(
             playerState,
-            enemyState,
-            0
+            enemyState
         );
     }
 

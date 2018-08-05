@@ -7,7 +7,9 @@ using System.Linq;
 
 public class GalleryIdle : MonoBehaviour
 {
-    public string cardName;
+    [SerializeField]
+    private string cardName;
+
     private dynamic summonAnimation;
     private List<string> summonAnimClips;
 

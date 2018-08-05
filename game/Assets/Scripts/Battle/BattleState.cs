@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,6 +16,8 @@ public class BattleState
 
     private int deviceMoveCount;
     private int serverMoveCount;
+
+    private List<ChallengeCard> deadCards;
 
     private List<ChallengeMove> serverMoveQueue;
     private List<ChallengeMove> deviceMoveQueue;
@@ -57,18 +60,41 @@ public class BattleState
 
     public static BattleState InstantiateWithState(
         PlayerState playerState,
-        PlayerState opponentState,
-        int spawnCount
+        PlayerState opponentState
     )
     {
-        if (!BattleSingleton.Instance.IsEnvironmentTest() && instance != null)
-        {
-            throw new Exception("BattleState instance already exists.");
-        }
         instance = new BattleState(
             playerState,
             opponentState,
-            spawnCount
+            0,
+            0,
+            new List<ChallengeCard>(),
+            new List<ChallengeMove>()
+        );
+        instance.RegisterPlayersWithState(
+            playerState,
+            opponentState
+        );
+        EffectManager.Instance.ReadyUp();
+        return instance;
+    }
+
+    public static BattleState InstantiateWithState(
+        PlayerState playerState,
+        PlayerState opponentState,
+        int moveCount,
+        int spawnCount,
+        List<ChallengeCard> deadCards,
+        List<ChallengeMove> serverMoves
+    )
+    {
+        instance = new BattleState(
+            playerState,
+            opponentState,
+            moveCount,
+            spawnCount,
+            deadCards,
+            serverMoves
         );
         instance.RegisterPlayersWithState(
             playerState,
@@ -82,6 +108,12 @@ public class BattleState
     {
         this.serverMoveQueue = new List<ChallengeMove>();
         this.deviceMoveQueue = new List<ChallengeMove>();
+
+        this.serverMoveCount = 0;
+        this.deviceMoveCount = 0;
+        this.spawnCount = 0;
+
+        this.deadCards = new List<ChallengeCard>();
         this.serverMoves = new List<ChallengeMove>();
 
         this.playerIdToPlayer = new Dictionary<string, Player>();
@@ -112,23 +144,27 @@ public class BattleState
     private BattleState(
         PlayerState playerState,
         PlayerState opponentState,
-        int spawnCount
+        int moveCount,
+        int spawnCount,
+        List<ChallengeCard> deadCards,
+        List<ChallengeMove> serverMoves
     )
     {
         this.serverMoveQueue = new List<ChallengeMove>();
         this.deviceMoveQueue = new List<ChallengeMove>();
-        this.serverMoves = new List<ChallengeMove>();
+
+        this.serverMoveCount = moveCount;
+        this.deviceMoveCount = moveCount;
+        this.spawnCount = spawnCount;
+
+        this.deadCards = deadCards;
+        this.serverMoves = serverMoves;
 
         this.playerIdToPlayer = new Dictionary<string, Player>();
         this.players = new List<Player>();
 
-        this.spawnCount = spawnCount;
-
-        this.you = new Player(playerState, playerState.Id);
-        this.opponent = new Player(opponentState, opponentState.Id);
-
-        this.you.Initialize(playerState);
-        this.opponent.Initialize(opponentState);
+        this.you = new Player(playerState, "Player");
+        this.opponent = new Player(opponentState, "Enemy");
 
         this.playerIdToPlayer[this.you.Id] = this.you;
         this.playerIdToPlayer[this.opponent.Id] = this.opponent;
@@ -145,11 +181,14 @@ public class BattleState
         PlayerState opponentState
     )
     {
+        this.you.Initialize(playerState);
+        this.opponent.Initialize(opponentState);
+
         Board.Instance().RegisterPlayer(this.you, playerState.Field);
         Board.Instance().RegisterPlayer(this.opponent, opponentState.Field);
     }
 
-    private void GameStart()
+    public void GameStart()
     {
         if (FlagHelper.IsServerEnabled())
         {
@@ -308,9 +347,25 @@ public class BattleState
         return this.serverMoves;
     }
 
-    public void SetServerMoves(List<ChallengeMove> serverMoves)
+    public List<ChallengeCard> GetDeadCards()
     {
-        this.serverMoves = serverMoves;
+        return this.deadCards;
+    }
+
+    public List<ChallengeCard> GetDeadCardsByPlayerId(string playerId)
+    {
+        //foreach (ChallengeCard deadCard in this.deadCards)
+        //{
+        //    Debug.Log(JsonUtility.ToJson(deadCard));
+        //}
+        return new List<ChallengeCard>(
+            this.deadCards.Where(deadCard => deadCard.PlayerId == playerId)
+        );
+    }
+
+    public void AddDeadCard(ChallengeCard deadCard)
+    {
+        this.deadCards.Add(deadCard);
     }
 
     public PlayerState GetPlayerState()

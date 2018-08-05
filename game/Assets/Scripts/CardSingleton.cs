@@ -42,9 +42,12 @@ public class CardSingleton : Singleton<CardSingleton>
 
         foreach (string creaturePrefabName in ResourceSingleton.Instance.GetCreatureNames())
         {
-            GameObject summon = GameObject.Instantiate(ResourceSingleton.Instance.GetCreaturePrefabByName(creaturePrefabName), summonPoolRoot);
+            GameObject summon = GameObject.Instantiate(
+                ResourceSingleton.Instance.GetCreaturePrefabByName(creaturePrefabName),
+                summonPoolRoot
+            );
             summon.transform.parent = summonPoolRoot;
-            summon.AddComponent<GalleryIdle>();
+            GalleryIdle galleryIdle = summon.AddComponent<GalleryIdle>();
             summon.SetActive(false);
             summonPool.Add(creaturePrefabName, summon);
         }

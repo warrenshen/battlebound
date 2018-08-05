@@ -152,8 +152,7 @@ public class TestBasicAttack
 
         BattleState.InstantiateWithState(
             playerState,
-            enemyState,
-            0
+            enemyState
         );
 
         //GameObject boardGameObject = new GameObject("Board");
