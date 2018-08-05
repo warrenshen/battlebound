@@ -710,7 +710,7 @@ describe("challenge play mulligan", function() {
               "healthStart": null,
               "healthMax": null,
               "abilitiesStart": [],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_PLAYER-0",
@@ -734,7 +734,7 @@ describe("challenge play mulligan", function() {
               "abilitiesStart": [
                 4
               ],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_PLAYER-19",
@@ -754,7 +754,7 @@ describe("challenge play mulligan", function() {
               "healthStart": null,
               "healthMax": null,
               "abilitiesStart": [],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_PLAYER-2",
@@ -778,7 +778,7 @@ describe("challenge play mulligan", function() {
               "abilitiesStart": [
                 4
               ],
-              "handBuffs": []
+              "buffsHand": []
             }
           ],
           "id": "ID_PLAYER",
@@ -910,7 +910,7 @@ describe("challenge play mulligan", function() {
                 1,
                 21
               ],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_OPPONENT-10",
@@ -934,7 +934,7 @@ describe("challenge play mulligan", function() {
               "abilitiesStart": [
                 29
               ],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_OPPONENT-7",
@@ -954,7 +954,7 @@ describe("challenge play mulligan", function() {
               "healthStart": null,
               "healthMax": null,
               "abilitiesStart": [],
-              "handBuffs": []
+              "buffsHand": []
             }
           ],
           "id": "ID_OPPONENT",
@@ -1334,7 +1334,7 @@ describe("challenge play mulligan", function() {
               "healthStart": null,
               "healthMax": null,
               "abilitiesStart": [],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_PLAYER-0",
@@ -1358,7 +1358,7 @@ describe("challenge play mulligan", function() {
               "abilitiesStart": [
                 4
               ],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_PLAYER-19",
@@ -1378,7 +1378,7 @@ describe("challenge play mulligan", function() {
               "healthStart": null,
               "healthMax": null,
               "abilitiesStart": [],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_PLAYER-2",
@@ -1402,7 +1402,7 @@ describe("challenge play mulligan", function() {
               "abilitiesStart": [
                 4
               ],
-              "handBuffs": []
+              "buffsHand": []
             }
           ],
           "id": "ID_PLAYER",
@@ -1530,7 +1530,7 @@ describe("challenge play mulligan", function() {
                 1,
                 21
               ],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_OPPONENT-10",
@@ -1554,7 +1554,7 @@ describe("challenge play mulligan", function() {
               "abilitiesStart": [
                 29
               ],
-              "handBuffs": []
+              "buffsHand": []
             },
             {
               "id": "ID_OPPONENT-7",
@@ -1574,7 +1574,7 @@ describe("challenge play mulligan", function() {
               "healthStart": null,
               "healthMax": null,
               "abilitiesStart": [],
-              "handBuffs": []
+              "buffsHand": []
             },
           ],
           "deckSize": 4,
