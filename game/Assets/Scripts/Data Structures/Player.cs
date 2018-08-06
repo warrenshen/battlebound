@@ -311,7 +311,7 @@ public class Player
         this.mulliganCards = new List<Card>(mulliganCards);
         this.keptMulliganCards = new List<Card>(mulliganCards);
 
-        for (int i = 0; i < this.keptMulliganCards.Count; i++)
+        for (int i = 0; i < this.keptMulliganCards.Count; ++i)
         {
             BattleCardObject battleCardObject = AddMulliganCard(
                 this.keptMulliganCards[i],
@@ -505,7 +505,7 @@ public class Player
             }
 
             int replaceIndex = 0;
-            for (int i = 0; i < this.mulliganCards.Count; i += 1)
+            for (int i = 0; i < this.mulliganCards.Count; ++i)
             {
                 Card mulliganCard = this.mulliganCards[i];
                 if (!cardIds.Contains(mulliganCard.Id))
@@ -587,6 +587,7 @@ public class Player
             this,
             battleCardObject,
             index,
+            this.mulliganCards.Count,
             onAnimationFinish
         );
 

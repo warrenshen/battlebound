@@ -598,13 +598,15 @@ public class BattleManager : MonoBehaviour
         Player player,
         BattleCardObject battleCardObject,
         int position,
+        int mulliganCount,
         UnityAction onAnimateFinish = null
     )
     {
-        string targetPointName = String.Format("{0} Mulligan Holder {1}", player.Name, position);
-        GameObject targetPoint = GameObject.Find(targetPointName);  //to-do cache this?
+        float centered = -(mulliganCount - 1) / 2.0F + position;
+        Vector3 mulliganPosition = new Vector3(centered * BattleCardObject.CARD_VISUAL_SIZE.x, 6, 5);
+
         battleCardObject.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
-        battleCardObject.transform.position = targetPoint.transform.position;
+        battleCardObject.transform.localPosition = mulliganPosition;
         battleCardObject.transform.localScale = Vector3.zero;
 
         battleCardObject.visual.SetOutline(true);
@@ -622,9 +624,9 @@ public class BattleManager : MonoBehaviour
             ).
             setEaseInQuad();
         CardTween
-            .move(
+            .moveLocal(
                 battleCardObject,
-                targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F,
+                mulliganPosition, //targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F
                 CardTween.TWEEN_DURATION
             )
             .setEaseInQuad()

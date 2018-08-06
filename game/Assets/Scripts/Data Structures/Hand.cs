@@ -19,7 +19,7 @@ public class Hand
 
     public int Size()
     {
-        return battleCardObjects.Count;
+        return this.battleCardObjects.Count;
     }
 
     public bool IsFull()
@@ -129,7 +129,7 @@ public class Hand
         UnityAction onRepositionFinish = null
     )
     {
-        int size = this.battleCardObjects.Count;
+        int size = this.Size();
         //if no cards, return
         if (size <= 0)
         {

@@ -61,6 +61,7 @@ public class CardSingleton : Singleton<CardSingleton>
             return created.GetComponent<HyperCard.Card>();
         }
         HyperCard.Card chosen = cardVisualPool.Pop();
+        chosen.transform.localScale = BattleCardObject.CARD_VISUAL_SIZE;
         chosen.ResetParams();
         chosen.gameObject.SetActive(true);
         return chosen;
@@ -71,6 +72,13 @@ public class CardSingleton : Singleton<CardSingleton>
         cardVisual.transform.parent = this.transform;
         cardVisualPool.Push(cardVisual);
         cardVisual.gameObject.SetActive(false);
+
+#if UNITY_EDITOR
+        if (!cardVisual.transform.localScale.Equals(BattleCardObject.CARD_VISUAL_SIZE))
+        {
+            Debug.LogError("Return card visual to pool with weird size. Likely a tween bug!");
+        }
+#endif
     }
 
     public GameObject GetSummonFromPool(string name)
