@@ -158,4 +158,10 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
             .setEasePunch();
         this.healthLabel.text = String.Format("{0}/{1}", this.playerAvatar.Health, this.playerAvatar.MaxHealth);
     }
+
+    public override void MouseDown()
+    {
+        base.MouseDown();
+        BattleManager.Instance.ShowEmoteMenu();
+    }
 }

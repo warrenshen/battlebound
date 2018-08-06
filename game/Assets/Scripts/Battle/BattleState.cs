@@ -227,8 +227,7 @@ public class BattleState
             }
             else
             {
-                EndMulligan(this.you);
-                EndMulligan(this.opponent);
+                EndMulligan();
 
                 activePlayer.RenderTurnStart();
                 inactivePlayer.RenderGameStart();
@@ -240,8 +239,7 @@ public class BattleState
 
             if (FlagHelper.ShouldSkipMulligan())
             {
-                EndMulligan(this.you);
-                EndMulligan(this.opponent);
+                EndMulligan();
 
                 this.activePlayer.DrawCardsForce(3);
                 inactivePlayer.DrawCardsForce(4);
@@ -254,16 +252,12 @@ public class BattleState
         }
     }
 
-    public void EndMulligan(Player player)
+    public void EndMulligan()
     {
-        BattleManager.Instance.HideMulliganOverlay(player);
-
-        if (this.mode != BATTLE_STATE_NORMAL_MODE)
-        {
-            this.mode = BATTLE_STATE_NORMAL_MODE;
-            this.activePlayer.MulliganNewTurn();
-            EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
-        }
+        BattleManager.Instance.HideMulliganOverlay();
+        this.mode = BATTLE_STATE_NORMAL_MODE;
+        this.activePlayer.MulliganNewTurn();
+        EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
     }
 
     public Player GetPlayerById(string playerId)
@@ -416,6 +410,7 @@ public class BattleState
     {
         this.you.FinishMulligan();
         this.opponent.FinishMulligan();
+        EndMulligan();
         ComparePlayerStates(); // Compare state at the end of mulligan.
     }
 

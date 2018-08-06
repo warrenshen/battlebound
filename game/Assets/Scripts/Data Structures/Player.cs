@@ -485,8 +485,6 @@ public class Player
 
         this.mode = PLAYER_STATE_MODE_NORMAL;
 
-        BattleState.Instance().EndMulligan(this);
-
         RenderTurnStart();
     }
 

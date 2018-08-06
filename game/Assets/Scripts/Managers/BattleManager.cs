@@ -52,6 +52,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private List<CardObject> xpCardObjects;
 
+    [SerializeField]
+    private GameObject emoteMenu;
+
     public HyperCard.Card HoverCard;
     public Canvas canvas;
 
@@ -127,9 +130,12 @@ public class BattleManager : MonoBehaviour
     {
         ActionManager.Instance.SetActive(false);
         this.validTargets = GetValidTargets(this.mouseDownTargetableObject);
-        //to-do: don't show attack arrow unless mouse no longer in bounds of board creature
+
+        //to-do: don't show attack arrow unless mouse no longer in bounds of board creature?
+        //raise object of interest?
         attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
         attackCommand.SetWidth(1.66f);
+
         //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
         ActionManager.Instance.SetCursor(4);
     }
@@ -213,8 +219,7 @@ public class BattleManager : MonoBehaviour
             {
                 //do something?
             }
-
-            //reset state
+            //reset state, kills AttackStartMade
             ActionManager.Instance.SetActive(true);
             this.attackCommand.SetWidth(0);
             this.mouseDownTargetableObject = null;
@@ -606,11 +611,14 @@ public class BattleManager : MonoBehaviour
             .setEaseInQuad();
     }
 
-    public void HideMulliganOverlay(Player player)
+    public void HideMulliganOverlay()
     {
-        GameObject overlay = GameObject.Find(String.Format("{0} Mulligan Overlay", player.Name));
-
-        LeanTween.move(overlay, overlay.transform.position + overlay.transform.up * -3, CardTween.TWEEN_DURATION);
+        GameObject overlay = GameObject.Find("Mulligan Overlay");
+        LeanTween.move(
+            overlay,
+            overlay.transform.position + overlay.transform.up * -3,
+            CardTween.TWEEN_DURATION
+        );
         LeanTween
             .scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION)
             .setOnComplete(() =>
@@ -1123,5 +1131,10 @@ public class BattleManager : MonoBehaviour
             Debug.LogError(string.Format("Invalid chatId {0}", chatId));
             return null;
         }
+    }
+
+    public void ShowEmoteMenu()
+    {
+        emoteMenu.SetActive(true);
     }
 }

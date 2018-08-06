@@ -38,9 +38,6 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
     private AudioSource[] audioSources;
 
-    private Color initialOutlineStartColor;
-    private Color initialOutlineEndColor;
-
     public void Initialize(BoardCreature boardCreature)
     {
         this.boardCreature = boardCreature;
@@ -528,7 +525,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     // MouseWatchable functions.
     public override void EnterHover()
     {
-        this.visual.SetOutlineColors(Color.white, this.initialOutlineEndColor);
+        this.visual.SetOutlineColors(Color.white, this.visual.InitialOutlineEndColor);
         if (!this.raisedCard)
         {
             RaiseCardVisual();

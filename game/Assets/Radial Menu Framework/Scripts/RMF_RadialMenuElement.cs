@@ -4,7 +4,8 @@ using UnityEngine.EventSystems;
 using System.Collections;
 
 [AddComponentMenu("Radial Menu Framework/RMF Element")]
-public class RMF_RadialMenuElement : MonoBehaviour {
+public class RMF_RadialMenuElement : MonoBehaviour
+{
 
     [HideInInspector]
     public RectTransform rt;
@@ -32,7 +33,8 @@ public class RMF_RadialMenuElement : MonoBehaviour {
 
     private CanvasGroup cg;
 
-    void Awake() {
+    void Awake()
+    {
 
         rt = gameObject.GetComponent<RectTransform>();
 
@@ -50,23 +52,27 @@ public class RMF_RadialMenuElement : MonoBehaviour {
 
     }
 
-    void Start () {
+    void Start()
+    {
 
         rt.rotation = Quaternion.Euler(0, 0, -angleOffset); //Apply rotation determined by the parent radial menu.
 
         //If we're using lazy selection, we don't want our normal mouse-over effects interfering, so we turn raycasts off.
         if (parentRM.useLazySelection)
             cg.blocksRaycasts = false;
-        else {
+        else
+        {
 
             //Otherwise, we have to do some magic with events to get the label stuff working on mouse-over.
 
             EventTrigger t;
 
-            if (button.GetComponent<EventTrigger>() == null) {
+            if (button.GetComponent<EventTrigger>() == null)
+            {
                 t = button.gameObject.AddComponent<EventTrigger>();
                 t.triggers = new System.Collections.Generic.List<EventTrigger.Entry>();
-            } else
+            }
+            else
                 t = button.GetComponent<EventTrigger>();
 
 
@@ -88,9 +94,10 @@ public class RMF_RadialMenuElement : MonoBehaviour {
         }
 
     }
-	
+
     //Used by the parent radial menu to set up all the approprate angles. Affects master Z rotation and the active angles for lazy selection.
-    public void setAllAngles(float offset, float baseOffset) {
+    public void setAllAngles(float offset, float baseOffset)
+    {
 
         angleOffset = offset;
         angleMin = offset - (baseOffset / 2f);
@@ -100,38 +107,40 @@ public class RMF_RadialMenuElement : MonoBehaviour {
 
     //Highlights this button. Unity's default button wasn't really meant to be controlled through code so event handlers are necessary here.
     //I would highly recommend not messing with this stuff unless you know what you're doing, if one event handler is wrong then the whole thing can break.
-    public void highlightThisElement(PointerEventData p) {
+    public void highlightThisElement(PointerEventData p)
+    {
 
         ExecuteEvents.Execute(button.gameObject, p, ExecuteEvents.selectHandler);
+        button.transform.localScale = Vector3.one * 2;
         active = true;
         setParentMenuLable(label);
 
     }
 
     //Sets the label of the parent menu. Is set to public so you can call this elsewhere if you need to show a special label for something.
-    public void setParentMenuLable(string l) {
+    public void setParentMenuLable(string l)
+    {
 
         if (parentRM.textLabel != null)
             parentRM.textLabel.text = l;
-
-
     }
 
 
     //Unhighlights the button, and if lazy selection is off, will reset the menu's label.
-    public void unHighlightThisElement(PointerEventData p) {
+    public void unHighlightThisElement(PointerEventData p)
+    {
 
         ExecuteEvents.Execute(button.gameObject, p, ExecuteEvents.deselectHandler);
+        button.transform.localScale = Vector3.one;
         active = false;
 
         if (!parentRM.useLazySelection)
             setParentMenuLable(" ");
-
-
     }
 
     //Just a quick little test you can run to ensure things are working properly.
-    public void clickMeTest() {
+    public void clickMeTest()
+    {
 
         Debug.Log(assignedIndex);
 
