@@ -103,6 +103,15 @@ public class BoardCreature : Targetable
         return this.owner.HasTurn && this.isFrozen <= 0 && this.canAttack > 0;
     }
 
+    public Transform GetTargetableTransform()
+    {
+        if (this.boardCreatureObject.GetType() == typeof(BoardCreatureMock))
+        {
+            return null;
+        }
+        return (this.boardCreatureObject as TargetableObject).transform;
+    }
+
     public TargetableObject GetTargetableObject()
     {
         return this.boardCreatureObject as TargetableObject;

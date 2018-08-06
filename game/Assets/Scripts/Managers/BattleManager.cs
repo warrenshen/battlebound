@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
@@ -12,7 +11,6 @@ public class BattleManager : MonoBehaviour
 
     public int battleLayer;
     public int boardOrBattleLayer;
-    //private List<HistoryItem> history;
 
     private TargetableObject mouseDownTargetableObject;
     private TargetableObject mouseUpTargetableObject;
@@ -748,19 +746,19 @@ public class BattleManager : MonoBehaviour
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
-        Player player = battleCardObject.Owner;
+        string playerId = battleCardObject.GetPlayerId();
 
         ChallengeMove challengeMove;
 
-        if (player.Id == BattleState.Instance().Opponent.Id)
+        if (playerId == BattleState.Instance().Opponent.Id)
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
             moveAttributes.SetFieldIndex(index);
 
             challengeMove.SetMoveAttributes(moveAttributes);
@@ -771,7 +769,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
             BattleState.Instance().AddDeviceMove(challengeMove);
 
@@ -786,12 +784,12 @@ public class BattleManager : MonoBehaviour
             else
             {
                 challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(player.Id);
+                challengeMove.SetPlayerId(playerId);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MINION);
 
                 ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
                 moveAttributes.SetCardId(battleCardObject.Card.Id);
-                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
                 moveAttributes.SetFieldIndex(index);
 
                 challengeMove.SetMoveAttributes(moveAttributes);
@@ -833,19 +831,18 @@ public class BattleManager : MonoBehaviour
     public bool PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
     {
         BoardCreatureObject targetedCreatureObject = hit.collider.GetComponent<BoardCreatureObject>();
+        string playerId = battleCardObject.GetPlayerId();
 
-        Player player = battleCardObject.Owner;
         ChallengeMove challengeMove;
-
-        if (player.Id == BattleState.Instance().Opponent.Id)
+        if (playerId == BattleState.Instance().Opponent.Id)
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
             moveAttributes.SetFieldId(targetedCreatureObject.GetPlayerId());
             moveAttributes.SetTargetId(targetedCreatureObject.GetCardId());
 
@@ -857,7 +854,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
             BattleState.Instance().AddDeviceMove(challengeMove);
 
@@ -875,13 +872,21 @@ public class BattleManager : MonoBehaviour
             else
             {
                 challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(player.Id);
+                challengeMove.SetPlayerId(playerId);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
+
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetCardId(battleCardObject.Card.Id);
+                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
+                moveAttributes.SetFieldId(targetedCreatureObject.GetPlayerId());
+                moveAttributes.SetTargetId(targetedCreatureObject.GetCardId());
+
+                challengeMove.SetMoveAttributes(moveAttributes);
                 BattleState.Instance().AddServerMove(challengeMove);
             }
 
             EffectManager.Instance.OnSpellTargetedPlay(
-                battleCardObject,
+                battleCardObject.GetChallengeCard(),
                 targetedCreatureObject.GetTargetable() as BoardCreature
             );
             UseCard(battleCardObject);
@@ -895,7 +900,10 @@ public class BattleManager : MonoBehaviour
      */
     public void PlayTargetedSpellFromServer(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
-        EffectManager.Instance.OnSpellTargetedPlay(battleCardObject, targetedCreature);
+        EffectManager.Instance.OnSpellTargetedPlay(
+            battleCardObject.GetChallengeCard(),
+            targetedCreature
+        );
         UseCard(battleCardObject);
     }
 
@@ -904,18 +912,18 @@ public class BattleManager : MonoBehaviour
      */
     public bool PlayUntargetedSpell(BattleCardObject battleCardObject)
     {
-        Player player = battleCardObject.Owner;
-        ChallengeMove challengeMove;
+        string playerId = battleCardObject.GetPlayerId();
 
-        if (player.Id == BattleState.Instance().Opponent.Id)
+        ChallengeMove challengeMove;
+        if (playerId == BattleState.Instance().Opponent.Id)
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
 
             ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
             moveAttributes.SetCardId(battleCardObject.Card.Id);
-            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard());
+            moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
 
             challengeMove.SetMoveAttributes(moveAttributes);
             BattleState.Instance().AddServerMove(challengeMove);
@@ -925,7 +933,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(player.Id);
+            challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
             BattleState.Instance().AddDeviceMove(challengeMove);
 
@@ -938,12 +946,20 @@ public class BattleManager : MonoBehaviour
             else
             {
                 challengeMove = new ChallengeMove();
-                challengeMove.SetPlayerId(player.Id);
+                challengeMove.SetPlayerId(playerId);
                 challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
+
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetCardId(battleCardObject.Card.Id);
+                moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
+
+                challengeMove.SetMoveAttributes(moveAttributes);
                 BattleState.Instance().AddServerMove(challengeMove);
             }
 
-            EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
+            EffectManager.Instance.OnSpellUntargetedPlay(
+                battleCardObject.GetChallengeCard()
+            );
             UseCard(battleCardObject);
 
             return true;
@@ -955,7 +971,9 @@ public class BattleManager : MonoBehaviour
      */
     public void PlayUntargetedSpellFromServer(BattleCardObject battleCardObject)
     {
-        EffectManager.Instance.OnSpellUntargetedPlay(battleCardObject);
+        EffectManager.Instance.OnSpellUntargetedPlay(
+            battleCardObject.GetChallengeCard()
+        );
         UseCard(battleCardObject);
     }
 

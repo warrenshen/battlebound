@@ -397,7 +397,7 @@ public abstract class Card
     public CardObject wrapper;
     //Rarity, Description, FrontImage, BackImage all moved into CardObject, obtain via codex loading cached to BattleManager
 
-    public abstract ChallengeCard GetChallengeCard();
+    public abstract ChallengeCard GetChallengeCard(string playerId);
 
     public string GetName()
     {
@@ -630,10 +630,11 @@ public class CreatureCard : Card
         return trimmed;
     }
 
-    public override ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard(string playerId)
     {
         ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
+        challengeCard.SetPlayerId(playerId);
         challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetName(this.name);
         challengeCard.SetColor(this.GetClassColor());
@@ -686,10 +687,11 @@ public class WeaponCard : Card
         LoadTemplateFromCodex();
     }
 
-    public override ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard(string playerId)
     {
         ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
+        challengeCard.SetPlayerId(playerId);
         challengeCard.SetCategory((int)Card.CardType.Weapon);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
@@ -731,10 +733,11 @@ public class StructureCard : Card
         LoadTemplateFromCodex();
     }
 
-    public override ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard(string playerId)
     {
         ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
+        challengeCard.SetPlayerId(playerId);
         challengeCard.SetCategory((int)Card.CardType.Structure);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);
@@ -828,10 +831,11 @@ public class SpellCard : Card
         LoadTemplateFromCodex();
     }
 
-    public override ChallengeCard GetChallengeCard()
+    public override ChallengeCard GetChallengeCard(string playerId)
     {
         ChallengeCard challengeCard = new ChallengeCard();
         challengeCard.SetId(this.id);
+        challengeCard.SetPlayerId(playerId);
         challengeCard.SetCategory((int)Card.CardType.Spell);
         challengeCard.SetName(this.name);
         challengeCard.SetLevel(this.level);

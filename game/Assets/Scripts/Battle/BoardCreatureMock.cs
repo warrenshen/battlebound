@@ -1,8 +1,9 @@
-﻿using UnityEngine.Events;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 public class BoardCreatureMock : IBoardCreatureObject
 {
-    BoardCreature boardCreature;
+    private BoardCreature boardCreature;
 
     public void Initialize(BoardCreature boardCreature)
     {

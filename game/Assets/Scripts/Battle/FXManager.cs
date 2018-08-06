@@ -18,18 +18,18 @@ public class FXManager : IFXManager
 
     public void ThrowEffectWithCallback(
         string effectName,
-        Vector3 fromPosition,
-        Vector3 toPosition,
+        Transform fromTransform,
+        Transform toTransform,
         UnityAction onEffectFinish
     )
     {
         GameObject effectGameObject = FXPoolManager.Instance.PlayEffect(
             effectName,
-            fromPosition
+            fromTransform.position
         );
 
         LeanTween
-            .move(effectGameObject, toPosition, ActionManager.TWEEN_DURATION * 3)
+            .move(effectGameObject, toTransform.position, ActionManager.TWEEN_DURATION * 3)
             .setEaseInOutCirc()
             .setOnComplete(() =>
             {

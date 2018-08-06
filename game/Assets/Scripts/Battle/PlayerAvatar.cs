@@ -88,6 +88,15 @@ public class PlayerAvatar : Targetable
         return this.owner.Id;
     }
 
+    public Transform GetTargetableTransform()
+    {
+        if (this.playerAvatarObject.GetType() == typeof(PlayerAvatarMock))
+        {
+            return null;
+        }
+        return (this.playerAvatarObject as PlayerAvatarObject).transform;
+    }
+
     public TargetableObject GetTargetableObject()
     {
         return this.playerAvatarObject as TargetableObject;
