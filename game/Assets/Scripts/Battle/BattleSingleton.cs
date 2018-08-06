@@ -491,19 +491,19 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
-        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        LogEventRequest request = new LogEventRequest();
         request.SetEventKey("ChallengeSendChat");
-        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("challengeId", this.challengeId);
         request.SetEventAttribute("chatId", chatId);
         request.Send(OnChallengeSendChatSuccess, OnChallengeSendChatError);
     }
 
-    private void OnChallengeSendChatSuccess(LogChallengeEventResponse response)
+    private void OnChallengeSendChatSuccess(LogEventResponse response)
     {
         Debug.Log("ChallengeSendChat request success.");
     }
 
-    private void OnChallengeSendChatError(LogChallengeEventResponse response)
+    private void OnChallengeSendChatError(LogEventResponse response)
     {
         Debug.LogError("ChallengeSendChat request error.");
     }
