@@ -88,11 +88,7 @@ public class RMF_RadialMenuElement : MonoBehaviour
 
             t.triggers.Add(enter);
             t.triggers.Add(exit);
-
-
-
         }
-
     }
 
     //Used by the parent radial menu to set up all the approprate angles. Affects master Z rotation and the active angles for lazy selection.
@@ -141,13 +137,6 @@ public class RMF_RadialMenuElement : MonoBehaviour
     //Just a quick little test you can run to ensure things are working properly.
     public void clickMeTest()
     {
-
         Debug.Log(assignedIndex);
-
-
     }
-
-
-
-
 }
