@@ -81,7 +81,7 @@ public class BattleManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
-            BattleState _ = BattleState.Instance();
+            BattleState _ = BattleState.Instantiate();
             Debug.Log("Battle in Local Development Mode.");
             EffectManager.Instance.ReadyUp();
         }
