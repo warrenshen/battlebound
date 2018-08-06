@@ -100,6 +100,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            BattleState.Instantiate();
             SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
         }
     }

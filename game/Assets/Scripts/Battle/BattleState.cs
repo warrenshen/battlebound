@@ -137,7 +137,10 @@ public class BattleState
         Board.Instance().RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
         Board.Instance().RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
 
-        GameStart();
+        if (!FlagHelper.IsServerEnabled())
+        {
+            GameStart();
+        }
     }
 
     private BattleState(
