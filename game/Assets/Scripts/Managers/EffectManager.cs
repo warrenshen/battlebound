@@ -1242,6 +1242,52 @@ public class EffectManager : MonoBehaviour
         this.isWaiting = false;
     }
 
+    public void OnPlayMulligan(string playerId, List<int> deckCardIndices)
+    {
+        if (deckCardIndices.Count > 0)
+        {
+            this.isWaiting = true;
+        }
+
+        Player player = BattleState.Instance().GetPlayerById(playerId);
+        player.PlayMulliganByIndices(deckCardIndices);
+    }
+
+    public void OnPlayMulliganFinish(string playerId)
+    {
+        Player player = BattleState.Instance().GetPlayerById(playerId);
+        Player enemy = Board.Instance().GetOpponentByPlayerId(playerId);
+        if (
+            player.Mode == Player.PLAYER_STATE_MODE_MULLIGAN_WAITING &&
+            enemy.Mode == Player.PLAYER_STATE_MODE_MULLIGAN_WAITING
+        )
+        {
+            StartCoroutine("WaitForOneSecondCoroutine");
+        }
+        else
+        {
+            this.isWaiting = false;
+        }
+    }
+
+    private IEnumerator WaitForOneSecondCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        this.isWaiting = false;
+    }
+
+    public void OnFinishMulligan()
+    {
+        this.isDirty = true;
+        this.isWaiting = true;
+        BattleState.Instance().EndMulligan();
+    }
+
+    public void OnFinishMulliganFinish()
+    {
+        this.isWaiting = false;
+    }
+
     public void OnStartTurn(string playerId)
     {
         Player player = BattleState.Instance().GetPlayerById(playerId);

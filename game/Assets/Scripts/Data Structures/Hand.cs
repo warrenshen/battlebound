@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class Hand
@@ -124,7 +124,10 @@ public class Hand
         RepositionCards(-1);
     }
 
-    public void RepositionCards(float verticalShift = 0)
+    public void RepositionCards(
+        float verticalShift = 0,
+        UnityAction onRepositionFinish = null
+    )
     {
         int size = this.battleCardObjects.Count;
         //if no cards, return
@@ -173,7 +176,15 @@ public class Hand
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.15f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
-            LeanTween.rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 3f, 0), CardTween.TWEEN_DURATION);
+            LeanTween
+                .rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 3f, 0), CardTween.TWEEN_DURATION)
+                .setOnComplete(() =>
+                {
+                    if (onRepositionFinish != null)
+                    {
+                        onRepositionFinish.Invoke();
+                    }
+                });
         }
     }
 
