@@ -107,7 +107,7 @@ public class MenuManager : MonoBehaviour
     public void HoverEnterEffect(GameObject target)
     {
         //LeanTween.scale(target, Vector3.one * 1.1f, TWEEN_DURATION).setEaseInQuad();
-        target.transform.localScale = Vector3.one * 1.1f;
+        target.transform.localScale = Vector3.one * 1.11f;
     }
 
     public void HoverExitEffect(GameObject target)
@@ -121,7 +121,18 @@ public class MenuManager : MonoBehaviour
         UMP.ChangeWindow(5);
         if (gallery.gameObject.activeSelf == true)
             gallery.gameObject.SetActive(false);
+        if (galleryCard.gameObject.activeSelf == true)
+            galleryCard.gameObject.SetActive(false);
         marketplacePreview.gameObject.SetActive(true);
+    }
+
+    public void ViewMainMenu()
+    {
+        UMP.ChangeWindow(0);
+        if (marketplacePreview.gameObject.activeSelf == true)
+            marketplacePreview.gameObject.SetActive(false);
+        galleryCard.gameObject.SetActive(true);
+        gallery.gameObject.SetActive(true);
     }
 
     public void SetMarketplacePreview(Card card)

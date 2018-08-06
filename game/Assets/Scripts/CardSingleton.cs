@@ -47,7 +47,7 @@ public class CardSingleton : Singleton<CardSingleton>
                 summonPoolRoot
             );
             summon.transform.parent = summonPoolRoot;
-            GalleryIdle galleryIdle = summon.AddComponent<GalleryIdle>();
+            AnimateIdle animateIdle = summon.AddComponent<AnimateIdle>();
             summon.SetActive(false);
             summonPool.Add(creaturePrefabName, summon);
         }

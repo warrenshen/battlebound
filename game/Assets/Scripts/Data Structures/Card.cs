@@ -54,7 +54,7 @@ public abstract class Card
     public const string CARD_NAME_CHAR_BOT_451 = "CHAR-BOT-451";
     public const string CARD_NAME_MEGAPUNK = "MegaPUNK";
     public const string CARD_NAME_DUSK_DWELLER = "Dusk Dweller";
-    public const string CARD_NAME_SUMMONED_DRAGON = "Summoned Dragon";
+    public const string CARD_NAME_TALUSREAVER = "Talusreaver";
     public const string CARD_NAME_PHANTOM_SKULLCRUSHER = "Phantom Skullcrusher";
 
     // Spells targeted.
@@ -125,7 +125,7 @@ public abstract class Card
         CARD_NAME_CHAR_BOT_451,
         CARD_NAME_MEGAPUNK,
         CARD_NAME_DUSK_DWELLER,
-        CARD_NAME_SUMMONED_DRAGON,
+        CARD_NAME_TALUSREAVER,
         CARD_NAME_PHANTOM_SKULLCRUSHER,
     };
 

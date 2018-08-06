@@ -673,7 +673,7 @@ public class Player
         //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CHAR_BOT_451, 1));
         //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_MEGAPUNK, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_DUSK_DWELLER, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SUMMONED_DRAGON, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TALUSREAVER, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PHANTOM_SKULLCRUSHER, 1));
 
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_UNSTABLE_POWER, 4));

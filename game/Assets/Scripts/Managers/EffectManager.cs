@@ -1148,7 +1148,7 @@ public class EffectManager : MonoBehaviour
             ),
         };
 
-        CreatureCard duskDweller = new CreatureCard("", "Dusk Dweller", 1);
+        CreatureCard duskDweller = new CreatureCard("", Card.CARD_NAME_DUSK_DWELLER, 1);
 
         Effect summonEffect = new Effect(
             playerId,
@@ -1190,7 +1190,7 @@ public class EffectManager : MonoBehaviour
             ),
         };
 
-        CreatureCard summonedDragon = new CreatureCard("", "Summoned Dragon", 1);
+        CreatureCard summonedDragon = new CreatureCard("", Card.CARD_NAME_TALUSREAVER, 1);
 
         Effect summonEffect = new Effect(
             playerId,
