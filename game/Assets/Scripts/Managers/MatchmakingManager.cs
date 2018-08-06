@@ -125,13 +125,27 @@ public class MatchmakingManager : MonoBehaviour
     private void SelectCasualMatch()
     {
         this.matchType = MATCH_TYPE_CASUAL;
-        FindMatch();
+        if (FlagHelper.IsServerEnabled())
+        {
+            FindMatch();
+        }
+        else
+        {
+            Application.LoadLevel("Battle");
+        }
     }
 
     private void SelectRankedMatch()
     {
         this.matchType = MATCH_TYPE_RANKED;
-        FindMatch();
+        if (FlagHelper.IsServerEnabled())
+        {
+            FindMatch();
+        }
+        else
+        {
+            Application.LoadLevel("Battle");
+        }
     }
 
     private void FindMatch()
