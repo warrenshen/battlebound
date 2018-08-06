@@ -510,13 +510,13 @@ public class Player
                 Card mulliganCard = this.mulliganCards[i];
                 if (!cardIds.Contains(mulliganCard.Id))
                 {
-                    if (replaceIndex - 1 == this.replaceMulliganCards.Count)
+                    if (replaceIndex == this.replaceMulliganCards.Count - 1)
                     {
-                        Debug.Log("Adding callback");
+                        EffectManager.Instance.OnDrawMulliganStart();
                         BattleCardObject battleCardObject = AddMulliganCard(
                             this.replaceMulliganCards[replaceIndex],
                             i,
-                            new UnityAction(() => EffectManager.Instance.OnPlayMulliganFinish(this.id))
+                            new UnityAction(() => EffectManager.Instance.OnDrawMulliganFinish(this.id))
                         );
                     }
                     else
@@ -581,7 +581,7 @@ public class Player
 
         created.transform.parent = GetHandTransform();
 
-        this.hand.AddCardObject(battleCardObject);
+        this.hand.InsertCardObject(battleCardObject, index);
 
         BattleManager.Instance.AnimateDrawCardForMulligan(
             this,
@@ -653,7 +653,7 @@ public class Player
 
     public string GetNewCardId()
     {
-        return string.Format("{0}-{1}", this.name, GetNewCardRank());
+        return string.Format("{0}-{1}", this.id, GetNewCardRank());
     }
 
     private Deck GetDeck()

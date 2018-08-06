@@ -621,22 +621,22 @@ public class BattleManager : MonoBehaviour
                 battleCardObject.gameObject,
                 Camera.main.transform.rotation.eulerAngles,
                 CardTween.TWEEN_DURATION
-            ).
-            setEaseInQuad();
+            )
+            .setEaseInQuad()
+            .setOnComplete(() => // Note we cannot add a setOnComplete to CardTween below.
+                {
+                    if (onAnimateFinish != null)
+                    {
+                        onAnimateFinish.Invoke();
+                    }
+                });
         CardTween
             .moveLocal(
                 battleCardObject,
                 mulliganPosition, //targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F
                 CardTween.TWEEN_DURATION
             )
-            .setEaseInQuad()
-            .setOnComplete(() =>
-            {
-                if (onAnimateFinish != null)
-                {
-                    onAnimateFinish.Invoke();
-                }
-            });
+            .setEaseInQuad();
     }
 
     public void HideMulliganOverlay()

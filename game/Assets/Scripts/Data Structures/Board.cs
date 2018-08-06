@@ -252,8 +252,15 @@ public class Board
             return null;
         }
 
-        int randomIndex = UnityEngine.Random.Range(0, opponentCreatures.Count);
-        return opponentCreatures[randomIndex];
+        if (BattleSingleton.Instance.IsEnvironmentTest())
+        {
+            return opponentCreatures[0];
+        }
+        else
+        {
+            int randomIndex = UnityEngine.Random.Range(0, opponentCreatures.Count);
+            return opponentCreatures[randomIndex];
+        }
     }
 
     public Targetable GetOpponentRandomTargetable(string playerId)

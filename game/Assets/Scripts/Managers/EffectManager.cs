@@ -1244,16 +1244,16 @@ public class EffectManager : MonoBehaviour
 
     public void OnPlayMulligan(string playerId, List<int> deckCardIndices)
     {
-        if (deckCardIndices.Count > 0)
-        {
-            this.isWaiting = true;
-        }
-
         Player player = BattleState.Instance().GetPlayerById(playerId);
         player.PlayMulliganByIndices(deckCardIndices);
     }
 
-    public void OnPlayMulliganFinish(string playerId)
+    public void OnDrawMulliganStart()
+    {
+        this.isWaiting = true;
+    }
+
+    public void OnDrawMulliganFinish(string playerId)
     {
         Player player = BattleState.Instance().GetPlayerById(playerId);
         Player enemy = Board.Instance().GetOpponentByPlayerId(playerId);
@@ -1734,7 +1734,7 @@ public class EffectManager : MonoBehaviour
     /*
      * Player is the one converting target to their side.
      */
-    public void OnConvertCreature(string playerId, string fieldId, string targetId)
+    public void OnCreatureConvert(string playerId, string fieldId, string targetId)
     {
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
             fieldId,

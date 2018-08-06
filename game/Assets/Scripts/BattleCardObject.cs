@@ -112,6 +112,78 @@ public class BattleCardObject : CardObject
         }
     }
 
+    public void Burn()
+    {
+        StartCoroutine("Dissolve", 1);  //called when overdraw
+    }
+
+    private IEnumerator Dissolve(float duration)
+    {
+        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
+
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Recycle();
+    }
+
+    public ChallengeCard GetChallengeCard()
+    {
+        ChallengeCard challengeCard = new ChallengeCard();
+        challengeCard.SetId(this.card.Id);
+        challengeCard.SetPlayerId(this.owner.Id);
+        challengeCard.SetColor(this.card.GetClassColor());
+        challengeCard.SetName(this.card.Name);
+        challengeCard.SetLevel(this.card.Level);
+        challengeCard.SetCost(GetCost()); // Note this is calling this' GetCost.
+        challengeCard.SetCostStart(this.card.GetCost());
+        challengeCard.SetBuffsHand(this.buffs);
+        challengeCard.SetBuffsField(new List<string>());
+
+        if (this.card.GetType() == typeof(CreatureCard))
+        {
+            challengeCard.SetCategory((int)Card.CardType.Creature);
+
+            CreatureCard creatureCard = this.card as CreatureCard;
+            challengeCard.SetHealth(creatureCard.GetHealth());
+            challengeCard.SetHealthStart(creatureCard.GetHealth());
+            challengeCard.SetHealthMax(creatureCard.GetHealth());
+            challengeCard.SetAttack(creatureCard.GetAttack());
+            challengeCard.SetAttackStart(creatureCard.GetAttack());
+            challengeCard.SetAbilities(creatureCard.GetAbilities());
+            challengeCard.SetAbilitiesStart(creatureCard.GetAbilities());
+        }
+        else if (this.card.GetType() == typeof(SpellCard))
+        {
+            challengeCard.SetCategory((int)Card.CardType.Spell);
+        }
+        else
+        {
+            Debug.LogError("Unsupported!");
+        }
+
+        return challengeCard;
+    }
+
+    private static void SetHyperCardCost(
+        HyperCard.Card cardVisual,
+        BattleCardObject battleCardObject
+    )
+    {
+        LeanTween.scale(
+            cardVisual.GetTextFieldWithKey("Cost").TmpObject.gameObject,
+            Vector3.one * BoardCreatureObject.UPDATE_STATS_GROWTH_FACTOR,
+            0.5F
+        ).setEasePunch();
+        cardVisual.SetTextFieldWithKey("Cost", battleCardObject.GetCost().ToString());
+
+        cardVisual.Redraw();
+    }
+
     public override void EnterHover()
     {
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
@@ -206,77 +278,5 @@ public class BattleCardObject : CardObject
     public override void Release()
     {
 
-    }
-
-    public void Burn()
-    {
-        StartCoroutine("Dissolve", 1);  //called when overdraw
-    }
-
-    private IEnumerator Dissolve(float duration)
-    {
-        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
-
-        float elapsedTime = 0;
-        while (elapsedTime < duration)
-        {
-            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
-            elapsedTime += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        Recycle();
-    }
-
-    public ChallengeCard GetChallengeCard()
-    {
-        ChallengeCard challengeCard = new ChallengeCard();
-        challengeCard.SetId(this.card.Id);
-        challengeCard.SetPlayerId(this.owner.Id);
-        challengeCard.SetColor(this.card.GetClassColor());
-        challengeCard.SetName(this.card.Name);
-        challengeCard.SetLevel(this.card.Level);
-        challengeCard.SetCost(GetCost()); // Note this is calling this' GetCost.
-        challengeCard.SetCostStart(this.card.GetCost());
-        challengeCard.SetBuffsHand(this.buffs);
-        challengeCard.SetBuffsField(new List<string>());
-
-        if (this.card.GetType() == typeof(CreatureCard))
-        {
-            challengeCard.SetCategory((int)Card.CardType.Creature);
-
-            CreatureCard creatureCard = this.card as CreatureCard;
-            challengeCard.SetHealth(creatureCard.GetHealth());
-            challengeCard.SetHealthStart(creatureCard.GetHealth());
-            challengeCard.SetHealthMax(creatureCard.GetHealth());
-            challengeCard.SetAttack(creatureCard.GetAttack());
-            challengeCard.SetAttackStart(creatureCard.GetAttack());
-            challengeCard.SetAbilities(creatureCard.GetAbilities());
-            challengeCard.SetAbilitiesStart(creatureCard.GetAbilities());
-        }
-        else if (this.card.GetType() == typeof(SpellCard))
-        {
-            challengeCard.SetCategory((int)Card.CardType.Spell);
-        }
-        else
-        {
-            Debug.LogError("Unsupported!");
-        }
-
-        return challengeCard;
-    }
-
-    private static void SetHyperCardCost(
-        HyperCard.Card cardVisual,
-        BattleCardObject battleCardObject
-    )
-    {
-        LeanTween.scale(
-            cardVisual.GetTextFieldWithKey("Cost").TmpObject.gameObject,
-            Vector3.one * BoardCreatureObject.UPDATE_STATS_GROWTH_FACTOR,
-            0.5F
-        ).setEasePunch();
-        cardVisual.SetTextFieldWithKey("Cost", battleCardObject.GetCost().ToString());
-
-        cardVisual.Redraw();
     }
 }

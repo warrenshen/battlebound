@@ -110,7 +110,9 @@ public class ActionManager : MonoBehaviour
         RaycastHit hit;
 
         if (!Physics.Raycast(ray, out hit, 100f))
+        {
             return;
+        }
 
         MouseWatchable hitWatchable = hit.collider.GetComponent<MouseWatchable>();
         if (hitWatchable == null || hitWatchable.noInteraction)
