@@ -423,7 +423,6 @@ public class EffectManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
-            Debug.Log(playerId);
             ChallengeCard spawnCard = CleanCardForSummon(playerId, dirtyCard);
 
             challengeMove = new ChallengeMove();
@@ -681,7 +680,7 @@ public class EffectManager : MonoBehaviour
 
         this.fXManager.PlayEffectLookAt(
             "FanMeteorsVFX",
-            attackingCreature.GetTargetableObject().transform,
+            attackingCreature.GetTargetableTransform(),
             defendingTransform
         );
 
@@ -1157,7 +1156,7 @@ public class EffectManager : MonoBehaviour
             null,
             effect.SpawnRank
         );
-        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetCard(duskDweller.GetChallengeCard(playerId));
         summonEffect.SetFieldIndex(fieldIndex);
         effects.Add(summonEffect);
 
@@ -1168,7 +1167,7 @@ public class EffectManager : MonoBehaviour
             null,
             effect.SpawnRank
         );
-        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetCard(duskDweller.GetChallengeCard(playerId));
         summonEffect.SetFieldIndex(closestIndex);
         effects.Add(summonEffect);
 
@@ -1191,7 +1190,7 @@ public class EffectManager : MonoBehaviour
             ),
         };
 
-        CreatureCard duskDweller = new CreatureCard("", "Summoned Dragon", 1);
+        CreatureCard summonedDragon = new CreatureCard("", "Summoned Dragon", 1);
 
         Effect summonEffect = new Effect(
             playerId,
@@ -1199,7 +1198,7 @@ public class EffectManager : MonoBehaviour
             null,
             effect.SpawnRank
         );
-        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetCard(summonedDragon.GetChallengeCard(playerId));
         summonEffect.SetFieldIndex(fieldIndex);
         effects.Add(summonEffect);
 
@@ -1210,7 +1209,7 @@ public class EffectManager : MonoBehaviour
             null,
             effect.SpawnRank
         );
-        summonEffect.SetCard(duskDweller.GetChallengeCard());
+        summonEffect.SetCard(summonedDragon.GetChallengeCard(playerId));
         summonEffect.SetFieldIndex(closestIndex);
         effects.Add(summonEffect);
 
@@ -1295,8 +1294,6 @@ public class EffectManager : MonoBehaviour
         this.callback = callback;
 
         Player player = BattleState.Instance().GetPlayerById(playerId);
-
-        //player.Avatar.OnEndTurn();
 
         List<Effect> effects = new List<Effect>();
 
@@ -1550,8 +1547,8 @@ public class EffectManager : MonoBehaviour
 
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
-                    attackingTargetable.GetTargetableObject().transform.position,
-                    defendingTargetable.GetTargetableObject().transform.position,
+                    attackingTargetable.GetTargetableTransform(),
+                    defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
                         int damageDone = defendingCreature.TakeDamage(20);
@@ -1574,8 +1571,8 @@ public class EffectManager : MonoBehaviour
 
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
-                    attackingTargetable.GetTargetableObject().transform.position,
-                    defendingTargetable.GetTargetableObject().transform.position,
+                    attackingTargetable.GetTargetableTransform(),
+                    defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
                         int damageDone = defendingAvatar.TakeDamage(20);
@@ -1608,8 +1605,8 @@ public class EffectManager : MonoBehaviour
 
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
-                    attackingTargetable.GetTargetableObject().transform.position,
-                    defendingTargetable.GetTargetableObject().transform.position,
+                    attackingTargetable.GetTargetableTransform(),
+                    defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
                         int damageDone = defendingCreature.TakeDamage(10);
@@ -1632,8 +1629,8 @@ public class EffectManager : MonoBehaviour
 
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
-                    attackingTargetable.GetTargetableObject().transform.position,
-                    defendingTargetable.GetTargetableObject().transform.position,
+                    attackingTargetable.GetTargetableTransform(),
+                    defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
                         int damageDone = defendingAvatar.TakeDamage(10);
@@ -1749,17 +1746,14 @@ public class EffectManager : MonoBehaviour
     }
 
     public void OnSpellTargetedPlay(
-        BattleCardObject battleCardObject,
+        ChallengeCard challengeCard,
         BoardCreature targetedCreature
     )
     {
-        string playerId = battleCardObject.Owner.Id;
-
-        SpellCard spellCard = battleCardObject.Card as SpellCard;
-
+        string playerId = challengeCard.PlayerId;
         List<Effect> effects = new List<Effect>();
 
-        switch (spellCard.Name)
+        switch (challengeCard.Name)
         {
             case Card.CARD_NAME_TOUCH_OF_ZEUS:
                 effects = SpellTargetedLightningBolt(playerId, targetedCreature);
@@ -1780,7 +1774,7 @@ public class EffectManager : MonoBehaviour
                 effects = SpellTargetedBestowedVigor(playerId, targetedCreature);
                 break;
             default:
-                Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", spellCard.Name));
+                Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", challengeCard.Name));
                 break;
         }
 
@@ -1864,16 +1858,12 @@ public class EffectManager : MonoBehaviour
         return new List<Effect>();
     }
 
-    public void OnSpellUntargetedPlay(BattleCardObject battleCardObject)
+    public void OnSpellUntargetedPlay(ChallengeCard challengeCard)
     {
-        string playerId = battleCardObject.Owner.Id;
-
-        SpellCard spellCard = battleCardObject.Card as SpellCard;
-        ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
-
+        string playerId = challengeCard.PlayerId;
         List<Effect> effects = new List<Effect>();
 
-        switch (spellCard.Name)
+        switch (challengeCard.Name)
         {
             case Card.CARD_NAME_RIOT_UP:
                 effects = SpellUntargetedRiotUp(playerId);
@@ -1906,7 +1896,7 @@ public class EffectManager : MonoBehaviour
                 effects = SpellUntargetedBattleRoyale(playerId, challengeCard);
                 break;
             default:
-                Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", spellCard.Name));
+                Debug.LogError(string.Format("Invalid untargeted spell with name: {0}.", challengeCard.Name));
                 break;
         }
 

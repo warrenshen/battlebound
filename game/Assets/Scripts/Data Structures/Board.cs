@@ -169,6 +169,12 @@ public class Board
 
     public Transform GetInFrontBoardPlaceByPlayerIdAndCardId(string playerId, string cardId)
     {
+        // Hack for unit tests - simply return null.
+        if (BattleSingleton.Instance.IsEnvironmentTest())
+        {
+            return null;
+        }
+
         PlayingField playingField = GetFieldByPlayerId(playerId);
         int playerIndex = playingField.GetIndexByCardId(cardId);
         int opponentIndex = 5 - playerIndex;

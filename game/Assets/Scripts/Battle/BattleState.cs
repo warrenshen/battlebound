@@ -317,7 +317,7 @@ public class BattleState
         int rank = GetServerMoveRank();
         challengeMove.SetRank(rank);
 
-        if (FlagHelper.IsLogVerbose())
+        if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsLogVerbose())
         {
             Debug.Log("[MOCK] Server move queue: " + challengeMove.Rank);
             Debug.Log(JsonUtility.ToJson(challengeMove));
@@ -332,7 +332,7 @@ public class BattleState
         int rank = GetDeviceMoveRank();
         challengeMove.SetRank(rank);
 
-        if (FlagHelper.IsLogVerbose())
+        if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsLogVerbose())
         {
             Debug.Log("Device move queue: " + challengeMove.Rank);
             Debug.Log(JsonUtility.ToJson(challengeMove));
@@ -343,6 +343,11 @@ public class BattleState
     }
 
     public List<ChallengeMove> GetServerMoves()
+    {
+        return this.serverMoves;
+    }
+
+    public List<ChallengeMove> GetDeviceMoves()
     {
         return this.serverMoves;
     }

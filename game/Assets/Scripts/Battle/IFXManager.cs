@@ -11,8 +11,8 @@ public interface IFXManager
 
     void ThrowEffectWithCallback(
         string effectName,
-        Vector3 fromPosition,
-        Vector3 toPosition,
+        Transform fromTransform,
+        Transform toTransform,
         UnityAction onEffectFinish
     );
 }
