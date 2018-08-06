@@ -75,19 +75,19 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        battleLayer = LayerMask.NameToLayer("Battle");
-        boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
+        this.battleLayer = LayerMask.NameToLayer("Battle");
+        this.boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
         ChooseRandomSetting();
 
         if (!FlagHelper.IsServerEnabled())
         {
-            BattleState _ = BattleState.Instantiate();
+            BattleState.Instantiate();
             Debug.Log("Battle in Local Development Mode.");
             EffectManager.Instance.ReadyUp();
         }
         else if (BattleSingleton.Instance.ChallengeStarted)
         {
-            BattleState _ = BattleState.InstantiateWithState(
+            BattleState.InstantiateWithState(
                 BattleSingleton.Instance.PlayerState,
                 BattleSingleton.Instance.OpponentState,
                 BattleSingleton.Instance.MoveCount,
@@ -116,6 +116,7 @@ public class BattleManager : MonoBehaviour
     {
         if (BattleState.Instance().IsNormalMode() && !EffectManager.IsWaiting())
         {
+            ToggleEndTurnButton();
             WatchMouseActions();
         }
     }
@@ -333,11 +334,6 @@ public class BattleManager : MonoBehaviour
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE);
-            BattleState.Instance().AddServerMove(challengeMove);
-
-            challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(opponentId);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
             BattleState.Instance().AddServerMove(challengeMove);
         }
     }

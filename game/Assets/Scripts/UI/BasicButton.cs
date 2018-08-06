@@ -41,10 +41,6 @@ public class BasicButton : ObjectUI
         {
             this.inactiveSprite = Sprite.Create(this.inactiveImage, new Rect(0.0f, 0.0f, this.inactiveImage.width, this.inactiveImage.height), new Vector2(0.5f, 0.5f), 100.0f);
         }
-        if (BattleState.Instance() != null && BattleState.Instance().ActivePlayer != BattleState.Instance().You)
-        {
-            this.ToggleState();
-        }
     }
 
     public override void EnterHover()
@@ -78,18 +74,39 @@ public class BasicButton : ObjectUI
 
     public void ToggleState()
     {
-        this.activeState = !this.activeState;
+        bool oldActiveState = this.activeState;
+
+        if (BattleState.Instance().You.Id == BattleState.Instance().ActivePlayer.Id)
+        {
+            this.activeState = true;
+        }
+        else
+        {
+            this.activeState = false;
+        }
+
+        if (this.activeState != oldActiveState)
+        {
+            return;
+        }
+
         if (this.activeState)
         {
             if (activeImage != null)
+            {
                 this.spriteRenderer.sprite = this.activeSprite;
+            }
         }
         else
         {
             if (inactiveImage != null)
+            {
                 this.spriteRenderer.sprite = this.inactiveSprite;
+            }
         }
         if (this.labelObject != null)
+        {
             this.labelObject.SetActive(this.activeState);
+        }
     }
 }

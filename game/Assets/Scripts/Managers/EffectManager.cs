@@ -18,6 +18,9 @@ public class EffectManager : MonoBehaviour
 
     private IFXManager fXManager;
 
+    private BattleState battleState;
+    public BattleState BattleState => battleState;
+
     public static EffectManager Instance { get; private set; }
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
