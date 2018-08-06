@@ -498,6 +498,8 @@ public class Player
 
         if (this.replaceMulliganCards.Count == this.mulliganCards.Count - this.keptMulliganCards.Count)
         {
+            this.deckSize -= this.replaceMulliganCards.Count;
+
             List<string> cardIds = new List<string>();
             foreach (Card keptCard in this.keptMulliganCards)
             {

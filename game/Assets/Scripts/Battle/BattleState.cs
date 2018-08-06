@@ -227,7 +227,7 @@ public class BattleState
             }
             else
             {
-                EndMulligan();
+                EndMulligan(true);
 
                 activePlayer.RenderTurnStart();
                 inactivePlayer.RenderGameStart();
@@ -239,7 +239,7 @@ public class BattleState
 
             if (FlagHelper.ShouldSkipMulligan())
             {
-                EndMulligan();
+                EndMulligan(true);
 
                 this.activePlayer.DrawCardsForce(3);
                 inactivePlayer.DrawCardsForce(4);
@@ -252,13 +252,17 @@ public class BattleState
         }
     }
 
-    public void EndMulligan()
+    public void EndMulligan(bool isResume = false)
     {
-        this.you.FinishMulligan(this.activePlayer.Id == this.you.Id);
-        this.opponent.FinishMulligan(this.activePlayer.Id == this.opponent.Id, true);
+        if (!isResume)
+        {
+            this.you.FinishMulligan(this.activePlayer.Id == this.you.Id);
+            this.opponent.FinishMulligan(this.activePlayer.Id == this.opponent.Id, true);
+            EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
+        }
+
         BattleManager.Instance.HideMulliganOverlay();
         this.mode = BATTLE_STATE_NORMAL_MODE;
-        EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
     }
 
     public Player GetPlayerById(string playerId)
@@ -314,7 +318,13 @@ public class BattleState
 
         if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsLogVerbose())
         {
-            Debug.Log("[MOCK] Server move queue: " + challengeMove.Rank);
+            Debug.Log(
+                string.Format(
+                    "[MOCK] Server move queue ADD for {0} with rank {1}",
+                    GetPlayerById(challengeMove.PlayerId).Name,
+                    challengeMove.Rank
+                )
+            );
             Debug.Log(JsonUtility.ToJson(challengeMove));
         }
 
@@ -329,7 +339,13 @@ public class BattleState
 
         if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsLogVerbose())
         {
-            Debug.Log("Device move queue: " + challengeMove.Rank);
+            Debug.Log(
+                string.Format(
+                    "Device move queue ADD for {0} with rank {1}",
+                    GetPlayerById(challengeMove.PlayerId).Name,
+                    challengeMove.Rank
+                )
+            );
             Debug.Log(JsonUtility.ToJson(challengeMove));
         }
         this.deviceMoveQueue.Add(challengeMove);
@@ -776,16 +792,27 @@ public class BattleState
             {
                 if (FlagHelper.IsLogVerbose())
                 {
-                    Debug.Log("[SKIPPED] Server move queue: " + challengeMove.Rank);
+                    Debug.Log(
+                        string.Format(
+                            "[SKIPPED] Server move queue ADD for {0} with rank {1}",
+                            GetPlayerById(challengeMove.PlayerId).Name,
+                            challengeMove.Rank
+                        )
+                    );
                     Debug.Log(JsonUtility.ToJson(challengeMove));
                     return;
                 }
             }
         }
-
         if (FlagHelper.IsLogVerbose())
         {
-            Debug.Log("Server move queue: " + challengeMove.Rank);
+            Debug.Log(
+                string.Format(
+                    "[Server move queue ADD for {0} with rank {1}",
+                    GetPlayerById(challengeMove.PlayerId).Name,
+                    challengeMove.Rank
+                )
+            );
             Debug.Log(JsonUtility.ToJson(challengeMove));
         }
         this.serverMoveQueue.Add(challengeMove);
