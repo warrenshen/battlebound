@@ -266,6 +266,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         cardVisual.SetOpacity(0.8f);
         cardVisual.SetBlackAndWhite(true);
         cardVisual.Renderer.enabled = true;
+        cardVisual.SetOutlineColors(cardVisual.InitialOutlineStartColor, cardVisual.InitialOutlineEndColor);
 
         return cardVisual;
     }
