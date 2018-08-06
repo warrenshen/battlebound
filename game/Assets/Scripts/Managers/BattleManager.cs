@@ -445,6 +445,19 @@ public class BattleManager : MonoBehaviour
         return false;
     }
 
+    private void ResetCardToHand()
+    {
+        if (!ActionManager.Instance.HasDragTarget())
+            return;
+
+        BattleCardObject selected = ActionManager.Instance.GetDragTarget().GetComponent<BattleCardObject>();
+        if (selected != null)
+        {
+            selected.visual.SetOutlineColors(selected.visual.InitialOutlineStartColor, selected.visual.InitialOutlineEndColor);
+            ActionManager.Instance.ResetTarget();
+        }
+    }
+
     private float GetCardDisplacement(BattleCardObject target)
     {
         Vector3 initial = target.reset.position;
@@ -466,13 +479,13 @@ public class BattleManager : MonoBehaviour
         {
             Debug.Log("Mana");
             //can't play card due to mana
-            ActionManager.Instance.ResetTarget();
+            this.ResetCardToHand();
             return false;
         }
         else if (GetCardDisplacement(target) < CARD_DISPLACEMENT_THRESHOLD)   //to-do: review this
         {
             //didn't displace card enough to activate
-            ActionManager.Instance.ResetTarget();
+            this.ResetCardToHand();
             return false;
         }
         else if (target.Card.GetType() == typeof(SpellCard))
@@ -494,13 +507,13 @@ public class BattleManager : MonoBehaviour
                     }
                     else
                     {
-                        ActionManager.Instance.ResetTarget();
+                        this.ResetCardToHand();
                         return false;
                     }
                 }
                 else
                 {
-                    ActionManager.Instance.ResetTarget();
+                    this.ResetCardToHand();
                     return false;
                 }
             }
@@ -514,7 +527,7 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                ActionManager.Instance.ResetTarget();
+                this.ResetCardToHand();
                 return false;
             }
         }
@@ -542,14 +555,14 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                ActionManager.Instance.ResetTarget();
+                this.ResetCardToHand();
                 return false;
             }
         }
         else
         {
             //no good activation events, return to hand or original pos/rot in collection
-            ActionManager.Instance.ResetTarget();
+            this.ResetCardToHand();
             return false;
         }
     }
