@@ -254,9 +254,10 @@ public class BattleState
 
     public void EndMulligan()
     {
+        this.you.FinishMulligan(this.activePlayer.Id == this.you.Id);
+        this.opponent.FinishMulligan(this.activePlayer.Id == this.opponent.Id, true);
         BattleManager.Instance.HideMulliganOverlay();
         this.mode = BATTLE_STATE_NORMAL_MODE;
-        this.activePlayer.MulliganNewTurn();
         EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
     }
 
@@ -398,20 +399,16 @@ public class BattleState
     }
 
     /*
- * @param List<int> deckCardIndices - indices of cards opponent chose to put back in deck
- */
+     * @param List<int> deckCardIndices - indices of cards opponent chose to put back in deck
+     */
     private void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
-        Player player = GetPlayerById(playerId);
-        player.PlayMulliganByIndices(deckCardIndices);
+        EffectManager.Instance.OnPlayMulligan(playerId, deckCardIndices);
     }
 
     private void ReceiveMoveFinishMulligan()
     {
-        this.you.FinishMulligan();
-        this.opponent.FinishMulligan();
-        EndMulligan();
-        ComparePlayerStates(); // Compare state at the end of mulligan.
+        EffectManager.Instance.OnFinishMulligan();
     }
 
     private void ReceiveMoveEndTurn(string playerId)
