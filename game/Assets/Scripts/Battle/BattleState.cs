@@ -45,14 +45,16 @@ public class BattleState
 
     public static BattleState Instance()
     {
-        if (BattleSingleton.Instance.IsEnvironmentTest() && instance == null)
+        if (instance == null)
         {
             throw new Exception("BattleState instance not set.");
         }
-        if (instance == null)
-        {
-            instance = new BattleState();
-        }
+        return instance;
+    }
+
+    public static BattleState Instantiate()
+    {
+        instance = new BattleState();
         // Note we do not call EffectManager.Instance.ReadyUp here,
         // as we leave that to the BattleManager.
         return instance;
@@ -321,7 +323,7 @@ public class BattleState
             Debug.Log(
                 string.Format(
                     "[MOCK] Server move queue ADD for {0} with rank {1}",
-                    GetPlayerById(challengeMove.PlayerId).Name,
+                    challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
                     challengeMove.Rank
                 )
             );
@@ -342,7 +344,7 @@ public class BattleState
             Debug.Log(
                 string.Format(
                     "Device move queue ADD for {0} with rank {1}",
-                    GetPlayerById(challengeMove.PlayerId).Name,
+                    challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
                     challengeMove.Rank
                 )
             );
@@ -795,7 +797,7 @@ public class BattleState
                     Debug.Log(
                         string.Format(
                             "[SKIPPED] Server move queue ADD for {0} with rank {1}",
-                            GetPlayerById(challengeMove.PlayerId).Name,
+                            challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
                             challengeMove.Rank
                         )
                     );
@@ -809,7 +811,7 @@ public class BattleState
             Debug.Log(
                 string.Format(
                     "[Server move queue ADD for {0} with rank {1}",
-                    GetPlayerById(challengeMove.PlayerId).Name,
+                    challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
                     challengeMove.Rank
                 )
             );
