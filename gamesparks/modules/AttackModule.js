@@ -5,6 +5,10 @@
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
+
+// 0 = normal, 1 = test.
+var GLOBAL_ENVIRONMENT = 0;
+
 function hasCardAbilityOrBuff(card, abilityOrBuff) {
     if (card.isSilenced == 1) {
         return false;
@@ -160,9 +164,14 @@ function drawCard(deck) {
     if (!Array.isArray(deck) || deck.length === 0) {
         setScriptError("Invalid deck parameter.");
     }
-    const deckSize = deck.length;
-    const randomIndex = Math.floor(Math.random() * deckSize);
-    return [deck[randomIndex], deck.slice(0, randomIndex).concat(deck.slice(randomIndex + 1))];
+    
+    if (GLOBAL_ENVIRONMENT === 1) {
+        return [deck[0], deck.slice(1)];
+    } else {
+        const deckSize = deck.length;
+        const randomIndex = Math.floor(Math.random() * deckSize);
+        return [deck[randomIndex], deck.slice(0, randomIndex).concat(deck.slice(randomIndex + 1))];
+    }
 }
 
 /**
@@ -193,9 +202,11 @@ function drawCards(deck, count) {
 /**
  * Draw a card to replace mulligan card. Do NOT use for regular draw card.
  * 
+ * @param int index - index in hand at which to insert drawn card
+ * 
  * @return object - draw card move object for drawn card
  **/
-function drawCardMulliganForPlayer(playerId, playerState) {
+function drawCardMulliganForPlayer(playerId, playerState, index) {
     const playerDeck = playerState.deck;
     
     if (playerDeck.length > 0) {
@@ -206,7 +217,7 @@ function drawCardMulliganForPlayer(playerId, playerState) {
         playerState.deck = newDeck;
         playerState.deckSize = newDeck.length;
         
-        playerState.hand.push(drawnCard);
+        playerState.hand.splice(index, 0, drawnCard);
         _updateHandCardCosts(playerState);
         
         return {

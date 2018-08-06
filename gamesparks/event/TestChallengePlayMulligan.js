@@ -12,6 +12,9 @@ const challengeStateString = Spark.getData().challengeStateString;
 const playerId = Spark.getData().challengePlayerId;
 const cardIds = Spark.getData().cardIds;
 
+// Turn on test mode.
+GLOBAL_ENVIRONMENT = 1;
+
 const challengeStateData = JSON.parse(challengeStateString);
 handleChallengePlayMulligan(challengeStateData, playerId, cardIds);
 

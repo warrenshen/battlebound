@@ -62,7 +62,7 @@ function handleChallengePlayMulligan(challengeStateData, playerId, cardIds) {
     mulliganCards.forEach(function(mulliganCard, index) {
         const isDeck = cardIds.indexOf(mulliganCard.id) < 0;
         if (isDeck) {
-            const move = drawCardMulliganForPlayer(playerId, playerState);
+            const move = drawCardMulliganForPlayer(playerId, playerState, index);
             addChallengeMove(challengeStateData, move);
         }
     });
