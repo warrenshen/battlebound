@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PulseIdle : MonoBehaviour
 {
+    public bool affectScale = true;
+    public bool affectPosition = true;
+
     private float pulse;
     private Vector3 originalScale;
     private Vector3 originalPosition;
@@ -22,7 +25,13 @@ public class PulseIdle : MonoBehaviour
     void Update()
     {
         pulse = Mathf.Sin(Time.time * frequency);
-        transform.localScale = this.originalScale + Vector3.one * pulse * damping;
-        transform.position = this.originalPosition + Vector3.up * pulse * damping;
+        if (affectScale)
+        {
+            transform.localScale = this.originalScale + Vector3.one * pulse * damping;
+        }
+        if (affectPosition)
+        {
+            transform.position = this.originalPosition + Vector3.up * pulse * damping;
+        }
     }
 }

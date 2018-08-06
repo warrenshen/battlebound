@@ -261,6 +261,11 @@ public class BoardCreature : Targetable
         this.boardCreatureObject.Redraw();
     }
 
+    public void Deathwish()
+    {
+        this.boardCreatureObject.RenderDeathwish();
+    }
+
     /*
      * @return int - amount of health healed
      */

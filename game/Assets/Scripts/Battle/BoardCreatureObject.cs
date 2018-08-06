@@ -193,6 +193,11 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         );
     }
 
+    public void RenderDeathwish()
+    {
+        FXPoolManager.Instance.PlayEffect("DeathwishVFX", this.transform.position);
+    }
+
     /*
      * @return int - amount of health healed
      */
@@ -221,21 +226,21 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     private void UnassignVFX()
     {
         //Unassign VFXs for creatures that die etc..
-        foreach (string ability in boardCreature.Abilities)
+        foreach (string ability in this.abilitiesVFX.Keys)
         {
             GameObject effect = this.abilitiesVFX[ability];
             FXPoolManager.Instance.UnassignEffect(ability, effect);
         }
 
-        if (this.boardCreature.IsFrozen > 0)
+        if (this.boardCreature.IsFrozen > 0 && this.abilitiesVFX.ContainsKey(FROZEN_STATUS))
         {
-            GameObject effect = abilitiesVFX[FROZEN_STATUS];
+            GameObject effect = this.abilitiesVFX[FROZEN_STATUS];
             FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, effect);
         }
 
-        if (this.boardCreature.IsSilenced)
+        if (this.boardCreature.IsSilenced && this.abilitiesVFX.ContainsKey(CONDEMNED_STATUS))
         {
-            GameObject effect = abilitiesVFX[CONDEMNED_STATUS];
+            GameObject effect = this.abilitiesVFX[CONDEMNED_STATUS];
             FXPoolManager.Instance.UnassignEffect(CONDEMNED_STATUS, effect);
         }
     }

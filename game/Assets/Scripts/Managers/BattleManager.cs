@@ -1162,6 +1162,9 @@ public class BattleManager : MonoBehaviour
 
     public void ShowEmoteMenu()
     {
+        if (BattleState.Instance().You.Mode != Player.PLAYER_STATE_MODE_NORMAL)
+            return;
+
         emoteMenu.SetActive(true);
     }
 

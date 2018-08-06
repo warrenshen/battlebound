@@ -26,6 +26,9 @@ public class BoardCreatureMock : IBoardCreatureObject
     public void Heal(int amount)
     { }
 
+    public void RenderDeathwish()
+    { }
+
     public void Die()
     { }
 

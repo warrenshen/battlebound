@@ -12,6 +12,8 @@ public interface IBoardCreatureObject
 
     void Heal(int amount);
 
+    void RenderDeathwish();
+
     void Die();
 
     bool HasAbility(string ability);
