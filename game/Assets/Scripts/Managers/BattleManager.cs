@@ -1137,4 +1137,12 @@ public class BattleManager : MonoBehaviour
     {
         emoteMenu.SetActive(true);
     }
+
+    public void Emote(int id)
+    {
+        BattleSingleton.Instance.SendChallengeSendChatRequest(id);
+        emoteMenu.SetActive(false);
+
+        Debug.Log(String.Format("Emote request sent, emote {0}.", id));
+    }
 }

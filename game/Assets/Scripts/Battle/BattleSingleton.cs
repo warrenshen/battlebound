@@ -483,7 +483,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         OnChallengeRequestError(response, "ChallengeCardAttack");
     }
 
-    private void SendChallengeSendChatRequest(int chatId)
+    public void SendChallengeSendChatRequest(int chatId)
     {
         if (this.challengeId == null)
         {
