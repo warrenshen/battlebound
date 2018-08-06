@@ -685,7 +685,7 @@ public class BattleState
         string targetId
     )
     {
-        EffectManager.Instance.OnConvertCreature(playerId, fieldId, targetId);
+        EffectManager.Instance.OnCreatureConvert(playerId, fieldId, targetId);
     }
 
     public void ReceiveMoveSurrenderByChoice(string playerId)

@@ -53,6 +53,14 @@ public class Hand
         UpdateCosts();
     }
 
+    public void InsertCardObject(BattleCardObject battleCardObject, int index)
+    {
+        this.battleCardObjects.Insert(index, battleCardObject);
+        SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
+
+        UpdateCosts();
+    }
+
     public void RemoveByIndex(int index)
     {
         this.battleCardObjects.RemoveAt(index);
