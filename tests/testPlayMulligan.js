@@ -1051,8 +1051,14 @@ describe("challenge play mulligan", function() {
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 2);
-            assert.equal(playerState.hand.length, 4);
             assert.equal(playerState.mulliganCards.length, 0);
+
+            const playerHand = playerState.hand;
+            assert.equal(playerHand.length, 4);
+            assert.equal(playerHand[0].id, "ID_PLAYER-15");
+            assert.equal(playerHand[1].id, "ID_PLAYER-16");
+            assert.equal(playerHand[2].id, "ID_PLAYER-17");
+            assert.equal(playerHand[3].id, "ID_PLAYER-18");
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 5);
@@ -1063,15 +1069,19 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-15");
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-16");
 
             assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[3].attributes.card.id, "ID_PLAYER-17");
 
             assert.equal(lastMoves[4].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[4].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[4].attributes.card.id, "ID_PLAYER-18");
 
             resolve();
           }
@@ -1095,8 +1105,13 @@ describe("challenge play mulligan", function() {
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.mode, 2);
-            assert.equal(opponentState.hand.length, 3);
             assert.equal(opponentState.mulliganCards.length, 0);
+
+            const opponentHand = opponentState.hand;
+            assert.equal(opponentHand.length, 3);
+            assert.equal(opponentHand[0].id, "ID_OPPONENT-15");
+            assert.equal(opponentHand[1].id, "ID_OPPONENT-16");
+            assert.equal(opponentHand[2].id, "ID_OPPONENT-17");
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 4);
@@ -1107,12 +1122,15 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-15");
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_OPPONENT-16");
 
             assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[3].attributes.card.id, "ID_OPPONENT-17");
 
             resolve();
           }
@@ -1141,7 +1159,9 @@ describe("challenge play mulligan", function() {
             const playerHand = playerState.hand;
             assert.equal(playerHand.length, 4);
             assert.equal(playerHand[0].id, "ID_PLAYER-1");
-            assert.equal(playerHand[1].id, "ID_PLAYER-19");
+            assert.equal(playerHand[1].id, "ID_PLAYER-15");
+            assert.equal(playerHand[2].id, "ID_PLAYER-19");
+            assert.equal(playerHand[3].id, "ID_PLAYER-16");
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 3);
@@ -1152,9 +1172,11 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-15");
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-16");
 
             resolve();
           }
@@ -1182,7 +1204,9 @@ describe("challenge play mulligan", function() {
 
             const opponentHand = opponentState.hand;
             assert.equal(opponentHand.length, 3);
-            assert.equal(opponentHand[0].id, "ID_OPPONENT-7");
+            assert.equal(opponentHand[0].id, "ID_OPPONENT-15");
+            assert.equal(opponentHand[1].id, "ID_OPPONENT-16");
+            assert.equal(opponentHand[2].id, "ID_OPPONENT-7");
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 3);
@@ -1193,9 +1217,11 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-15");
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_OPPONENT-16");
 
             resolve();
           }
@@ -1249,7 +1275,7 @@ describe("challenge play mulligan", function() {
             eventKey: "TestChallengePlayMulligan",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_OPPONENT",
-            cardIds: ["ID_OPPONENT-6", "ID_OPPONENT-10", "ID_OPPONENT-7"],
+            cardIds: ["ID_OPPONENT-6", "ID_OPPONENT-7", "ID_OPPONENT-10"],
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1659,7 +1685,6 @@ describe("challenge play mulligan", function() {
       "nonce": 4,
     };
 
-
     it("should support discard all cards - 4 mulligan", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
@@ -1676,8 +1701,14 @@ describe("challenge play mulligan", function() {
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.mode, 0);
-            assert.equal(playerState.hand.length, 4);
             assert.equal(playerState.mulliganCards.length, 0);
+
+            const playerHand = playerState.hand;
+            assert.equal(playerHand.length, 4);
+            assert.equal(playerHand[0].id, "ID_PLAYER-15");
+            assert.equal(playerHand[1].id, "ID_PLAYER-16");
+            assert.equal(playerHand[2].id, "ID_PLAYER-17");
+            assert.equal(playerHand[3].id, "ID_PLAYER-18");
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 7);
@@ -1688,15 +1719,19 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-15");
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-16");
 
             assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[3].attributes.card.id, "ID_PLAYER-17");
 
             assert.equal(lastMoves[4].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[4].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[4].attributes.card.id, "ID_PLAYER-18");
 
             assert.equal(lastMoves[5].category, "MOVE_CATEGORY_FINISH_MULLIGAN");
 
@@ -1705,8 +1740,9 @@ describe("challenge play mulligan", function() {
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.mode, 0);
-            assert.equal(opponentState.hand.length, 4);
             assert.equal(opponentState.mulliganCards.length, 0);
+
+            assert.equal(opponentState.hand.length, 4);
 
             resolve();
           }
@@ -1722,7 +1758,7 @@ describe("challenge play mulligan", function() {
             eventKey: "TestChallengePlayMulligan",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardIds: ["ID_PLAYER-1", "ID_PLAYER-19"],
+            cardIds: ["ID_PLAYER-19", "ID_PLAYER-1"],
           },
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
@@ -1735,7 +1771,9 @@ describe("challenge play mulligan", function() {
             const playerHand = playerState.hand;
             assert.equal(playerHand.length, 4);
             assert.equal(playerHand[0].id, "ID_PLAYER-1");
-            assert.equal(playerHand[1].id, "ID_PLAYER-19");
+            assert.equal(playerHand[1].id, "ID_PLAYER-15");
+            assert.equal(playerHand[2].id, "ID_PLAYER-19");
+            assert.equal(playerHand[3].id, "ID_PLAYER-16");
 
             const lastMoves = response.scriptData.challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 5);
@@ -1746,9 +1784,11 @@ describe("challenge play mulligan", function() {
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-15");
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_DRAW_CARD_MULLIGAN");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-16");
 
             assert.equal(lastMoves[3].category, "MOVE_CATEGORY_FINISH_MULLIGAN");
 
