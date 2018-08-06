@@ -1003,7 +1003,6 @@ public class EffectManager : MonoBehaviour
         ChallengeCard spawnCard = JsonUtility.FromJson<ChallengeCard>(
             JsonUtility.ToJson(dirtyCard)
         );
-        Debug.Log(spawnCard.IsSilenced);
 
         spawnCard.SetId(player.GetNewCardId());
         spawnCard.SetPlayerId(playerId);

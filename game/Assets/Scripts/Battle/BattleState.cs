@@ -625,7 +625,7 @@ public class BattleState
         int fieldIndex
     )
     {
-        Card card = challengeCard.GetCard();
+        Card card = challengeCard.GetCard(false);
         if (card.GetType() == typeof(CreatureCard))
         {
             Player player = GetPlayerById(playerId);
