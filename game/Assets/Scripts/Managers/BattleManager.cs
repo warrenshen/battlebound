@@ -1016,7 +1016,6 @@ public class BattleManager : MonoBehaviour
     public void UseCard(BattleCardObject battleCardObject)
     {
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
-        battleCardObject.visual.Renderer.enabled = false;
         battleCardObject.Recycle();
     }
 
