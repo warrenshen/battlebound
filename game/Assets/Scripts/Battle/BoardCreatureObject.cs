@@ -19,6 +19,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     public static Color LIGHT_RED = new Color(1, 0.33F, 0.33F);
 
     public const string FROZEN_STATUS = "FROZEN_STATUS";
+    public const string CONDEMNED_STATUS = "CONDEMNED_STATUS";
 
     private BoardCreature boardCreature;
 
@@ -213,8 +214,30 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
     public void Die()
     {
-        //to-do, delay creature death
+        UnassignVFX();
         StartCoroutine("Dissolve", 2);
+    }
+
+    private void UnassignVFX()
+    {
+        //Unassign VFXs for creatures that die etc..
+        foreach (string ability in boardCreature.Abilities)
+        {
+            GameObject effect = this.abilitiesVFX[ability];
+            FXPoolManager.Instance.UnassignEffect(ability, effect);
+        }
+
+        if (this.boardCreature.IsFrozen > 0)
+        {
+            GameObject effect = abilitiesVFX[FROZEN_STATUS];
+            FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, effect);
+        }
+
+        if (this.boardCreature.IsSilenced)
+        {
+            GameObject effect = abilitiesVFX[CONDEMNED_STATUS];
+            FXPoolManager.Instance.UnassignEffect(CONDEMNED_STATUS, effect);
+        }
     }
 
     public bool HasAbility(string ability)
@@ -265,7 +288,6 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
         cardVisual.SetOpacity(0.8f);
         cardVisual.SetBlackAndWhite(true);
-        cardVisual.Renderer.enabled = true;
         cardVisual.SetOutlineColors(cardVisual.InitialOutlineStartColor, cardVisual.InitialOutlineEndColor);
 
         return cardVisual;
@@ -443,6 +465,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
                     FROZEN_STATUS,
                     this.transform
                 ).gameObject;
+
                 this.statusVFX[FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
                 LeanTween
                     .scale(this.statusVFX[FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
@@ -468,6 +491,29 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
                         FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, this.statusVFX[FROZEN_STATUS]);
                         this.summonAnimation.enabled = true;
                         this.statusVFX.Remove(FROZEN_STATUS);
+                    });
+            }
+        }
+
+        bool isCondemned = this.boardCreature.IsSilenced;
+
+        if (isCondemned)
+        {
+            if (!this.statusVFX.ContainsKey(CONDEMNED_STATUS))
+            {
+                this.statusVFX[CONDEMNED_STATUS] = FXPoolManager.Instance.AssignEffect(
+                    CONDEMNED_STATUS,
+                    this.transform
+                ).gameObject;
+
+                //to-do refactor this spawn/tween with variance logic for freeze, silence, and other status
+                LeanTween
+                    .scale(this.statusVFX[CONDEMNED_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
+                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+                    .setEaseOutCubic()
+                    .setOnStart(() =>
+                    {
+                        SoundManager.Instance.PlaySound("CondemnedSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
                     });
             }
         }
@@ -519,8 +565,6 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
             Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
         }
     }
-
-
 
 
     // MouseWatchable functions.
