@@ -207,4 +207,10 @@ public class PlayerAvatar : Targetable
     {
         this.playerAvatarObject.Die();
     }
+
+    public void ShowEmoteOnObject(int id)
+    {
+        PlayerAvatarObject avatarObject = this.GetTargetableObject() as PlayerAvatarObject;
+        avatarObject.ShowEmote(id);
+    }
 }

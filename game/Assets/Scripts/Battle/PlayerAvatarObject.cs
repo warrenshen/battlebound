@@ -17,7 +17,10 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
     TextMeshPro healthLabel;
     TextMeshPro nameLabel;
 
-    AudioSource audioSource;
+    [SerializeField]
+    private SpriteRenderer emoteRenderer;
+
+    private AudioSource audioSource;
 
     public void Initialize(PlayerAvatar playerAvatar)
     {
@@ -163,5 +166,22 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
     {
         base.MouseDown();
         BattleManager.Instance.ShowEmoteMenu();
+    }
+
+    public void ShowEmote(int id)
+    {
+        if (LeanTween.isTweening(emoteRenderer.gameObject))
+        {
+            LeanTween.cancel(emoteRenderer.gameObject);
+        }
+
+        emoteRenderer.sprite = BattleManager.Instance.EmoteSprites[id];
+        emoteRenderer.gameObject.SetActive(true);
+        LeanTween.scale(emoteRenderer.gameObject, Vector3.one * 1.2F, 1)
+                 .setEasePunch()
+                 .setOnComplete(() =>
+                 {
+                     emoteRenderer.gameObject.SetActive(false);
+                 });
     }
 }

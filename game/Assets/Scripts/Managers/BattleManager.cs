@@ -58,6 +58,10 @@ public class BattleManager : MonoBehaviour
     public HyperCard.Card HoverCard;
     public Canvas canvas;
 
+    [SerializeField]
+    private Sprite[] emoteSprites;
+    public Sprite[] EmoteSprites => emoteSprites;
+
     public static BattleManager Instance { get; private set; }
 
     private void Awake()
@@ -1133,7 +1137,7 @@ public class BattleManager : MonoBehaviour
 
     public void ShowOpponentChat(int chatId)
     {
-        Debug.Log(GetChatByChatId(chatId));
+        BattleState.Instance().Opponent.Avatar.ShowEmoteOnObject(chatId);
     }
 
     public static readonly Dictionary<int, string> CHAT_ID_TO_STRING = new Dictionary<int, string>
@@ -1165,10 +1169,12 @@ public class BattleManager : MonoBehaviour
         emoteMenu.SetActive(true);
     }
 
-    public void Emote(int id)
+    public void SendEmote(int id)
     {
         BattleSingleton.Instance.SendChallengeSendChatRequest(id);
         emoteMenu.SetActive(false);
+
+        BattleState.Instance().You.Avatar.ShowEmoteOnObject(id);
 
         Debug.Log(String.Format("Emote request sent, emote {0}.", id));
     }

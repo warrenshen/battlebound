@@ -10,13 +10,31 @@ public class ConstantRotation : MonoBehaviour
 
     public float rotateSpeed = 10; // set it in the  inspector
 
-    void Update()
+    public bool random;
+    private Vector3 randomDirection;
+
+    private void Awake()
     {
-        Rotate();
+        if (random)
+        {
+            randomDirection = Random.insideUnitSphere;
+        }
+    }
+
+    private void Update()
+    {
+        if (randomDirection == null)
+        {
+            Rotate();
+        }
+        else
+        {
+            RotateRandom();
+        }
     }
 
 
-    void Rotate()
+    private void Rotate()
     {
         if (x)
         {
@@ -30,5 +48,10 @@ public class ConstantRotation : MonoBehaviour
         {
             transform.Rotate(Vector3.forward, rotateSpeed * Time.deltaTime, Space.World);
         }
+    }
+
+    private void RotateRandom()
+    {
+        transform.Rotate(randomDirection, rotateSpeed * Time.deltaTime, Space.World);
     }
 }
