@@ -54,9 +54,10 @@ public class Player
 
     private List<Card> mulliganCards;
 
-    private List<Card> keptMulliganCards;
+    private List<Card> keptMulliganCards; // Only used by player (you).
     public List<Card> KeptMulliganCards => keptMulliganCards;
 
+    private List<int> replaceMulliganIndices;
     private List<Card> replaceMulliganCards;
 
     public Player(string id, string name, string displayName)
@@ -76,7 +77,9 @@ public class Player
         this.mode = PLAYER_STATE_MODE_NORMAL;
         this.turnCount = 0;
 
+        this.replaceMulliganIndices = new List<int>();
         this.replaceMulliganCards = new List<Card>();
+
         this.hand = new Hand(this);
         this.avatar = new PlayerAvatar(this);
     }
@@ -97,7 +100,9 @@ public class Player
         this.mode = playerState.Mode;
         this.turnCount = playerState.TurnCount;
 
+        this.replaceMulliganIndices = new List<int>();
         this.replaceMulliganCards = new List<Card>();
+
         this.avatar = new PlayerAvatar(this, playerState);
     }
 
@@ -311,6 +316,11 @@ public class Player
         return cards;
     }
 
+    public bool IsModeMulligan()
+    {
+        return this.mode == PLAYER_STATE_MODE_MULLIGAN || this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING;
+    }
+
     public void BeginMulligan(List<Card> mulliganCards)
     {
         this.mode = PLAYER_STATE_MODE_MULLIGAN;
@@ -352,11 +362,6 @@ public class Player
         {
             Debug.LogError("Resume mulligan called on player not in mulligan mode.");
         }
-    }
-
-    public bool IsModeMulligan()
-    {
-        return this.mode == PLAYER_STATE_MODE_MULLIGAN || this.mode == PLAYER_STATE_MODE_MULLIGAN_WAITING;
     }
 
     public void PlayMulligan(int opponentMode)
@@ -411,27 +416,6 @@ public class Player
                 DrawCardMock(true);
             }
         }
-
-        // If not in connected mode, automatically perform mulligan for opponent.
-        if (!FlagHelper.IsServerEnabled())
-        {
-            string opponentId = Board.Instance().GetOpponentIdByPlayerId(this.id);
-
-            challengeMove = new ChallengeMove();
-            challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(opponentId);
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-
-            moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetDeckCardIndices(new List<int>());
-
-            challengeMove.SetMoveAttributes(moveAttributes);
-            BattleState.Instance().AddServerMove(challengeMove);
-
-            challengeMove = new ChallengeMove();
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
-            BattleState.Instance().AddServerMove(challengeMove);
-        }
     }
 
     public void PlayMulliganByIndices(List<int> replacedCardIndices)
@@ -442,11 +426,13 @@ public class Player
             return;
         }
 
+        this.replaceMulliganIndices = replacedCardIndices;
+
         // It is very important that we iterate downwards,
         // since the ReplaceCardByMulligan call removes cards from hand by index.
         for (int i = this.mulliganCards.Count - 1; i >= 0; i -= 1)
         {
-            if (replacedCardIndices.Contains(i))
+            if (this.replaceMulliganIndices.Contains(i))
             {
                 Card removeCard = this.mulliganCards[i];
                 ReplaceCardByMulligan(removeCard, i);
@@ -459,6 +445,77 @@ public class Player
         }
 
         this.mode = PLAYER_STATE_MODE_MULLIGAN_WAITING;
+    }
+
+    private void ReplaceCardByMulligan(Card card, int index)
+    {
+        this.hand.RemoveByIndex(index);
+        ReturnCardToDeck(card);
+        BattleManager.Instance.UseCard(card.wrapper as BattleCardObject);
+    }
+
+    public void AddDrawnCardMulligan(Card card)
+    {
+        this.replaceMulliganCards.Add(card);
+
+        if (this.replaceMulliganCards.Count == this.replaceMulliganIndices.Count)
+        {
+            this.deckSize -= this.replaceMulliganCards.Count;
+
+            int replaceCardIndex = 0;
+            foreach (int replaceMulliganIndex in replaceMulliganIndices)
+            {
+                Card mulliganCard = this.mulliganCards[replaceCardIndex];
+                if (replaceCardIndex == this.replaceMulliganCards.Count - 1)
+                {
+                    EffectManager.Instance.OnDrawMulliganStart();
+                    BattleCardObject battleCardObject = AddMulliganCard(
+                        this.replaceMulliganCards[replaceCardIndex],
+                        replaceMulliganIndex,
+                        new UnityAction(() => EffectManager.Instance.OnDrawMulliganFinish(this.id))
+                    );
+                }
+                else
+                {
+                    BattleCardObject battleCardObject = AddMulliganCard(
+                        this.replaceMulliganCards[replaceCardIndex],
+                        replaceMulliganIndex
+                    );
+                }
+                replaceCardIndex += 1;
+            }
+
+            // If not in connected mode, automatically perform mulligan for opponent.
+            if (!FlagHelper.IsServerEnabled())
+            {
+                Player opponent = Board.Instance().GetOpponentByPlayerId(this.id);
+
+                if (opponent.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+                {
+                    List<int> deckCardIndices = new List<int> { 0, 2 };
+
+                    ChallengeMove challengeMove = new ChallengeMove();
+                    challengeMove = new ChallengeMove();
+                    challengeMove.SetPlayerId(opponent.Id);
+                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+
+                    ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                    moveAttributes.SetDeckCardIndices(deckCardIndices);
+
+                    challengeMove.SetMoveAttributes(moveAttributes);
+                    BattleState.Instance().AddServerMove(challengeMove);
+
+                    foreach (int _ in deckCardIndices)
+                    {
+                        opponent.DrawCardMock(true);
+                    }
+
+                    challengeMove = new ChallengeMove();
+                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
+                    BattleState.Instance().AddServerMove(challengeMove);
+                }
+            }
+        }
     }
 
     public void FinishMulligan(bool isActivePlayer, bool shouldCallEffectManager = false)
@@ -492,53 +549,29 @@ public class Player
         }
     }
 
-    private void ReplaceCardByMulligan(Card card, int index)
+    public BattleCardObject AddMulliganCard(Card card, int index, UnityAction onAnimationFinish = null)
     {
-        this.hand.RemoveByIndex(index);
-        ReturnCardToDeck(card);
-        BattleManager.Instance.UseCard(card.wrapper as BattleCardObject);
-    }
-
-    public void AddDrawnCardMulligan(Card card)
-    {
-        this.replaceMulliganCards.Add(card);
-
-        if (this.replaceMulliganCards.Count == this.mulliganCards.Count - this.keptMulliganCards.Count)
+        GameObject created = new GameObject(card.Name);
+        BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+        battleCardObject.Initialize(this, card);
+        foreach (HyperCard.Card.CustomSpriteParam spriteParam in battleCardObject.visual.SpriteObjects)
         {
-            this.deckSize -= this.replaceMulliganCards.Count;
-
-            List<string> cardIds = new List<string>();
-            foreach (Card keptCard in this.keptMulliganCards)
-            {
-                cardIds.Add(keptCard.Id);
-            }
-
-            int replaceIndex = 0;
-            for (int i = 0; i < this.mulliganCards.Count; ++i)
-            {
-                Card mulliganCard = this.mulliganCards[i];
-                if (!cardIds.Contains(mulliganCard.Id))
-                {
-                    if (replaceIndex == this.replaceMulliganCards.Count - 1)
-                    {
-                        EffectManager.Instance.OnDrawMulliganStart();
-                        BattleCardObject battleCardObject = AddMulliganCard(
-                            this.replaceMulliganCards[replaceIndex],
-                            i,
-                            new UnityAction(() => EffectManager.Instance.OnDrawMulliganFinish(this.id))
-                        );
-                    }
-                    else
-                    {
-                        BattleCardObject battleCardObject = AddMulliganCard(
-                            this.replaceMulliganCards[replaceIndex],
-                            i
-                        );
-                    }
-                    replaceIndex += 1;
-                }
-            }
+            spriteParam.IsAffectedByFilters = true;
         }
+
+        created.transform.parent = GetHandTransform();
+
+        this.hand.InsertCardObject(battleCardObject, index);
+
+        BattleManager.Instance.AnimateDrawCardForMulligan(
+            this,
+            battleCardObject,
+            index,
+            this.mulliganCards.Count,
+            onAnimationFinish
+        );
+
+        return battleCardObject;
     }
 
     public void AddDrawnCardHandFull(Card card)
@@ -576,31 +609,6 @@ public class Player
 
         BattleManager.Instance.AnimateDrawCard(this, createdBattleCard);
         return createdBattleCard;
-    }
-
-    public BattleCardObject AddMulliganCard(Card card, int index, UnityAction onAnimationFinish = null)
-    {
-        GameObject created = new GameObject(card.Name);
-        BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
-        battleCardObject.Initialize(this, card);
-        foreach (HyperCard.Card.CustomSpriteParam spriteParam in battleCardObject.visual.SpriteObjects)
-        {
-            spriteParam.IsAffectedByFilters = true;
-        }
-
-        created.transform.parent = GetHandTransform();
-
-        this.hand.InsertCardObject(battleCardObject, index);
-
-        BattleManager.Instance.AnimateDrawCardForMulligan(
-            this,
-            battleCardObject,
-            index,
-            this.mulliganCards.Count,
-            onAnimationFinish
-        );
-
-        return battleCardObject;
     }
 
     public BattleCardObject AddCardOnResume(Card card)
