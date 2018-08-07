@@ -1526,19 +1526,19 @@ describe("challenge events", function() {
             "armor": 0,
             "field": [
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
                 "id": "EMPTY"
@@ -1624,19 +1624,19 @@ describe("challenge events", function() {
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
             assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-32");
             assert.equal(lastMoves[2].attributes.card.name, "Firebug Catelyn");
-            assert.equal(lastMoves[2].attributes.fieldIndex, 5);
+            assert.equal(lastMoves[2].attributes.fieldIndex, 4);
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
             assert.equal(playerState.manaMax, 90);
 
             const playerField = playerState.field;
-            assert.equal(playerField[5].id, "ID_PLAYER-32");
-            assert.equal(playerField[5].cost, 10);
-            assert.equal(playerField[5].attack, 10);
-            assert.equal(playerField[5].health, 10);
-            assert.equal(playerField[5].isFrozen, 1);
-            assert.equal(playerField[5].isSilenced, 1);
+            assert.equal(playerField[4].id, "ID_PLAYER-32");
+            assert.equal(playerField[4].cost, 10);
+            assert.equal(playerField[4].attack, 10);
+            assert.equal(playerField[4].health, 10);
+            assert.equal(playerField[4].isFrozen, 1);
+            assert.equal(playerField[4].isSilenced, 1);
 
             // Converted creatures deathwish should not run.
             const opponentState = challengeStateData.current["ID_OPPONENT"];
@@ -1696,19 +1696,19 @@ describe("challenge events", function() {
             "armor": 0,
             "field": [
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
-                "id": "NOT_EMPTY"
+                "id": "EMPTY"
               },
               {
                 "id": "EMPTY"
