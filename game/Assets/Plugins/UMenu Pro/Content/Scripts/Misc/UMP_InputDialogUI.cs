@@ -9,18 +9,10 @@ public class UMP_InputDialogUI : UMP_ConfirmationDialogUI
     [SerializeField]
     private InputField inputField;
 
-    public void SetConfirmAction<T>(UnityAction<T> action)
+    public void SetConfirmAction(UnityAction<string, UMP_InputDialogUI> action)
     {
         this.confirmButton.onClick.RemoveAllListeners();
-        //this.confirmButton.onClick.AddListener(() => action.Invoke(context));
-        this.confirmButton.onClick.AddListener(Close);
-    }
-
-    public void SetCancelAction<T>(UnityAction<T> action)
-    {
-        this.cancelButton.onClick.RemoveAllListeners();
-        //this.cancelButton.onClick.AddListener(() => action.Invoke(context));
-        this.cancelButton.onClick.AddListener(Close);
+        this.confirmButton.onClick.AddListener(() => action.Invoke(GetInputValue(), this));
     }
 
     public void SetInputPlaceholder(ref InputField inputField, string placeholder)
