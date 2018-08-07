@@ -716,7 +716,6 @@ public class BattleState
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
     }
 
@@ -730,7 +729,6 @@ public class BattleState
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
-        challengeMove.SetRank(GetDeviceMoveRank());
         AddDeviceMove(challengeMove);
     }
 
