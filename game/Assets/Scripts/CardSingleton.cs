@@ -72,13 +72,12 @@ public class CardSingleton : Singleton<CardSingleton>
         cardVisual.transform.parent = this.transform;
         cardVisualPool.Push(cardVisual);
         cardVisual.gameObject.SetActive(false);
-
-#if UNITY_EDITOR
-        if (!cardVisual.transform.localScale.Equals(BattleCardObject.CARD_VISUAL_SIZE))
-        {
-            Debug.LogError("Return card visual to pool with weird size. Likely a tween bug!");
-        }
-#endif
+        //#if UNITY_EDITOR
+        //        if (!cardVisual.transform.localScale.Equals(BattleCardObject.CARD_VISUAL_SIZE))
+        //        {
+        //            Debug.LogError("Return card visual to pool with weird size. Likely a tween bug!");
+        //        }
+        //#endif
     }
 
     public GameObject GetSummonFromPool(string name)

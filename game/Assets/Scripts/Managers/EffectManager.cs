@@ -544,36 +544,79 @@ public class EffectManager : MonoBehaviour
                 AbilityHeal(effect, 20);
                 break;
             case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
-            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
                 AbilityAttackInFront(effect, 10);
                 break;
             case Card.CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY:
-            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
                 AbilityAttackInFront(effect, 20);
                 break;
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
+            case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT:
+            case Card.CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY:
+            case Card.CARD_ABILITY_BATTLE_CRY_DAMAGE_PLAYER_FACE_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_FOURTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE:
+            case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES:
+                AbilityBattlecry(effect);
+                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
-                AbilityDeathRattleAttackFace(effect, 10);
-                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
-                AbilityDeathRattleAttackFace(effect, 20);
-                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
-                AbilityDeathRattleAttackRandomThree(effect);
-                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY:
-                AbilityDeathRattleDamageAllOpponentCreatures(effect, 20);
-                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY:
-                AbilityDeathRattleDamageAllCreatures(effect, 30);
-                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
-                AbilityDeathRattleDrawCard(effect);
+            case Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON:
+            case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS:
+            case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
+                AbilityDeathRattle(effect);
                 break;
             case EFFECT_CHANGE_TURN_DRAW_CARD:
             case EFFECT_DRAW_CARD:
             case Card.CARD_ABILITY_END_TURN_DRAW_CARD:
-            case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
+                AbilityDrawCard(effect);
+                break;
             case Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD:
+                AbilityDrawCard(effect);
+                break;
+            case Card.BUFF_CATEGORY_UNSTABLE_POWER:
+                BuffUnstablePower(effect);
+                break;
+            default:
+                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
+                break;
+        }
+    }
+
+    private void AbilityBattlecry(Effect effect)
+    {
+        this.isWaiting = true;
+        StartCoroutine("BattlecryCoroutine", effect);
+    }
+
+    private IEnumerator BattlecryCoroutine(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        boardCreature.Deathwish();
+
+        yield return new WaitForSeconds(0.5f);
+        this.isWaiting = false;
+
+        switch (effect.Name)
+        {
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
+                AbilityAttackInFront(effect, 10);
+                break;
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
+                AbilityAttackInFront(effect, 20);
+                break;
+            case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
                 AbilityDrawCard(effect);
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
@@ -603,6 +646,48 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES:
                 AbilitySilenceAllOpponentCreatures(effect);
                 break;
+            default:
+                Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
+                break;
+        }
+    }
+
+    private void AbilityDeathRattle(Effect effect)
+    {
+        this.isWaiting = true;
+        StartCoroutine("DeathRattleCoroutine", effect);
+    }
+
+    private IEnumerator DeathRattleCoroutine(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
+
+        yield return new WaitForSeconds(0.5f);
+        this.isWaiting = false;
+
+        switch (effect.Name)
+        {
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
+                AbilityDeathRattleAttackFace(effect, 10);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
+                AbilityDeathRattleAttackFace(effect, 20);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
+                AbilityDeathRattleAttackRandomThree(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY:
+                AbilityDeathRattleDamageAllOpponentCreatures(effect, 20);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY:
+                AbilityDeathRattleDamageAllCreatures(effect, 30);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
+                AbilityDeathRattleDrawCard(effect);
+                break;
             case Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON:
                 AbilityDeathRattleResummon(effect);
                 break;
@@ -611,9 +696,6 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
                 AbilityDeathRattleSummonSummonedDragon(effect);
-                break;
-            case Card.BUFF_CATEGORY_UNSTABLE_POWER:
-                BuffUnstablePower(effect);
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
