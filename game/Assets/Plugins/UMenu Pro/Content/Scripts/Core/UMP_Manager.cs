@@ -117,12 +117,17 @@ public class UMP_Manager : MonoBehaviour
                                        UnityAction<string, UMP_InputDialogUI> confirmAction,
                                        UnityAction cancelAction,
                                        string cancelText = "Cancel",
-                                       string confirmText = "Confirm")
+                                       string confirmText = "Confirm",
+                                       string placeholderMessage = "Enter value...",
+                                       InputField.ContentType contentType = InputField.ContentType.Standard
+                                    )
     {
         InputFieldDialog.SetTitle(title);
         InputFieldDialog.SetMessage(text);
         InputFieldDialog.SetConfirmAction(confirmAction);
         InputFieldDialog.SetCancelAction(cancelAction);
+        InputFieldDialog.SetInputPlaceholder(placeholderMessage);
+        InputFieldDialog.SetInputContentType(contentType);
 
         InputFieldDialog.gameObject.SetActive(true);
     }

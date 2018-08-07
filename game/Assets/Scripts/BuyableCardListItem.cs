@@ -61,7 +61,9 @@ public class BuyableCardListItem : CardListItem
             "Authorize Bid",
             "Please enter your password to verify the transaction.",
             new UnityAction<string, UMP_InputDialogUI>(SubmitBidAuction),
-            new UnityAction(CancelAction)
+            new UnityAction(CancelAction),
+            placeholderMessage: "Enter password...",
+            contentType: InputField.ContentType.Password
         );
     }
 
@@ -76,12 +78,14 @@ public class BuyableCardListItem : CardListItem
         {
             dialog.SetMessage("Ethereum hot wallet not configured for this device.");
             dialog.SetMessageColor(Color.red);
+            dialog.SetMessageStyle(FontStyle.Bold);
             return;
         }
         else if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
         {
             dialog.SetMessage("Ethereum hot wallet not configured for this device.");
             dialog.SetMessageColor(Color.red);
+            dialog.SetMessageStyle(FontStyle.Bold);
             return;
         }
 
@@ -92,6 +96,7 @@ public class BuyableCardListItem : CardListItem
         {
             dialog.SetMessage("Entered password incorrect! Please try again.");
             dialog.SetMessageColor(Color.red);
+            dialog.SetMessageStyle(FontStyle.Bold);
             return;
         }
         else
