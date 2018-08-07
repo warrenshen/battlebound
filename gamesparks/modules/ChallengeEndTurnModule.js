@@ -54,9 +54,14 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
     const opponentField = opponentState.field;
     
     opponentState.hasTurn = 1;
-        
-    // Increase opponent's max mana by 1 if it's not max'ed out.
-    if (opponentState.manaMax < 100) {
+
+    // Increase opponent's max mana by 1 if:
+    // - This is not player's first turn.
+    // - It's not max'ed out.
+    if (
+        challengeStateData.turnCountByPlayerId[opponentId] > 0 &&
+        opponentState.manaMax < 100
+    ) {
         opponentState.manaMax += 10;
     }
     opponentState.manaCurrent = opponentState.manaMax;

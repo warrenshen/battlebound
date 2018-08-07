@@ -655,6 +655,598 @@ describe("challenge end turn", function() {
     })
   });
 
+  describe("max mana increase", function() {
+    it("should not increase max mana on 0th turn", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "C1-ID_OPPONENT-1",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "C4-ID_OPPONENT-4",
+                "level": 1,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+              {
+                "id": "C6-ID_PLAYER-6",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              },
+            ],
+            "deckSize": 0,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 20,
+            "manaMax": 20,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "deathCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.manaCurrent, 20);
+            assert.equal(opponentState.manaMax, 20);
+
+            const opponentHand = opponentState.hand;
+            assert.equal(opponentHand.length, 0);
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 2);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should not increase max mana on 0th turn", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "C1-ID_OPPONENT-1",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "C4-ID_OPPONENT-4",
+                "level": 1,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+              {
+                "id": "C6-ID_PLAYER-6",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              },
+            ],
+            "deckSize": 0,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 20,
+            "manaMax": 20,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 1,
+          "ID_OPPONENT": 1,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "deathCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.manaCurrent, 30);
+            assert.equal(opponentState.manaMax, 30);
+
+            const opponentHand = opponentState.hand;
+            assert.equal(opponentHand.length, 0);
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 2);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("draw cards", function() {
+    it("should support draw card hand full if next player's hand is full and change player turns", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "C1-ID_OPPONENT-1",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "At the end of each turn, recover 10 health",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C1",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30
+              },
+              {
+                "id": "C4-ID_OPPONENT-4",
+                "level": 1,
+                "category": 0,
+                "attack": 10,
+                "health": 10,
+                "cost": 10,
+                "name": "Firebug Catelyn",
+                "description": "",
+                "abilities": [],
+                "baseId": "C4",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10
+              },
+              {
+                "id": "C6-ID_PLAYER-6",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              },
+            ],
+            "deckSize": 5,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+            "deck": [],
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "manaCurrent": 30,
+            "manaMax": 40,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+              {
+                "id": "HIDDEN"
+              },
+            ],
+            "deckSize": 4,
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+            "deck": [
+              {
+                "id": "C6-ID_OPPONENT-6",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 10,
+                "cost": 10,
+                "name": "Young Kyo",
+                "description": "",
+                "abilities": [],
+                "baseId": "C6",
+                "attackStart": 20,
+                "costStart": 10,
+                "healthStart": 10,
+                "healthMax": 10,
+              }
+            ],
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "turnCountByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "deathCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentHand = opponentState.hand;
+            assert.equal(opponentHand.length, 10);
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 2);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_DRAW_CARD_HAND_FULL");
+            assert.equal(lastMoves[1].attributes.card.id, "C6-ID_OPPONENT-6");
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
   describe("draw cards", function() {
     it("should support draw card deck empty if next player's deck is empty", function() {
       const challengeStateData = {

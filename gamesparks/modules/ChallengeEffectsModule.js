@@ -564,12 +564,15 @@ function abilityHealFriendlyMax(challengeStateData, effect) {
     return [];
 }
 
-function _getInFrontCardByPlayerIdAndCardId(challengeStateData, playerId, cardId) {
+function _getInFrontIndexByPlayerIdAndCardId(challengeStateData, playerId, cardId) {
     const playerState = challengeStateData.current[playerId];
     const playerField = playerState.field;
     const playerIndex = playerField.findIndex(function(fieldCard) { return fieldCard.id === cardId });
+    return 5 - playerIndex;
+}
 
-    const opponentIndex = 5 - playerIndex;
+function _getInFrontCardByPlayerIdAndCardId(challengeStateData, playerId, cardId) {
+    const opponentIndex = _getInFrontIndexByPlayerIdAndCardId(challengeStateData, playerId, cardId);
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     const opponentState = challengeStateData.current[opponentId];
     const opponentField = opponentState.field;
@@ -806,20 +809,11 @@ function _getEffectsForReviveCardRandomLocation(challengeStateData, playerId, di
     return _getEffectsForSummonCard(challengeStateData, playerId, cleanCard, fieldIndex);
 }
 
-function _getEffectsForConvertCardRandomLocation(challengeStateData, playerId, dirtyCard) {
-	const playerState = challengeStateData.current[playerId];
-    const playerField = playerState.field;
-
-    const availableIndices = [];
-    playerField.forEach(function(fieldCard, index) {
-        if (fieldCard.id === "EMPTY") {
-            availableIndices.push(index);
-        }
-	});
-
-	const fieldIndex = _selectRandom(availableIndices);
+function _getEffectsForConvertCard(challengeStateData, playerId, dirtyCard) {
+    const targetIndex = _getInFrontIndexByPlayerIdAndCardId(challengeStateData, dirtyCard.playerId, dirtyCard.id);
+    const closestIndex = _selectClosestAvailableIndex(challengeStateData, playerId, targetIndex);
 	const cleanCard = _cleanCardForConvert(challengeStateData, dirtyCard, playerId);
-    return _getEffectsForSummonCard(challengeStateData, playerId, cleanCard, fieldIndex);
+    return _getEffectsForSummonCard(challengeStateData, playerId, cleanCard, targetIndex);
 }
 
 function _getEffectsForSummonCard(challengeStateData, playerId, cleanCard, fieldIndex) {
@@ -923,8 +917,11 @@ function abilityDeathRattleAttackRandomThree(challengeStateData, effect) {
     return newEffects;
 }
 
-function _selectClosestAvailableIndex(playerField, index) {
-    const offsets = [1, -1, 2, -2, 3, -3, 4, -4, 5, -5];
+function _selectClosestAvailableIndex(challengeStateData, playerId, index) {
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    
+    const offsets = [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5];
     var closestIndex = -1;
     offsets.forEach(function(offset) {
         const currentIndex = index + offset;
@@ -1076,7 +1073,7 @@ function abilityDeathRattleSummonDuskDwellers(challengeStateData, effect) {
         abilitiesStart: [CARD_ABILITY_DEATH_RATTLE_RESUMMON],
         description: "",
     };
-    const closestIndex = _selectClosestAvailableIndex(playerField, fieldIndex);
+    const closestIndex = _selectClosestAvailableIndex(challengeStateData, playerId, fieldIndex);
 
     return [
         {
@@ -1120,7 +1117,7 @@ function abilityDeathRattleSummonSummonedDragons(challengeStateData, effect) {
         abilitiesStart: [CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS],
         description: "",
     };
-    const closestIndex = _selectClosestAvailableIndex(playerField, fieldIndex);
+    const closestIndex = _selectClosestAvailableIndex(challengeStateData, playerId, fieldIndex);
 
     return [
         {
@@ -1690,7 +1687,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 },
             };
             addChallengeMove(challengeStateData, move);
-            newEffects = newEffects.concat(_getEffectsForConvertCardRandomLocation(challengeStateData, playerId, randomCard));
+            newEffects = newEffects.concat(_getEffectsForConvertCard(challengeStateData, playerId, randomCard));
         }
     } else if (playedCard.name === SPELL_NAME_BATTLE_ROYALE) {
         const creatureCards = _getAllCreatureCards(challengeStateData, playerId);
