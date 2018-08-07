@@ -222,7 +222,7 @@ public class PlayerState
         List<Card> cards = new List<Card>();
         foreach (ChallengeCard challengeCard in this.hand)
         {
-            cards.Add(challengeCard.GetCard(false));
+            cards.Add(challengeCard.GetCard());
         }
         return cards;
     }

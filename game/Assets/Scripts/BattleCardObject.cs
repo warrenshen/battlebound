@@ -31,7 +31,7 @@ public class BattleCardObject : CardObject
     {
         this.card = challengeCard.GetCard();
         card.wrapper = this;
-        this.LoadCardArtwork();
+        LoadCardArtwork();
 
         if (this.visual == null)
         {
@@ -43,6 +43,7 @@ public class BattleCardObject : CardObject
         Card.SetHyperCardArtwork(ref this.visual, this.card);
 
         this.costFromServer = challengeCard.Cost;
+        this.buffs = challengeCard.GetBuffsHand();
 
         if (this.costFromServer != this.card.GetCost())
         {

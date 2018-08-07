@@ -401,7 +401,7 @@ public class ChallengeCard
         return null;
     }
 
-    public Card GetCard(bool shouldCompare = true)
+    public Card GetCard()
     {
         if (this.category == (int)Card.CardType.Creature)
         {
@@ -411,54 +411,54 @@ public class ChallengeCard
                 this.level
             );
 
-            if (shouldCompare)
-            {
-                if (this.cost != creatureCard.GetCost())
-                {
-                    Debug.LogWarning(
-                        string.Format(
-                            "Server db vs device codex {0} cost mismatch: {1} vs {2}",
-                            this.name,
-                            this.cost,
-                            creatureCard.GetCost()
-                        )
-                    );
-                }
-                if (this.attackStart != creatureCard.GetAttack())
-                {
-                    Debug.LogWarning(
-                        string.Format(
-                            "Server db vs device codex {0} attack mismatch: {1} vs {2}",
-                            this.name,
-                            this.attack,
-                            creatureCard.GetAttack()
-                        )
-                    );
-                }
-                if (this.healthStart != creatureCard.GetHealth())
-                {
-                    Debug.LogWarning(
-                        string.Format(
-                            "Server db vs device codex {0} health mismatch: {1} vs {2}",
-                            this.name,
-                            this.health,
-                            creatureCard.GetAttack()
-                        )
-                    );
-                }
+            //if (shouldCompare)
+            //{
+            //    if (this.cost != creatureCard.GetCost())
+            //    {
+            //        Debug.LogWarning(
+            //            string.Format(
+            //                "Server db vs device codex {0} cost mismatch: {1} vs {2}",
+            //                this.name,
+            //                this.cost,
+            //                creatureCard.GetCost()
+            //            )
+            //        );
+            //    }
+            //    if (this.attackStart != creatureCard.GetAttack())
+            //    {
+            //        Debug.LogWarning(
+            //            string.Format(
+            //                "Server db vs device codex {0} attack mismatch: {1} vs {2}",
+            //                this.name,
+            //                this.attack,
+            //                creatureCard.GetAttack()
+            //            )
+            //        );
+            //    }
+            //    if (this.healthStart != creatureCard.GetHealth())
+            //    {
+            //        Debug.LogWarning(
+            //            string.Format(
+            //                "Server db vs device codex {0} health mismatch: {1} vs {2}",
+            //                this.name,
+            //                this.health,
+            //                creatureCard.GetAttack()
+            //            )
+            //        );
+            //    }
 
-                string abilitiesDiff = GetAbilitiesDiff(this.abilities, creatureCard.GetAbilities());
-                if (abilitiesDiff != null)
-                {
-                    Debug.LogWarning(
-                        string.Format(
-                            "Server db vs device codex {0} abilities mismatch: {1}",
-                            this.name,
-                            abilitiesDiff
-                        )
-                    );
-                }
-            }
+            //    string abilitiesDiff = GetAbilitiesDiff(this.abilities, creatureCard.GetAbilities());
+            //    if (abilitiesDiff != null)
+            //    {
+            //        Debug.LogWarning(
+            //            string.Format(
+            //                "Server db vs device codex {0} abilities mismatch: {1}",
+            //                this.name,
+            //                abilitiesDiff
+            //            )
+            //        );
+            //    }
+            //}
 
             return creatureCard;
         }
