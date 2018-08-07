@@ -8,7 +8,7 @@ using GameSparks.Api.Responses;
 
 public class SparkSingleton : Singleton<SparkSingleton>
 {
-    private static string PLAYER_PREF_AUTHTOKEN_KEY = "gamesparks.authtoken";
+    private static string PLAYER_PREF_AUTH_TOKEN_KEY = "gamesparks.authtoken";
 
     [SerializeField]
     private string username = "";
@@ -64,11 +64,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
             this.address = null;
             this.balance = 0;
             this.level = 0;
-
-            //if (!GS.Instance.Authenticated)
-            //{
-            //    Login(this.username, this.password);
-            //}
         }
         else
         {
@@ -287,8 +282,10 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
         DeckStore.Instance().Logout();
         GS.GSPlatform.AuthToken = null;
-        PlayerPrefs.SetString(PLAYER_PREF_AUTHTOKEN_KEY, null);
+        PlayerPrefs.SetString(PLAYER_PREF_AUTH_TOKEN_KEY, null);
         GS.Reset();
+
+        Application.LoadLevel("Login");
     }
 
     public void Register(string email, string username, string password)

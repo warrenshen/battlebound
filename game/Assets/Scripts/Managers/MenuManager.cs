@@ -22,9 +22,6 @@ public class MenuManager : MonoBehaviour
     [SerializeField]
     private Text usernameText;
 
-    [SerializeField]
-    private Button logoutButton;
-
     public static MenuManager Instance { get; private set; }
 
     private void Awake()
@@ -34,8 +31,6 @@ public class MenuManager : MonoBehaviour
         {
             this.usernameText.text = "Not logged in";
         }
-        this.logoutButton.onClick.AddListener(OnLogoutButtonClick);
-
         SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
     }
 
@@ -65,13 +60,6 @@ public class MenuManager : MonoBehaviour
     {
         this.galleryIndex = (this.galleryIndex + 1) % gallery.childCount;
         SetGalleryCreature();
-    }
-
-    private void OnLogoutButtonClick()
-    {
-        SparkSingleton.Instance.Logout();
-        string playerId = SparkSingleton.Instance.GetPlayerId();
-        Application.LoadLevel("Login");
     }
 
     private void RenderUserData()

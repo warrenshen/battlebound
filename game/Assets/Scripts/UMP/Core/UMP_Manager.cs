@@ -137,11 +137,12 @@ public class UMP_Manager : MonoBehaviour
     /// </summary>
     public void QuitApp()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-		Application.Quit();
-#endif
+        SparkSingleton.Instance.Logout();
+        //#if UNITY_EDITOR
+        //        UnityEditor.EditorApplication.isPlaying = false;
+        //#else
+        //		Application.Quit();
+        //#endif
     }
 
     [System.Serializable]
