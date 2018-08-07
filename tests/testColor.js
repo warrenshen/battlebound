@@ -630,7 +630,7 @@ GameSparks.prototype.withdrawChallengeRequest = function(challengeInstanceId, me
 
 const gamesparks = new GameSparks();
 
-describe("challenge end turn", function() {
+describe("challenge color synergy", function() {
   before(function() {
     return new Promise((resolve) => {
       gamesparks.initPreview({
@@ -661,6 +661,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_OPPONENT": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -697,6 +698,7 @@ describe("challenge end turn", function() {
           },
           "ID_PLAYER": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -798,10 +800,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -861,6 +859,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_OPPONENT": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -897,6 +896,7 @@ describe("challenge end turn", function() {
           },
           "ID_PLAYER": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -998,10 +998,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -1058,6 +1054,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_OPPONENT": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -1094,6 +1091,7 @@ describe("challenge end turn", function() {
           },
           "ID_PLAYER": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -1195,10 +1193,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -1256,6 +1250,7 @@ describe("challenge end turn", function() {
       "current": {
         "ID_OPPONENT": {
           "hasTurn": 0,
+          "turnCount": 1,
           "manaCurrent": 30,
           "manaMax": 50,
           "health": 60,
@@ -1302,6 +1297,7 @@ describe("challenge end turn", function() {
         },
         "ID_PLAYER": {
           "hasTurn": 1,
+          "turnCount": 1,
           "manaCurrent": 50,
           "manaMax": 50,
           "health": 100,
@@ -1476,10 +1472,6 @@ describe("challenge end turn", function() {
       "moves": [],
       "deadCards": [],
       "moveTakenThisTurn": 0,
-      "turnCountByPlayerId": {
-        "ID_PLAYER": 0,
-        "ID_OPPONENT": 0,
-      },
       "expiredStreakByPlayerId": {
         "ID_PLAYER": 0,
         "ID_OPPONENT": 0,

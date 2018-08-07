@@ -661,6 +661,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 0,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -748,6 +749,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 0,
             "manaCurrent": 20,
             "manaMax": 20,
             "health": 100,
@@ -791,10 +793,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -815,7 +813,11 @@ describe("challenge end turn", function() {
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
 
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.turnCount, 1);
+
             const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.turnCount, 0);
             assert.equal(opponentState.manaCurrent, 20);
             assert.equal(opponentState.manaMax, 20);
 
@@ -841,6 +843,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -928,6 +931,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 20,
             "health": 100,
@@ -971,10 +975,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 1,
-          "ID_OPPONENT": 1,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -995,7 +995,11 @@ describe("challenge end turn", function() {
           function(response) {
             const challengeStateData = response.scriptData.challengeStateData;
 
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            assert.equal(playerState.turnCount, 2);
+
             const opponentState = challengeStateData.current["ID_OPPONENT"];
+            assert.equal(opponentState.turnCount, 1);
             assert.equal(opponentState.manaCurrent, 30);
             assert.equal(opponentState.manaMax, 30);
 
@@ -1023,6 +1027,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -1110,6 +1115,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -1201,10 +1207,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -1253,6 +1255,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -1340,6 +1343,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -1414,10 +1418,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -1461,6 +1461,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -1548,6 +1549,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -1639,10 +1641,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -1690,6 +1688,7 @@ describe("challenge end turn", function() {
       "current": {
         "ID_OPPONENT": {
           "hasTurn": 0,
+          "turnCount": 1,
           "manaCurrent": 30,
           "manaMax": 50,
           "health": 60,
@@ -1770,6 +1769,7 @@ describe("challenge end turn", function() {
         },
         "ID_PLAYER": {
           "hasTurn": 1,
+          "turnCount": 1,
           "manaCurrent": 0,
           "manaMax": 50,
           "health": 100,
@@ -1883,10 +1883,6 @@ describe("challenge end turn", function() {
       "moves": [],
       "deadCards": [],
       "moveTakenThisTurn": 0,
-      "turnCountByPlayerId": {
-        "ID_PLAYER": 0,
-        "ID_OPPONENT": 0,
-      },
       "expiredStreakByPlayerId": {
         "ID_PLAYER": 0,
         "ID_OPPONENT": 0,
@@ -1943,6 +1939,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -2050,6 +2047,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -2124,10 +2122,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -2174,6 +2168,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -2281,6 +2276,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -2355,10 +2351,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
@@ -2405,6 +2397,7 @@ describe("challenge end turn", function() {
         "current": {
           "ID_PLAYER": {
             "hasTurn": 1,
+            "turnCount": 1,
             "manaCurrent": 20,
             "manaMax": 30,
             "health": 100,
@@ -2441,6 +2434,7 @@ describe("challenge end turn", function() {
           },
           "ID_OPPONENT": {
             "hasTurn": 0,
+            "turnCount": 1,
             "manaCurrent": 30,
             "manaMax": 40,
             "health": 100,
@@ -2507,10 +2501,6 @@ describe("challenge end turn", function() {
         "moves": [],
         "deadCards": [],
         "moveTakenThisTurn": 0,
-        "turnCountByPlayerId": {
-          "ID_PLAYER": 0,
-          "ID_OPPONENT": 0,
-        },
         "expiredStreakByPlayerId": {
           "ID_PLAYER": 0,
           "ID_OPPONENT": 0,
