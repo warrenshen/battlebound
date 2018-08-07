@@ -1,7 +1,9 @@
 ﻿using System;
+
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+
 using Nethereum.Web3.Accounts;
 
 public class CancelableListItem : CardListItem

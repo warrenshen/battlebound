@@ -1,8 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+﻿using UnityEngine.UI;
 using UnityEngine.Events;
-using System.Collections.Generic;
 
 [System.Serializable]
 public class UMPSingleton : Singleton<UMPSingleton>

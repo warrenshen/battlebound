@@ -1,10 +1,8 @@
 ﻿using System;
+
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-
-using TMPro;
 
 using Nethereum.Web3.Accounts;
 
