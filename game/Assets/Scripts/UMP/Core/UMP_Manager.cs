@@ -114,7 +114,7 @@ public class UMP_Manager : MonoBehaviour
 
     public void ShowInputFieldDialog(string title,
                                        string text,
-                                       UnityAction<string, UMP_InputDialogUI> confirmAction,
+                                       UnityAction<UMP_InputDialogUI, string> confirmAction,
                                        UnityAction cancelAction,
                                        string cancelText = "Cancel",
                                        string confirmText = "Confirm",

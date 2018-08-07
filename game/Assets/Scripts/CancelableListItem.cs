@@ -47,14 +47,14 @@ public class CancelableListItem : CardListItem
         MenuManager.Instance.UMP.ShowInputFieldDialog(
             "Authorize Withdrawal",
             "Please enter your password to verify the transaction.",
-            new UnityAction<string, UMP_InputDialogUI>(SubmitWithdrawAuction),
+            new UnityAction<UMP_InputDialogUI, string>(SubmitWithdrawAuction),
             new UnityAction(CancelWithdrawAuction),
             placeholderMessage: "Enter password...",
             contentType: InputField.ContentType.Password
         );
     }
 
-    private void SubmitWithdrawAuction(string password, UMP_InputDialogUI dialog)
+    private void SubmitWithdrawAuction(UMP_InputDialogUI dialog, string password)
     {
         if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {

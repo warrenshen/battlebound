@@ -60,7 +60,7 @@ public class BuyableCardListItem : CardListItem
         MenuManager.Instance.UMP.ShowInputFieldDialog(
             "Authorize Bid",
             "Please enter your password to verify the transaction.",
-            new UnityAction<string, UMP_InputDialogUI>(SubmitBidAuction),
+            new UnityAction<UMP_InputDialogUI, string>(SubmitBidAuction),
             new UnityAction(CancelAction),
             placeholderMessage: "Enter password...",
             contentType: InputField.ContentType.Password
@@ -72,7 +72,7 @@ public class BuyableCardListItem : CardListItem
 
     }
 
-    private void SubmitBidAuction(string password, UMP_InputDialogUI dialog)
+    private void SubmitBidAuction(UMP_InputDialogUI dialog, string password)
     {
         if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {
@@ -111,6 +111,4 @@ public class BuyableCardListItem : CardListItem
         }
         dialog.Close();
     }
-
-
 }
