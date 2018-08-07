@@ -247,8 +247,8 @@ namespace HyperCard
         public float OutlineTrimOffset = 0.03f;
         public Vector2 OutlinePosOffset = Vector2.zero;
 
-        public Color OutlineColor = Color.white;
-        public Color OutlineEndColor = Color.cyan;
+        public Color OutlineColor = new Color(1, 0.8f, 1);
+        public Color OutlineEndColor = new Color(1, 0.25f, 1);
         public float OutlineEndColorDistance = 0.15f;
 
         public float OutlineAlphaMult = 5;
@@ -926,8 +926,10 @@ namespace HyperCard
         {
             this.OutlineColor = start;
             this.OutlineEndColor = end;
+
             Renderer.material.SetColor("_OutlineColor", this.OutlineColor);
             Renderer.material.SetColor("_OutlineEndColor", this.OutlineEndColor);
+            this.Redraw(); //to-do: try not to use this! some version of the above + showoutline
         }
 
         public void SetBlackAndWhite(bool value)
