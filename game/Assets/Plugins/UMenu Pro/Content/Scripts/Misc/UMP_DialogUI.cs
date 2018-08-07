@@ -8,7 +8,7 @@ public class UMP_DialogUI : MonoBehaviour
 
     [Header("References")]
     [SerializeField]
-    private Text mText;
+    private Text message;
 
     [SerializeField]
     private Animator m_Animator;
@@ -34,9 +34,14 @@ public class UMP_DialogUI : MonoBehaviour
         }
     }
 
-    public void SetText(string infoText)
+    public void SetMessage(string infoText)
     {
-        mText.text = infoText;
+        message.text = infoText;
+    }
+
+    public void SetMessageColor(Color color)
+    {
+        message.color = color;
     }
 
     void Deactive()

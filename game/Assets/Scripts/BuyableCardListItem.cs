@@ -51,36 +51,60 @@ public class BuyableCardListItem : CardListItem
             "Confirm Bid",
             "Are you sure you would like to bid for this card? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeBidAuction),
-            new UnityAction(DoNothing)
+            new UnityAction(CancelAction)
         );
     }
 
     private void AuthorizeBidAuction()
     {
-        MenuManager.Instance.UMP.ShowInputFieldDialog<Account>(
-            "Authorize Transaction",
-            "Please enter your password to verify transaction.",
-            new UnityAction<Account>(SubmitBidAuction),
-            new UnityAction<Account>(DoNothing)
+        MenuManager.Instance.UMP.ShowInputFieldDialog(
+            "Authorize Bid",
+            "Please enter your password to verify the transaction.",
+            new UnityAction<string, UMP_InputDialogUI>(SubmitBidAuction),
+            new UnityAction(CancelAction)
         );
     }
 
-    private void DoNothing()
-    {
-
-    }
-    private void DoNothing(Account account)
+    private void CancelAction()
     {
 
     }
 
-    private void SubmitBidAuction(Account account)
+    private void SubmitBidAuction(string password, UMP_InputDialogUI dialog)
     {
-        CryptoSingleton.Instance.BidAuction(
-            account,
-            Int32.Parse(cardAuction.GetId().Substring(1)),
-            1000L
-        );
+        if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
+        {
+            dialog.SetMessage("Ethereum hot wallet not configured for this device.");
+            dialog.SetMessageColor(Color.red);
+            return;
+        }
+        else if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
+        {
+            dialog.SetMessage("Ethereum hot wallet not configured for this device.");
+            dialog.SetMessageColor(Color.red);
+            return;
+        }
+
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
+
+        string publicAddress = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS);
+        if (publicAddress != account.Address)
+        {
+            dialog.SetMessage("Entered password incorrect! Please try again.");
+            dialog.SetMessageColor(Color.red);
+            return;
+        }
+        else
+        {
+            //Actual end result/payload begin
+            CryptoSingleton.Instance.BidAuction(
+                account,
+                Int32.Parse(cardAuction.GetId().Substring(1)),
+                1000L
+            );
+            //Actual end result/payload end
+        }
+        dialog.Close();
     }
 
 

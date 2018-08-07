@@ -89,7 +89,7 @@ public class UMP_Manager : MonoBehaviour
         if (Dialogs[indexDialog] != null)
         {
             Dialogs[indexDialog].gameObject.SetActive(true);
-            if (!string.IsNullOrEmpty(text)) { Dialogs[indexDialog].SetText(text); }
+            if (!string.IsNullOrEmpty(text)) { Dialogs[indexDialog].SetMessage(text); }
         }
         else
         {
@@ -105,24 +105,24 @@ public class UMP_Manager : MonoBehaviour
                                        string confirmText = "Confirm")
     {
         ConfirmationDialog.SetTitle(title);
-        ConfirmationDialog.SetText(text);
+        ConfirmationDialog.SetMessage(text);
         ConfirmationDialog.SetConfirmAction(confirmAction);
         ConfirmationDialog.SetCancelAction(cancelAction);
 
         ConfirmationDialog.gameObject.SetActive(true);
     }
 
-    public void ShowInputFieldDialog<T>(string title,
+    public void ShowInputFieldDialog(string title,
                                        string text,
-                                       UnityAction<T> confirmAction,
-                                       UnityAction<T> cancelAction,
+                                       UnityAction<string, UMP_InputDialogUI> confirmAction,
+                                       UnityAction cancelAction,
                                        string cancelText = "Cancel",
                                        string confirmText = "Confirm")
     {
         InputFieldDialog.SetTitle(title);
-        InputFieldDialog.SetText(text);
-        InputFieldDialog.SetConfirmAction<T>(confirmAction);
-        InputFieldDialog.SetCancelAction<T>(cancelAction);
+        InputFieldDialog.SetMessage(text);
+        InputFieldDialog.SetConfirmAction(confirmAction);
+        InputFieldDialog.SetCancelAction(cancelAction);
 
         InputFieldDialog.gameObject.SetActive(true);
     }
