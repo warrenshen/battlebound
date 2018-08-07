@@ -34,21 +34,22 @@ public class CancelableListItem : CardListItem
 
     public void OnCancelAuctionButtonClick()
     {
-        GenericModalPanel.Instance.Show(
-            "Confirm you would like to cancel this auction? You'll authorize a transaction next.",
-            new UnityAction(AuthorizeCancelAuction),
-            new UnityAction(CancelBidAuction)
+        MenuManager.Instance.UMP.ShowConfirmationDialog(
+            "Confirm Withdrawal",
+            "Are you sure you would like to withdraw your auction? You'll be asked to authorize the transaction next.",
+            new UnityAction(AuthorizeWithdrawAuction),
+            new UnityAction(CancelWithdrawAuction)
         );
     }
 
-    private void AuthorizeCancelAuction()
+    private void AuthorizeWithdrawAuction()
     {
         PrivateKeyModal.Instance.ShowModalWithCallback(
-            new UnityAction<Account>(SubmitCancelAuction)
+            new UnityAction<Account>(SubmitWithdrawAuction)
         );
     }
 
-    private void SubmitCancelAuction(Account account)
+    private void SubmitWithdrawAuction(Account account)
     {
         CryptoSingleton.Instance.CancelAuction(
             account,
@@ -56,7 +57,8 @@ public class CancelableListItem : CardListItem
         );
     }
 
-    private void CancelBidAuction()
+    private void CancelWithdrawAuction()
     {
+
     }
 }

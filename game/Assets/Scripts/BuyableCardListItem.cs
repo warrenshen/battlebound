@@ -47,24 +47,31 @@ public class BuyableCardListItem : CardListItem
 
     public void OnBidAuctionButtonClick()
     {
-        GenericModalPanel.Instance.Show(
-            "Confirm you would like to buy this card? You'll authorize a transaction next.",
+        MenuManager.Instance.UMP.ShowConfirmationDialog(
+            "Confirm Bid",
+            "Are you sure you would like to bid for this card? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeBidAuction),
-            new UnityAction(CancelBidAuction),
-            "Proceed",
-            "Cancel"
+            new UnityAction(DoNothing)
         );
     }
 
     private void AuthorizeBidAuction()
     {
-        PrivateKeyModal.Instance.ShowModalWithCallback(
-            new UnityAction<Account>(SubmitBidAuction)
+        MenuManager.Instance.UMP.ShowInputFieldDialog<Account>(
+            "Authorize Transaction",
+            "Please enter your password to verify transaction.",
+            new UnityAction<Account>(SubmitBidAuction),
+            new UnityAction<Account>(DoNothing)
         );
     }
 
-    private void CancelBidAuction()
+    private void DoNothing()
     {
+
+    }
+    private void DoNothing(Account account)
+    {
+
     }
 
     private void SubmitBidAuction(Account account)

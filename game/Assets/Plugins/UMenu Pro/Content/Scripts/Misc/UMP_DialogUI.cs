@@ -5,13 +5,14 @@ public class UMP_DialogUI : MonoBehaviour
 {
     [Header("Settings")]
     public string AnimationParamenter = "show";
-    [Header("References")]
-    [SerializeField]private Text mText;
-    [SerializeField]private Animator m_Animator;
 
-    /// <summary>
-    /// 
-    /// </summary>
+    [Header("References")]
+    [SerializeField]
+    private Text mText;
+
+    [SerializeField]
+    private Animator m_Animator;
+
     void OnEnable()
     {
         if (m_Animator)
@@ -20,15 +21,12 @@ public class UMP_DialogUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public void Close()
     {
         if (m_Animator)
         {
             m_Animator.SetBool(AnimationParamenter, false);
-            Invoke("Desactive", m_Animator.GetCurrentAnimatorStateInfo(0).length);
+            Invoke("Deactive", m_Animator.GetCurrentAnimatorStateInfo(0).length);
         }
         else
         {
@@ -36,19 +34,12 @@ public class UMP_DialogUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="infoText"></param>
     public void SetText(string infoText)
     {
         mText.text = infoText;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    void Desactive()
+    void Deactive()
     {
         gameObject.SetActive(false);
     }

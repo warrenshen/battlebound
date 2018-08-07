@@ -107,7 +107,7 @@ public class MenuManager : MonoBehaviour
     public void HoverEnterEffect(GameObject target)
     {
         //LeanTween.scale(target, Vector3.one * 1.1f, TWEEN_DURATION).setEaseInQuad();
-        target.transform.localScale = Vector3.one * 1.11f;
+        target.transform.localScale = Vector3.one * 1.10f;
     }
 
     public void HoverExitEffect(GameObject target)
