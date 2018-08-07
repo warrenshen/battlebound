@@ -22,9 +22,6 @@ public class UMP_Manager : MonoBehaviour
 
     private int CurrentWindow = -1;
 
-    public UMP_ConfirmationDialogUI ConfirmationDialog;
-    public UMP_InputDialogUI InputFieldDialog;
-
     public static UMP_Manager Instance { get; private set; }
 
     void Awake()
@@ -95,41 +92,6 @@ public class UMP_Manager : MonoBehaviour
         {
             Debug.Log(string.Format("Doesn't exist a dialog in the index {0} of list", indexDialog));
         }
-    }
-
-    public void ShowConfirmationDialog(string title,
-                                       string text,
-                                       UnityAction confirmAction,
-                                       UnityAction cancelAction,
-                                       string cancelText = "Cancel",
-                                       string confirmText = "Confirm")
-    {
-        ConfirmationDialog.SetTitle(title);
-        ConfirmationDialog.SetMessage(text);
-        ConfirmationDialog.SetConfirmAction(confirmAction);
-        ConfirmationDialog.SetCancelAction(cancelAction);
-
-        ConfirmationDialog.gameObject.SetActive(true);
-    }
-
-    public void ShowInputFieldDialog(string title,
-                                       string text,
-                                       UnityAction<UMP_InputDialogUI, string> confirmAction,
-                                       UnityAction cancelAction,
-                                       string cancelText = "Cancel",
-                                       string confirmText = "Confirm",
-                                       string placeholderMessage = "Enter value...",
-                                       InputField.ContentType contentType = InputField.ContentType.Standard
-                                    )
-    {
-        InputFieldDialog.SetTitle(title);
-        InputFieldDialog.SetMessage(text);
-        InputFieldDialog.SetConfirmAction(confirmAction);
-        InputFieldDialog.SetCancelAction(cancelAction);
-        InputFieldDialog.SetInputPlaceholder(placeholderMessage);
-        InputFieldDialog.SetInputContentType(contentType);
-
-        InputFieldDialog.gameObject.SetActive(true);
     }
 
     /// <summary>

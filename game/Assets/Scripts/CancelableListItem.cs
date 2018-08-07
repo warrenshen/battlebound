@@ -34,7 +34,7 @@ public class CancelableListItem : CardListItem
 
     public void OnCancelAuctionButtonClick()
     {
-        MenuManager.Instance.UMP.ShowConfirmationDialog(
+        UMPSingleton.Instance.ShowConfirmationDialog(
             "Confirm Withdrawal",
             "Are you sure you would like to withdraw your auction? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeWithdrawAuction),
@@ -44,7 +44,7 @@ public class CancelableListItem : CardListItem
 
     private void AuthorizeWithdrawAuction()
     {
-        MenuManager.Instance.UMP.ShowInputFieldDialog(
+        UMPSingleton.Instance.ShowInputFieldDialog(
             "Authorize Withdrawal",
             "Please enter your password to verify the transaction.",
             new UnityAction<UMP_InputDialogUI, string>(SubmitWithdrawAuction),

@@ -29,11 +29,6 @@ public class BuyableCardListItem : CardListItem
         this.cardAuction = cardAuction;
         this.card = cardAuction.Card;
 
-        Debug.Log(cardAuction.Auction.StartingPrice);
-        Debug.Log(cardAuction.Auction.EndingPrice);
-        Debug.Log(cardAuction.Auction.Duration);
-        Debug.Log(cardAuction.Auction.StartedAt);
-
         Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(cardAuction.Card.GetFrontImage());
         this.cardImage.sprite = Sprite.Create(
             texture,
@@ -47,7 +42,7 @@ public class BuyableCardListItem : CardListItem
 
     public void OnBidAuctionButtonClick()
     {
-        MenuManager.Instance.UMP.ShowConfirmationDialog(
+        UMPSingleton.Instance.ShowConfirmationDialog(
             "Confirm Bid",
             "Are you sure you would like to bid for this card? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeBidAuction),
@@ -57,7 +52,7 @@ public class BuyableCardListItem : CardListItem
 
     private void AuthorizeBidAuction()
     {
-        MenuManager.Instance.UMP.ShowInputFieldDialog(
+        UMPSingleton.Instance.ShowInputFieldDialog(
             "Authorize Bid",
             "Please enter your password to verify the transaction.",
             new UnityAction<UMP_InputDialogUI, string>(SubmitBidAuction),

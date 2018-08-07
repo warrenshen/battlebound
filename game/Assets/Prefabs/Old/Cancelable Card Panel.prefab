@@ -353,6 +353,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardImage: {fileID: 114045065175404260}
   cancelAuctionButton: {fileID: 114810291997341118}
+  cardAuction:
+    name: 
+    category: 0
+    seller: 
+    auction:
+      startingPrice: 0
+      endingPrice: 0
+      startedAt: 0
+      duration: 0
 --- !u!222 &222041931784797014
 CanvasRenderer:
   m_ObjectHideFlags: 1

@@ -434,8 +434,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardImage: {fileID: 114089600746889438}
-  priceText: {fileID: 114479254727467632}
+  priceText: {fileID: 0}
   bidAuctionButton: {fileID: 114077687029184186}
+  cardAuction:
+    name: 
+    category: 0
+    seller: 
+    auction:
+      startingPrice: 0
+      endingPrice: 0
+      startedAt: 0
+      duration: 0
 --- !u!114 &114752300140713642
 MonoBehaviour:
   m_ObjectHideFlags: 1
