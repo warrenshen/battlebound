@@ -216,11 +216,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             this.moveCount = (int)scriptData.GetInt("moveCount");
         }
 
-        if (BattleManager.Instance == null)
-        {
-            return;
-        }
-
         // Logic to load in existing moves for resume challenge case.
         List<GSData> movesData = scriptData.GetGSDataList("moves");
         if (movesData != null)
@@ -251,6 +246,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
         else
         {
             this.initDeadCards = new List<ChallengeCard>();
+        }
+
+        if (BattleManager.Instance == null)
+        {
+            return;
         }
 
         List<GSData> newMovesData = scriptData.GetGSDataList("newMoves");
