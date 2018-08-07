@@ -150,18 +150,24 @@ public class TestDuskDweller
         GameObject battleSingletonGameObject = new GameObject();
         this.battleSingleton = battleSingletonGameObject.AddComponent<BattleSingleton>();
         this.battleSingleton.SetEnvironmentTest();
-
-        GameObject effectManagerGameObject = new GameObject();
-        this.effectManager = effectManagerGameObject.AddComponent<EffectManager>();
     }
 
     [SetUp]
     public void SetUp()
     {
+        GameObject effectManagerGameObject = new GameObject();
+        this.effectManager = effectManagerGameObject.AddComponent<EffectManager>();
+
         BattleState.InstantiateWithState(
             playerState,
             enemyState
         );
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.Destroy(this.effectManager.gameObject);
     }
 
     [UnityTest]
@@ -187,7 +193,7 @@ public class TestDuskDweller
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
         Assert.AreEqual(null, enemyCreature);
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
 
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
         Assert.AreEqual("ID_ENEMY-33", enemyCreature.GetCardId());
