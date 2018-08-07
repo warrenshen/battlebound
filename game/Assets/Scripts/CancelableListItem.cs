@@ -48,7 +48,9 @@ public class CancelableListItem : CardListItem
             "Authorize Withdrawal",
             "Please enter your password to verify the transaction.",
             new UnityAction<string, UMP_InputDialogUI>(SubmitWithdrawAuction),
-            new UnityAction(CancelWithdrawAuction)
+            new UnityAction(CancelWithdrawAuction),
+            placeholderMessage: "Enter password...",
+            contentType: InputField.ContentType.Password
         );
     }
 

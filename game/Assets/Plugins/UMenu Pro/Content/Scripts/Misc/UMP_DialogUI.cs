@@ -44,6 +44,11 @@ public class UMP_DialogUI : MonoBehaviour
         message.color = color;
     }
 
+    public void SetMessageStyle(FontStyle style)
+    {
+        message.fontStyle = style;
+    }
+
     void Deactive()
     {
         gameObject.SetActive(false);
