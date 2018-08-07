@@ -13,6 +13,7 @@ public class EffectManager : MonoBehaviour
     private bool isReady; // Ready => process queues.
     private bool isWaiting; // Waiting => wait for server move.
     private bool isDirty; // Dirty => compare device vs server state when queues empty.
+    public bool IsDirty => isDirty;
 
     private UnityAction callback;
 
@@ -2174,8 +2175,17 @@ public class EffectManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
-            int randomIndex = UnityEngine.Random.Range(0, opponentCreatures.Count);
-            BoardCreature randomCreature = allCreatures[randomIndex];
+            BoardCreature randomCreature;
+
+            if (BattleSingleton.Instance.IsEnvironmentTest())
+            {
+                randomCreature = allCreatures[0];
+            }
+            else
+            {
+                int randomIndex = UnityEngine.Random.Range(0, opponentCreatures.Count);
+                randomCreature = allCreatures[randomIndex];
+            }
 
             challengeMove = new ChallengeMove();
             challengeMove.SetPlayerId(playerId);

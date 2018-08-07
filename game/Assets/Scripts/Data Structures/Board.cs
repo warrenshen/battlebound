@@ -159,11 +159,16 @@ public class Board
         return playingField.GetCreatureByIndex(index);
     }
 
-    public BoardCreature GetInFrontCreatureByPlayerIdAndCardId(string playerId, string cardId)
+    public int GetInFrontIndexByPlayerIdAndCardId(string playerId, string cardId)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
         int playerIndex = playingField.GetIndexByCardId(cardId);
-        int opponentIndex = 5 - playerIndex;
+        return 5 - playerIndex;
+    }
+
+    public BoardCreature GetInFrontCreatureByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        int opponentIndex = GetInFrontIndexByPlayerIdAndCardId(playerId, cardId);
         return GetCreatureByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
     }
 
@@ -175,9 +180,7 @@ public class Board
             return null;
         }
 
-        PlayingField playingField = GetFieldByPlayerId(playerId);
-        int playerIndex = playingField.GetIndexByCardId(cardId);
-        int opponentIndex = 5 - playerIndex;
+        int opponentIndex = GetInFrontIndexByPlayerIdAndCardId(playerId, cardId);
         return GetBoardPlaceByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
     }
 

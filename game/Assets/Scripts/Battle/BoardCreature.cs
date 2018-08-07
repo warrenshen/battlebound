@@ -257,7 +257,6 @@ public class BoardCreature : Targetable
         int healthBefore = this.health;
         this.health = 0;
 
-        this.boardCreatureObject.TakeDamage(healthBefore);
         this.boardCreatureObject.Redraw();
     }
 
