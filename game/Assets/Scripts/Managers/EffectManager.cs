@@ -943,7 +943,6 @@ public class EffectManager : MonoBehaviour
         }
 
         List<Effect> effects = new List<Effect>();
-
         AddToQueues(effects);
     }
 

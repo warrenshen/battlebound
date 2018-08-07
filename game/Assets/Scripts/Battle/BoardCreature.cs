@@ -50,7 +50,7 @@ public class BoardCreature : Targetable
     {
         this.owner = BattleState.Instance().GetPlayerById(challengeCard.PlayerId);
         this.fieldIndex = fieldIndex;
-        this.card = challengeCard.GetCard(false) as CreatureCard;
+        this.card = challengeCard.GetCard() as CreatureCard;
 
         this.cost = challengeCard.Cost;
         this.health = challengeCard.Health;
