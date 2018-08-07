@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+using UnityEngine.Events;
 
 public class SellableCardListItem : CardListItem
 {
@@ -29,6 +33,40 @@ public class SellableCardListItem : CardListItem
 
     public void OnCreateAuctionButtonClick()
     {
-        CreateAuctionModalPanel.Instance.ShowModalForCard(this.card);
+        UMPSingleton.Instance.ShowThreeInputFieldDialog(
+            "Create Auction",
+            "Input your price spread and auction length to continue.",
+            "Initial Price",
+            "Final Price",
+            "Duration",
+            new UnityAction<UMP_ThreeInputDialogUI, string, string, string>(SubmitCreateAuctionTransaction),
+            new UnityAction(CancelAction),
+            contentTypeOne: InputField.ContentType.IntegerNumber,
+            contentTypeTwo: InputField.ContentType.IntegerNumber,
+            contentTypeThree: InputField.ContentType.IntegerNumber
+        );
+    }
+
+    private void SubmitCreateAuctionTransaction(UMP_ThreeInputDialogUI dialog, string startPrice, string endPrice, string auctionDuration)
+    {
+        int tokenId = Convert.ToInt32(card.Id.Substring(1));
+        long startingPrice = Convert.ToInt64(startPrice);
+        long endingPrice = Convert.ToInt64(endPrice);
+        int duration = Convert.ToInt32(auctionDuration);
+
+        //CryptoSingleton.Instance.CreateAuction(
+        //    account,
+        //    tokenId,
+        //    startingPrice,
+        //    endingPrice,
+        //    duration
+        //);
+
+        dialog.Close();
+    }
+
+    private void CancelAction()
+    {
+
     }
 }

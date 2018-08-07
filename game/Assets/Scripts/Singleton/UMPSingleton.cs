@@ -17,13 +17,17 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string message,
         UnityAction confirmAction,
         UnityAction cancelAction,
-        string cancelText = "Cancel",
-        string confirmText = "Confirm")
+        string cancelLabel = "Cancel",
+        string confirmLabel = "Confirm")
     {
         ConfirmationDialog.SetTitle(title);
         ConfirmationDialog.SetMessage(message);
+
         ConfirmationDialog.SetConfirmAction(confirmAction);
         ConfirmationDialog.SetCancelAction(cancelAction);
+
+        ConfirmationDialog.SetConfirmLabel(confirmLabel);
+        ConfirmationDialog.SetCancelLabel(cancelLabel);
 
         ConfirmationDialog.gameObject.SetActive(true);
     }
@@ -33,16 +37,21 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string message,
         UnityAction<UMP_InputDialogUI, string> confirmAction,
         UnityAction cancelAction,
-        string cancelText = "Cancel",
-        string confirmText = "Confirm",
+        string cancelLabel = "Cancel",
+        string confirmLabel = "Confirm",
         string placeholderMessage = "Enter value...",
         InputField.ContentType contentType = InputField.ContentType.Standard
     )
     {
         InputFieldDialog.SetTitle(title);
         InputFieldDialog.SetMessage(message);
+
         InputFieldDialog.SetConfirmAction(confirmAction);
         InputFieldDialog.SetCancelAction(cancelAction);
+
+        ConfirmationDialog.SetConfirmLabel(confirmLabel);
+        ConfirmationDialog.SetCancelLabel(cancelLabel);
+
         InputFieldDialog.SetInputPlaceholder(placeholderMessage);
         InputFieldDialog.SetInputContentType(contentType);
 
@@ -56,8 +65,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string contextTwo,
         UnityAction<UMP_TwoInputDialogUI, string, string> confirmAction,
         UnityAction cancelAction,
-        string cancelText = "Cancel",
-        string confirmText = "Confirm",
+        string cancelLabel = "Cancel",
+        string confirmLabel = "Confirm",
         InputField.ContentType contentTypeOne = InputField.ContentType.Standard,
         InputField.ContentType contentTypeTwo = InputField.ContentType.Standard
     )
@@ -67,6 +76,9 @@ public class UMPSingleton : Singleton<UMPSingleton>
 
         TwoInputFieldDialog.SetConfirmAction(confirmAction);
         TwoInputFieldDialog.SetCancelAction(cancelAction);
+
+        ConfirmationDialog.SetConfirmLabel(confirmLabel);
+        ConfirmationDialog.SetCancelLabel(cancelLabel);
 
         TwoInputFieldDialog.SetInputContextOne(contextOne);
         TwoInputFieldDialog.SetInputContextTwo(contextTwo);
@@ -85,8 +97,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string contextThree,
         UnityAction<UMP_ThreeInputDialogUI, string, string, string> confirmAction,
         UnityAction cancelAction,
-        string cancelText = "Cancel",
-        string confirmText = "Confirm",
+        string cancelLabel = "Cancel",
+        string confirmLabel = "Confirm",
         InputField.ContentType contentTypeOne = InputField.ContentType.Standard,
         InputField.ContentType contentTypeTwo = InputField.ContentType.Standard,
         InputField.ContentType contentTypeThree = InputField.ContentType.Standard
@@ -97,6 +109,9 @@ public class UMPSingleton : Singleton<UMPSingleton>
 
         ThreeInputFieldDialog.SetConfirmAction(confirmAction);
         ThreeInputFieldDialog.SetCancelAction(cancelAction);
+
+        ConfirmationDialog.SetConfirmLabel(confirmLabel);
+        ConfirmationDialog.SetCancelLabel(cancelLabel);
 
         ThreeInputFieldDialog.SetInputContextOne(contextOne);
         ThreeInputFieldDialog.SetInputContextTwo(contextTwo);

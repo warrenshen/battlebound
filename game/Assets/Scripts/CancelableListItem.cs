@@ -35,26 +35,26 @@ public class CancelableListItem : CardListItem
     public void OnCancelAuctionButtonClick()
     {
         UMPSingleton.Instance.ShowConfirmationDialog(
-            "Confirm Withdrawal",
-            "Are you sure you would like to withdraw your auction? You'll be asked to authorize the transaction next.",
+            "Confirm Cancellation",
+            "Are you sure you would like to cancel your auction? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeWithdrawAuction),
-            new UnityAction(CancelWithdrawAuction)
+            new UnityAction(CancelCancelAuction)
         );
     }
 
     private void AuthorizeWithdrawAuction()
     {
         UMPSingleton.Instance.ShowInputFieldDialog(
-            "Authorize Withdrawal",
+            "Authorize Cancellation",
             "Please enter your password to verify the transaction.",
-            new UnityAction<UMP_InputDialogUI, string>(SubmitWithdrawAuction),
-            new UnityAction(CancelWithdrawAuction),
+            new UnityAction<UMP_InputDialogUI, string>(SubmitCancelAuction),
+            new UnityAction(CancelCancelAuction),
             placeholderMessage: "Enter password...",
             contentType: InputField.ContentType.Password
         );
     }
 
-    private void SubmitWithdrawAuction(UMP_InputDialogUI dialog, string password)
+    private void SubmitCancelAuction(UMP_InputDialogUI dialog, string password)
     {
         if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {
@@ -90,7 +90,7 @@ public class CancelableListItem : CardListItem
         dialog.Close();
     }
 
-    private void CancelWithdrawAuction()
+    private void CancelCancelAuction()
     {
 
     }

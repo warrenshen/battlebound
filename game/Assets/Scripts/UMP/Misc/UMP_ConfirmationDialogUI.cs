@@ -29,6 +29,16 @@ public class UMP_ConfirmationDialogUI : UMP_DialogUI
         this.cancelButton.onClick.AddListener(Close);
     }
 
+    public void SetConfirmLabel(string label)
+    {
+        this.confirmButton.GetComponentInChildren<Text>().text = label;
+    }
+
+    public void SetCancelLabel(string label)
+    {
+        this.cancelButton.GetComponentInChildren<Text>().text = label;
+    }
+
     public void SetTitle(string title)
     {
         mTitle.text = title;

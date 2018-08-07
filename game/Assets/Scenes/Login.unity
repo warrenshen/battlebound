@@ -1301,7 +1301,7 @@ GameObject:
   - component: {fileID: 639534413}
   - component: {fileID: 639534412}
   m_Layer: 0
-  m_Name: Text
+  m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2894,6 +2894,11 @@ Prefab:
     - target: {fileID: 4398406364734962, guid: 86150028d917e4c8fbd3b9ae50049e22, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224108784881260616, guid: 86150028d917e4c8fbd3b9ae50049e22,
+        type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 86150028d917e4c8fbd3b9ae50049e22, type: 2}

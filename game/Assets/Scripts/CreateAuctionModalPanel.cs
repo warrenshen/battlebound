@@ -28,7 +28,7 @@ public class CreateAuctionModalPanel : MonoBehaviour
         Instance = this;
 
         this.cancelButton.onClick.AddListener(Close);
-        this.submitButton.onClick.AddListener(AuthorizeBidAuction);
+        //this.submitButton.onClick.AddListener(AuthorizeBidAuction);
 
         Close();
     }
@@ -44,25 +44,6 @@ public class CreateAuctionModalPanel : MonoBehaviour
         this.gameObject.SetActive(true);
     }
 
-    public void AuthorizeBidAuction()
-    {
-        if (this.card == null)
-        {
-            Debug.LogError("Card does not exist - did you forget to call InitializeCard?");
-        }
-
-        int tokenId = Convert.ToInt32(card.Id.Substring(1));
-        long startingPrice = Convert.ToInt64(startingPriceInputField.text);
-        long endingPrice = Convert.ToInt64(endingPriceInputField.text);
-        int duration = Convert.ToInt32(durationInputField.text);
-
-        // TODO: validations.
-
-        PrivateKeyModal.Instance.ShowModalWithCallback(
-            new UnityAction<Account>(SubmitCreateAuctionTransaction)
-        );
-        Close();
-    }
 
     private void SubmitCreateAuctionTransaction(Account account)
     {
