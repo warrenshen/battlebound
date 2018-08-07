@@ -18,6 +18,10 @@ public class PlayerState
     public int HasTurn => hasTurn;
 
     [SerializeField]
+    private int turnCount;
+    public int TurnCount => turnCount;
+
+    [SerializeField]
     private int manaCurrent;
     public int ManaCurrent => manaCurrent;
 
@@ -74,6 +78,11 @@ public class PlayerState
     public void SetHasTurn(int hasTurn)
     {
         this.hasTurn = hasTurn;
+    }
+
+    public void SetTurnCount(int turnCount)
+    {
+        this.turnCount = turnCount;
     }
 
     public void SetManaCurrent(int manaCurrent)
@@ -148,6 +157,10 @@ public class PlayerState
         else if (this.hasTurn != other.HasTurn)
         {
             return string.Format("HasTurn: {0} vs {1}", this.hasTurn, other.HasTurn);
+        }
+        else if (this.turnCount != other.TurnCount)
+        {
+            return string.Format("TurnCount: {0} vs {1}", this.turnCount, other.TurnCount);
         }
         else if (this.manaCurrent != other.ManaCurrent)
         {

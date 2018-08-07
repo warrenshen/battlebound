@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
@@ -45,6 +44,8 @@ public class Player
     private int mode;
     public int Mode => mode;
 
+    private int turnCount;
+
     private Board.PlayingField field;
     public Board.PlayingField Field => Field;
 
@@ -72,11 +73,12 @@ public class Player
         this.maxMana = 20;
 
         this.cardCount = this.deckSize;
-        this.replaceMulliganCards = new List<Card>();
+        this.mode = PLAYER_STATE_MODE_NORMAL;
+        this.turnCount = 0;
 
+        this.replaceMulliganCards = new List<Card>();
         this.hand = new Hand(this);
         this.avatar = new PlayerAvatar(this);
-        this.mode = PLAYER_STATE_MODE_NORMAL;
     }
 
     public Player(PlayerState playerState, string name)
@@ -92,10 +94,11 @@ public class Player
         this.maxMana = playerState.ManaMax;
 
         this.cardCount = playerState.CardCount;
-        this.replaceMulliganCards = new List<Card>();
-
-        this.avatar = new PlayerAvatar(this, playerState);
         this.mode = playerState.Mode;
+        this.turnCount = playerState.TurnCount;
+
+        this.replaceMulliganCards = new List<Card>();
+        this.avatar = new PlayerAvatar(this, playerState);
     }
 
     public void Initialize(PlayerState playerState)
@@ -138,6 +141,7 @@ public class Player
     public void EndTurn()
     {
         this.hasTurn = false;
+        this.turnCount += 1;
         this.hand.RecedeCards();
     }
 
@@ -145,8 +149,11 @@ public class Player
     {
         this.hasTurn = true;
 
-        this.maxMana = Math.Min(maxMana + 10, 100);
-        this.mana = maxMana;
+        if (this.turnCount > 0)
+        {
+            this.maxMana = Math.Min(maxMana + 10, 100);
+            this.mana = maxMana;
+        }
 
         RenderTurnStart();
     }
@@ -740,6 +747,7 @@ public class Player
         playerState.SetId(this.id);
         playerState.SetDisplayName(this.displayName);
         playerState.SetHasTurn(this.hasTurn ? 1 : 0);
+        playerState.SetTurnCount(this.turnCount);
         playerState.SetManaCurrent(this.mana);
         playerState.SetManaMax(this.maxMana);
         playerState.SetHealth(this.avatar.Health);
