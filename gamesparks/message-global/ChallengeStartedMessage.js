@@ -49,11 +49,6 @@ expCardIdsByPlayerId[challengerId] = [];
 expCardIdsByPlayerId[challengedId] = [];
 challengeStateData.expCardIdsByPlayerId = expCardIdsByPlayerId;
 
-const turnCountByPlayerId = {};
-turnCountByPlayerId[challengerId] = 0;
-turnCountByPlayerId[challengedId] = 0;
-challengeStateData.turnCountByPlayerId = turnCountByPlayerId;
-
 const expiredStreakByPlayerId = {};
 expiredStreakByPlayerId[challengerId] = 0;
 expiredStreakByPlayerId[challengedId] = 0;
@@ -70,6 +65,7 @@ const ARMOR_START = 0;
 
 const challengerData = {
     displayName: challenger.getUserName(),
+    turnCount: 0,
     manaCurrent: MANA_START,
     manaMax: MANA_START,
     health: HEALTH_START,
@@ -82,6 +78,7 @@ const challengerData = {
 
 const challengedData = {
     displayName: challenged.getUserName(),
+    turnCount: 0,
     manaCurrent: MANA_START,
     manaMax: MANA_START,
     health: HEALTH_START,

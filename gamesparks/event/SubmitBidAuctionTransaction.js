@@ -8,6 +8,7 @@
 require("ScriptDataModule");
 require("OnChainModule");
 
+const publicAddress = Spark.getData().publicAddress;
 const signedTx = Spark.getData().signedTx;
 const tokenId = Spark.getData().tokenId;
 const bidPrice = Spark.getData().bidPrice;

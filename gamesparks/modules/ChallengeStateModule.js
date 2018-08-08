@@ -48,6 +48,7 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
     const fields = [
         "displayName",
         "hasTurn",
+        "turnCount",
         "manaCurrent",
         "manaMax",
         "health",

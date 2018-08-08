@@ -26,8 +26,12 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
     };
     addChallengeMove(challengeStateData, move);
 
-    playerState.hasTurn = 0;    
-    challengeStateData.turnCountByPlayerId[playerId] += 1;
+    if (playerState.hasTurn == null || playerState.turnCount == null) {
+        setScriptError("Player state has invalid has turn or turn count.");
+    }
+    
+    playerState.hasTurn = 0;
+    playerState.turnCount += 1;
         
     const playerField = playerState.field;
     // Perform start of turn events for cards on field.
@@ -59,7 +63,7 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
     // - This is not player's first turn.
     // - It's not max'ed out.
     if (
-        challengeStateData.turnCountByPlayerId[opponentId] > 0 &&
+        opponentState.turnCount > 0 &&
         opponentState.manaMax < 100
     ) {
         opponentState.manaMax += 10;
