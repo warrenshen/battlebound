@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4673643025918244}
   - component: {fileID: 108638546453279606}
   - component: {fileID: 114858227649853078}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,13 +39,13 @@ GameObject:
   - component: {fileID: 198250881244239832}
   - component: {fileID: 199636220572303824}
   - component: {fileID: 114586738946041096}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DeathwishVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1488981675275318
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4020283884325610}
   - component: {fileID: 198190202862041638}
   - component: {fileID: 199074853486119002}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Inner Glow Big
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 4633923954230838}
   - component: {fileID: 198021559077326636}
   - component: {fileID: 199238013334418856}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Inner Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 4685051075205080}
   - component: {fileID: 198974921035909842}
   - component: {fileID: 199427498849541012}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Bubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1214676454848152}
   m_LocalRotation: {x: -0.00000003090862, y: 0.7071068, z: -0.7071068, w: -0.00000003090862}
-  m_LocalPosition: {x: -20.795141, y: -30.300808, z: 11.099999}
+  m_LocalPosition: {x: -16.707968, y: -14.745551, z: -4.8714247}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4685051075205080}
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnlyDeactivate: 0
+  OnlyDeactivate: 1
 --- !u!114 &114858227649853078
 MonoBehaviour:
   m_ObjectHideFlags: 1
