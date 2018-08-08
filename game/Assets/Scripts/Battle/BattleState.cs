@@ -801,8 +801,8 @@ public class BattleState
                         )
                     );
                     Debug.Log(JsonUtility.ToJson(challengeMove));
-                    return;
                 }
+                return;
             }
         }
         if (FlagHelper.IsLogVerbose())
