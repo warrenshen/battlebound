@@ -98,7 +98,7 @@ public class BuyableCardListItem : CardListItem
             CryptoSingleton.Instance.BidAuction(
                 account,
                 Int32.Parse(cardAuction.GetId().Substring(1)),
-                1000L
+                this.cardAuction.Auction.StartingPrice
             );
             //Actual end result/payload end
         }

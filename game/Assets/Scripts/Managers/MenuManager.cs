@@ -64,14 +64,14 @@ public class MenuManager : MonoBehaviour
 
     private void RenderUserData()
     {
-        string playerId = SparkSingleton.Instance.GetPlayerId();
-        if (playerId == null)
+        string displayName = SparkSingleton.Instance.DisplayName;
+        if (displayName == null)
         {
             this.usernameText.text = "Not logged in";
         }
         else
         {
-            this.usernameText.text = playerId;
+            this.usernameText.text = displayName;
             // Preload decks.
             DeckStore.Instance().GetDecksWithCallback(null);
         }

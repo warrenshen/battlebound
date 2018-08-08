@@ -29,7 +29,7 @@ public static class AuctionContract
             bidPrice,
             nonce,
             gasPrice,
-            500000,
+            100000,
             data
         );
 
@@ -57,7 +57,7 @@ public static class AuctionContract
             0,
             nonce,
             gasPrice,
-            500000,
+            100000,
             data
         );
 

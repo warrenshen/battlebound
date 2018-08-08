@@ -122,7 +122,7 @@ public class WalletManager : MonoBehaviour
 
     private void CancelNewWalletEnterPassword()
     {
-
+        ReturnToMenu();
     }
 
     private void ShowNewWalletRepeatPassword()
@@ -163,7 +163,7 @@ public class WalletManager : MonoBehaviour
         else
         {
             dialogUI.Close();
-            UpdatePlayerAddress(passwordRepeat);
+            UpdatePlayerAddressNewWallet(passwordRepeat);
         }
     }
 
@@ -201,18 +201,11 @@ public class WalletManager : MonoBehaviour
             string publicAddress = CryptoSingleton.Instance.RecoverPrivateKey(mnemonic, password);
 
             dialogUI.Close();
-            UMPSingleton.Instance.ShowConfirmationDialog(
-                "Wallet Import Successful",
-                string.Format("Your wallet's public identifier is: {0}", publicAddress),
-                new UnityAction(ReturnToMenu),
-                null,
-                "Return to menu",
-                null
-            );
+            UpdatePlayerAddressImportWallet(password);
         }
     }
 
-    private void UpdatePlayerAddress(string password)
+    private void UpdatePlayerAddressNewWallet(string password)
     {
         if (this.addressChallenge == null)
         {
@@ -232,7 +225,36 @@ public class WalletManager : MonoBehaviour
     private void ShowNewWalletFinish(string publicAddress)
     {
         UMPSingleton.Instance.ShowConfirmationDialog(
-            "Wallet success",
+            "Wallet Create Success",
+            string.Format("Your wallet's public identifier is: {0}", publicAddress),
+            new UnityAction(ReturnToMenu),
+            null,
+            "Return to menu",
+            ""
+        );
+    }
+
+    private void UpdatePlayerAddressImportWallet(string password)
+    {
+        if (this.addressChallenge == null)
+        {
+            Debug.LogError("Address challenge does not exist.");
+            return;
+        }
+
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
+
+        CryptoSingleton.Instance.UpdatePlayerAddress(
+            account,
+            this.addressChallenge,
+            new UnityAction<string>(ShowImportWalletFinish)
+        );
+    }
+
+    private void ShowImportWalletFinish(string publicAddress)
+    {
+        UMPSingleton.Instance.ShowConfirmationDialog(
+            "Wallet Import Success",
             string.Format("Your wallet's public identifier is: {0}", publicAddress),
             new UnityAction(ReturnToMenu),
             null,

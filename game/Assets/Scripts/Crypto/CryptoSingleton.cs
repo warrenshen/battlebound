@@ -300,7 +300,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         EthECKey ethECKey = new EthECKey(account.PrivateKey);
         string publicAddress = ethECKey.GetPublicAddress();
-        Debug.Log("PA: " + publicAddress);
+        //Debug.Log("PA: " + publicAddress);
 
         challenge = "0x" + challenge;
         //Debug.Log("C: " + challenge);
@@ -414,8 +414,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         PlayerPrefs.SetString(PLAYER_PREFS_ENCRYPTED_KEY_STORE, keyStoreJson);
         PlayerPrefs.SetString(PLAYER_PREFS_PUBLIC_ADDRESS, publicAddress);
-
-        Debug.Log("Set player prefs public address to: " + publicAddress);
 
         return publicAddress;
     }
