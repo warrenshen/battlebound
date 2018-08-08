@@ -127,24 +127,24 @@ public class WalletManager : MonoBehaviour
 
     private void ShowNewWalletRepeatPassword()
     {
-        UMPSingleton.Instance.ShowTwoInputFieldDialog(
+        UMPSingleton.Instance.ShowInputFieldAndAreaDialog(
             "Wallet Double Check",
             "Please enter your mnemonic and password again",
-            "Mnemonic repeat",
             "Password repeat",
+            "Mnemonic repeat",
             new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyNewWalletRepeatPassword),
             null,
             "Proceed",
             "Cancel",
-            InputField.ContentType.Standard,
-            InputField.ContentType.Password
+            InputField.ContentType.Password,
+            InputField.ContentType.Standard
         );
     }
 
     private void VerifyNewWalletRepeatPassword(
         UMP_TwoInputDialogUI dialogUI,
-        string mnemonicRepeat,
-        string passwordRepeat
+        string passwordRepeat,
+        string mnemonicRepeat
     )
     {
         Account accountByPassword = CryptoSingleton.Instance.GetAccountWithPassword(passwordRepeat);
@@ -169,24 +169,24 @@ public class WalletManager : MonoBehaviour
 
     private void ShowImportWalletEnterPassword()
     {
-        UMPSingleton.Instance.ShowTwoInputFieldDialog(
+        UMPSingleton.Instance.ShowInputFieldAndAreaDialog(
             "Import Wallet",
             "Enter your 12-word mnemonic and a password to protect your wallet",
-            "Mnemonic",
             "New password",
+            "Mnemonic",
             new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyImportWalletEnterPassword),
             new UnityAction(CancelNewWalletEnterPassword),
             "Proceed",
             "Cancel",
             InputField.ContentType.Password,
-            InputField.ContentType.Password
+            InputField.ContentType.Standard
         );
     }
 
     private void VerifyImportWalletEnterPassword(
         UMP_TwoInputDialogUI dialogUI,
-        string mnemonic,
-        string password
+        string password,
+        string mnemonic
     )
     {
         Account accountByMnemonic = CryptoSingleton.Instance.GetAccountWithMnemonic(mnemonic);
