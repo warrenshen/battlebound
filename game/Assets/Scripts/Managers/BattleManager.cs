@@ -602,7 +602,7 @@ public class BattleManager : MonoBehaviour
                  .setOnComplete(() =>
             {
                 // TODO: should on draw card finish call in reposition cards?
-                player.Hand.RepositionCards();  //can override completioon behavior by calling setOnComplete again
+                player.RepositionCards();  //can override completioon behavior by calling setOnComplete again
                 EffectManager.Instance.OnDrawCardFinish();
             });
         });

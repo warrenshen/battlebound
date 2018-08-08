@@ -420,6 +420,7 @@ public class EffectManager : MonoBehaviour
         }
         else
         {
+            // Note that we only care about the actual non-zero value in local development mode.
             challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
         }
 
@@ -1116,60 +1117,35 @@ public class EffectManager : MonoBehaviour
             return;
         }
 
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(effect.PlayerId);
+        int highestCost = -1;
+        ChallengeCard reviveCard = null;
 
-        if (aliveCreatures.Count < 6)
+        for (int i = sortedDeadCards.Count - 1; i >= 0; i -= 1)
         {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
-        }
-        else
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
-        }
-
-        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
-
-        if (!FlagHelper.IsServerEnabled())
-        {
-            int highestCost = -1;
-            ChallengeCard reviveCard = null;
-
-            for (int i = sortedDeadCards.Count - 1; i >= 0; i -= 1)
+            ChallengeCard currentCard = sortedDeadCards[i];
+            int currentCost = currentCard.CostStart;
+            if (currentCost > highestCost)
             {
-                ChallengeCard currentCard = sortedDeadCards[i];
-                int currentCost = currentCard.CostStart;
-                if (currentCost > highestCost)
-                {
-                    highestCost = currentCost;
-                    reviveCard = currentCard;
-                }
+                highestCost = currentCost;
+                reviveCard = currentCard;
             }
-
-            ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
-
-            int spawnIndex = Board.Instance().GetAvailableFieldIndexByPlayerId(playerId);
-
-            challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(effect.PlayerId);
-
-            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetCard(spawnCard);
-            moveAttributes.SetFieldId(playerId);
-
-            if (spawnIndex < 0)
-            {
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
-            }
-            else
-            {
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
-                moveAttributes.SetFieldIndex(spawnIndex);
-            }
-
-            challengeMove.SetMoveAttributes(moveAttributes);
-            BattleState.Instance().AddServerMove(challengeMove);
         }
+
+        Effect summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            0
+        );
+        summonEffect.SetCard(sortedDeadCards.Last());
+        summonEffect.SetFieldIndex(
+            aliveCreatures.Count < 6 ?
+            Board.Instance().GetAvailableFieldIndexByPlayerId(playerId) :
+            -1
+        );
+
+        List<Effect> effects = new List<Effect> { summonEffect };
+        AddToQueues(effects);
     }
 
     private void AbilitySilenceAllOpponentCreatures(Effect effect)
@@ -2152,55 +2128,30 @@ public class EffectManager : MonoBehaviour
         List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         List<ChallengeCard> sortedDeadCards = BattleState.Instance().GetDeadCardsByPlayerId(playerId);
 
+        List<Effect> effects = new List<Effect>();
+
         if (sortedDeadCards.Count <= 0)
         {
-            return new List<Effect>();
+            return effects;
         }
 
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(playerId);
+        ChallengeCard reviveCard = sortedDeadCards.Last();
 
-        if (aliveCreatures.Count < 6)
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
-        }
-        else
-        {
-            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
-        }
+        Effect summonEffect = new Effect(
+            playerId,
+            EFFECT_SUMMON_CREATURE,
+            null,
+            0
+        );
+        summonEffect.SetCard(sortedDeadCards.Last());
+        summonEffect.SetFieldIndex(
+            aliveCreatures.Count < 6 ?
+            Board.Instance().GetAvailableFieldIndexByPlayerId(playerId) :
+            -1
+        );
+        effects.Add(summonEffect);
 
-        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
-
-        if (!FlagHelper.IsServerEnabled())
-        {
-            ChallengeCard reviveCard = sortedDeadCards.Last();
-            ChallengeCard spawnCard = CleanCardForSummon(playerId, reviveCard);
-
-            challengeMove = new ChallengeMove();
-            challengeMove.SetPlayerId(playerId);
-
-            int spawnIndex = Board.Instance().GetAvailableFieldIndexByPlayerId(playerId);
-
-            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-            moveAttributes.SetCard(spawnCard);
-            moveAttributes.SetFieldId(playerId);
-
-            if (spawnIndex < 0)
-            {
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL);
-            }
-            else
-            {
-                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE);
-                moveAttributes.SetFieldIndex(spawnIndex);
-            }
-
-            challengeMove.SetMoveAttributes(moveAttributes);
-
-            BattleState.Instance().AddServerMove(challengeMove);
-        }
-
-        return new List<Effect>();
+        return effects;
     }
 
     private List<Effect> SpellUntargetedTheSeven(string playerId)
