@@ -37,8 +37,9 @@ public class BattleManager : MonoBehaviour
     private Transform playerHandTransform;
     public Transform PlayerHandTransform => playerHandTransform;
 
-    private GameObject lightGameObject;
-    public GameObject LightGameObject => lightGameObject;
+    [SerializeField]
+    private GameObject lightObject;
+    public GameObject LightObject => lightObject;
     [SerializeField]
     private GameObject boardMessageGameObject;
     // --
@@ -68,16 +69,16 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
 
-        this.lightGameObject = GameObject.Find("Point Light");
         this.attackCommand.SetWidth(0);
         this.validTargets = new List<TargetableObject>();
+        ChooseRandomSetting();
     }
 
     private void Start()
     {
+        this.lightObject = GameObject.Find("Point Light");
         this.battleLayer = LayerMask.NameToLayer("Battle");
         this.boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
-        ChooseRandomSetting();
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -153,7 +154,7 @@ public class BattleManager : MonoBehaviour
             BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
             if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
             {
-                target.visual.SetOutlineColors(Color.cyan, Color.green);
+                target.visual.SetOutlineColors(Color.yellow, Color.green);
             }
             else
             {

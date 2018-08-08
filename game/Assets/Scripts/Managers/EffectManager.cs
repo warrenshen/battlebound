@@ -1698,7 +1698,7 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError("Unsupported.");
             }
         }
-        else if (card.Name == Card.CARD_NAME_SPRAY_N_PRAY)
+        else if (card.Name == Card.CARD_NAME_BOMBS_AWAY)
         {
             PlayerAvatar attackingTargetable = BattleState.Instance().GetPlayerById(playerId).Avatar;
             Targetable defendingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
@@ -1989,7 +1989,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_NAME_MUDSLINGING:
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
-            case Card.CARD_NAME_SPRAY_N_PRAY:
+            case Card.CARD_NAME_BOMBS_AWAY:
                 effects = SpellUntargetedSprayNPray(playerId, challengeCard);
                 break;
             case Card.CARD_NAME_GRAVE_DIGGING:

@@ -356,7 +356,7 @@ public class CardEditorPanel : EditorWindow
             EditorGUI.PrefixLabel(new Rect(23, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
         }
         frameMat.color = CardTemplate.ColorFromClass(template.classColor);
-        EditorGUI.DrawPreviewTexture(new Rect(5, position.height - 400, 280, 390), this.cardFrame, frameMat);  //hardcoded for card frame
+        EditorGUI.DrawPreviewTexture(new Rect(10, position.height - 400, 265, 390), this.cardFrame, frameMat);  //hardcoded for card frame
     }
 
     private void CardDefaultSection(CardTemplate template, int verticalOffset)

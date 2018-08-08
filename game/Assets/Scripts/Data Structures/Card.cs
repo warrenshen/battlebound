@@ -72,7 +72,7 @@ public abstract class Card
     public const string CARD_NAME_GREEDY_FINGERS = "Greedy Fingers";
     public const string CARD_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
     public const string CARD_NAME_MUDSLINGING = "Mudslinging";
-    public const string CARD_NAME_SPRAY_N_PRAY = "Spray n' Pray";
+    public const string CARD_NAME_BOMBS_AWAY = "Bombs Away";
     public const string CARD_NAME_GRAVE_DIGGING = "Grave-digging";
     public const string CARD_NAME_THE_SEVEN = "The Seven";
     public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
@@ -144,7 +144,7 @@ public abstract class Card
         CARD_NAME_GREEDY_FINGERS,
         CARD_NAME_SILENCE_OF_THE_LAMBS,
         CARD_NAME_MUDSLINGING,
-        CARD_NAME_SPRAY_N_PRAY,
+        CARD_NAME_BOMBS_AWAY,
         CARD_NAME_GRAVE_DIGGING,
         CARD_NAME_THE_SEVEN,
         CARD_NAME_BATTLE_ROYALE,
@@ -776,7 +776,7 @@ public class SpellCard : Card
         CARD_NAME_GREEDY_FINGERS,
         CARD_NAME_SILENCE_OF_THE_LAMBS,
         CARD_NAME_MUDSLINGING,
-        CARD_NAME_SPRAY_N_PRAY,
+        CARD_NAME_BOMBS_AWAY,
         CARD_NAME_GRAVE_DIGGING,
         CARD_NAME_THE_SEVEN,
         CARD_NAME_BATTLE_ROYALE,

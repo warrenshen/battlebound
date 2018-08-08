@@ -177,13 +177,14 @@ public class Player
             targetPosition = BattleManager.Instance.EnemyHandTransform.position;
         }
 
+        LeanTween.cancel(BattleManager.Instance.LightObject);
         LeanTween
             .move(
-                BattleManager.Instance.LightGameObject,
+                BattleManager.Instance.LightObject,
                 new Vector3(
                     targetPosition.x,
                     targetPosition.y,
-                    BattleManager.Instance.LightGameObject.transform.position.z
+                    BattleManager.Instance.LightObject.transform.position.z
                 ),
                 0.4f
             )
@@ -757,7 +758,7 @@ public class Player
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_MUDSLINGING, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEATH_NOTE, 1));
-        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SPRAY_N_PRAY, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BOMBS_AWAY, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GRAVE_DIGGING, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_THE_SEVEN, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
