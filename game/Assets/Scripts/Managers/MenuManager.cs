@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
@@ -65,16 +63,24 @@ public class MenuManager : MonoBehaviour
     private void RenderUserData()
     {
         string displayName = SparkSingleton.Instance.DisplayName;
-        if (displayName == null)
+        string address = SparkSingleton.Instance.Address;
+
+        if (displayName == null && address == null)
         {
             this.usernameText.text = "Not logged in";
+            return;
+        }
+
+        if (address != null)
+        {
+            this.usernameText.text = string.Format("{0} | {1}", displayName, address);
         }
         else
         {
             this.usernameText.text = displayName;
-            // Preload decks.
-            DeckStore.Instance().GetDecksWithCallback(null);
         }
+
+        DeckStore.Instance().GetDecksWithCallback(null);
     }
 
     public void LoadMatchmaking()

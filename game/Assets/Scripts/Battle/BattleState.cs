@@ -360,11 +360,6 @@ public class BattleState
         return this.serverMoves;
     }
 
-    public List<ChallengeMove> GetDeviceMoves()
-    {
-        return this.serverMoves;
-    }
-
     public List<ChallengeCard> GetDeadCards()
     {
         return this.deadCards;
@@ -398,6 +393,11 @@ public class BattleState
 
     public void ComparePlayerStates()
     {
+        if (this.serverMoveQueue.Count > 0 || this.deviceMoveQueue.Count > 0)
+        {
+            return;
+        }
+
         PlayerState devicePlayerState = GetPlayerState();
         PlayerState deviceOpponentState = GetOpponentState();
 

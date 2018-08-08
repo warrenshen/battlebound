@@ -30,6 +30,8 @@ public class SparkSingleton : Singleton<SparkSingleton>
     public string DisplayName => displayName;
 
     private string address;
+    public string Address => address;
+
     private BigInteger balance;
     private int level;
 
