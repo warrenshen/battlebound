@@ -4,26 +4,48 @@
   "version": "1.0.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
-    "gatsby": "^1.9.277",
-    "gatsby-link": "^1.6.46",
-    "gatsby-plugin-react-helmet": "^2.0.11",
-    "react-helmet": "^5.2.0"
+    "animate.css": "^3.5.2",
+    "bootstrap": "^3.3.7",
+    "color": "^2.0.0",
+    "gatsby": "^1.6.5",
+    "gatsby-link": "^1.6.5",
+    "gatsby-plugin-netlify-cms": "^1.0.5",
+    "gatsby-plugin-nprogress": "^1.0.7",
+    "gatsby-plugin-react-helmet": "^1.0.1",
+    "gatsby-source-filesystem": "^1.5.16",
+    "gatsby-transformer-remark": "^1.7.30",
+    "gsap": "^1.20.2",
+    "radium": "^0.19.4",
+    "react-reveal": "^0.1.1",
+    "scrollmagic": "^2.0.5",
+    "web3": "^1.0.0-beta.35"
   },
   "keywords": [
     "gatsby"
   ],
   "license": "MIT",
+  "main": "n/a",
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
-    "format": "prettier --write 'src/**/*.js'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write 'src/**/*.js'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "git subtree push --prefix public origin gh-pages"
   },
   "devDependencies": {
-    "prettier": "^1.13.7"
+    "prettier": "^1.5.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+  "overrides": {
+    "gsap": {
+      "main": [
+        "./src/uncompressed/TweenMax.js"
+      ]
+    },
+    "scrollmagic": {
+      "main": [
+        "./scrollmagic/uncompressed/ScrollMagic.js",
+        "./scrollmagic/uncompressed/plugins/animation.gsap.js"
+      ]
+    }
   }
 }
