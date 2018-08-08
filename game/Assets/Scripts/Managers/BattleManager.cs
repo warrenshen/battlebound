@@ -116,9 +116,14 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        if (BattleState.Instance().IsNormalMode())
+        {
+            this.endTurnButton.ToggleState();
+        }
+
         if (BattleState.Instance().IsNormalMode() && !EffectManager.IsWaiting())
         {
-            ToggleEndTurnButton();
+            this.endTurnButton.ToggleState();
             WatchMouseActions();
         }
     }
@@ -300,11 +305,6 @@ public class BattleManager : MonoBehaviour
         {
             BattleSingleton.Instance.SendChallengeEndTurnRequest();
         }
-    }
-
-    public void ToggleEndTurnButton()
-    {
-        this.endTurnButton.ToggleState();
     }
 
     public void SetBoardCenterText(string message)
@@ -594,19 +594,21 @@ public class BattleManager : MonoBehaviour
         }
 
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        return CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad()
-                 .setOnComplete(() =>
-        {
-            CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-                 .setOnComplete(() =>
+        return CardTween
+            .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+            .setEaseInQuad()
+            .setOnComplete(() =>
             {
-                // TODO: should on draw card finish call in reposition cards?
                 SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position);
-                player.RepositionCards();  //can override completioon behavior by calling setOnComplete again
-                EffectManager.Instance.OnDrawCardFinish();
+                CardTween
+                    .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                    .setOnComplete(() =>
+                    {
+                        // TODO: should on draw card finish call in reposition cards?
+                        player.RepositionCards();
+                        EffectManager.Instance.OnDrawCardFinish();
+                    });
             });
-        });
     }
 
     public void AnimateDrawCardForMulligan(

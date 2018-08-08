@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -113,13 +114,16 @@ public class BattleCardObject : CardObject
         }
     }
 
-    public void Burn()
+    public void Burn(UnityAction onBurnFinish)
     {
-        StartCoroutine("Dissolve", 1);  //called when overdraw
+        StartCoroutine("Dissolve", new object[2] { 1, onBurnFinish });  //called when overdraw
     }
 
-    private IEnumerator Dissolve(float duration)
+    private IEnumerator Dissolve(object[] args)
     {
+        int duration = (int)args[0];
+        UnityAction onBurnFinish = args[1] as UnityAction;
+
         SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
 
         float elapsedTime = 0;
@@ -130,6 +134,7 @@ public class BattleCardObject : CardObject
             yield return new WaitForEndOfFrame();
         }
         Recycle();
+        onBurnFinish.Invoke();
     }
 
     public ChallengeCard GetChallengeCard()

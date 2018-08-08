@@ -49,7 +49,9 @@ public class BasicButton : ObjectUI
     public override void EnterHover()
     {
         if (!this.activeState)
+        {
             return;
+        }
 
         base.EnterHover();
         ActionManager.Instance.SetCursor(1);
@@ -84,7 +86,10 @@ public class BasicButton : ObjectUI
     {
         bool oldActiveState = this.activeState;
 
-        if (BattleState.Instance().You.Id == BattleState.Instance().ActivePlayer.Id)
+        if (
+            BattleState.Instance().You.Id == BattleState.Instance().ActivePlayer.Id &&
+            !EffectManager.IsWaiting()
+        )
         {
             this.activeState = true;
         }

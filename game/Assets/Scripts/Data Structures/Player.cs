@@ -605,8 +605,8 @@ public class Player
                     .move(createdBattleCard, createdBattleCard.transform.position, CardTween.TWEEN_DURATION)
                     .setOnComplete(() =>
                     {
+                        createdBattleCard.Burn(() => RepositionCards());
                         EffectManager.Instance.OnDrawCardFinish();
-                        createdBattleCard.Burn();
                     });
             });
     }

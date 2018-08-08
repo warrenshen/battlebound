@@ -29,12 +29,13 @@ public class MenuManager : MonoBehaviour
         {
             this.usernameText.text = "Not logged in";
         }
-        SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
     }
 
     private void Start()
     {
         this.currentView = "home";
+        SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
+
         this.galleryIndex = Random.Range(0, gallery.childCount);
         this.SetGalleryCreature();
 

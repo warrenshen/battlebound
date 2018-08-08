@@ -9,7 +9,7 @@ public class LoginManager : MonoBehaviour
     [SerializeField]
     private Button loginButton;
 
-    private void Awake()
+    private void Start()
     {
         SparkSingleton.Instance.AddAuthenticatedCallback(Callback);
     }
@@ -20,10 +20,5 @@ public class LoginManager : MonoBehaviour
         {
             Application.LoadLevel("Menu");
         }
-    }
-
-    private void OnLoginButtonClick()
-    {
-        //LoginRegisterPanel.Instance.Open();
     }
 }
