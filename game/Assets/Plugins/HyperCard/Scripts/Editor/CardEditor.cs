@@ -4,6 +4,7 @@ Copyright (c) Enixion
 Developer    Bourgot Jean-Louis
 \***************************************************************************/
 
+#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1097,3 +1098,4 @@ namespace HyperCard
         }
     }
 }
+#endif

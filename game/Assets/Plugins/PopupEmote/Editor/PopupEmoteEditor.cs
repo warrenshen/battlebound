@@ -1,11 +1,13 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(PopupEmote))]
 [CanEditMultipleObjects]
-public class PopupEmoteEditor : Editor {
+public class PopupEmoteEditor : Editor
+{
     private SerializedProperty _emotePrefab;
     private SerializedProperty _popupAnimation;
     private SerializedProperty _builtInSprites;
@@ -14,7 +16,8 @@ public class PopupEmoteEditor : Editor {
     private SerializedProperty _offset;
     private SerializedProperty _scale;
 
-    void OnEnable() {
+    void OnEnable()
+    {
         _emotePrefab = serializedObject.FindProperty("_emotePrefab");
         _popupAnimation = serializedObject.FindProperty("_popupAnimation");
         _builtInSprites = serializedObject.FindProperty("_builtInSprites");
@@ -24,10 +27,11 @@ public class PopupEmoteEditor : Editor {
         _scale = serializedObject.FindProperty("_scale");
     }
 
-    public override void OnInspectorGUI() {
+    public override void OnInspectorGUI()
+    {
         serializedObject.Update();
 
-        PopupEmote emote = (PopupEmote) target;
+        PopupEmote emote = (PopupEmote)target;
 
         EditorGUILayout.PropertyField(_emotePrefab);
         EditorGUILayout.PropertyField(_popupAnimation);
@@ -57,8 +61,10 @@ public class PopupEmoteEditor : Editor {
 
         serializedObject.ApplyModifiedProperties();
 
-        if (GUILayout.Button("Reload Content")) {
+        if (GUILayout.Button("Reload Content"))
+        {
             emote.Reload();
         }
     }
 }
+#endif

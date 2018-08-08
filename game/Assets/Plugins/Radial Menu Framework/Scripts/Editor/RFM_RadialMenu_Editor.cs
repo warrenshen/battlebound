@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(RMF_RadialMenu))]
-public class NewBehaviourScript : Editor {
+public class NewBehaviourScript : Editor
+{
 
-    public override void OnInspectorGUI() {
+    public override void OnInspectorGUI()
+    {
 
         DrawDefaultInspector();
 
@@ -15,14 +18,17 @@ public class NewBehaviourScript : Editor {
         GUIContent visualize = new GUIContent("Visualize Arrangement", "Press this to preview what the radial menu will look like ingame.");
         GUIContent reset = new GUIContent("Reset Arrangement", "Press this to reset all elements to a 0 rotation for easy editing.");
 
-        if (!Application.isPlaying) {
-            if (GUILayout.Button(visualize)) {
+        if (!Application.isPlaying)
+        {
+            if (GUILayout.Button(visualize))
+            {
 
                 arrangeElementsInEditor(rm, false);
 
             }
 
-            if (GUILayout.Button(reset)) {
+            if (GUILayout.Button(reset))
+            {
 
                 arrangeElementsInEditor(rm, true);
 
@@ -35,13 +41,17 @@ public class NewBehaviourScript : Editor {
 
 
 
-    public void arrangeElementsInEditor(RMF_RadialMenu rm, bool reset) {
+    public void arrangeElementsInEditor(RMF_RadialMenu rm, bool reset)
+    {
 
-        if (reset) {
+        if (reset)
+        {
 
 
-            for (int i = 0; i < rm.elements.Count; i++) {
-                if (rm.elements[i] == null) {
+            for (int i = 0; i < rm.elements.Count; i++)
+            {
+                if (rm.elements[i] == null)
+                {
                     Debug.LogError("Radial Menu: element " + i.ToString() + " in the radial menu " + rm.gameObject.name + " is null!");
                     continue;
                 }
@@ -54,8 +64,10 @@ public class NewBehaviourScript : Editor {
         }
 
 
-        for (int i = 0; i < rm.elements.Count; i++) {
-            if (rm.elements[i] == null) {
+        for (int i = 0; i < rm.elements.Count; i++)
+        {
+            if (rm.elements[i] == null)
+            {
                 Debug.LogError("Radial Menu: element " + i.ToString() + " in the radial menu " + rm.gameObject.name + " is null!");
                 continue;
             }
@@ -70,3 +82,4 @@ public class NewBehaviourScript : Editor {
 
 
 }
+#endif
