@@ -138,8 +138,7 @@ public class BattleManager : MonoBehaviour
         ActionManager.Instance.SetActive(false);
         this.validTargets = GetValidTargets(this.mouseDownTargetableObject);
 
-        //to-do: don't show attack arrow unless mouse no longer in bounds of board creature?
-        //raise object of interest?
+        //to-do: don't show attack arrow unless mouse no longer in bounds of board creature? raise object of interest?
         attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
         attackCommand.SetWidth(1.66f);
 
@@ -603,6 +602,7 @@ public class BattleManager : MonoBehaviour
                  .setOnComplete(() =>
             {
                 // TODO: should on draw card finish call in reposition cards?
+                SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position);
                 player.RepositionCards();  //can override completioon behavior by calling setOnComplete again
                 EffectManager.Instance.OnDrawCardFinish();
             });

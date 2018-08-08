@@ -24,6 +24,8 @@ public class BasicButton : ObjectUI
     private Texture2D inactiveImage;
     private Sprite inactiveSprite;
 
+    private AudioSource audioSource;
+
     // Use this for initialization
     void Start()
     {
@@ -31,6 +33,7 @@ public class BasicButton : ObjectUI
         this.scalingFactor = 1.10f;
         this.activeState = true;
         this.spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        this.audioSource = gameObject.GetComponent<AudioSource>();
 
         if (this.activeImage)
         {
@@ -70,6 +73,11 @@ public class BasicButton : ObjectUI
         base.MouseUp();
         if (target != null)
             target.SendMessage(functionName);
+
+        if (this.audioSource != null)
+        {
+            audioSource.Play();
+        }
     }
 
     public void ToggleState()
