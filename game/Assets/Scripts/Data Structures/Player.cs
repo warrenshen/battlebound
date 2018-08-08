@@ -683,9 +683,9 @@ public class Player
         }
     }
 
-    public void RepositionCards()
+    public void RepositionCards(UnityAction onRepositionFinish = null)
     {
-        this.hand.RepositionCards();
+        this.hand.RepositionCards(0, onRepositionFinish);
     }
 
     public string GetNewCardId()

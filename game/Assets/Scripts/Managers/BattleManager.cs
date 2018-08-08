@@ -604,9 +604,7 @@ public class BattleManager : MonoBehaviour
                     .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
                     .setOnComplete(() =>
                     {
-                        // TODO: should on draw card finish call in reposition cards?
-                        player.RepositionCards();
-                        EffectManager.Instance.OnDrawCardFinish();
+                        player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());
                     });
             });
     }
