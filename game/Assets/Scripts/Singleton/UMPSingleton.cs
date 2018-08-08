@@ -8,6 +8,7 @@ public class UMPSingleton : Singleton<UMPSingleton>
     public UMP_InputDialogUI InputFieldDialog;
     public UMP_TwoInputDialogUI TwoInputFieldDialog;
     public UMP_ThreeInputDialogUI ThreeInputFieldDialog;
+    public UMP_TwoInputDialogUI InputFieldAndTextArea;
 
     public void ShowConfirmationDialog(
         string title,
@@ -55,8 +56,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         InputFieldDialog.SetConfirmAction(confirmAction);
         InputFieldDialog.SetCancelAction(cancelAction);
 
-        ConfirmationDialog.SetConfirmLabel(confirmLabel);
-        ConfirmationDialog.SetCancelLabel(cancelLabel);
+        InputFieldDialog.SetConfirmLabel(confirmLabel);
+        InputFieldDialog.SetCancelLabel(cancelLabel);
 
         InputFieldDialog.SetInputPlaceholder(placeholderMessage);
         InputFieldDialog.SetInputContentType(contentType);
@@ -83,8 +84,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         TwoInputFieldDialog.SetConfirmAction(confirmAction);
         TwoInputFieldDialog.SetCancelAction(cancelAction);
 
-        ConfirmationDialog.SetConfirmLabel(confirmLabel);
-        ConfirmationDialog.SetCancelLabel(cancelLabel);
+        TwoInputFieldDialog.SetConfirmLabel(confirmLabel);
+        TwoInputFieldDialog.SetCancelLabel(cancelLabel);
 
         TwoInputFieldDialog.SetInputContextOne(contextOne);
         TwoInputFieldDialog.SetInputContextTwo(contextTwo);
@@ -116,8 +117,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         ThreeInputFieldDialog.SetConfirmAction(confirmAction);
         ThreeInputFieldDialog.SetCancelAction(cancelAction);
 
-        ConfirmationDialog.SetConfirmLabel(confirmLabel);
-        ConfirmationDialog.SetCancelLabel(cancelLabel);
+        ThreeInputFieldDialog.SetConfirmLabel(confirmLabel);
+        ThreeInputFieldDialog.SetCancelLabel(cancelLabel);
 
         ThreeInputFieldDialog.SetInputContextOne(contextOne);
         ThreeInputFieldDialog.SetInputContextTwo(contextTwo);
@@ -128,5 +129,36 @@ public class UMPSingleton : Singleton<UMPSingleton>
         ThreeInputFieldDialog.SetInputContentTypeThree(contentTypeThree);
 
         ThreeInputFieldDialog.gameObject.SetActive(true);
+    }
+
+    public void ShowInputFieldAndAreaDialog(
+        string title,
+        string message,
+        string contextOne,  //example: "value" => "Enter value..." in placeholder
+        string contextTwo,
+        UnityAction<UMP_TwoInputDialogUI, string, string> confirmAction,
+        UnityAction cancelAction,
+        string confirmLabel = "Confirm",
+        string cancelLabel = "Cancel",
+        InputField.ContentType contentTypeOne = InputField.ContentType.Standard,
+        InputField.ContentType contentTypeTwo = InputField.ContentType.Standard
+    )
+    {
+        InputFieldAndTextArea.SetTitle(title);
+        InputFieldAndTextArea.SetMessage(message);
+
+        InputFieldAndTextArea.SetConfirmAction(confirmAction);
+        InputFieldAndTextArea.SetCancelAction(cancelAction);
+
+        InputFieldAndTextArea.SetConfirmLabel(confirmLabel);
+        InputFieldAndTextArea.SetCancelLabel(cancelLabel);
+
+        InputFieldAndTextArea.SetInputContextOne(contextOne);
+        InputFieldAndTextArea.SetInputContextTwo(contextTwo);
+
+        InputFieldAndTextArea.SetInputContentTypeOne(contentTypeOne);
+        InputFieldAndTextArea.SetInputContentTypeTwo(contentTypeTwo);
+
+        InputFieldAndTextArea.gameObject.SetActive(true);
     }
 }
