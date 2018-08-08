@@ -29,4 +29,10 @@ public class UMP_InputDialogUI : UMP_ConfirmationDialogUI
     {
         return inputField.text;
     }
+
+    public new void Close()
+    {
+        base.Close();
+        this.inputField.text = "";
+    }
 }

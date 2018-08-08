@@ -89,4 +89,12 @@ public class UMP_ThreeInputDialogUI : UMP_ConfirmationDialogUI
     {
         return inputFieldThree.text;
     }
+
+    public new void Close()
+    {
+        base.Close();
+        this.inputFieldOne.text = "";
+        this.inputFieldTwo.text = "";
+        this.inputFieldThree.text = "";
+    }
 }

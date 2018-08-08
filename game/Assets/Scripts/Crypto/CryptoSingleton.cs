@@ -397,20 +397,12 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
     public string RecoverPrivateKey(string mnemonicString, string password)
     {
-        if (mnemonicString.Contains(","))
+        Account account = GetAccountWithMnemonic(mnemonicString);
+        if (account == null)
         {
-            mnemonicString = mnemonicString.Replace(",", "");
+            return null;
         }
 
-        string[] parsedMnemonic = mnemonicString.Split(' ');
-        if (parsedMnemonic.Length != 12)
-        {
-            return "Mnemonic must contain twelve words.";
-        }
-
-        Wallet wallet = new Wallet(mnemonicString, null);
-
-        Account account = wallet.GetAccount(0);
         string publicAddress = account.Address;
 
         KeyStorePbkdf2Service keyStorePbkdf2Service = new KeyStorePbkdf2Service();
@@ -425,7 +417,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
         Debug.Log("Set player prefs public address to: " + publicAddress);
 
-        return null;
+        return publicAddress;
     }
 
     public Account GetAccountWithPassword(string password)
@@ -442,6 +434,23 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         string privateKeyDecrypted = keyStorePbkdf2Service.DecryptKeyStore(password, keyStore).ToHex();
 
         return new Account(privateKeyDecrypted.HexToByteArray());
+    }
+
+    public Account GetAccountWithMnemonic(string mnemonicString)
+    {
+        if (mnemonicString.Contains(","))
+        {
+            mnemonicString = mnemonicString.Replace(",", "");
+        }
+
+        string[] parsedMnemonic = mnemonicString.Split(' ');
+        if (parsedMnemonic.Length != 12)
+        {
+            return null;
+        }
+
+        Wallet wallet = new Wallet(mnemonicString, null);
+        return wallet.GetAccount(0);
     }
 
     private IEnumerator FetchTransactionNonce()
