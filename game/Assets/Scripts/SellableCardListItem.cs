@@ -11,18 +11,19 @@ public class SellableCardListItem : CardListItem
     [SerializeField]
     private Button createAuctionButton;
 
-    public void OnEnable()
+    private void Awake()
     {
         this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
     }
 
-    public void OnDisable()
-    {
-        this.createAuctionButton.onClick.RemoveAllListeners();
-    }
-
     public void Initialize(Card card)
     {
+        if (card == null)
+        {
+            Debug.LogError("Invalid card auction parameter.");
+            return;
+        }
+
         this.card = card;
 
         Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(card.GetFrontImage());

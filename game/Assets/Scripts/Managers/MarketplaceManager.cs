@@ -149,30 +149,52 @@ public class MarketplaceManager : MonoBehaviour
 
     private void ShowBuyMode()
     {
+        ClearListItems();
         this.mode = MARKETPLACE_MODE_BUY;
         RenderListItems();
     }
 
     private void OnSellModeButtonClick()
     {
+        ClearListItems();
         this.mode = MARKETPLACE_MODE_SELL;
         RenderListItems();
     }
 
     private void OnCancelModeButtonClick()
     {
+        ClearListItems();
         this.mode = MARKETPLACE_MODE_CANCEL;
         RenderListItems();
     }
 
+    private void ClearListItems()
+    {
+        if (this.mode == MARKETPLACE_MODE_BUY)
+        {
+            foreach (BuyableCardListItem item in contentPanel.GetComponentsInChildren<BuyableCardListItem>())
+            {
+                SetBuyableListItemToPool(item);
+            }
+        }
+        else if (this.mode == MARKETPLACE_MODE_SELL)
+        {
+            foreach (SellableCardListItem item in contentPanel.GetComponentsInChildren<SellableCardListItem>())
+            {
+                SetSellableListItemToPool(item);
+            }
+        }
+        else
+        {
+            foreach (CancelableListItem item in contentPanel.GetComponentsInChildren<CancelableListItem>())
+            {
+                SetCancelableItemToPool(item);
+            }
+        }
+    }
+
     private void RenderListItems()
     {
-        foreach (Transform child in this.contentPanel)
-        {
-            Debug.Log(child.gameObject);
-            Destroy(child.gameObject);
-        }
-
         if (this.mode == MARKETPLACE_MODE_BUY)
         {
             CreateBuyableCardListItems(this.buyableCards);
@@ -183,7 +205,6 @@ public class MarketplaceManager : MonoBehaviour
         }
         else
         {
-            // Render player's auctioned cards.
             CreateCancelableCardListItems(this.cancelableCards);
         }
     }
@@ -193,9 +214,9 @@ public class MarketplaceManager : MonoBehaviour
         foreach (CardAuction cardAuction in cardAuctions)
         {
             BuyableCardListItem listItem = GetBuyableListItemFromPool();
-            listItem.gameObject.SetActive(true);
             listItem.InitializeCardAuction(cardAuction);
             listItem.transform.SetParent(contentPanel, false);
+            listItem.gameObject.SetActive(true);
             //listItem.transform.localScale = Vector3.one;
         }
     }
@@ -207,6 +228,7 @@ public class MarketplaceManager : MonoBehaviour
             CancelableListItem listItem = GetCancelableListItemFromPool();
             listItem.InitializeCardAuction(auctionedCard);
             listItem.transform.SetParent(contentPanel, false);
+            listItem.gameObject.SetActive(true);
             //listItem.transform.localScale = Vector3.one;
         }
     }
@@ -218,6 +240,7 @@ public class MarketplaceManager : MonoBehaviour
             SellableCardListItem listItem = GetSellableListItemFromPool();
             listItem.Initialize(card);
             listItem.transform.SetParent(contentPanel, false);
+            listItem.gameObject.SetActive(true);
             //listItem.transform.localScale = Vector3.one;
         }
     }

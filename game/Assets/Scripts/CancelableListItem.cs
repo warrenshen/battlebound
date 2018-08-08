@@ -14,18 +14,19 @@ public class CancelableListItem : CardListItem
     [SerializeField]
     protected CardAuction cardAuction;
 
-    public void OnAwake()
+    private void Awake()
     {
         this.cancelAuctionButton.onClick.AddListener(OnCancelAuctionButtonClick);
     }
 
-    public void OnDisable()
-    {
-        this.cancelAuctionButton.onClick.RemoveAllListeners();
-    }
-
     public void InitializeCardAuction(CardAuction cardAuction)
     {
+        if (cardAuction == null)
+        {
+            Debug.LogError("Invalid card auction parameter.");
+            return;
+        }
+
         this.cardAuction = cardAuction;
         this.card = cardAuction.Card;
 

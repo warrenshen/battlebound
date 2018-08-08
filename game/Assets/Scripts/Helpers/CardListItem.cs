@@ -18,6 +18,12 @@ public class CardListItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public virtual void OnPointerEnter(PointerEventData pointerEventData)
     {
+        if (this.card == null)
+        {
+            Debug.LogError("Invalid card instance variable.");
+            return;
+        }
+
         Card.SetHyperCardArtwork(ref MarketplaceManager.Instance.showcaseCard, this.card);
         Card.SetHyperCardFromData(ref MarketplaceManager.Instance.showcaseCard, this.card);
         MenuManager.Instance.HoverEnterEffect(this.gameObject);

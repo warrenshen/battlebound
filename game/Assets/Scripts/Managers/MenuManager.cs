@@ -125,6 +125,12 @@ public class MenuManager : MonoBehaviour
 
     public void SetMarketplacePreview(Card card)
     {
+        if (card == null)
+        {
+            Debug.LogError("Received null for card in SetMarketplacePreview()");
+            return;
+        }
+
         this.marketplacePreviewSummon.SetActive(false);  //assumes that initial value is set via inspector
         Vector3 position = this.marketplacePreviewSummon.transform.position;
 

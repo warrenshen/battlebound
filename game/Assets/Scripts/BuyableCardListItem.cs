@@ -16,18 +16,24 @@ public class BuyableCardListItem : CardListItem
     [SerializeField]
     protected CardAuction cardAuction;
 
-    public void OnEnable()
+    private void Awake()
     {
         this.bidAuctionButton.onClick.AddListener(OnBidAuctionButtonClick);
     }
 
-    public void OnDisable()
-    {
-        this.bidAuctionButton.onClick.RemoveAllListeners();
-    }
-
     public void InitializeCardAuction(CardAuction cardAuction)
     {
+        if (cardAuction == null)
+        {
+            Debug.LogError("Invalid card auction parameter.");
+            return;
+        }
+        else if (cardAuction.Card == null)
+        {
+            Debug.LogError("Invalid card parameter.");
+            return;
+        }
+
         this.cardAuction = cardAuction;
         this.card = cardAuction.Card;
 
