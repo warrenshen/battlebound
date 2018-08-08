@@ -16,10 +16,14 @@ public class BuyableCardListItem : CardListItem
     [SerializeField]
     protected CardAuction cardAuction;
 
-    public new void Awake()
+    public void OnEnable()
     {
-        base.Awake();
         this.bidAuctionButton.onClick.AddListener(OnBidAuctionButtonClick);
+    }
+
+    public void OnDisable()
+    {
+        this.bidAuctionButton.onClick.RemoveAllListeners();
     }
 
     public void InitializeCardAuction(CardAuction cardAuction)

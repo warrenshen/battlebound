@@ -16,11 +16,6 @@ public class CardListItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     [SerializeField]
     protected Card card;
 
-    public void Awake()
-    {
-        //do something
-    }
-
     public virtual void OnPointerEnter(PointerEventData pointerEventData)
     {
         Card.SetHyperCardArtwork(ref MarketplaceManager.Instance.showcaseCard, this.card);

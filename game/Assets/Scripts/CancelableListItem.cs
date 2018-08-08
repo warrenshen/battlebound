@@ -14,10 +14,14 @@ public class CancelableListItem : CardListItem
     [SerializeField]
     protected CardAuction cardAuction;
 
-    public new void Awake()
+    public void OnAwake()
     {
-        base.Awake();
         this.cancelAuctionButton.onClick.AddListener(OnCancelAuctionButtonClick);
+    }
+
+    public void OnDisable()
+    {
+        this.cancelAuctionButton.onClick.RemoveAllListeners();
     }
 
     public void InitializeCardAuction(CardAuction cardAuction)

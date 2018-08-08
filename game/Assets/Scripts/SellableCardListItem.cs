@@ -10,10 +10,14 @@ public class SellableCardListItem : CardListItem
     [SerializeField]
     private Button createAuctionButton;
 
-    public new void Awake()
+    public void OnEnable()
     {
-        base.Awake();
         this.createAuctionButton.onClick.AddListener(OnCreateAuctionButtonClick);
+    }
+
+    public void OnDisable()
+    {
+        this.createAuctionButton.onClick.RemoveAllListeners();
     }
 
     public void Initialize(Card card)

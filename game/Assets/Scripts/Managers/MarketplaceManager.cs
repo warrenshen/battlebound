@@ -36,7 +36,7 @@ public class MarketplaceManager : MonoBehaviour
     [SerializeField]
     private GameObject sellableCardListItem;
     [SerializeField]
-    private GameObject cancelableCardlistItem;
+    private GameObject cancelableCardListItem;
 
     [SerializeField]
     private Transform contentPanel;
@@ -44,6 +44,14 @@ public class MarketplaceManager : MonoBehaviour
     private List<CardAuction> buyableCards;
     private List<Card> sellableCards;
     private List<CardAuction> cancelableCards;
+
+    //Pooling
+    private Stack<BuyableCardListItem> buyableListItemPool;
+    private Stack<SellableCardListItem> sellableListItemPool;
+    private Stack<CancelableListItem> cancelableListItemPool;
+    //End Pooling
+    private static int LIST_ITEM_POOL_SIZE = 30;
+    private object listItemObject;
 
     public static MarketplaceManager Instance { get; private set; }
 
@@ -54,14 +62,14 @@ public class MarketplaceManager : MonoBehaviour
         this.buyModeButton.onClick.AddListener(OnBuyModeButtonClick);
         this.sellModeButton.onClick.AddListener(OnSellModeButtonClick);
         this.cancelModeButton.onClick.AddListener(OnCancelModeButtonClick);
+
+        this.buyableCards = new List<CardAuction>();
+        this.sellableCards = new List<Card>();
+        this.cancelableCards = new List<CardAuction>();
     }
 
     private void Start()
     {
-        buyableCards = new List<CardAuction>();
-        sellableCards = new List<Card>();
-        cancelableCards = new List<CardAuction>();
-
         if (SparkSingleton.Instance.IsAuthenticated)
         {
             GetMarketplaceData();
@@ -71,9 +79,27 @@ public class MarketplaceManager : MonoBehaviour
             SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
         }
 
+        buyableListItemPool = new Stack<BuyableCardListItem>();
+        sellableListItemPool = new Stack<SellableCardListItem>();
+        cancelableListItemPool = new Stack<CancelableListItem>();
+
+        for (int i = 0; i < LIST_ITEM_POOL_SIZE; ++i)
+        {
+            BuyableCardListItem buyable = Instantiate(buyableCardListItem).GetComponent<BuyableCardListItem>();
+            buyable.transform.SetParent(this.transform, false);
+            buyableListItemPool.Push(buyable);
+
+            SellableCardListItem sellable = Instantiate(sellableCardListItem).GetComponent<SellableCardListItem>();
+            sellable.transform.SetParent(this.transform, false);
+            sellableListItemPool.Push(sellable);
+
+            CancelableListItem cancelable = Instantiate(cancelableCardListItem).GetComponent<CancelableListItem>();
+            cancelable.transform.SetParent(this.transform, false);
+            cancelableListItemPool.Push(cancelable);
+        }
+
         ShowBuyMode();
     }
-
 
     private void GetMarketplaceData()
     {
@@ -166,11 +192,11 @@ public class MarketplaceManager : MonoBehaviour
     {
         foreach (CardAuction cardAuction in cardAuctions)
         {
-            GameObject listItemObject = Instantiate(buyableCardListItem) as GameObject;
-            BuyableCardListItem listItem = listItemObject.GetComponent<BuyableCardListItem>();
+            BuyableCardListItem listItem = GetBuyableListItemFromPool();
+            listItem.gameObject.SetActive(true);
             listItem.InitializeCardAuction(cardAuction);
-            listItemObject.transform.SetParent(contentPanel);
-            listItemObject.transform.localScale = Vector3.one;
+            listItem.transform.SetParent(contentPanel, false);
+            //listItem.transform.localScale = Vector3.one;
         }
     }
 
@@ -178,11 +204,10 @@ public class MarketplaceManager : MonoBehaviour
     {
         foreach (CardAuction auctionedCard in auctionedCards)
         {
-            GameObject listItemObject = Instantiate(cancelableCardlistItem) as GameObject;
-            CancelableListItem listItem = listItemObject.GetComponent<CancelableListItem>();
+            CancelableListItem listItem = GetCancelableListItemFromPool();
             listItem.InitializeCardAuction(auctionedCard);
-            listItemObject.transform.SetParent(contentPanel);
-            listItemObject.transform.localScale = Vector3.one;
+            listItem.transform.SetParent(contentPanel, false);
+            //listItem.transform.localScale = Vector3.one;
         }
     }
 
@@ -190,11 +215,68 @@ public class MarketplaceManager : MonoBehaviour
     {
         foreach (Card card in cards)
         {
-            GameObject listItemObject = Instantiate(sellableCardListItem) as GameObject;
-            SellableCardListItem listItem = listItemObject.GetComponent<SellableCardListItem>();
+            SellableCardListItem listItem = GetSellableListItemFromPool();
             listItem.Initialize(card);
-            listItemObject.transform.SetParent(contentPanel);
-            listItemObject.transform.localScale = Vector3.one;
+            listItem.transform.SetParent(contentPanel, false);
+            //listItem.transform.localScale = Vector3.one;
         }
+    }
+
+    //Pooling getters and setters
+    public BuyableCardListItem GetBuyableListItemFromPool()
+    {
+        if (buyableListItemPool.Count <= 0)
+        {
+            GameObject created = Instantiate(this.buyableCardListItem, transform.position, Quaternion.identity);
+            return created.GetComponent<BuyableCardListItem>();
+        }
+        BuyableCardListItem chosen = buyableListItemPool.Pop();
+        chosen.gameObject.SetActive(true);
+        return chosen;
+    }
+
+    public void SetBuyableListItemToPool(BuyableCardListItem buyableListItem)
+    {
+        buyableListItem.transform.SetParent(this.transform, false);
+        buyableListItemPool.Push(buyableListItem);
+        buyableListItem.gameObject.SetActive(false);
+    }
+
+    public SellableCardListItem GetSellableListItemFromPool()
+    {
+        if (sellableListItemPool.Count <= 0)
+        {
+            GameObject created = Instantiate(this.sellableCardListItem, transform.position, Quaternion.identity);
+            return created.GetComponent<SellableCardListItem>();
+        }
+        SellableCardListItem chosen = sellableListItemPool.Pop();
+        chosen.gameObject.SetActive(true);
+        return chosen;
+    }
+
+    public void SetSellableListItemToPool(SellableCardListItem sellableListItem)
+    {
+        sellableListItem.transform.SetParent(this.transform, false);
+        sellableListItemPool.Push(sellableListItem);
+        sellableListItem.gameObject.SetActive(false);
+    }
+
+    public CancelableListItem GetCancelableListItemFromPool()
+    {
+        if (cancelableListItemPool.Count <= 0)
+        {
+            GameObject created = Instantiate(this.cancelableCardListItem, transform.position, Quaternion.identity);
+            return created.GetComponent<CancelableListItem>();
+        }
+        CancelableListItem chosen = cancelableListItemPool.Pop();
+        chosen.gameObject.SetActive(true);
+        return chosen;
+    }
+
+    public void SetCancelableItemToPool(CancelableListItem cancelableListItem)
+    {
+        cancelableListItem.transform.SetParent(this.transform, false);
+        cancelableListItemPool.Push(cancelableListItem);
+        cancelableListItem.gameObject.SetActive(false);
     }
 }
