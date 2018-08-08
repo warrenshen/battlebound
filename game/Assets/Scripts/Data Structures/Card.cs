@@ -295,7 +295,7 @@ public abstract class Card
         );
 
         cardVisual.Stencil = ActionManager.Instance.stencilCount;
-        ActionManager.Instance.stencilCount = Mathf.Max(ActionManager.Instance.stencilCount + 3 % 255, 3);
+        ActionManager.Instance.stencilCount = Mathf.Max((ActionManager.Instance.stencilCount + 3) % 255, 3);
     }
 
     public static void SetHyperCardFromData(ref HyperCard.Card cardVisual, Card card)
