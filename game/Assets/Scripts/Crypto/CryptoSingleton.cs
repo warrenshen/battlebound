@@ -48,7 +48,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         }
 
         int nonce = (int)await FetchTransactionNonce();
-
         string signedTx = TreasuryContract.SignCreateAuctionTransaction(
             account,
             nonce,
@@ -127,7 +126,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         }
 
         int nonce = (int)await FetchTransactionNonce();
-
         string signedTx = AuctionContract.SignBidAuctionTransaction(
             account,
             nonce,
@@ -197,6 +195,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             return "Invalid tokenId parameter";
         }
 
+        int nonce = (int)await FetchTransactionNonce();
         string signedTx = AuctionContract.SignCancelAuctionTransaction(
             account,
             nonce,
@@ -475,13 +474,12 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
     private void OnGetTransactionNonceSuccess(LogEventResponse response)
     {
         this.nonce = (int)response.ScriptData.GetInt("nonce");
-        Debug.Log("Got nonce: " + this.nonce);
     }
 
     private void OnGetTransactionNonceError(LogEventResponse response)
     {
         StopCoroutine("CreateAuctionHelper");
         GSData errors = response.Errors;
-        Debug.Log(errors);
+        Debug.LogError(errors);
     }
 }
