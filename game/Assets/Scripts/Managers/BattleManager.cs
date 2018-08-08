@@ -116,14 +116,9 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
-        if (BattleState.Instance().IsNormalMode())
-        {
-            this.endTurnButton.ToggleState();
-        }
-
         if (BattleState.Instance().IsNormalMode() && !EffectManager.IsWaiting())
         {
-            this.endTurnButton.ToggleState();
+            ToggleEndTurnButton();
             WatchMouseActions();
         }
     }
@@ -305,6 +300,11 @@ public class BattleManager : MonoBehaviour
         {
             BattleSingleton.Instance.SendChallengeEndTurnRequest();
         }
+    }
+
+    public void ToggleEndTurnButton()
+    {
+        this.endTurnButton.ToggleState();
     }
 
     public void SetBoardCenterText(string message)
@@ -594,19 +594,19 @@ public class BattleManager : MonoBehaviour
         }
 
         LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        return CardTween
-            .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-            .setEaseInQuad()
-            .setOnComplete(() =>
+        return CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                 .setEaseInQuad()
+                 .setOnComplete(() =>
+        {
+            CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                 .setOnComplete(() =>
             {
-                SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position);
-                CardTween
-                    .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-                    .setOnComplete(() =>
-                    {
-                        player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());
-                    });
+                // TODO: should on draw card finish call in reposition cards?
+                SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position, delay: 0.2F);
+                player.RepositionCards();  //can override completioon behavior by calling setOnComplete again
+                EffectManager.Instance.OnDrawCardFinish();
             });
+        });
     }
 
     public void AnimateDrawCardForMulligan(
@@ -1109,6 +1109,7 @@ public class BattleManager : MonoBehaviour
 
     public void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
     {
+        SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
         this.AnimateCardPlayed(battleCardObject).setOnComplete(() =>
           {
               CardTween

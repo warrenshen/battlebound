@@ -20,7 +20,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlaySound(string name, Vector3 position, float pitchVariance = 0F, float pitchBias = 0F)
+    public void PlaySound(string name, Vector3 position, float pitchVariance = 0F, float pitchBias = 0F, float delay = 0F)
     {
         Transform root = transform.Find(name);
         if (root == null)
@@ -40,11 +40,11 @@ public class SoundManager : MonoBehaviour
         {
             float previousPitch = audioSource.pitch;
             audioSource.pitch += UnityEngine.Random.Range(-pitchVariance, pitchVariance);
-            audioSource.Play();
+            audioSource.PlayDelayed(delay);
         }
         else
         {
-            audioSource.Play();
+            audioSource.PlayDelayed(delay);
         }
     }
 }
