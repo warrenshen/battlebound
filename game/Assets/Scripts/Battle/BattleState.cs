@@ -486,6 +486,7 @@ public class BattleState
         Player player = GetPlayerById(playerId);
         // TODO: animate and remove debug.
         Debug.Log("Receive move draw card deck empty");
+        player.RepositionCards();
         EffectManager.Instance.OnDrawCardFinish();
     }
 
@@ -970,10 +971,6 @@ public class BattleState
             ReceiveMoveDrawCardDeckEmpty(
                 serverMove.PlayerId
             );
-        }
-        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY)
-        {
-            Debug.LogError("Not supported.");
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
         {

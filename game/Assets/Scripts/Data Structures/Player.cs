@@ -411,9 +411,51 @@ public class Player
 
         if (!FlagHelper.IsServerEnabled())
         {
-            foreach (int index in deckCardIndices)
+            if (deckCardIndices.Count <= 0)
             {
-                DrawCardMock(true);
+                Player opponent = Board.Instance().GetOpponentByPlayerId(this.id);
+                opponent.PlayMulliganMock();
+            }
+            else
+            {
+                foreach (int index in deckCardIndices)
+                {
+                    DrawCardMock(true);
+                }
+            }
+        }
+    }
+
+    /*
+     * Call on opponent in local development mode to simulate mulligan.
+     */
+    public void PlayMulliganMock()
+    {
+        if (!FlagHelper.IsServerEnabled())
+        {
+            if (this.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
+            {
+                List<int> deckCardIndices = new List<int> { 0, 2 };
+
+                ChallengeMove challengeMove = new ChallengeMove();
+                challengeMove = new ChallengeMove();
+                challengeMove.SetPlayerId(this.Id);
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+
+                ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+                moveAttributes.SetDeckCardIndices(deckCardIndices);
+
+                challengeMove.SetMoveAttributes(moveAttributes);
+                BattleState.Instance().AddServerMove(challengeMove);
+
+                foreach (int _ in deckCardIndices)
+                {
+                    DrawCardMock(true);
+                }
+
+                challengeMove = new ChallengeMove();
+                challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
+                BattleState.Instance().AddServerMove(challengeMove);
             }
         }
     }
@@ -485,36 +527,8 @@ public class Player
                 replaceCardIndex += 1;
             }
 
-            // If not in connected mode, automatically perform mulligan for opponent.
-            if (!FlagHelper.IsServerEnabled())
-            {
-                Player opponent = Board.Instance().GetOpponentByPlayerId(this.id);
-
-                if (opponent.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
-                {
-                    List<int> deckCardIndices = new List<int> { 0, 2 };
-
-                    ChallengeMove challengeMove = new ChallengeMove();
-                    challengeMove = new ChallengeMove();
-                    challengeMove.SetPlayerId(opponent.Id);
-                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-
-                    ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-                    moveAttributes.SetDeckCardIndices(deckCardIndices);
-
-                    challengeMove.SetMoveAttributes(moveAttributes);
-                    BattleState.Instance().AddServerMove(challengeMove);
-
-                    foreach (int _ in deckCardIndices)
-                    {
-                        opponent.DrawCardMock(true);
-                    }
-
-                    challengeMove = new ChallengeMove();
-                    challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN);
-                    BattleState.Instance().AddServerMove(challengeMove);
-                }
-            }
+            Player opponent = Board.Instance().GetOpponentByPlayerId(this.id);
+            opponent.PlayMulliganMock();
         }
     }
 
@@ -666,6 +680,11 @@ public class Player
         {
             return BattleManager.Instance.EnemyHandTransform;
         }
+    }
+
+    public void RepositionCards()
+    {
+        this.hand.RepositionCards();
     }
 
     public string GetNewCardId()
