@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NBitcoin.BouncyCastle.Math;
 using UnityEngine;
 using UnityEngine.Events;
 using GameSparks.Core;
@@ -23,8 +24,13 @@ public class SparkSingleton : Singleton<SparkSingleton>
     public bool IsLatestVersion => isLatestVersion;
 
     private string playerId;
+    public string PlayerId => playerId;
+
+    private string displayName;
+    public string DisplayName => displayName;
+
     private string address;
-    private long balance;
+    private BigInteger balance;
     private int level;
 
     private List<UnityAction> authenticatedCallbacks;
@@ -61,8 +67,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
         if (available)
         {
             this.playerId = null;
+            this.displayName = null;
             this.address = null;
-            this.balance = 0;
+            this.balance = new BigInteger("0");
             this.level = 0;
         }
         else
@@ -81,11 +88,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
         {
             Debug.LogWarning("Not authenticated...");
         }
-    }
-
-    public string GetPlayerId()
-    {
-        return this.playerId;
     }
 
     public void AddAuthenticatedCallback(UnityAction callback)
@@ -191,15 +193,17 @@ public class SparkSingleton : Singleton<SparkSingleton>
         }
 
         this.playerId = scriptData.GetString("playerId");
+        this.displayName = scriptData.GetString("displayName");
         this.address = scriptData.GetString("address");
 
-        if (scriptData.GetLong("balance") == null)
+        string balanceString = scriptData.GetString("balance");
+        if (balanceString == null)
         {
-            this.balance = 0;
+            this.balance = new BigInteger("0");
         }
         else
         {
-            this.balance = (long)scriptData.GetLong("balance");
+            this.balance = new BigInteger(balanceString);
         }
 
         if (scriptData.GetInt("level") == null)
@@ -277,7 +281,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.isAuthenticated = false;
         this.playerId = null;
         this.address = null;
-        this.balance = 0;
+        this.balance = new BigInteger("0");
         this.level = 0;
 
         DeckStore.Instance().Logout();
