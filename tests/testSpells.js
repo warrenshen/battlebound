@@ -2144,7 +2144,7 @@ describe("challenge events", function() {
               "level": 1,
               "category": 1,
               "cost": 20,
-              "name": "Spray n' Pray",
+              "name": "Bombs Away",
               "description": "Deal 10 dmg to three random opponent targetables",
               "baseId": "C23",
               "costStart": 40,
@@ -2183,7 +2183,7 @@ describe("challenge events", function() {
       "nonce": 14
     };
 
-    it("should support spray n' pray", function() {
+    it("should support bombs away", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
