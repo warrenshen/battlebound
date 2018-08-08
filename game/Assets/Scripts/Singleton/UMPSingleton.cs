@@ -14,14 +14,23 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string message,
         UnityAction confirmAction,
         UnityAction cancelAction,
-        string cancelLabel = "Cancel",
-        string confirmLabel = "Confirm")
+        string confirmLabel = "Confirm",
+        string cancelLabel = "Cancel"
+    )
     {
         ConfirmationDialog.SetTitle(title);
         ConfirmationDialog.SetMessage(message);
 
         ConfirmationDialog.SetConfirmAction(confirmAction);
-        ConfirmationDialog.SetCancelAction(cancelAction);
+
+        if (cancelAction == null)
+        {
+            ConfirmationDialog.SetCancelButtonActive(false);
+        }
+        else
+        {
+            ConfirmationDialog.SetCancelAction(cancelAction);
+        }
 
         ConfirmationDialog.SetConfirmLabel(confirmLabel);
         ConfirmationDialog.SetCancelLabel(cancelLabel);
@@ -62,8 +71,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string contextTwo,
         UnityAction<UMP_TwoInputDialogUI, string, string> confirmAction,
         UnityAction cancelAction,
-        string cancelLabel = "Cancel",
         string confirmLabel = "Confirm",
+        string cancelLabel = "Cancel",
         InputField.ContentType contentTypeOne = InputField.ContentType.Standard,
         InputField.ContentType contentTypeTwo = InputField.ContentType.Standard
     )

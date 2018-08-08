@@ -43,5 +43,10 @@ public class UMP_ConfirmationDialogUI : UMP_DialogUI
     {
         mTitle.text = title;
     }
+
+    public void SetCancelButtonActive(bool isActive)
+    {
+        this.cancelButton.gameObject.SetActive(isActive);
+    }
 }
 

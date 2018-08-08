@@ -43,101 +43,7 @@ public class WalletManager : MonoBehaviour
 
     private string addressChallenge;
 
-    public void Awake()
-    {
-        this.passwordInputField.onValueChanged.AddListener(
-            new UnityAction<string>(OnPasswordValueChanged)
-        );
-        this.passwordConfirmationInputField.onValueChanged.AddListener(
-            new UnityAction<string>(OnPasswordConfirmationValueChanged)
-        );
-        this.passwordRepeatInputField.onValueChanged.AddListener(
-            new UnityAction<string>(OnPasswordRepeatValueChanged)
-        );
-
-        this.finishWelcomeButton.onClick.AddListener(OnFinishWelcomeClick);
-        this.finishGeneratePasswordButton.onClick.AddListener(OnFinishGeneratePasswordClick);
-        this.finishViewMnemonicButton.onClick.AddListener(OnFinishViewMnemonicClick);
-        this.finishViewSuccessButton.onClick.AddListener(OnFinishViewSuccessClick);
-
-        DisplayWelcomePanel();
-    }
-
-    private void DeactivateAllPanels()
-    {
-        this.welcomePanel.SetActive(false);
-        this.generatePasswordPanel.SetActive(false);
-        this.viewMnemonicPanel.SetActive(false);
-        this.viewSuccessPanel.SetActive(false);
-    }
-
-    private void OnPasswordValueChanged(string password)
-    {
-        string passwordConfirmation = this.passwordConfirmationInputField.text;
-
-        if (password.Length < 8)
-        {
-            SetGeneratePasswordError("Password must be more than 8 characters.");
-        }
-        else if (passwordConfirmation.Length > 0 && password != passwordConfirmation)
-        {
-            SetGeneratePasswordError("Password and password confirmation do not match.");
-        }
-        else
-        {
-            SetGeneratePasswordError("");
-        }
-    }
-
-    private void OnPasswordConfirmationValueChanged(string passwordConfirmation)
-    {
-        string password = this.passwordInputField.text;
-
-        if (password != passwordConfirmation)
-        {
-            SetGeneratePasswordError("Password and password confirmation do not match.");
-        }
-        else
-        {
-            SetGeneratePasswordError("");
-        }
-    }
-
-    private void OnPasswordRepeatValueChanged(string passwordRepeat)
-    {
-        string passwordConfirmation = this.passwordConfirmationInputField.text;
-
-        if (passwordRepeat != passwordConfirmation)
-        {
-            SetViewMnemonicError("Incorrect password!");
-        }
-        else
-        {
-            SetViewMnemonicError("");
-        }
-    }
-
-    private void SetGeneratePasswordError(string message)
-    {
-        this.generatePasswordErrorText.text = message;
-
-        if (message.Length > 0)
-        {
-            this.finishGeneratePasswordButton.interactable = false;
-        }
-        else
-        {
-            this.finishGeneratePasswordButton.interactable = true;
-        }
-    }
-
-    private void DisplayWelcomePanel()
-    {
-        DeactivateAllPanels();
-        this.welcomePanel.SetActive(true);
-    }
-
-    private void OnFinishWelcomeClick()
+    private void Start()
     {
         CryptoSingleton.Instance.GetAddressChallenge(
             new UnityAction<string>(OnGetChallenge)
@@ -148,77 +54,144 @@ public class WalletManager : MonoBehaviour
     {
         if (challenge == null)
         {
-            Debug.LogError("Could not get address challenge.");
-            return;
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Unexpected Error",
+                "Server could not be reached - please try again later.",
+                new UnityAction(ReturnToMenu),
+                null,
+                "Return to menu",
+                ""
+            );
         }
 
         this.addressChallenge = challenge;
-        DisplayGeneratePasswordPanel();
+
+        UMPSingleton.Instance.ShowConfirmationDialog(
+            "Wallet Management",
+            "If you have a 12-word mnemonic already, choose import wallet.",
+            new UnityAction(ShowNewWalletEnterPassword),
+            new UnityAction(ShowImportWalletEnterPassword),
+            "New wallet",
+            "Import wallet"
+        );
     }
 
-    private void DisplayGeneratePasswordPanel()
+    private void ShowNewWalletEnterPassword()
     {
-        DeactivateAllPanels();
-        SetGeneratePasswordError("");
-        this.generatePasswordPanel.SetActive(true);
-        this.finishGeneratePasswordButton.interactable = false;
+        UMPSingleton.Instance.ShowTwoInputFieldDialog(
+            "Create Wallet Password",
+            "You'll use this password to trade your cards",
+            "Password",
+            "Password confirmation",
+            new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyNewWalletEnterPassword),
+            new UnityAction(CancelNewWalletEnterPassword),
+            "Proceed",
+            "Cancel",
+            InputField.ContentType.Password,
+            InputField.ContentType.Password
+        );
     }
 
-    private void OnFinishGeneratePasswordClick()
+    private void VerifyNewWalletEnterPassword(
+        UMP_TwoInputDialogUI dialogUI,
+        string password,
+        string passwordConfirmation
+    )
     {
-        string password = this.passwordInputField.text;
-        string passwordConfirmation = this.passwordConfirmationInputField.text;
-
         if (password != passwordConfirmation)
         {
-            SetGeneratePasswordError("Password and password confirmation do not match.");
-            return;
-        }
-
-        string mnemonicString = CryptoSingleton.Instance.InitializePrivateKey(password);
-        this.mnemonicText.text = mnemonicString;
-
-        DisplayViewMnemonicPanel();
-    }
-
-    private void DisplayViewMnemonicPanel()
-    {
-        DeactivateAllPanels();
-        this.viewMnemonicPanel.SetActive(true);
-        this.finishViewMnemonicButton.interactable = false;
-    }
-
-    private void OnFinishViewMnemonicClick()
-    {
-        string passwordRepeat = this.passwordRepeatInputField.text;
-
-        Account account = CryptoSingleton.Instance.GetAccountWithPassword(passwordRepeat);
-
-        if (account.Address != PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
-        {
-            Debug.LogError("Password repeat does not match saved player prefs.");
+            dialogUI.SetMessage("Password and confirmation do not match");
+            dialogUI.SetMessageColor(Color.red);
         }
         else
         {
-            SetGeneratePasswordError("");
-        }
+            string mnemonicString = CryptoSingleton.Instance.InitializePrivateKey(password);
+            string mnemonicStringWithDescription = string.Format("Write these 12 words down in a <b>SAFE</b> place:\n\n{0}", mnemonicString);
+            dialogUI.Close();
 
-        // TODO: show loading screen.
-        UpdatePlayerAddress(passwordRepeat);
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "New wallet mnemonic",
+                mnemonicStringWithDescription,
+                new UnityAction(ShowNewWalletRepeatPassword),
+                null,
+                "Proceed",
+                ""
+            );
+        }
     }
 
-    private void SetViewMnemonicError(string message)
+    private void CancelNewWalletEnterPassword()
     {
-        this.viewMnemonicErrorText.text = message;
 
-        if (message.Length > 0)
+    }
+
+    private void ShowNewWalletRepeatPassword()
+    {
+        UMPSingleton.Instance.ShowTwoInputFieldDialog(
+            "Wallet Double Check",
+            "Please enter your mnemonic and password again",
+            "Mnemonic repeat",
+            "Password repeat",
+            new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyNewWalletRepeatPassword),
+            null,
+            "Proceed",
+            "Cancel",
+            InputField.ContentType.Standard,
+            InputField.ContentType.Password
+        );
+    }
+
+    private void VerifyNewWalletRepeatPassword(
+        UMP_TwoInputDialogUI dialogUI,
+        string mnemonicRepeat,
+        string passwordRepeat
+    )
+    {
+        Account accountByPassword = CryptoSingleton.Instance.GetAccountWithPassword(passwordRepeat);
+        Account accountByMnemonic = CryptoSingleton.Instance.GetAccountWithMnemonic(mnemonicRepeat);
+
+        if (
+            accountByPassword != null &&
+            accountByMnemonic != null &&
+            accountByPassword.Address == PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS) &&
+            accountByMnemonic.Address == PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS)
+        )
         {
-            this.finishViewMnemonicButton.interactable = false;
+            dialogUI.SetMessage("Mnemonic or password is not correct.");
+            dialogUI.SetMessageColor(Color.red);
         }
         else
         {
-            this.finishViewMnemonicButton.interactable = true;
+            dialogUI.Close();
+            UpdatePlayerAddress(passwordRepeat);
         }
+    }
+
+    private void ShowImportWalletEnterPassword()
+    {
+        UMPSingleton.Instance.ShowTwoInputFieldDialog(
+            "Import Wallet",
+            "Enter your 12-word mnemonic and a password to protect your wallet",
+            "Mnemonic",
+            "New password",
+            new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyImportWalletEnterPassword),
+            new UnityAction(CancelNewWalletEnterPassword),
+            "Proceed",
+            "Cancel",
+            InputField.ContentType.Password,
+            InputField.ContentType.Password
+        );
+    }
+
+    private void VerifyImportWalletEnterPassword(
+        UMP_TwoInputDialogUI dialogUI,
+        string mnemonic,
+        string password
+    )
+    {
+        Account accountByMnemonic = CryptoSingleton.Instance.GetAccountWithMnemonic(mnemonic);
+        string publicAddress = CryptoSingleton.Instance.RecoverPrivateKey(mnemonic, password);
+        ShowNewWalletRepeatPassword();
     }
 
     private void UpdatePlayerAddress(string password)
@@ -234,22 +207,24 @@ public class WalletManager : MonoBehaviour
         CryptoSingleton.Instance.UpdatePlayerAddress(
             account,
             this.addressChallenge,
-            new UnityAction<string>(DisplayViewSuccessPanel)
+            new UnityAction<string>(ShowNewWalletFinish)
         );
     }
 
-    private void DisplayViewSuccessPanel(string publicAddress)
+    private void ShowNewWalletFinish(string publicAddress)
     {
-        DeactivateAllPanels();
-        this.viewSuccessPanel.SetActive(true);
+        UMPSingleton.Instance.ShowConfirmationDialog(
+            "Wallet success",
+            string.Format("Your wallet's public identifier is: {0}", publicAddress),
+            new UnityAction(ReturnToMenu),
+            null,
+            "Return to menu",
+            ""
+        );
     }
 
-    private void LeaveScene()
+    private void ReturnToMenu()
     {
-    }
-
-    private void OnFinishViewSuccessClick()
-    {
-
+        Application.LoadLevel("Menu");
     }
 }

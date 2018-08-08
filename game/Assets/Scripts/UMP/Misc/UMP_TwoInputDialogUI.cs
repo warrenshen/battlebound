@@ -66,4 +66,11 @@ public class UMP_TwoInputDialogUI : UMP_ConfirmationDialogUI
     {
         return inputFieldTwo.text;
     }
+
+    public new void Close()
+    {
+        base.Close();
+        this.inputFieldOne.text = "";
+        this.inputFieldTwo.text = "";
+    }
 }
