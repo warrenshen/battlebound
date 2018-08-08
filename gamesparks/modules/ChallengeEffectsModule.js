@@ -354,14 +354,14 @@ function _effectRandomBombshellBombadier(challengeStateData, effect) {
     var damageDone;
 
     if (randomOpponentTargetableId === TARGET_ID_FACE) {
-        damageDone = damageFace(opponentState, 20);
+        damageDone = damageFace(opponentState, 10);
         newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, opponentId, opponentState, damageDone));
     } else {
         const defendingCard = opponentField.find(function(fieldCard) { return fieldCard.id === randomOpponentTargetableId });
         if (defendingCard == null) {
             setScriptError("Defending card with card ID " + randomOpponentTargetableId + " does not exist.")
         }
-        damageDone = damageCard(defendingCard, 20);
+        damageDone = damageCard(defendingCard, 10);
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, defendingCard, damageDone));
     }
 

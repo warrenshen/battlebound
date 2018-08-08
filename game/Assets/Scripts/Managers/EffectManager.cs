@@ -1656,7 +1656,7 @@ public class EffectManager : MonoBehaviour
                     defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
-                        int damageDone = defendingCreature.TakeDamage(20);
+                        int damageDone = defendingCreature.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnCreatureDamageTaken(
                             defendingCreature,
                             damageDone
@@ -1680,7 +1680,7 @@ public class EffectManager : MonoBehaviour
                     defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
-                        int damageDone = defendingAvatar.TakeDamage(20);
+                        int damageDone = defendingAvatar.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnFaceDamageTaken(
                         defendingAvatar,
                             damageDone

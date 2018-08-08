@@ -2767,7 +2767,7 @@ describe("challenge events", function() {
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
             assert.equal(playerState.manaMax, 90);
-            assert.equal(playerState.health, 20);
+            assert.equal(playerState.health, 40);
 
             const playerField = playerState.field;
             assert.equal(playerField[1].id, "EMPTY");
@@ -2775,7 +2775,7 @@ describe("challenge events", function() {
             assert.equal(playerField[3].id, "EMPTY");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
-            assert.equal(opponentState.health, 40);
+            assert.equal(opponentState.health, 70);
 
             const opponentField = opponentState.field;
             assert.equal(opponentField[1].id, "EMPTY");

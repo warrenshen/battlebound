@@ -17,11 +17,17 @@ if (address) {
     balance = fetchBalanceByAddress(address);
 }
 
-const scoreRequest = new SparkRequests.GetLeaderboardEntriesRequest();
-scoreRequest.leaderboards = ["HIGH_SCORE_LB"];
-scoreRequest.player = playerId;
-const scoreResponse = scoreRequest.Send();
-const playerRank = scoreResponse.HIGH_SCORE_LB.SCORE_ATTR;
+var rankGlobal = 0;
+var rankElo = 0;
+
+const leaderboard = Spark.getLeaderboards().getLeaderboard("HIGH_SCORE_LB");
+const leaderboardCursor = leaderboard.getEntriesFromPlayer(playerId, 1);
+
+if (leaderboardCursor.hasNext()) {
+    leaderboardEntry = leaderboardCursor.next();
+    rankGlobal = leaderboardEntry.getRank();
+    rankElo = leaderboardEntry.getAttribute("SCORE_ATTR");
+}
 
 const GAME_VERSION_LATEST = "0.1";
 
@@ -32,7 +38,8 @@ Spark.setScriptData("balance", balance);
 Spark.setScriptData("activeChallengeId", player.getPrivateData("activeChallengeId"));
 Spark.setScriptData("infoByMatchType", player.getPrivateData("infoByMatchType"));
 Spark.setScriptData("level", player.getPrivateData("level"));
-Spark.setScriptData("rank", playerRank);
+Spark.setScriptData("rankGlobal", rankGlobal)
+Spark.setScriptData("rankElo", rankElo);
 Spark.setScriptData("latestVersion", GAME_VERSION_LATEST);
 
 setScriptSuccess();

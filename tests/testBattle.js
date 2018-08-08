@@ -673,7 +673,7 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C10-ID_OPPONENT-5",
+                "id": "ID_OPPONENT-5",
                 "playerId": "ID_OPPONENT",
                 "level": 1,
                 "category": 0,
@@ -726,7 +726,7 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C2-ID_PLAYER-2",
+                "id": "ID_PLAYER-2",
                 "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
@@ -803,10 +803,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengeCardAttackCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C2-ID_PLAYER-2",
+            cardId: "ID_PLAYER-2",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C10-ID_OPPONENT-5",
+              targetId: "ID_OPPONENT-5",
             },
           },
           function(response) {
@@ -815,28 +815,28 @@ describe("challenge events", function() {
             const lastMoves = challengeStateData.lastMoves;
             assert.equal(lastMoves.length, 4);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
-            assert.equal(lastMoves[0].attributes.cardId, "C2-ID_PLAYER-2");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-2");
             assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
-            assert.equal(lastMoves[0].attributes.targetId, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_OPPONENT-5");
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
-
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-5");
 
-            assert.equal(lastMoves[1].attributes.card.id, "C10-ID_OPPONENT-5");
-            assert.equal(lastMoves[2].attributes.card.id, "C10-ID_OPPONENT-5");
-            assert.equal(lastMoves[3].attributes.card.id, "C10-ID_OPPONENT-5");
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_OPPONENT-5");
+
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+            assert.equal(lastMoves[3].attributes.card.id, "ID_OPPONENT-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
             assert.equal(playerField[1].id, "EMPTY");
 
             assert.equal(playerState.healthMax, 100);
-            assert.equal(playerState.health, 40);
+            assert.equal(playerState.health, 70);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
@@ -868,7 +868,7 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C10-ID_OPPONENT-5",
+                "id": "ID_OPPONENT-5",
                 "playerId": "ID_OPPONENT",
                 "level": 1,
                 "category": 0,
@@ -921,7 +921,7 @@ describe("challenge events", function() {
                 "id": "EMPTY"
               },
               {
-                "id": "C10-ID_PLAYER-10",
+                "id": "ID_PLAYER-10",
                 "playerId": "ID_PLAYER",
                 "level": 1,
                 "category": 0,
@@ -997,10 +997,10 @@ describe("challenge events", function() {
             eventKey: "TestChallengeCardAttackCard",
             challengeStateString: JSON.stringify(challengeStateData),
             challengePlayerId: "ID_PLAYER",
-            cardId: "C10-ID_PLAYER-10",
+            cardId: "ID_PLAYER-10",
             attributesJson: {
               fieldId: "ID_OPPONENT",
-              targetId: "C10-ID_OPPONENT-5",
+              targetId: "ID_OPPONENT-5",
             },
           },
           function(response) {
@@ -1011,38 +1011,42 @@ describe("challenge events", function() {
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
 
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
-            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-10");
+
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-10");
+
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[3].playerId, "ID_PLAYER");
-            assert.equal(lastMoves[1].attributes.card.id, "C10-ID_PLAYER-10");
-            assert.equal(lastMoves[2].attributes.card.id, "C10-ID_PLAYER-10");
-            assert.equal(lastMoves[3].attributes.card.id, "C10-ID_PLAYER-10");
+            assert.equal(lastMoves[3].attributes.card.id, "ID_PLAYER-10");
 
             assert.equal(lastMoves[4].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[5].category, "MOVE_CATEGORY_RANDOM_TARGET");
             assert.equal(lastMoves[6].category, "MOVE_CATEGORY_RANDOM_TARGET");
+
             assert.equal(lastMoves[4].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[5].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[6].playerId, "ID_OPPONENT");
-            assert.equal(lastMoves[4].attributes.card.id, "C10-ID_OPPONENT-5");
-            assert.equal(lastMoves[5].attributes.card.id, "C10-ID_OPPONENT-5");
-            assert.equal(lastMoves[6].attributes.card.id, "C10-ID_OPPONENT-5");
+
+            assert.equal(lastMoves[4].attributes.card.id, "ID_OPPONENT-5");
+            assert.equal(lastMoves[5].attributes.card.id, "ID_OPPONENT-5");
+            assert.equal(lastMoves[6].attributes.card.id, "ID_OPPONENT-5");
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             const playerField = playerState.field;
             assert.equal(playerField[1].id, "EMPTY");
 
             assert.equal(playerState.healthMax, 100);
-            assert.equal(playerState.health, 30);
+            assert.equal(playerState.health, 60);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
             assert.equal(opponentField[2].id, "EMPTY");
 
             assert.equal(opponentState.healthMax, 100);
-            assert.equal(opponentState.health, 40);
+            assert.equal(opponentState.health, 70);
 
             assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 1);
             assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 0);

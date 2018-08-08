@@ -1822,7 +1822,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(lastMoves[5].attributes.fieldIndex, 0);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
-            assert.equal(opponentState.health, 60);
+            assert.equal(opponentState.health, 80);
             assert.equal(opponentState.healthMax, 100);
 
             const opponentField = opponentState.field;
@@ -2033,7 +2033,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(lastMoves[4].attributes.fieldIndex, 0);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
-            assert.equal(opponentState.health, 40);
+            assert.equal(opponentState.health, 70);
             assert.equal(opponentState.healthMax, 100);
 
             const opponentField = opponentState.field;
