@@ -1,9 +1,10 @@
 ﻿using System;
 
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-using UnityEngine.Events;
+using Nethereum.Web3.Accounts;
 
 public class SellableCardListItem : CardListItem
 {
@@ -42,33 +43,82 @@ public class SellableCardListItem : CardListItem
             "Final Price",
             "Duration",
             new UnityAction<UMP_ThreeInputDialogUI, string, string, string>(SubmitCreateAuctionTransaction),
-            new UnityAction(CancelAction),
+            new UnityAction(() => { }),
             contentTypeOne: InputField.ContentType.IntegerNumber,
             contentTypeTwo: InputField.ContentType.IntegerNumber,
             contentTypeThree: InputField.ContentType.IntegerNumber
         );
     }
 
-    private void SubmitCreateAuctionTransaction(UMP_ThreeInputDialogUI dialog, string startPrice, string endPrice, string auctionDuration)
+    private void SubmitCreateAuctionTransaction(
+        UMP_ThreeInputDialogUI dialog,
+        string startPrice,
+        string endPrice,
+        string auctionDuration
+    )
     {
         int tokenId = Convert.ToInt32(card.Id.Substring(1));
         long startingPrice = Convert.ToInt64(startPrice);
         long endingPrice = Convert.ToInt64(endPrice);
         int duration = Convert.ToInt32(auctionDuration);
 
-        //CryptoSingleton.Instance.CreateAuction(
-        //    account,
-        //    tokenId,
-        //    startingPrice,
-        //    endingPrice,
-        //    duration
-        //);
+        UMPSingleton.Instance.ShowInputFieldDialog(
+            "Authorize Auction",
+            "Please enter your password to verify the transaction.",
+            new UnityAction<UMP_InputDialogUI, string>(
+                (UMP_InputDialogUI dialogUI, string password) => ProcessPassword(dialogUI, password, tokenId, startingPrice, endingPrice, duration)
+            ),
+            new UnityAction(() => { }),
+            placeholderMessage: "Enter password...",
+            contentType: InputField.ContentType.Password
+        );
 
         dialog.Close();
     }
 
-    private void CancelAction()
+    private void ProcessPassword(
+        UMP_DialogUI dialogUI,
+        string password,
+        int tokenId,
+        long startingPrice,
+        long endingPrice,
+        int duration
+    )
     {
+        if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
+        {
+            dialogUI.SetMessage("Ethereum hot wallet not configured for this device.");
+            dialogUI.SetMessageColor(Color.red);
+            dialogUI.SetMessageStyle(FontStyle.Bold);
+            return;
+        }
+        else if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
+        {
+            dialogUI.SetMessage("Ethereum hot wallet not configured for this device.");
+            dialogUI.SetMessageColor(Color.red);
+            dialogUI.SetMessageStyle(FontStyle.Bold);
+            return;
+        }
 
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
+
+        string publicAddress = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS);
+        if (publicAddress != account.Address)
+        {
+            dialogUI.SetMessage("Entered password incorrect! Please try again.");
+            dialogUI.SetMessageColor(Color.red);
+            dialogUI.SetMessageStyle(FontStyle.Bold);
+        }
+        else
+        {
+            CryptoSingleton.Instance.CreateAuction(
+                account,
+                tokenId,
+                startingPrice,
+                endingPrice,
+                duration
+            );
+            dialogUI.Close();
+        }
     }
 }
