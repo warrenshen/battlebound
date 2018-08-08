@@ -321,7 +321,7 @@ function effectRandomTarget(challengeStateData, effect) {
 
     if (card.name === "Bombshell Bombadier") {
         return _effectRandomBombshellBombadier(challengeStateData, effect);
-    } else if (card.name === "Spray n' Pray") {
+    } else if (card.name === SPELL_NAME_BOMBS_AWAY) {
         return _effectRandomSprayNPray(challengeStateData, effect);
     } else {
         setScriptError("Invalid card for this effect.");
@@ -1474,7 +1474,7 @@ const SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
 const SPELL_NAME_GREEDY_FINGERS = "Greedy Fingers";
 const SPELL_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
 const SPELL_NAME_MUDSLINGING = "Mudslinging";
-const SPELL_NAME_SPRAY_N_PRAY = "Spray n' Pray";
+const SPELL_NAME_BOMBS_AWAY = "Bombs Away";
 const SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
 const SPELL_NAME_THE_SEVEN = "The Seven";
 const SPELL_NAME_BATTLE_ROYALE = "Battle Royale";
@@ -1659,7 +1659,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 fieldCard.abilities.push(CARD_ABILITY_TAUNT);
             }
         });
-    } else if (playedCard.name === SPELL_NAME_SPRAY_N_PRAY) {
+    } else if (playedCard.name === SPELL_NAME_BOMBS_AWAY) {
         for (var i = 0; i < 3; i += 1) {
             newEffects.push({
                 playerId: playerId,

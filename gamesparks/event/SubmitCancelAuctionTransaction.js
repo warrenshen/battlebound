@@ -30,10 +30,11 @@ const bCardId = "B" + tokenId.toString();
 const cardDataItem = API.getItem("Card", bCardId).document();
 
 const cardData = cardDataItem.getData();
+const seller = cardData.seller;
 const auction = cardData.auction;
 // Get auction end.
 
-if (auction.seller !== address) {
+if (prefixHex(seller.toLowerCase()) != prefixHex(address.toLowerCase())) {
     setScriptError("Auction cannot be canceled by non-seller.");
 }
     

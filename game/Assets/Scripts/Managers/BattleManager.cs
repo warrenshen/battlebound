@@ -46,6 +46,7 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     private BasicButton endTurnButton;
+    public BasicButton EndTurnButton => endTurnButton;
 
     [SerializeField]
     private GameObject endOverlay;

@@ -437,13 +437,11 @@ public class BattleState
             return;
         }
 
-        NextTurn();
-    }
-
-    private void NextTurn()
-    {
-        activePlayer.EndTurn();
-
+        SoundManager.Instance.PlaySound(
+            "GongSFX",
+            BattleManager.Instance.EndTurnButton.transform.position
+        );
+        this.activePlayer.EndTurn();
         EffectManager.Instance.OnEndTurn(
             activePlayer.Id,
             new UnityAction(ActualNextTurn)
