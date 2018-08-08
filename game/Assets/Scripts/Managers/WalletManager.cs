@@ -79,7 +79,7 @@ public class WalletManager : MonoBehaviour
     private void ShowNewWalletEnterPassword()
     {
         UMPSingleton.Instance.ShowTwoInputFieldDialog(
-            "Create Wallet Password",
+            "Wallet Create Password",
             "You'll use this password to trade your cards",
             "Password",
             "Password confirmation",
@@ -110,7 +110,7 @@ public class WalletManager : MonoBehaviour
             dialogUI.Close();
 
             UMPSingleton.Instance.ShowConfirmationDialog(
-                "New wallet mnemonic",
+                "Wallet New Mnemonic",
                 mnemonicStringWithDescription,
                 new UnityAction(ShowNewWalletRepeatPassword),
                 null,
@@ -170,7 +170,7 @@ public class WalletManager : MonoBehaviour
     private void ShowImportWalletEnterPassword()
     {
         UMPSingleton.Instance.ShowInputFieldAndAreaDialog(
-            "Import Wallet",
+            "Wallet Import",
             "Enter your 12-word mnemonic and a password to protect your wallet",
             "New password",
             "Mnemonic",
@@ -190,8 +190,26 @@ public class WalletManager : MonoBehaviour
     )
     {
         Account accountByMnemonic = CryptoSingleton.Instance.GetAccountWithMnemonic(mnemonic);
-        string publicAddress = CryptoSingleton.Instance.RecoverPrivateKey(mnemonic, password);
-        ShowNewWalletRepeatPassword();
+
+        if (accountByMnemonic == null)
+        {
+            dialogUI.SetMessage("Mnemonic or password format is not correct.");
+            dialogUI.SetMessageColor(Color.red);
+        }
+        else
+        {
+            string publicAddress = CryptoSingleton.Instance.RecoverPrivateKey(mnemonic, password);
+
+            dialogUI.Close();
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Wallet Import Successful",
+                string.Format("Your wallet's public identifier is: {0}", publicAddress),
+                new UnityAction(ReturnToMenu),
+                null,
+                "Return to menu",
+                null
+            );
+        }
     }
 
     private void UpdatePlayerAddress(string password)

@@ -125,31 +125,22 @@ public class MatchmakingManager : MonoBehaviour
     private void SelectCasualMatch()
     {
         this.matchType = MATCH_TYPE_CASUAL;
-        if (FlagHelper.IsServerEnabled())
-        {
-            FindMatch();
-        }
-        else
-        {
-            Application.LoadLevel("Battle");
-        }
+        FindMatch();
     }
 
     private void SelectRankedMatch()
     {
         this.matchType = MATCH_TYPE_RANKED;
-        if (FlagHelper.IsServerEnabled())
-        {
-            FindMatch();
-        }
-        else
-        {
-            Application.LoadLevel("Battle");
-        }
+        FindMatch();
     }
 
     private void FindMatch()
     {
+        if (!FlagHelper.IsServerEnabled())
+        {
+            Application.LoadLevel("Battle");
+        }
+
         if (this.matchDeckName == null)
         {
             Debug.LogError("Cannot send FindMatch request without deck name.");
