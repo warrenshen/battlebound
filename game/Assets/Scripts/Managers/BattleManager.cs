@@ -7,7 +7,7 @@ using TMPro;
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
-    private static float CARD_DISPLACEMENT_THRESHOLD = 30;
+    private static float CARD_DISPLACEMENT_THRESHOLD = 25;
 
     public int battleLayer;
     public int boardOrBattleLayer;
