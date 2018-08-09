@@ -430,7 +430,6 @@ public class BoardCreature : Targetable
         challengeCard.SetCategory((int)Card.CardType.Creature);
         challengeCard.SetColor(this.card.GetClassColor());
         challengeCard.SetName(this.card.Name);
-        //challengeCard.SetDescription(boardCreature.CreatureCard.Description);
         challengeCard.SetLevel(this.card.Level);
         challengeCard.SetCost(this.cost);
         challengeCard.SetCostStart(this.card.GetCost());
