@@ -1,14 +1,41 @@
-﻿using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 
 [System.Serializable]
 public class UMPSingleton : Singleton<UMPSingleton>
 {
-    public UMP_ConfirmationDialogUI ConfirmationDialog;
-    public UMP_InputDialogUI InputFieldDialog;
-    public UMP_TwoInputDialogUI TwoInputFieldDialog;
-    public UMP_ThreeInputDialogUI ThreeInputFieldDialog;
-    public UMP_TwoInputDialogUI InputFieldAndTextArea;
+    private bool isConfirmationOne;
+    [SerializeField]
+    private UMP_ConfirmationDialogUI ConfirmationDialog;
+    [SerializeField]
+    private UMP_ConfirmationDialogUI ConfirmationDialogTwo;
+
+    [SerializeField]
+    private UMP_InputDialogUI InputFieldDialog;
+    [SerializeField]
+    private UMP_TwoInputDialogUI TwoInputFieldDialog;
+    [SerializeField]
+    private UMP_ThreeInputDialogUI ThreeInputFieldDialog;
+
+    private bool isInputFieldTextAreaOne;
+    [SerializeField]
+    private UMP_TwoInputDialogUI InputFieldAndTextArea;
+    [SerializeField]
+    private UMP_TwoInputDialogUI InputFieldAndTextAreaTwo;
+
+    private new void Awake()
+    {
+        base.Awake();
+
+        if (this.isDestroyed)
+        {
+            return;
+        }
+
+        this.isConfirmationOne = false;
+        this.isInputFieldTextAreaOne = false;
+    }
 
     public void ShowConfirmationDialog(
         string title,
@@ -19,24 +46,36 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string cancelLabel = "Cancel"
     )
     {
-        ConfirmationDialog.SetTitle(title);
-        ConfirmationDialog.SetMessage(message);
-
-        ConfirmationDialog.SetConfirmAction(confirmAction);
-
-        if (cancelAction == null)
+        UMP_ConfirmationDialogUI dialogUI;
+        if (this.isConfirmationOne)
         {
-            ConfirmationDialog.SetCancelButtonActive(false);
+            this.isConfirmationOne = false;
+            dialogUI = ConfirmationDialogTwo;
         }
         else
         {
-            ConfirmationDialog.SetCancelAction(cancelAction);
+            this.isConfirmationOne = true;
+            dialogUI = ConfirmationDialog;
         }
 
-        ConfirmationDialog.SetConfirmLabel(confirmLabel);
-        ConfirmationDialog.SetCancelLabel(cancelLabel);
+        dialogUI.SetTitle(title);
+        dialogUI.SetMessage(message);
 
-        ConfirmationDialog.gameObject.SetActive(true);
+        dialogUI.SetConfirmAction(confirmAction);
+
+        if (cancelAction == null)
+        {
+            dialogUI.SetCancelButtonActive(false);
+        }
+        else
+        {
+            dialogUI.SetCancelAction(cancelAction);
+        }
+
+        dialogUI.SetConfirmLabel(confirmLabel);
+        dialogUI.SetCancelLabel(cancelLabel);
+
+        dialogUI.gameObject.SetActive(true);
     }
 
     public void ShowInputFieldDialog(
@@ -144,21 +183,33 @@ public class UMPSingleton : Singleton<UMPSingleton>
         InputField.ContentType contentTypeTwo = InputField.ContentType.Standard
     )
     {
-        InputFieldAndTextArea.SetTitle(title);
-        InputFieldAndTextArea.SetMessage(message);
+        UMP_TwoInputDialogUI dialogUI;
+        if (this.isInputFieldTextAreaOne)
+        {
+            this.isInputFieldTextAreaOne = false;
+            dialogUI = InputFieldAndTextAreaTwo;
+        }
+        else
+        {
+            this.isInputFieldTextAreaOne = true;
+            dialogUI = InputFieldAndTextArea;
+        }
 
-        InputFieldAndTextArea.SetConfirmAction(confirmAction);
-        InputFieldAndTextArea.SetCancelAction(cancelAction);
+        dialogUI.SetTitle(title);
+        dialogUI.SetMessage(message);
 
-        InputFieldAndTextArea.SetConfirmLabel(confirmLabel);
-        InputFieldAndTextArea.SetCancelLabel(cancelLabel);
+        dialogUI.SetConfirmAction(confirmAction);
+        dialogUI.SetCancelAction(cancelAction);
 
-        InputFieldAndTextArea.SetInputContextOne(contextOne);
-        InputFieldAndTextArea.SetInputContextTwo(contextTwo);
+        dialogUI.SetConfirmLabel(confirmLabel);
+        dialogUI.SetCancelLabel(cancelLabel);
 
-        InputFieldAndTextArea.SetInputContentTypeOne(contentTypeOne);
-        InputFieldAndTextArea.SetInputContentTypeTwo(contentTypeTwo);
+        dialogUI.SetInputContextOne(contextOne);
+        dialogUI.SetInputContextTwo(contextTwo);
 
-        InputFieldAndTextArea.gameObject.SetActive(true);
+        dialogUI.SetInputContentTypeOne(contentTypeOne);
+        dialogUI.SetInputContentTypeTwo(contentTypeTwo);
+
+        dialogUI.gameObject.SetActive(true);
     }
 }

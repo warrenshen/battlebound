@@ -367,12 +367,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
      */
     public string InitializePrivateKey(string password)
     {
-        //if (PlayerPrefs.HasKey(PLAYER_PREFS_ENCRYPTED_KEY_STORE))
-        //{
-        //    Debug.LogError("Encrypted key store already exists.");
-        //    return null;
-        //}
-
         Wallet wallet = new Wallet(Wordlist.English, WordCount.Twelve);
         string mnemonicString = string.Join(" ", wallet.Words);
 

@@ -5,45 +5,24 @@ using Nethereum.Web3.Accounts;
 
 public class WalletManager : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject welcomePanel;
-    [SerializeField]
-    private Button finishWelcomeButton;
-    [SerializeField]
-    private Button backWelcomeButton;
-
-    [SerializeField]
-    private GameObject generatePasswordPanel;
-    [SerializeField]
-    private InputField passwordInputField;
-    [SerializeField]
-    private InputField passwordConfirmationInputField;
-    [SerializeField]
-    private Text generatePasswordErrorText;
-    [SerializeField]
-    private Button finishGeneratePasswordButton;
-    [SerializeField]
-    private Button backGeneratePasswordButton;
-
-    [SerializeField]
-    private GameObject viewMnemonicPanel;
-    [SerializeField]
-    private Text mnemonicText;
-    [SerializeField]
-    private InputField passwordRepeatInputField;
-    [SerializeField]
-    private Text viewMnemonicErrorText;
-    [SerializeField]
-    private Button finishViewMnemonicButton;
-
-    [SerializeField]
-    private GameObject viewSuccessPanel;
-    [SerializeField]
-    private Button finishViewSuccessButton;
-
     private string addressChallenge;
 
     private void Start()
+    {
+        if (PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
+        {
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Wallet Already Exists",
+                "You already have a wallet configured on this device, are you sure you want to replace it?",
+                new UnityAction(GetAddressChallenge),
+                new UnityAction(ReturnToMenu),
+                "Confirm",
+                "Return to menu"
+            );
+        }
+    }
+
+    private void GetAddressChallenge()
     {
         CryptoSingleton.Instance.GetAddressChallenge(
             new UnityAction<string>(OnGetChallenge)
@@ -151,10 +130,10 @@ public class WalletManager : MonoBehaviour
         Account accountByMnemonic = CryptoSingleton.Instance.GetAccountWithMnemonic(mnemonicRepeat);
 
         if (
-            accountByPassword != null &&
-            accountByMnemonic != null &&
-            accountByPassword.Address == PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS) &&
-            accountByMnemonic.Address == PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS)
+            accountByPassword == null ||
+            accountByMnemonic == null ||
+            accountByPassword.Address != PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS) ||
+            accountByMnemonic.Address != PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS)
         )
         {
             dialogUI.SetMessage("Mnemonic or password is not correct.");
@@ -165,6 +144,35 @@ public class WalletManager : MonoBehaviour
             dialogUI.Close();
             UpdatePlayerAddressNewWallet(passwordRepeat);
         }
+    }
+
+    private void UpdatePlayerAddressNewWallet(string password)
+    {
+        if (this.addressChallenge == null)
+        {
+            Debug.LogError("Address challenge does not exist.");
+            return;
+        }
+
+        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
+
+        CryptoSingleton.Instance.UpdatePlayerAddress(
+            account,
+            this.addressChallenge,
+            new UnityAction<string>(ShowNewWalletFinish)
+        );
+    }
+
+    private void ShowNewWalletFinish(string publicAddress)
+    {
+        UMPSingleton.Instance.ShowConfirmationDialog(
+            "Wallet Create Success",
+            string.Format("Your wallet's public identifier is: {0}", publicAddress),
+            new UnityAction(ReturnToMenu),
+            null,
+            "Return to menu",
+            ""
+        );
     }
 
     private void ShowImportWalletEnterPassword()
@@ -199,39 +207,52 @@ public class WalletManager : MonoBehaviour
         else
         {
             string publicAddress = CryptoSingleton.Instance.RecoverPrivateKey(mnemonic, password);
-
+            Debug.Log(publicAddress);
             dialogUI.Close();
-            UpdatePlayerAddressImportWallet(password);
+            ShowImportWalletRepeatPassword();
         }
     }
 
-    private void UpdatePlayerAddressNewWallet(string password)
+    private void ShowImportWalletRepeatPassword()
     {
-        if (this.addressChallenge == null)
-        {
-            Debug.LogError("Address challenge does not exist.");
-            return;
-        }
-
-        Account account = CryptoSingleton.Instance.GetAccountWithPassword(password);
-
-        CryptoSingleton.Instance.UpdatePlayerAddress(
-            account,
-            this.addressChallenge,
-            new UnityAction<string>(ShowNewWalletFinish)
-        );
-    }
-
-    private void ShowNewWalletFinish(string publicAddress)
-    {
-        UMPSingleton.Instance.ShowConfirmationDialog(
-            "Wallet Create Success",
-            string.Format("Your wallet's public identifier is: {0}", publicAddress),
-            new UnityAction(ReturnToMenu),
+        UMPSingleton.Instance.ShowInputFieldAndAreaDialog(
+            "Wallet Double Check",
+            "Please enter your mnemonic and password again",
+            "Password repeat",
+            "Mnemonic repeat",
+            new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyImportWalletRepeatPassword),
             null,
-            "Return to menu",
-            ""
+            "Proceed",
+            "Cancel",
+            InputField.ContentType.Password,
+            InputField.ContentType.Standard
         );
+    }
+
+    private void VerifyImportWalletRepeatPassword(
+        UMP_TwoInputDialogUI dialogUI,
+        string passwordRepeat,
+        string mnemonicRepeat
+    )
+    {
+        Account accountByPassword = CryptoSingleton.Instance.GetAccountWithPassword(passwordRepeat);
+        Account accountByMnemonic = CryptoSingleton.Instance.GetAccountWithMnemonic(mnemonicRepeat);
+
+        if (
+            accountByPassword == null ||
+            accountByMnemonic == null ||
+            accountByPassword.Address != PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS) ||
+            accountByMnemonic.Address != PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS)
+        )
+        {
+            dialogUI.SetMessage("Mnemonic or password is not correct.");
+            dialogUI.SetMessageColor(Color.red);
+        }
+        else
+        {
+            dialogUI.Close();
+            UpdatePlayerAddressImportWallet(passwordRepeat);
+        }
     }
 
     private void UpdatePlayerAddressImportWallet(string password)
