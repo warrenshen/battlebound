@@ -399,19 +399,18 @@ public class Player
         {
             BattleSingleton.Instance.SendChallengePlayMulliganRequest(cardIds);
         }
-
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(this.id);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
-
-        ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-        moveAttributes.SetDeckCardIndices(deckCardIndices);
-
-        challengeMove.SetMoveAttributes(moveAttributes);
-        BattleState.Instance().AddServerMove(challengeMove);
-
-        if (!FlagHelper.IsServerEnabled())
+        else
         {
+            ChallengeMove challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(this.id);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN);
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetDeckCardIndices(deckCardIndices);
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
+
             if (deckCardIndices.Count <= 0)
             {
                 Player opponent = Board.Instance().GetOpponentByPlayerId(this.id);

@@ -30,8 +30,6 @@ public class BoardCreature : Targetable
     private int canAttack;
     public int CanAttack => canAttack;
 
-    private int maxAttacks;
-
     private List<string> abilities;
     public List<string> Abilities => abilities;
 
@@ -66,7 +64,6 @@ public class BoardCreature : Targetable
             this.canAttack = 1;
         }
 
-        this.maxAttacks = 1;
         this.buffsField = challengeCard.GetBuffsField();
         this.buffsHand = challengeCard.GetBuffsHand();
 
@@ -162,6 +159,21 @@ public class BoardCreature : Targetable
         }
 
         return attack;
+    }
+
+    /*
+     * Returns number of times board creature can attack each turn.
+     */
+    public int GetAttackCount()
+    {
+        if (HasAbility(Card.CARD_ABILITY_DOUBLE_STRIKE))
+        {
+            return 2;
+        }
+        else
+        {
+            return 1;
+        }
     }
 
     public int GetHealthMax()
@@ -312,7 +324,7 @@ public class BoardCreature : Targetable
 
     public void OnStartTurn()
     {
-        this.canAttack = this.maxAttacks;
+        this.canAttack = GetAttackCount();
         this.boardCreatureObject.Redraw();
     }
 

@@ -48,7 +48,7 @@ public abstract class Card
     public const string CARD_NAME_PRICKLEPILLAR = "Pricklepillar";
     public const string CARD_NAME_ADDERSPINE_WEEVIL = "Adderspine Weevil";
     public const string CARD_NAME_THIEF_OF_NIGHT = "Thief of Night";
-    public const string CARD_NAME_POWER_SIPHONER = "POWER SIPH#NER";
+    public const string CARD_NAME_POWER_SIPHONER = "POWER Siphoner";
     public const string CARD_NAME_LIL_RUSTY = "Lil' Rusty";
     public const string CARD_NAME_INFERNO_902 = "INFERNO-902";
     public const string CARD_NAME_CHAR_BOT_451 = "CHAR-BOT-451";
@@ -193,6 +193,8 @@ public abstract class Card
     public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS = "CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS";
     public const string CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS = "CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS";
 
+    public const string CARD_ABILITY_DOUBLE_STRIKE = "CARD_ABILITY_DOUBLE_STRIKE";
+
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
         CARD_ABILITY_CHARGE,
@@ -232,6 +234,8 @@ public abstract class Card
         CARD_ABILITY_DEATH_RATTLE_RESUMMON,
         CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
         CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
+
+        CARD_ABILITY_DOUBLE_STRIKE,
     };
 
     public static readonly Dictionary<int, string> ABILITY_CODE_TO_STRING = new Dictionary<int, string>
@@ -273,6 +277,8 @@ public abstract class Card
         { 34, CARD_ABILITY_DEATH_RATTLE_RESUMMON },
         { 35, CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS },
         { 36, CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS },
+
+        { 47, CARD_ABILITY_DOUBLE_STRIKE },
     };
 
     public static void SetHyperCardArtwork(ref HyperCard.Card cardVisual, Card card)
