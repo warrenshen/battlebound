@@ -2543,4 +2543,217 @@ describe("challenge end turn", function() {
       });
     });
   });
+
+  describe("triggered effects", function() {
+    it("should support buff random friendly", function() {
+      const challengeStateData = {
+        "current": {
+          "ID_PLAYER": {
+            "hasTurn": 1,
+            "turnCount": 1,
+            "manaCurrent": 20,
+            "manaMax": 30,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "ID_PLAYER-23",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 20,
+                "health": 30,
+                "cost": 20,
+                "name": "Marshwater Squealer",
+                "description": "Draw a card at end of either player's turn",
+                "abilities": [
+                  7
+                ],
+                "baseId": "C38",
+                "attackStart": 20,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffsField": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 0
+              },
+              {
+                "id": "ID_PLAYER-22",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 10,
+                "health": 30,
+                "cost": 10,
+                "name": "Firesmith Apprentice",
+                "description": "Turnover: Give random friendly creature +10/10",
+                "abilities": [
+                  43
+                ],
+                "baseId": "C39",
+                "attackStart": 10,
+                "costStart": 10,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffsField": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 1
+              },
+              {
+                "id": "ID_PLAYER-24",
+                "playerId": "ID_PLAYER",
+                "level": 1,
+                "category": 0,
+                "attack": 10,
+                "health": 30,
+                "cost": 20,
+                "name": "PAL_V1",
+                "description": "Turnover: Give random friendly creature +0/20",
+                "abilities": [
+                  40
+                ],
+                "baseId": "C40",
+                "attackStart": 10,
+                "costStart": 20,
+                "healthStart": 30,
+                "healthMax": 30,
+                "buffsField": [],
+                "canAttack": 0,
+                "isFrozen": 0,
+                "isSilenced": 0,
+                "spawnRank": 2
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "deck": [],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_PLAYER",
+            "expiredStreak": 0,
+          },
+          "ID_OPPONENT": {
+            "hasTurn": 0,
+            "turnCount": 1,
+            "manaCurrent": 30,
+            "manaMax": 40,
+            "health": 100,
+            "healthMax": 100,
+            "armor": 0,
+            "field": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "hand": [],
+            "deckSize": 0,
+            "deck": [],
+            "cardCount": 8,
+            "mode": 0,
+            "mulliganCards": [],
+            "id": "ID_OPPONENT",
+            "expiredStreak": 0,
+          },
+        },
+        "opponentIdByPlayerId": {
+          "ID_PLAYER": "ID_OPPONENT",
+          "ID_OPPONENT": "ID_PLAYER",
+        },
+        "lastMoves": [],
+        "moves": [],
+        "deadCards": [],
+        "moveTakenThisTurn": 0,
+        "expiredStreakByPlayerId": {
+          "ID_PLAYER": 0,
+          "ID_OPPONENT": 0,
+        },
+        "spawnCount": 0,
+        "deathCount": 0,
+        "nonce": 4,
+      };
+
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeEndTurn",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER"
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = response.scriptData.challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 4);
+
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_END_TURN");
+            assert.equal(lastMoves[0].playerId, "ID_PLAYER");
+
+            assert.equal(lastMoves[1].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[1].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.card.id, "ID_PLAYER-22");
+            assert.equal(lastMoves[1].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[1].attributes.targetId, "ID_PLAYER-23");
+
+            assert.equal(lastMoves[2].category, "MOVE_CATEGORY_RANDOM_TARGET");
+            assert.equal(lastMoves[2].playerId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.card.id, "ID_PLAYER-24");
+            assert.equal(lastMoves[2].attributes.fieldId, "ID_PLAYER");
+            assert.equal(lastMoves[2].attributes.targetId, "ID_PLAYER-23");
+
+            assert.equal(lastMoves[3].category, "MOVE_CATEGORY_DRAW_CARD_DECK_EMPTY");
+            assert.equal(lastMoves[3].playerId, "ID_OPPONENT");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+
+            assert.equal(playerField[0].id, "ID_PLAYER-23");
+            assert.equal(playerField[0].attack, 30);
+            assert.equal(playerField[0].attackStart, 20);
+            assert.equal(playerField[0].health, 60);
+            assert.equal(playerField[0].healthMax, 60);
+            assert.equal(playerField[0].healthStart, 30);
+            assert.equal(playerField[0].buffsField.indexOf(1003) >= 0, true);
+            assert.equal(playerField[0].buffsField.indexOf(1004) >= 0, true);
+
+            assert.equal(challengeStateData.current["ID_PLAYER"].hasTurn, 0);
+            assert.equal(challengeStateData.current["ID_OPPONENT"].hasTurn, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
 });
