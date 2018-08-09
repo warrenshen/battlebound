@@ -18,6 +18,9 @@ public class MenuManager : MonoBehaviour
     public HyperCard.Card galleryCard;
 
     [SerializeField]
+    private Text rankLabel;
+
+    [SerializeField]
     private Text usernameText;
 
     public static MenuManager Instance { get; private set; }
@@ -55,6 +58,12 @@ public class MenuManager : MonoBehaviour
         Card.SetHyperCardFromData(ref this.galleryCard, galleryCreature.card);
     }
 
+    public void RenderRank(int rank)
+    {
+        string value = string.Format("#{0}", rank.ToString("N0"));
+        rankLabel.text = value;
+    }
+
     private void RotateGalleryCreature()
     {
         this.galleryIndex = (this.galleryIndex + 1) % gallery.childCount;
@@ -74,7 +83,7 @@ public class MenuManager : MonoBehaviour
 
         if (address != null)
         {
-            this.usernameText.text = string.Format("{0} | {1}", displayName, address);
+            this.usernameText.text = string.Format("{0} {1}", displayName, address);
         }
         else
         {
@@ -97,6 +106,11 @@ public class MenuManager : MonoBehaviour
     public void LoadMarketplace()
     {
         Application.LoadLevel("Marketplace");
+    }
+
+    public void LoadWallet()
+    {
+        Application.LoadLevel("Wallet");
     }
 
     public void HoverEnterEffect(GameObject target)

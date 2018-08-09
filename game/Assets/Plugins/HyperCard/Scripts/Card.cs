@@ -975,12 +975,22 @@ namespace HyperCard
             this.CardFaceFrameColor = color;
         }
 
+        public void EmptyAllText()
+        {
+            foreach (TextMeshProParam element in this.TmpTextObjects)
+            {
+                element.Value = "";
+            }
+            this.Redraw();
+        }
+
         public void ResetParams()
         {
             GetTextFieldWithKey("Cost").TmpObject.color = Color.white;
             GetTextFieldWithKey("Attack").TmpObject.color = Color.white;
             GetTextFieldWithKey("Health").TmpObject.color = Color.white;
 
+            this.BurningAmount = 0;
             this.BlackAndWhite = false;
             this.CardOpacity = 1;
             this.EnableOutline = false;

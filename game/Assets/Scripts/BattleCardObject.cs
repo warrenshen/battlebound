@@ -127,8 +127,14 @@ public class BattleCardObject : CardObject
         SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
 
         float elapsedTime = 0;
+        bool textHidden = false;
         while (elapsedTime < duration)
         {
+            if (elapsedTime > duration / 2.5f && !textHidden)
+            {
+                this.visual.EmptyAllText();
+                textHidden = true;
+            }
             this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
             elapsedTime += Time.deltaTime;
             yield return new WaitForEndOfFrame();
