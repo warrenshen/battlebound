@@ -12,8 +12,6 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
     private BoardWeapon weapon;
     public BoardWeapon Weapon => weapon;
 
-    private SpriteRenderer spriteRenderer;
-
     TextMeshPro healthLabel;
     TextMeshPro nameLabel;
 
@@ -28,9 +26,6 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
 
         this.audioSource = GetComponent<AudioSource>();
 
-        this.spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        this.spriteRenderer.sortingOrder = -5;
-
         CreateLabelOnAvatar(ref this.nameLabel, Vector3.left * 1.05f);
         CreateLabelOnAvatar(ref this.healthLabel, Vector3.right * 1.05f);
 
@@ -43,7 +38,7 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
 
     private void CreateLabelOnAvatar(ref TextMeshPro assignTo, Vector3 offset)
     {
-        GameObject textHolder = new GameObject("Health Label");
+        GameObject textHolder = new GameObject("Label");
         assignTo = textHolder.AddComponent<TextMeshPro>();
         assignTo.fontSize = 4;
         assignTo.fontStyle = FontStyles.Bold;
@@ -52,7 +47,8 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
         RectTransform textContainer = assignTo.GetComponent<RectTransform>();
         textContainer.sizeDelta = new Vector2(2, 1);
         textContainer.anchoredPosition = new Vector3(0, 2.6F, -0.5F) + offset;
-        textHolder.transform.SetParent(gameObject.transform, false);
+        textHolder.transform.rotation = Quaternion.identity;
+        textHolder.transform.SetParent(this.transform, false);
         textHolder.layer = textHolder.transform.parent.gameObject.layer;
     }
 
@@ -132,21 +128,21 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
 
     public void Die()
     {
-        StartCoroutine("Dissolve", 2);
+        //StartCoroutine("Dissolve", 2);
     }
 
-    private IEnumerator Dissolve(float duration)
-    {
-        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
-        float elapsedTime = 0;
-        while (elapsedTime < duration)
-        {
-            spriteRenderer.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
-            elapsedTime += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        Destroy(gameObject);
-    }
+    //private IEnumerator Dissolve(float duration)
+    //{
+    //    SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
+    //    float elapsedTime = 0;
+    //    while (elapsedTime < duration)
+    //    {
+    //        spriteRenderer.material.SetFloat("_Progress", Mathf.Lerp(1, 0, (elapsedTime / duration)));
+    //        elapsedTime += Time.deltaTime;
+    //        yield return new WaitForEndOfFrame();
+    //    }
+    //    Destroy(gameObject);
+    //}
 
     public void Redraw()
     {
