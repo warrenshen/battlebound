@@ -315,6 +315,20 @@ public class BattleState
 
     public int AddServerMove(ChallengeMove challengeMove)
     {
+        if (
+            FlagHelper.IsServerEnabled() &&
+            (
+                challengeMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN ||
+                challengeMove.Category == ChallengeMove.MOVE_CATEGORY_FINISH_MULLIGAN
+            )
+        )
+        {
+            Debug.LogError(
+                string.Format("Cannot add invalid server move in connected mode: {0}", challengeMove.Category)
+            );
+            ReloadBattleOnError();
+        }
+
         int rank = GetServerMoveRank();
         challengeMove.SetRank(rank);
 

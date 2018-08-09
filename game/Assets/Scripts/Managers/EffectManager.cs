@@ -1912,8 +1912,12 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        targetedCreature.Freeze(1);
         int damageTaken = targetedCreature.TakeDamage(10);
+        if (targetedCreature.Health > 0)
+        {
+            targetedCreature.Freeze(1);
+        }
+
         effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
 
         return effects;
