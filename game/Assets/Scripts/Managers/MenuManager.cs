@@ -28,10 +28,13 @@ public class MenuManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
         if (!SparkSingleton.Instance.IsAuthenticated)
         {
             this.usernameText.text = "Not logged in";
         }
+
+        RenderRank(-1);
     }
 
     private void Start()
@@ -58,10 +61,25 @@ public class MenuManager : MonoBehaviour
         Card.SetHyperCardFromData(ref this.galleryCard, galleryCreature.card);
     }
 
-    public void RenderRank(int rank)
+    private void RenderRank(int rank)
     {
-        string value = string.Format("#{0}", rank.ToString("N0"));
-        rankLabel.text = value;
+        string rankString;
+
+        if (rank < 0)
+        {
+            rankString = "Loading...";
+        }
+        else if (rank == 0)
+        {
+            rankString = "Unranked";
+        }
+        else
+        {
+            rankString = rank.ToString("N0");
+        }
+
+        string value = string.Format("#{0}", rankString);
+        this.rankLabel.text = value;
     }
 
     private void RotateGalleryCreature()
@@ -74,6 +92,7 @@ public class MenuManager : MonoBehaviour
     {
         string displayName = SparkSingleton.Instance.DisplayName;
         string address = SparkSingleton.Instance.Address;
+        int rankGlobal = SparkSingleton.Instance.RankGlobal;
 
         if (displayName == null && address == null)
         {
@@ -89,6 +108,8 @@ public class MenuManager : MonoBehaviour
         {
             this.usernameText.text = displayName;
         }
+
+        RenderRank(rankGlobal);
 
         DeckStore.Instance().GetDecksWithCallback(null);
     }
