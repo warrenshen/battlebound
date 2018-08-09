@@ -6,7 +6,6 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("ChallengeMovesModule");
 require("ChallengeEndTurnModule");
 
 const challengeStateString = Spark.getData().challengeStateString;

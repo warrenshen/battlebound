@@ -19,6 +19,7 @@ const EFFECT_SUMMON_CREATURE = "EFFECT_SUMMON_CREATURE";
 const EFFECT_H_PRIORITY_ORDER = [
     CARD_ABILITY_LIFE_STEAL,
     CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+    CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
     EFFECT_CARD_DIE,
     EFFECT_SUMMON_CREATURE,
 ];
@@ -38,6 +39,9 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY,
     CARD_ABILITY_END_TURN_DRAW_CARD,
     CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
+    CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY,
+    CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN,
+    CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY,
 
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
     CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
@@ -51,14 +55,21 @@ const EFFECT_L_PRIORITY_ORDER = [
     CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY,
     CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
     CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE,
+    CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY,
+    CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
+    CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY,
+    CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY,
 
     CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
     CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
     CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
     CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
+    CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY,
     CARD_ABILITY_DEATH_RATTLE_RESUMMON,
     CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
     CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
+    CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
+    CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
     CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
     EFFECT_PLAYER_AVATAR_DIE,
@@ -71,6 +82,9 @@ const EFFECTS_END_TURN = [
     CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY,
     CARD_ABILITY_END_TURN_DRAW_CARD,
     CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
+    CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY,
+    CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN,
+    CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY,
 ];
 
 const EFFECTS_START_TURN = [
@@ -90,6 +104,10 @@ const EFFECTS_BATTLE_CRY = [
     CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY,
     CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
     CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE,
+    CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY,
+    CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
+    CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY,
+    CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY,
 ];
 
 const EFFECTS_DEATH_RATTLE = [
@@ -101,6 +119,17 @@ const EFFECTS_DEATH_RATTLE = [
     CARD_ABILITY_DEATH_RATTLE_RESUMMON,
     CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
     CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
+    CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
+    CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
+];
+
+const EFFECTS_DAMAGE_TAKEN = [
+    CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+    CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
+];
+
+const EFFECTS_DAMAGE_DONE = [
+    CARD_ABILITY_LIFE_STEAL,
 ];
 
 function addToQueues(newEffects) {
@@ -211,6 +240,9 @@ function processHQueue(challengeStateData, effect) {
         case CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY:
             newEffects = abilityDamagePlayerFace(challengeStateData, effect, 30);
             break;
+        case CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY:
+            newEffects = abilityDamageOpponentFace(challengeStateData, effect, 20);
+            break;
         case EFFECT_CARD_DIE:
             newEffects = effectCardDie(challengeStateData, effect);
             break;
@@ -319,7 +351,7 @@ function effectRandomTarget(challengeStateData, effect) {
     const playerId = effect.playerId;
     const card = effect.card;
 
-    if (card.name === "Bombshell Bombadier") {
+    if (card.name === CARD_NAME_BOMBSHELL_BOMBADIER) {
         return _effectRandomBombshellBombadier(challengeStateData, effect);
     } else if (card.name === SPELL_NAME_BOMBS_AWAY) {
         return _effectRandomSprayNPray(challengeStateData, effect);
@@ -439,7 +471,17 @@ function processLQueue(challengeStateData, effect) {
         case CARD_ABILITY_END_TURN_HEAL_TWENTY:
             newEffects = abilityEndTurnHeal(challengeStateData, effect, 20);
             break;
+        case CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY:
+            newEffects = abilityBoostRandomFriendly(challengeStateData, effect);
+            break;
+        case CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN:
+            newEffects = abilityBoostRandomFriendly(challengeStateData, effect);
+            break;
+        case CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY:
+            newEffects = abilityHealFace(challengeStateData, effect, 30);
+            break;
         case CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
+        case CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX:
             newEffects = abilityHealFriendlyMax(challengeStateData, effect);
             break;
         case CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT:
@@ -464,7 +506,14 @@ function processLQueue(challengeStateData, effect) {
             newEffects = abilitySilenceAllOpponentCreatures(challengeStateData, effect);
             break;
         case CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE:
+        case CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE:
             newEffects = abilityReviveHighestCostCreature(challengeStateData, effect);
+            break;
+        case CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY:
+            newEffects = abilityAttackRandomFrozen(challengeStateData, effect);
+            break;
+        case CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN:
+            newEffects = abilityKillRandomFrozen(challengeStateData, effect);
             break;
         case CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN:
         case CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
@@ -473,6 +522,12 @@ function processLQueue(challengeStateData, effect) {
         case CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY:
         case CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
             newEffects = abilityAttackInFront(challengeStateData, effect, 20);
+            break;
+        case CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY:
+            newEffects = abilityHealFace(challengeStateData, effect, 20);
+            break;
+        case CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY:
+            newEffects = abilityBoostAdjacentFriendly(challengeStateData, effect);
             break;
         case CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
             newEffects = abilityDeathRattleAttackFace(challengeStateData, effect, 10);
@@ -532,28 +587,90 @@ function effectPlayerAvatarDie(challengeStateData, effect) {
 
 function abilityEndTurnHeal(challengeStateData, effect, amount) {
     const playerId = effect.playerId;
+    const cardId = effect.cardId;
+    
     const playerState = challengeStateData.current[playerId];
-    if (playerState == null) {
-        setScriptError("Effect player ID is invalid.");
-    }
-
     const playerField = playerState.field;
-    const card = playerField.find(function(fieldCard) { return fieldCard.id === effect.cardId });
-    if (card == null) {
-        setScriptError("Effect card ID is invalid.");
-    }
+    const card = playerField.find(function(fieldCard) { return fieldCard.id === cardId });
 
     healCard(card, 20);
+    return [];
+}
+
+function abilityBoostRandomFriendly(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const cardId = effect.cardId;
+    
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    const card = playerField.find(function(fieldCard) { return fieldCard.id === cardId });
+    
+    const friendlyCards = _getPlayerCreatureCardsExcept(challengeStateData, playerId, cardId);
+    if (friendlyCards.length <= 0) {
+        return [];
+    }
+    
+    const targetCard = _selectRandom(friendlyCards);
+    const move = {
+        playerId: playerId,
+        category: MOVE_CATEGORY_RANDOM_TARGET,
+        attributes: {
+            card: card,
+            fieldId: targetCard.playerId,
+            targetId: targetCard.id,
+        },
+    };
+    addChallengeMove(challengeStateData, move);
+
+    var buff;
+    switch (effect.name) {
+        case CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY:
+            buff = BUFF_CATEGORY_ZERO_TWENTY;
+            break;
+        case CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN:
+            buff = BUFF_CATEGORY_TEN_TEN;
+            break;
+        default:
+            setScriptError("Invalid effect name: " + effect.name);
+            break;
+    }
+    
+    buffFieldCard(targetCard, buff);
+    return [];
+}
+
+function abilityBoostAdjacentFriendly(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const cardId = effect.cardId;
+    
+    var buff;
+    switch (effect.name) {
+        case CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY:
+            buff = BUFF_CATEGORY_THIRTY_THIRTY;
+            break;
+        default:
+            setScriptError("Invalid effect name: " + effect.name);
+            break;
+    }
+    
+    const adjacentCards = _getAdjacentCardsByPlayerIdAndCardId(challengeStateData, playerId, cardId);
+    adjacentCards.forEach(function(adjacentCard) {
+        buffFieldCard(adjacentCard, buff);
+    });
+    
+    return [];
+}
+
+function abilityHealFace(challengeStateData, effect, amount) {
+    const playerId = effect.playerId;
+    const playerState = challengeStateData.current[playerId];
+    healFace(playerState, amount);
     return [];
 }
 
 function abilityHealFriendlyMax(challengeStateData, effect) {
     const playerId = effect.playerId;
     const playerState = challengeStateData.current[playerId];
-    if (playerState == null) {
-        setScriptError("Effect player ID is invalid.");
-    }
-
     const playerField = playerState.field;
     playerField.forEach(function(fieldCard) {
         if (fieldCard.id != "EMPTY") {
@@ -660,6 +777,15 @@ function abilityDamagePlayerFace(challengeStateData, effect, amount) {
     return _getEffectsOnFaceDamageTaken(challengeStateData, playerId, playerState, damageTaken);
 }
 
+function abilityDamageOpponentFace(challengeStateData, effect, amount) {
+    const playerId = effect.playerId;
+    const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+    const opponentState = challengeStateData.current[opponentId];
+
+    const damageTaken = damageFace(opponentState, amount);
+    return _getEffectsOnFaceDamageTaken(challengeStateData, opponentId, opponentState, damageTaken);    
+}
+
 function _getAllCreatureCards(challengeStateData, playerId) {
     const playerState = challengeStateData.current[playerId];
     const playerField = playerState.field;
@@ -687,13 +813,18 @@ function _getAllCreatureCards(challengeStateData, playerId) {
 function _getPlayerCreatureCards(challengeStateData, playerId) {
     const playerState = challengeStateData.current[playerId];
     const playerField = playerState.field;
-
-    const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-    const opponentState = challengeStateData.current[opponentId];
-    const opponentField = opponentState.field;
-
-    return opponentField.filter(function(fieldCard) {
+    return playerField.filter(function(fieldCard) {
         return fieldCard.id != "EMPTY";
+    });
+}
+
+/*
+ * Return all player creature cards except one with given card ID.
+ */
+function _getPlayerCreatureCardsExcept(challengeStateData, playerId, cardId) {
+    const playerCards = _getPlayerCreatureCards(challengeStateData, playerId);
+    return playerCards.filter(function(playerCard) {
+        return playerCard.id != cardId;
     });
 }
 
@@ -707,6 +838,13 @@ function _getOpponentCreatureCards(challengeStateData, playerId) {
 
     return opponentField.filter(function(fieldCard) {
         return fieldCard.id != "EMPTY";
+    });
+}
+
+function _getOpponentCreatureCardsFrozen(challengeStateData, playerId) {
+    const opponentCards = _getOpponentCreatureCards(challengeStateData, playerId);
+    return opponentCards.filter(function(opponentCard) {
+        return opponentCard.isFrozen > 0;
     });
 }
 
@@ -761,7 +899,11 @@ function _cleanCardForSummon(challengeStateData, dirtyCard) {
     spawnCard.buffsField = [];
 
     if (hasCardAbilityOrBuff(spawnCard, CARD_ABILITY_CHARGE)) {
-        spawnCard.canAttack = 1;
+        if (hasCardAbilityOrBuff(spawnCard, CARD_ABILITY_DOUBLE_STRIKE)) {
+            spawnCard.canAttack = 2;
+        } else {
+            spawnCard.canAttack = 1;
+        }
     } else {
         spawnCard.canAttack = 0;
     }
@@ -782,7 +924,11 @@ function _cleanCardForConvert(challengeStateData, dirtyCard, playerId) {
     spawnCard.playerId = playerId;
 
     if (hasCardAbilityOrBuff(spawnCard, CARD_ABILITY_CHARGE)) {
-        spawnCard.canAttack = 1;
+        if (hasCardAbilityOrBuff(spawnCard, CARD_ABILITY_DOUBLE_STRIKE)) {
+            spawnCard.canAttack = 2;
+        } else {
+            spawnCard.canAttack = 1;
+        }
     } else {
         spawnCard.canAttack = 0;
     }
@@ -844,6 +990,64 @@ function abilityReviveHighestCostCreature(challengeStateData, effect) {
     }
 
     return _getEffectsForReviveCardRandomLocation(challengeStateData, playerId, reviveCard);
+}
+
+function abilityAttackRandomFrozen(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const cardId = effect.cardId;
+    
+    const frozenCards = _getOpponentCreatureCardsFrozen(challengeStateData, playerId);
+    if (frozenCards.length <= 0) {
+        return [];
+    }
+    
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    const card = playerField.find(function(fieldCard) { return fieldCard.id === cardId });
+    
+    const targetCard = _selectRandom(frozenCards);
+    const move = {
+        playerId: playerId,
+        category: MOVE_CATEGORY_RANDOM_TARGET,
+        attributes: {
+            card: card,
+            fieldId: targetCard.playerId,
+            targetId: targetCard.id,
+        },
+    };
+    addChallengeMove(challengeStateData, move);
+
+    const damageTaken = damageCard(targetCard, 20);
+    return _getEffectsOnCardDamageTaken(challengeStateData, targetCard, damageTaken);
+}
+
+function abilityKillRandomFrozen(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const cardId = effect.cardId;
+    
+    const frozenCards = _getOpponentCreatureCardsFrozen(challengeStateData, playerId);
+    if (frozenCards.length <= 0) {
+        return [];
+    }
+    
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    const card = playerField.find(function(fieldCard) { return fieldCard.id === cardId });
+    
+    const targetCard = _selectRandom(frozenCards);
+    const move = {
+        playerId: playerId,
+        category: MOVE_CATEGORY_RANDOM_TARGET,
+        attributes: {
+            card: card,
+            fieldId: targetCard.playerId,
+            targetId: targetCard.id,
+        },
+    };
+    addChallengeMove(challengeStateData, move);
+    
+    damageCardMax(targetCard, 20);
+    return _getEffectsOnCardDeath(challengeStateData, targetCard);
 }
 
 function abilityAttackInFront(challengeStateData, effect, amount) {
@@ -1172,15 +1376,19 @@ function _addExpCard(challengeStateData, card) {
 function _getEffectsOnCardDamageDealt(challengeStateData, card, amount) {
     _addExpCard(challengeStateData, card);
 
-    var newEffects = [];
+    const newEffects = [];
 
-    if (hasCardAbilityOrBuff(card, CARD_ABILITY_LIFE_STEAL)) {
-        newEffects.push({
-            playerId: card.playerId,
-            cardId: card.id,
-            name: CARD_ABILITY_LIFE_STEAL,
-            spawnRank: card.spawnRank,
-            value: amount,
+    if (amount > 0) {
+        EFFECTS_DAMAGE_DONE.forEach(function(effectName) {
+            if (hasCardAbilityOrBuff(card, effectName)) {
+                newEffects.push({
+                    playerId: card.playerId,
+                    cardId: card.id,
+                    name: effectName,
+                    spawnRank: card.spawnRank,
+                    value: amount,
+                });
+            }
         });
     }
 
@@ -1190,12 +1398,17 @@ function _getEffectsOnCardDamageDealt(challengeStateData, card, amount) {
 function _getEffectsOnCardDamageTaken(challengeStateData, card, amount) {
     var newEffects = [];
 
-    if (hasCardAbilityOrBuff(card, CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY) && amount > 0) {
-        newEffects.push({
-            playerId: card.playerId,
-            cardId: card.id,
-            name: CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
-            spawnRank: card.spawnRank,
+    if (amount > 0) {
+        EFFECTS_DAMAGE_TAKEN.forEach(function(effectName) {
+            if (hasCardAbilityOrBuff(card, effectName)) {
+                newEffects.push({
+                    playerId: card.playerId,
+                    cardId: card.id,
+                    name: effectName,
+                    spawnRank: card.spawnRank,
+                    value: amount,
+                });
+            }
         });
     }
 
@@ -1418,9 +1631,43 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
 
         newEffects = newEffects.concat(_getEffectsOnCardDamageDealt(challengeStateData, attackingCard, attackingDamageDone));
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, defendingCard, attackingDamageDone));
+        
+        if (
+            hasCardAbilityOrBuff(attackingCard, CARD_ABILITY_ICY) &&
+            defendingCard.health > 0 &&
+            defendingCard.isFrozen <= 0
+        ) {
+            defendingCard.isFrozen = 1;
+        }
 
+        if (
+            hasCardAbilityOrBuff(attackingCard, CARD_ABILITY_PIERCING) &&
+            defendingCard.health <= 0
+        ) {
+            const attackingDamagePierce = attackingCard.attack - attackingDamageDone;
+            const attackingDamageDoneFace = damageFace(defenderState, attackingDamagePierce);
+            newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, fieldId, defenderState, attackingDamageDoneFace));
+        }
+        
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, attackingCard, defendingDamageDone));
         newEffects = newEffects.concat(_getEffectsOnCardDamageDealt(challengeStateData, defendingCard, defendingDamageDone));
+        
+        if (
+            hasCardAbilityOrBuff(defendingCard, CARD_ABILITY_ICY) &&
+            attackingCard.health > 0 &&
+            attackingCard.isFrozen <= 0
+        ) {
+            attackingCard.isFrozen = 1;
+        }
+        
+        if (
+            hasCardAbilityOrBuff(defendingCard, CARD_ABILITY_PIERCING) &&
+            attackingCard.health <= 0
+        ) {
+            const defendingDamagePierce = defendingCard.attack - defendingDamageDone;
+            const defendingDamageDoneFace = damageFace(defenderState, defendingDamagePierce);
+            newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, playerId, attackerState, defendingDamagePierce));
+        }
 
         var adjacentAttack = 0;
         if (hasCardAbilityOrBuff(attackingCard, CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN)) {
@@ -1521,7 +1768,9 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, opponentCard, damageDone));
     } else if (playedCard.name === SPELL_NAME_DEEP_FREEZE) {
         damageDone = damageCard(opponentCard, 10);
-        opponentCard.isFrozen = 1;
+        if (opponentCard.health > 0) {
+            opponentCard.isFrozen = 1;
+        }
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, opponentCard, damageDone));
     } else if (playedCard.name === SPELL_NAME_WIDESPREAD_FROSTBITE) {
         opponentCard.isFrozen = 2;

@@ -6,7 +6,7 @@
 //
 // ====================================================================================================
 require("AttackModule");
-require("ChallengeMovesModule");
+require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
 function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attributes) {
