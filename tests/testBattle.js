@@ -964,7 +964,7 @@ describe("challenge events", function() {
     });
   });
 
-  describe("attack", function() {
+  describe("attack adjacent", function() {
     const challengeStateData = {
       "current": {
         "ID_OPPONENT": {
@@ -1339,6 +1339,248 @@ describe("challenge events", function() {
 
             assert.equal(opponentField[1].id, "EMPTY");
             assert.equal(opponentField[2].id, "EMPTY");
+
+            resolve();
+          }
+        );
+      });
+    });
+  });
+
+  describe("attack icy", function() {
+    const challengeStateData = {
+      "current": {
+        "ID_OPPONENT": {
+          "hasTurn": 0,
+          "manaCurrent": 0,
+          "manaMax": 70,
+          "health": 100,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "ID_OPPONENT-9",
+              "playerId": "ID_OPPONENT",
+              "level": 1,
+              "category": 0,
+              "attack": 40,
+              "health": 60,
+              "cost": 60,
+              "name": "Temple Guardian",
+              "description": "Charge; Shield",
+              "abilities": [
+                2
+              ],
+              "baseId": "C9",
+              "attackStart": 40,
+              "costStart": 60,
+              "healthStart": 60,
+              "healthMax": 60,
+              "buffs": [],
+              "canAttack": 0,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 0
+            },
+            {
+              "id": "ID_OPPONENT-25",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 0,
+              "attack": 40,
+              "health": 80,
+              "cost": 70,
+              "name": "Sabre, Crystalline Dragon",
+              "description": "Freeze enemy in combat",
+              "abilities": [
+                42
+              ],
+              "baseId": "C36",
+              "attackStart": 40,
+              "costStart": 70,
+              "healthStart": 80,
+              "healthMax": 80,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 1
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 0,
+          "cardCount": 6,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "ID_OPPONENT",
+          "expiredStreak": 0
+        },
+        "ID_PLAYER": {
+          "hasTurn": 1,
+          "manaCurrent": 70,
+          "manaMax": 70,
+          "health": 90,
+          "healthMax": 100,
+          "armor": 0,
+          "field": [
+            {
+              "id": "ID_PLAYER-28",
+              "playerId": "ID_PLAYER",
+              "level": 1,
+              "category": 0,
+              "attack": 40,
+              "health": 80,
+              "cost": 70,
+              "name": "Sabre, Crystalline Dragon",
+              "description": "Freeze enemy in combat",
+              "abilities": [
+                42
+              ],
+              "baseId": "C34",
+              "attackStart": 40,
+              "costStart": 70,
+              "healthStart": 80,
+              "healthMax": 80,
+              "buffs": [],
+              "canAttack": 1,
+              "isFrozen": 0,
+              "isSilenced": 0,
+              "spawnRank": 3
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            }
+          ],
+          "hand": [],
+          "deckSize": 1,
+          "cardCount": 8,
+          "mode": 0,
+          "mulliganCards": [],
+          "id": "ID_PLAYER",
+          "expiredStreak": 0
+        },
+      },
+      "opponentIdByPlayerId": {
+        "ID_PLAYER": "ID_OPPONENT",
+        "ID_OPPONENT": "ID_PLAYER",
+      },
+      "lastMoves": [],
+      "moves": [],
+      "expCardIdsByPlayerId": {
+        "ID_PLAYER": [],
+        "ID_OPPONENT": [],
+      },
+      "deadCards": [],
+      "moveTakenThisTurn": 0,
+      "expiredStreakByPlayerId": {
+        "ID_PLAYER": 0,
+        "ID_OPPONENT": 0,
+      },
+      "spawnCount": 2,
+      "deathCount": 0,
+      "nonce": 14
+    };
+
+    it("should support freeze enemy on attack", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-28",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "ID_OPPONENT-9",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-28");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_OPPONENT-9");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[0].id, "ID_PLAYER-28");
+            assert.equal(playerField[0].health, 40);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[0].id, "ID_OPPONENT-9");
+            assert.equal(opponentField[0].health, 60);
+            assert.equal(opponentField[0].isFrozen, 1);
+
+            resolve();
+          }
+        );
+      });
+    });
+
+    it("should support freeze enemy on defend", function() {
+      return new Promise((resolve) => {
+        gamesparks.sendWithData(
+          "LogEventRequest",
+          {
+            eventKey: "TestChallengeCardAttackCard",
+            challengeStateString: JSON.stringify(challengeStateData),
+            challengePlayerId: "ID_PLAYER",
+            cardId: "ID_PLAYER-28",
+            attributesJson: {
+              fieldId: "ID_OPPONENT",
+              targetId: "ID_OPPONENT-25",
+            },
+          },
+          function(response) {
+            const challengeStateData = response.scriptData.challengeStateData;
+
+            const lastMoves = challengeStateData.lastMoves;
+            assert.equal(lastMoves.length, 1);
+            assert.equal(lastMoves[0].category, "MOVE_CATEGORY_CARD_ATTACK");
+            assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-28");
+            assert.equal(lastMoves[0].attributes.fieldId, "ID_OPPONENT");
+            assert.equal(lastMoves[0].attributes.targetId, "ID_OPPONENT-25");
+
+            const playerState = challengeStateData.current["ID_PLAYER"];
+            const playerField = playerState.field;
+            assert.equal(playerField[0].id, "ID_PLAYER-28");
+            assert.equal(playerField[0].health, 40);
+            assert.equal(playerField[0].isFrozen, 2);
+
+            const opponentState = challengeStateData.current["ID_OPPONENT"];
+            const opponentField = opponentState.field;
+            assert.equal(opponentField[1].id, "ID_OPPONENT-25");
+            assert.equal(opponentField[1].health, 40);
+            assert.equal(opponentField[1].isFrozen, 1);
 
             resolve();
           }
