@@ -94,6 +94,38 @@ function silenceCard(card) {
     card.health = Math.min(card.health, card.healthMax);
 }
 
+function buffFieldCard(card, buff) {
+    if (VALID_BUFF_FIELDS.indexOf(buff) < 0) {
+        setScriptError("Invalid buff field: " + buff);
+    }
+    
+    card.buffsField.push(buff);
+    
+    switch (buff) {
+        case CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY:
+            card.health += 20;
+            card.healthMax += 20;
+            break;
+        case BUFF_CATEGORY_TEN_TEN:
+            card.attack += 10;
+            card.health += 10;
+            card.healthMax += 10;
+            break;
+        case BUFF_CATEGORY_THIRTY_THIRTY:
+            card.attack += 30;
+            card.health += 30;
+            card.healthMax += 30;
+            break;
+        case BUFF_CATEGORY_ZERO_TWENTY:
+            card.health += 20;
+            card.healthMax += 20;
+            break;
+        default:
+            setScriptError("Invalid buff field: " + buff);
+            break;
+    }
+}
+
 /**
  * @return int - damage done to face
  **/
@@ -154,7 +186,6 @@ function filterDeadCardsFromFields(playerField, opponentField) {
         
     return [newPlayerField, newOpponentField, playerDeadCards, opponentDeadCards];
 }
-
 
 /**
  * @param deck - a non-empty array of Card objects
@@ -319,6 +350,7 @@ function _updateHandCardCosts(playerState) {
         }
     });
     
+    Spark.getLog().debug(BUFF_HAND_DECREASE_COST_BY_COLOR);
     hand.forEach(function(card) {
         const color = card.color;
         if (color <= 0) {

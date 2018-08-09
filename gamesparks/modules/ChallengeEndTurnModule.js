@@ -6,6 +6,7 @@
 //
 // ====================================================================================================
 require("AttackModule");
+require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
 function handleChallengeEndTurn(challengeStateData, playerId) {
@@ -84,8 +85,11 @@ function handleChallengeEndTurn(challengeStateData, playerId) {
             setScriptError("Creature on opponent field that is dead at start turn.");
         }
         
-        // TODO: maybe should not set to 1 for all cards.
-        fieldCard.canAttack = 1;
+        if (hasCardAbilityOrBuff(fieldCard, CARD_ABILITY_DOUBLE_STRIKE)) {
+            fieldCard.canAttack = 2;
+        } else {
+            fieldCard.canAttack = 1;
+        }
     }
     
     // Player with next turn should start with no move taken.

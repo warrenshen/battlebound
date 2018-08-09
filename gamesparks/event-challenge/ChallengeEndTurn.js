@@ -7,7 +7,6 @@
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
-require("ChallengeMovesModule");
 require("ChallengeEndTurnModule");
 require("CancelScheduledTimeEventsModule");
 
@@ -54,7 +53,7 @@ if (!isChallengeOver) {
     // since this will already be sent because this is a challenge event.
     challenge.consumeTurn(playerId);
     
-    startTurnTimeEvents(challengeId, opponentId);
+    // startTurnTimeEvents(challengeId, opponentId);
 }
 
 require("PersistChallengeStateModule");
