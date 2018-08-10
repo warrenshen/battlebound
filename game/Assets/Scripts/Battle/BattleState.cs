@@ -40,6 +40,7 @@ public class BattleState
     public Player ActivePlayer => activePlayer;
 
     private Dictionary<string, Player> playerIdToPlayer;
+    private Dictionary<string, string> playerIdToOpponentId;
 
     private static BattleState instance;
 
@@ -119,6 +120,7 @@ public class BattleState
         this.serverMoves = new List<ChallengeMove>();
 
         this.playerIdToPlayer = new Dictionary<string, Player>();
+        this.playerIdToOpponentId = new Dictionary<string, string>();
         this.players = new List<Player>();
 
         this.spawnCount = 0;
@@ -129,13 +131,14 @@ public class BattleState
         this.playerIdToPlayer[this.you.Id] = this.you;
         this.playerIdToPlayer[this.opponent.Id] = this.opponent;
 
+        this.playerIdToOpponentId[this.you.Id] = this.opponent.Id;
+        this.playerIdToOpponentId[this.opponent.Id] = this.you.Id;
+
         this.players.Add(this.you);
         this.players.Add(this.opponent);
 
         Board.Instance().RegisterPlayer(this.you);
         Board.Instance().RegisterPlayer(this.opponent);
-        Board.Instance().RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
-        Board.Instance().RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -163,6 +166,7 @@ public class BattleState
         this.serverMoves = serverMoves;
 
         this.playerIdToPlayer = new Dictionary<string, Player>();
+        this.playerIdToOpponentId = new Dictionary<string, string>();
         this.players = new List<Player>();
 
         this.you = new Player(playerState, "Player");
@@ -171,11 +175,11 @@ public class BattleState
         this.playerIdToPlayer[this.you.Id] = this.you;
         this.playerIdToPlayer[this.opponent.Id] = this.opponent;
 
+        this.playerIdToOpponentId[this.you.Id] = this.opponent.Id;
+        this.playerIdToOpponentId[this.opponent.Id] = this.you.Id;
+
         this.players.Add(this.you);
         this.players.Add(this.opponent);
-
-        Board.Instance().RegisterPlayerOpponent(this.you.Id, this.opponent.Id);
-        Board.Instance().RegisterPlayerOpponent(this.opponent.Id, this.you.Id);
     }
 
     private void RegisterPlayersWithState(
@@ -204,7 +208,7 @@ public class BattleState
         }
 
         Player inactivePlayer = GetPlayerById(
-            Board.Instance().GetOpponentIdByPlayerId(this.activePlayer.Id)
+            GetOpponentIdByPlayerId(this.activePlayer.Id)
         );
 
         if (BattleSingleton.Instance.IsEnvironmentTest())
@@ -280,6 +284,16 @@ public class BattleState
             );
         }
         return this.playerIdToPlayer[playerId];
+    }
+
+    public string GetOpponentIdByPlayerId(string playerId)
+    {
+        return this.playerIdToOpponentId[playerId];
+    }
+
+    public Player GetOpponentByPlayerId(string playerId)
+    {
+        return GetPlayerById(GetOpponentIdByPlayerId(playerId));
     }
 
     public bool IsNormalMode()
@@ -726,7 +740,7 @@ public class BattleState
         }
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetPlayerId(GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
         AddDeviceMove(challengeMove);
     }
@@ -739,7 +753,7 @@ public class BattleState
         }
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetPlayerId(GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
         AddDeviceMove(challengeMove);
     }
@@ -1161,7 +1175,7 @@ public class BattleState
         }
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(loserId));
+        challengeMove.SetPlayerId(GetOpponentIdByPlayerId(loserId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
         AddServerMove(challengeMove);
     }

@@ -204,7 +204,7 @@ public class BoardCreature : Targetable
         {
             switch (buff)
             {
-                case Card.CARD_NAME_UNSTABLE_POWER:
+                case Card.BUFF_CATEGORY_UNSTABLE_POWER:
                     break;
                 case Card.BUFF_CATEGORY_BESTOWED_VIGOR:
                     health += 10;
