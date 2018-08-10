@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
+using System.Collections;
 
 [System.Serializable]
 public class CardObject : MouseWatchable
 {
     protected static Vector3 CARD_BOUNDS = new Vector3(2.3F, 3.5F, 0.2F);
 
-    //[SerializeField]
+    [SerializeField]
     protected Card card;
     public Card Card => card;
 
@@ -79,18 +81,41 @@ public class CardObject : MouseWatchable
         this.reset.rotation = this.transform.localRotation;
     }
 
-    public virtual void Release()
-    {
-
-    }
-
     public void Recycle()
     {
         if (this.visual != null)
         {
             CardSingleton.Instance.ReturnCardToPool(this.visual);
         }
-
         Destroy(gameObject);
+    }
+
+    public void Burn(UnityAction onBurnFinish, float duration = 1F)
+    {
+        StartCoroutine("Dissolve", new object[2] { duration, onBurnFinish });  //called when overdraw
+        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
+    }
+
+    protected virtual IEnumerator Dissolve(object[] args)
+    {
+        float duration = (float)args[0];
+        UnityAction onBurnFinish = args[1] as UnityAction;
+
+        float elapsedTime = 0;
+        bool textHidden = false;
+        while (elapsedTime < duration)
+        {
+            if (elapsedTime > duration / 2.5f && !textHidden)
+            {
+                this.visual.EmptyAllText();
+                textHidden = true;
+            }
+            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        Recycle();
+        onBurnFinish.Invoke();
+        yield return null;
     }
 }

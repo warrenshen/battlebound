@@ -619,7 +619,7 @@ public class BattleManager : MonoBehaviour
     )
     {
         float centered = -(mulliganCount - 1) / 2.0F + position;
-        Vector3 mulliganPosition = new Vector3(centered * BattleCardObject.CARD_VISUAL_SIZE.x, 6, 5);
+        Vector3 mulliganPosition = new Vector3(centered * BattleCardObject.CARD_VISUAL_SIZE.x / 1.10f, 6, 5);
 
         battleCardObject.gameObject.SetLayer(LayerMask.NameToLayer("UI"));
         battleCardObject.transform.localPosition = mulliganPosition;
