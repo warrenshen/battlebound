@@ -73,7 +73,6 @@ public class UMPSingleton : Singleton<UMPSingleton>
         dialogUI.SetMessage(message);
 
         dialogUI.SetConfirmAction(confirmAction);
-
         if (cancelAction == null)
         {
             dialogUI.SetCancelButtonActive(false);
@@ -104,7 +103,14 @@ public class UMPSingleton : Singleton<UMPSingleton>
         InputFieldDialog.SetMessage(message);
 
         InputFieldDialog.SetConfirmAction(confirmAction);
-        InputFieldDialog.SetCancelAction(cancelAction);
+        if (cancelAction == null)
+        {
+            InputFieldDialog.SetCancelButtonActive(false);
+        }
+        else
+        {
+            InputFieldDialog.SetCancelAction(cancelAction);
+        }
 
         InputFieldDialog.SetConfirmLabel(confirmLabel);
         InputFieldDialog.SetCancelLabel(cancelLabel);
@@ -132,7 +138,14 @@ public class UMPSingleton : Singleton<UMPSingleton>
         TwoInputFieldDialog.SetMessage(message);
 
         TwoInputFieldDialog.SetConfirmAction(confirmAction);
-        TwoInputFieldDialog.SetCancelAction(cancelAction);
+        if (cancelAction == null)
+        {
+            TwoInputFieldDialog.SetCancelButtonActive(false);
+        }
+        else
+        {
+            TwoInputFieldDialog.SetCancelAction(cancelAction);
+        }
 
         TwoInputFieldDialog.SetConfirmLabel(confirmLabel);
         TwoInputFieldDialog.SetCancelLabel(cancelLabel);
@@ -165,7 +178,14 @@ public class UMPSingleton : Singleton<UMPSingleton>
         ThreeInputFieldDialog.SetMessage(message);
 
         ThreeInputFieldDialog.SetConfirmAction(confirmAction);
-        ThreeInputFieldDialog.SetCancelAction(cancelAction);
+        if (cancelAction == null)
+        {
+            ThreeInputFieldDialog.SetCancelButtonActive(false);
+        }
+        else
+        {
+            ThreeInputFieldDialog.SetCancelAction(cancelAction);
+        }
 
         ThreeInputFieldDialog.SetConfirmLabel(confirmLabel);
         ThreeInputFieldDialog.SetCancelLabel(cancelLabel);
@@ -175,7 +195,7 @@ public class UMPSingleton : Singleton<UMPSingleton>
         ThreeInputFieldDialog.SetInputContextThree(contextThree);
 
         ThreeInputFieldDialog.SetInputContentTypeOne(contentTypeOne);
-        ThreeInputFieldDialog.SetInputContentTypeOne(contentTypeTwo);
+        ThreeInputFieldDialog.SetInputContentTypeTwo(contentTypeTwo);
         ThreeInputFieldDialog.SetInputContentTypeThree(contentTypeThree);
 
         ThreeInputFieldDialog.gameObject.SetActive(true);
@@ -210,7 +230,14 @@ public class UMPSingleton : Singleton<UMPSingleton>
         dialogUI.SetMessage(message);
 
         dialogUI.SetConfirmAction(confirmAction);
-        dialogUI.SetCancelAction(cancelAction);
+        if (cancelAction == null)
+        {
+            dialogUI.SetCancelButtonActive(false);
+        }
+        else
+        {
+            dialogUI.SetCancelAction(cancelAction);
+        }
 
         dialogUI.SetConfirmLabel(confirmLabel);
         dialogUI.SetCancelLabel(cancelLabel);

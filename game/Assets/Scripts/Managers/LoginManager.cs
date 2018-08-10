@@ -62,6 +62,8 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
+            dialogUI.SetMessage("");
+
             SparkSingleton.Instance.Login(
                 email,
                 password,
@@ -74,7 +76,17 @@ public class LoginManager : MonoBehaviour
                     }
                     else
                     {
-                        dialogUI.SetMessage("Invalid email or password.");
+                        string sparkErrorMessage = SparkSingleton.Instance.LoginRegisterErrorMessage;
+                        string errorMessage;
+                        if (sparkErrorMessage != null)
+                        {
+                            errorMessage = sparkErrorMessage;
+                        }
+                        else
+                        {
+                            errorMessage = "Something went wrong, please try again later";
+                        }
+                        dialogUI.SetMessage(errorMessage);
                         dialogUI.SetMessageColor(Color.red);
                     }
                 }
@@ -84,6 +96,8 @@ public class LoginManager : MonoBehaviour
 
     private void ShowRegister()
     {
+        SparkSingleton.Instance.ClearAuthenticatedCallbacks();
+
         UMPSingleton.Instance.ShowThreeInputFieldDialog(
             "Create Account",
             null,
@@ -107,14 +121,28 @@ public class LoginManager : MonoBehaviour
         string passwordConfirmation
     )
     {
-        if (email.Length < 3)
+        if (
+            email.Length < 3 ||
+            !email.Contains("@") ||
+            !email.Contains(".")
+        )
         {
-            dialogUI.SetMessage("Email is not long enough.");
+            dialogUI.SetMessage("Email address is invalid.");
             dialogUI.SetMessageColor(Color.red);
         }
-        else if (password.Length < 1)
+        else if (email.Length > 30)
         {
-            dialogUI.SetMessage("Password is not long enough.");
+            dialogUI.SetMessage("Email address cannot be more than 30 characters.");
+            dialogUI.SetMessageColor(Color.red);
+        }
+        else if (password.Length < 8)
+        {
+            dialogUI.SetMessage("Password must be at least 8 characters.");
+            dialogUI.SetMessageColor(Color.red);
+        }
+        else if (password.Length > 36)
+        {
+            dialogUI.SetMessage("Password cannot be more than 36 characters.");
             dialogUI.SetMessageColor(Color.red);
         }
         else if (password != passwordConfirmation)
@@ -124,6 +152,8 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
+            dialogUI.SetMessage("");
+
             SparkSingleton.Instance.Register(
                 email,
                 "",
@@ -133,15 +163,61 @@ public class LoginManager : MonoBehaviour
                     if (SparkSingleton.Instance.IsAuthenticated)
                     {
                         dialogUI.Close();
-                        Application.LoadLevel("Menu");
+                        ShowUpdateDisplayName();
                     }
                     else
                     {
-                        dialogUI.SetMessage("Something went wrong, please try again later.");
+                        string sparkErrorMessage = SparkSingleton.Instance.LoginRegisterErrorMessage;
+                        string errorMessage;
+                        if (sparkErrorMessage != null)
+                        {
+                            errorMessage = sparkErrorMessage;
+                        }
+                        else
+                        {
+                            errorMessage = "Something went wrong, please try again later";
+                        }
+                        dialogUI.SetMessage(errorMessage);
                         dialogUI.SetMessageColor(Color.red);
                     }
                 }
             );
         }
+    }
+
+    private void ShowUpdateDisplayName()
+    {
+        UMPSingleton.Instance.ShowInputFieldDialog(
+            "Choose Username",
+            "Please enter in a username for your account.",
+            new UnityAction<UMP_InputDialogUI, string>(UpdateDisplayName),
+            null,
+            "Proceed",
+            null,
+            "Enter username...",
+            InputField.ContentType.Standard
+        );
+    }
+
+    private void UpdateDisplayName(UMP_InputDialogUI dialogUI, string displayName)
+    {
+        dialogUI.SetMessage("");
+
+        SparkSingleton.Instance.SendUpdateDisplayNameRequest(
+            displayName,
+            new UnityAction(() =>
+            {
+                if (SparkSingleton.Instance.IsDisplayNameValid())
+                {
+                    dialogUI.Close();
+                    Application.LoadLevel("Menu");
+                }
+                else
+                {
+                    dialogUI.SetMessage(SparkSingleton.Instance.LoginRegisterErrorMessage);
+                    dialogUI.SetMessageColor(Color.red);
+                }
+            })
+        );
     }
 }
