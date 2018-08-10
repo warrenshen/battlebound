@@ -862,7 +862,6 @@ public class BattleState
     private static List<string> PLAYER_SKIP_CHALLENGE_MOVES = new List<string>
     {
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
-        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
     };
@@ -938,7 +937,7 @@ public class BattleState
         }
 
         this.serverMoveQueue.RemoveAt(0);
-
+        // Compare device server state?
         if (
             serverMove.PlayerId == this.you.Id &&
             PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)

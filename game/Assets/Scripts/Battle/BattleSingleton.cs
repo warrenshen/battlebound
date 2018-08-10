@@ -34,6 +34,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private int spawnCount;
     public int SpawnCount => spawnCount;
 
+    private int deadCount;
+    public int DeadCount => deadCount;
+
     private List<ChallengeMove> initServerMoves;
     public List<ChallengeMove> InitServerMoves => initServerMoves;
 
@@ -198,6 +201,15 @@ public class BattleSingleton : Singleton<BattleSingleton>
         this.playerState = JsonUtility.FromJson<PlayerState>(playerJson);
         this.opponentState = JsonUtility.FromJson<PlayerState>(opponentJson);
 
+        if (scriptData.GetInt("moveCount") == null)
+        {
+            this.moveCount = 0;
+        }
+        else
+        {
+            this.moveCount = (int)scriptData.GetInt("moveCount");
+        }
+
         if (scriptData.GetInt("spawnCount") == null)
         {
             this.spawnCount = 0;
@@ -207,13 +219,13 @@ public class BattleSingleton : Singleton<BattleSingleton>
             this.spawnCount = (int)scriptData.GetInt("spawnCount");
         }
 
-        if (scriptData.GetInt("moveCount") == null)
+        if (scriptData.GetInt("deadCount") == null)
         {
-            this.moveCount = 0;
+            this.deadCount = 0;
         }
         else
         {
-            this.moveCount = (int)scriptData.GetInt("moveCount");
+            this.deadCount = (int)scriptData.GetInt("deadCount");
         }
 
         // Logic to load in existing moves for resume challenge case.
