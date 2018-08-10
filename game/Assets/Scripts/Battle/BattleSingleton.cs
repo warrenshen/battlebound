@@ -43,10 +43,13 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private List<ChallengeCard> initDeadCards;
     public List<ChallengeCard> InitDeadCards => initDeadCards;
 
+    private Dictionary<int, ChallengeState> moveRankToChallengeState;
     // List of moves waiting to be sent to BattleManager.
     private List<ChallengeMove> moveQueue;
+    // List of messages from server waiting to be processed.
+    private List<GSData> messageQueue;
 
-    private void Awake()
+    private new void Awake()
     {
         base.Awake();
 
@@ -62,7 +65,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
         this.moveCount = 0;
         this.spawnCount = 0;
 
+        this.moveRankToChallengeState = new Dictionary<int, ChallengeState>();
         this.moveQueue = new List<ChallengeMove>();
+        this.messageQueue = new List<GSData>();
 
         ChallengeIssuedMessage.Listener = ChallengeIssuedMessageHandler;
         ChallengeStartedMessage.Listener = ChallengeStartedMessageHandler;
@@ -79,6 +84,12 @@ public class BattleSingleton : Singleton<BattleSingleton>
         if (this.moveQueue.Count > 0)
         {
             EmitChallengeMove();
+        }
+        else if (this.messageQueue.Count > 0)
+        {
+            GSData scriptData = this.messageQueue[0];
+            this.messageQueue.RemoveAt(0);
+            ProcessChallengeScriptData(scriptData);
         }
     }
 
@@ -112,7 +123,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         GSData scriptData = message.ScriptData;
         if (IsMessageChallengeIdValid(scriptData))
         {
-            ProcessChallengeScriptData(scriptData);
+            this.messageQueue.Add(scriptData);
         }
     }
 
@@ -121,7 +132,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         GSData scriptData = message.ScriptData;
         if (IsMessageChallengeIdValid(scriptData))
         {
-            ProcessChallengeScriptData(scriptData);
+            this.messageQueue.Add(scriptData);
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
@@ -134,7 +145,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         GSData scriptData = message.ScriptData;
         if (IsMessageChallengeIdValid(scriptData))
         {
-            ProcessChallengeScriptData(scriptData);
+            this.messageQueue.Add(scriptData);
 
             string challengeEndStateJson = scriptData.GetGSData("challengeEndState").JSON;
             ChallengeEndState challengeEndState = JsonUtility.FromJson<ChallengeEndState>(challengeEndStateJson);
@@ -147,7 +158,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         GSData scriptData = message.Data;
         if (IsMessageChallengeIdValid(scriptData))
         {
-            ProcessChallengeScriptData(scriptData);
+            this.messageQueue.Add(scriptData);
         }
     }
 
@@ -259,6 +270,14 @@ public class BattleSingleton : Singleton<BattleSingleton>
         {
             this.initDeadCards = new List<ChallengeCard>();
         }
+
+        this.moveRankToChallengeState[this.moveCount] = new ChallengeState(
+            this.playerState,
+            this.opponentState,
+            this.moveCount,
+            this.spawnCount,
+            this.deadCount
+        );
 
         if (BattleManager.Instance == null)
         {
@@ -601,21 +620,34 @@ public class BattleSingleton : Singleton<BattleSingleton>
         // Show prompt to user and ask what they want to do.
     }
 
-    public bool ComparePlayerStates(
+    public bool CompareChallengeState(
+        int moveRank,
         PlayerState devicePlayerState,
         PlayerState deviceOpponentState,
-        int deviceMoveCount
+        int spawnCount,
+        int deadCount
     )
     {
-        if (this.moveCount != deviceMoveCount)
+        if (moveRank < 0)
         {
             return true;
         }
 
-        bool doesMatch = true;
+        ChallengeState challengeState = this.moveRankToChallengeState[moveRank];
+        string firstDiff = challengeState.FirstDiff(
+            devicePlayerState,
+            deviceOpponentState,
+            spawnCount,
+            deadCount
+        );
 
-        PlayerState serverPlayerState = this.playerState;
-        PlayerState serverOpponentState = this.opponentState;
+        if (firstDiff == null)
+        {
+            return true;
+        }
+
+        PlayerState serverPlayerState = challengeState.PlayerState;
+        PlayerState serverOpponentState = challengeState.OpponentState;
 
         if (!serverPlayerState.Equals(devicePlayerState))
         {
@@ -623,7 +655,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Server: " + JsonUtility.ToJson(serverPlayerState));
             Debug.LogWarning("Device: " + JsonUtility.ToJson(devicePlayerState));
             Debug.LogWarning("First diff: " + serverPlayerState.FirstDiff(devicePlayerState));
-            doesMatch = false;
+            return false;
         }
         else
         {
@@ -640,7 +672,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Server: " + JsonUtility.ToJson(serverOpponentState));
             Debug.LogWarning("Device: " + JsonUtility.ToJson(deviceOpponentState));
             Debug.LogWarning("First diff: " + serverOpponentState.FirstDiff(deviceOpponentState));
-            doesMatch = false;
+            return false;
         }
         else
         {
@@ -651,7 +683,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
             }
         }
 
-        return doesMatch;
+        Debug.LogWarning(firstDiff);
+        return false;
     }
 
     private void InitializeChallenge(GSData scriptData)
