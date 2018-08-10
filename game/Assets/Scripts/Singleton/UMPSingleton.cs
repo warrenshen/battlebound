@@ -37,6 +37,17 @@ public class UMPSingleton : Singleton<UMPSingleton>
         this.isInputFieldTextAreaOne = false;
     }
 
+    public void CloseAllDialogs()
+    {
+        ConfirmationDialog.Close();
+        ConfirmationDialogTwo.Close();
+        InputFieldDialog.Close();
+        TwoInputFieldDialog.Close();
+        ThreeInputFieldDialog.Close();
+        InputFieldAndTextArea.Close();
+        InputFieldAndTextAreaTwo.Close();
+    }
+
     public void ShowConfirmationDialog(
         string title,
         string message,
@@ -83,8 +94,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string message,
         UnityAction<UMP_InputDialogUI, string> confirmAction,
         UnityAction cancelAction,
-        string cancelLabel = "Cancel",
         string confirmLabel = "Confirm",
+        string cancelLabel = "Cancel",
         string placeholderMessage = "Enter value...",
         InputField.ContentType contentType = InputField.ContentType.Standard
     )
@@ -143,8 +154,8 @@ public class UMPSingleton : Singleton<UMPSingleton>
         string contextThree,
         UnityAction<UMP_ThreeInputDialogUI, string, string, string> confirmAction,
         UnityAction cancelAction,
-        string cancelLabel = "Cancel",
         string confirmLabel = "Confirm",
+        string cancelLabel = "Cancel",
         InputField.ContentType contentTypeOne = InputField.ContentType.Standard,
         InputField.ContentType contentTypeTwo = InputField.ContentType.Standard,
         InputField.ContentType contentTypeThree = InputField.ContentType.Standard

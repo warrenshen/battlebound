@@ -9,7 +9,8 @@ using GameSparks.Api.Responses;
 
 public class SparkSingleton : Singleton<SparkSingleton>
 {
-    private static string PLAYER_PREF_AUTH_TOKEN_KEY = "gamesparks.authtoken";
+    private const string PLAYER_PREF_AUTH_TOKEN_KEY = "gamesparks.authtoken";
+    private const string PLAYER_PREF_HAS_LOGGED_IN = "PLAYER_PREF_HAS_LOGGED_IN";
 
     [SerializeField]
     private string username = "";
@@ -39,6 +40,8 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private int level;
 
     private List<UnityAction> authenticatedCallbacks;
+
+    private UnityAction loginRegisterCallback;
 
     private void Awake()
     {
@@ -242,8 +245,10 @@ public class SparkSingleton : Singleton<SparkSingleton>
         Debug.Log(response.Errors.ToString());
     }
 
-    public void Login(string name, string password)
+    public void Login(string name, string password, UnityAction onAuthFinish)
     {
+        this.loginRegisterCallback = onAuthFinish;
+
         AuthenticationRequest request = new AuthenticationRequest();
         request.SetUserName(name);
         request.SetPassword(password);
@@ -255,13 +260,14 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
     private void OnLoginSuccess(AuthenticationResponse response)
     {
+        PlayerPrefs.SetInt(PLAYER_PREF_HAS_LOGGED_IN, 1);
         SendGetPlayerDataRequest();
-        LoginRegisterPanel.Instance.OnLoginSuccess(response);
+        this.loginRegisterCallback.Invoke();
     }
 
     private void OnLoginError(AuthenticationResponse response)
     {
-        LoginRegisterPanel.Instance.OnLoginError(response);
+        this.loginRegisterCallback.Invoke();
     }
 
     public void LoginDevelopment(string name, string password)
@@ -306,8 +312,15 @@ public class SparkSingleton : Singleton<SparkSingleton>
         Application.LoadLevel("Login");
     }
 
-    public void Register(string email, string username, string password)
+    public void Register(
+        string email,
+        string username,
+        string password,
+        UnityAction onAuthFinish
+    )
     {
+        this.loginRegisterCallback = onAuthFinish;
+
         RegistrationRequest request = new RegistrationRequest();
         request.SetUserName(email);
         request.SetDisplayName(username);
@@ -321,11 +334,16 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private void OnRegisterSuccess(RegistrationResponse response)
     {
         SendGetPlayerDataRequest();
-        LoginRegisterPanel.Instance.OnRegisterSuccess(response);
+        this.loginRegisterCallback.Invoke();
     }
 
     private void OnRegisterError(RegistrationResponse response)
     {
-        LoginRegisterPanel.Instance.OnRegisterError(response);
+        this.loginRegisterCallback.Invoke();
+    }
+
+    public bool HasLoggedIn()
+    {
+        return PlayerPrefs.GetInt(PLAYER_PREF_HAS_LOGGED_IN) == 1;
     }
 }
