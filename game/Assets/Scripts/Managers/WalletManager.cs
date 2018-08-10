@@ -20,6 +20,10 @@ public class WalletManager : MonoBehaviour
                 "Return to menu"
             );
         }
+        else
+        {
+            GetAddressChallenge();
+        }
     }
 
     private void GetAddressChallenge()
@@ -42,17 +46,19 @@ public class WalletManager : MonoBehaviour
                 ""
             );
         }
+        else
+        {
+            this.addressChallenge = challenge;
 
-        this.addressChallenge = challenge;
-
-        UMPSingleton.Instance.ShowConfirmationDialog(
-            "Wallet Management",
-            "If you have a 12-word mnemonic already, choose import wallet.",
-            new UnityAction(ShowNewWalletEnterPassword),
-            new UnityAction(ShowImportWalletEnterPassword),
-            "New wallet",
-            "Import wallet"
-        );
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Wallet Management",
+                "If you have a 12-word mnemonic already, choose import wallet.",
+                new UnityAction(ShowNewWalletEnterPassword),
+                new UnityAction(ShowImportWalletEnterPassword),
+                "New wallet",
+                "Import wallet"
+            );
+        }
     }
 
     private void ShowNewWalletEnterPassword()
