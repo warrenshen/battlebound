@@ -1623,12 +1623,6 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
             attackingDamageDone = damageCard(defendingCard, attackingCard.attack);
         }
 
-        if (hasCardAbilityOrBuff(defendingCard, CARD_ABILITY_LETHAL)) {
-            defendingDamageDone = damageCardWithLethal(attackingCard, defendingCard.attack);
-        } else {
-            defendingDamageDone = damageCard(attackingCard, defendingCard.attack);
-        }
-
         newEffects = newEffects.concat(_getEffectsOnCardDamageDealt(challengeStateData, attackingCard, attackingDamageDone));
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, defendingCard, attackingDamageDone));
         
@@ -1649,15 +1643,21 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
             newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, fieldId, defenderState, attackingDamageDoneFace));
         }
         
+        if (hasCardAbilityOrBuff(defendingCard, CARD_ABILITY_LETHAL)) {
+            defendingDamageDone = damageCardWithLethal(attackingCard, defendingCard.attack);
+        } else {
+            defendingDamageDone = damageCard(attackingCard, defendingCard.attack);
+        }
+        
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, attackingCard, defendingDamageDone));
         newEffects = newEffects.concat(_getEffectsOnCardDamageDealt(challengeStateData, defendingCard, defendingDamageDone));
         
         if (
             hasCardAbilityOrBuff(defendingCard, CARD_ABILITY_ICY) &&
             attackingCard.health > 0 &&
-            attackingCard.isFrozen <= 0
+            attackingCard.isFrozen <= 1
         ) {
-            attackingCard.isFrozen = 1;
+            attackingCard.isFrozen = 2;
         }
         
         if (

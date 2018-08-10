@@ -17,6 +17,7 @@ if (address) {
     balance = fetchBalanceByAddress(address);
 }
 
+// 0 => unranked.
 var rankGlobal = 0;
 var rankElo = 0;
 

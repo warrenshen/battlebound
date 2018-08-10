@@ -21,7 +21,10 @@
  *   }
  * }
  * 
+ * // PlayerDecks is a misnomer - should be PlayerMetadata.
  * PlayerDecks schema: {
+ *   address: string, // Ethereum address.
+ *   displayName: string, // Username.
  *   bCardIds: [int (card id), ...], // Card IDs of cards on the blockchain.
  *   cardByCardId: {
  *     [id]: {
