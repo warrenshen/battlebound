@@ -187,5 +187,6 @@ public class TestDuskDweller
 
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
         Assert.AreEqual("ID_ENEMY-33", enemyCreature.GetCardId());
+        Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
     }
 }
