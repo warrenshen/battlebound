@@ -384,7 +384,7 @@ public class BoardCreature : Targetable
 
     public void Freeze(int amount)
     {
-        this.isFrozen += amount;
+        this.isFrozen = Math.Max(this.IsFrozen, amount);
         this.boardCreatureObject.Redraw();
     }
 
@@ -414,6 +414,7 @@ public class BoardCreature : Targetable
         }
 
         this.buffsField.Add(buff);
+        Redraw();
     }
 
     public bool HasBuff(string buff)

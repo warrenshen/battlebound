@@ -102,6 +102,11 @@ public class PlayerAvatar : Targetable
         return this.playerAvatarObject as TargetableObject;
     }
 
+    public Player GetPlayer()
+    {
+        return this.owner;
+    }
+
     public string GetDisplayName()
     {
         return this.Owner.DisplayName;
