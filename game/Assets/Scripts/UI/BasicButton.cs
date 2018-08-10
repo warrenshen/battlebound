@@ -87,8 +87,10 @@ public class BasicButton : ObjectUI
         bool oldActiveState = this.activeState;
 
         if (
-            !BattleState.Instance().You.IsModeMulligan() &&
+            BattleState.Instance().You != null &&
+            BattleState.Instance().ActivePlayer != null &&
             BattleState.Instance().You.Id == BattleState.Instance().ActivePlayer.Id &&
+            !BattleState.Instance().You.IsModeMulligan() &&
             !EffectManager.IsWaiting()
         )
         {
