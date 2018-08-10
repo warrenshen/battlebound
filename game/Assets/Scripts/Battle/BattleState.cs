@@ -419,31 +419,6 @@ public class BattleState
         return this.opponent.GeneratePlayerState();
     }
 
-    public void ComparePlayerStates()
-    {
-        if (this.serverMoveQueue.Count > 0 || this.deviceMoveQueue.Count > 0)
-        {
-            return;
-        }
-
-        PlayerState devicePlayerState = GetPlayerState();
-        PlayerState deviceOpponentState = GetOpponentState();
-
-        if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsServerEnabled())
-        {
-            bool doesMatch = BattleSingleton.Instance.ComparePlayerStates(
-                devicePlayerState,
-                deviceOpponentState,
-                this.deviceMoveCount
-            );
-
-            if (!doesMatch)
-            {
-                ReloadBattleOnError();
-            }
-        }
-    }
-
     /*
      * @param List<int> deckCardIndices - indices of cards opponent chose to put back in deck
      */
@@ -877,6 +852,13 @@ public class BattleState
         }
 
         ChallengeMove serverMove = this.serverMoveQueue[0];
+        VerifyChallengeState(
+            serverMove.Rank - 1,
+            GetPlayerState(),
+            GetOpponentState(),
+            this.spawnCount,
+            this.deadCards.Count
+        );
         this.serverMoves.Add(serverMove);
 
         if (
@@ -1114,6 +1096,31 @@ public class BattleState
         }
 
         return serverMove.Rank;
+    }
+
+    private void VerifyChallengeState(
+        int moveRank,
+        PlayerState playerState,
+        PlayerState opponentState,
+        int spawnCount,
+        int deadCount
+    )
+    {
+        if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsServerEnabled())
+        {
+            bool doesMatch = BattleSingleton.Instance.CompareChallengeState(
+                moveRank,
+                playerState,
+                opponentState,
+                spawnCount,
+                deadCount
+            );
+
+            if (!doesMatch)
+            {
+                ReloadBattleOnError();
+            }
+        }
     }
 
     private void ReloadBattleOnError()

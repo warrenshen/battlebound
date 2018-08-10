@@ -12,9 +12,7 @@ public class EffectManager : MonoBehaviour
 
     private bool isReady; // Ready => process queues.
     private int isWaiting; // Waiting > 0 => do not auto-process more server moves.
-
-    private bool isDirty; // Dirty => compare device vs server state when queues empty.
-    public bool IsDirty => isDirty;
+    private bool isChangingTurn;
 
     private UnityAction callback;
 
@@ -215,7 +213,7 @@ public class EffectManager : MonoBehaviour
     {
         if (Instance != null)
         {
-            return Instance.isWaiting > 0 || !Instance.isReady;
+            return Instance.isWaiting > 0 || !Instance.isReady || Instance.isChangingTurn;
         }
         else
         {
@@ -229,6 +227,7 @@ public class EffectManager : MonoBehaviour
 
         this.isReady = false;
         this.isWaiting = 0;
+        this.isChangingTurn = false;
 
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
@@ -247,7 +246,7 @@ public class EffectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.isWaiting > 0 || !this.isReady)
+        if (!this.isReady || this.isWaiting > 0)
         {
             return;
         }
@@ -265,21 +264,11 @@ public class EffectManager : MonoBehaviour
                 this.callback = null;
                 action();
             }
-            else
+            else if (!this.isChangingTurn)
             {
-                if (this.isDirty)
-                {
-                    BattleState.Instance().ComparePlayerStates();
-                    this.isDirty = false;
-                }
-            }
 
-            int moveRank = BattleState.Instance().ProcessMoveQueue();
-            if (moveRank >= 0)
-            {
-                //this.isDirty = true;
+                BattleState.Instance().ProcessMoveQueue();
             }
-            //if ()
         }
         else if (this.hQueue.Count > 0)
         {
@@ -1575,7 +1564,6 @@ public class EffectManager : MonoBehaviour
 
     public void OnFinishMulligan()
     {
-        this.isDirty = true;
         IncrementIsWaiting();
         BattleState.Instance().EndMulligan();
     }
@@ -1626,15 +1614,16 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
-        this.isDirty = true;
+        this.isChangingTurn = false;
     }
 
     public void OnEndTurn(string playerId, UnityAction callback)
     {
-        // We do not set isDirty here because the susbequent
-        // call to OnStartTurn will set it.
-        //this.isDirty = true;
         this.callback = callback;
+        if (this.callback != null)
+        {
+            this.isChangingTurn = true;
+        }
 
         Player player = BattleState.Instance().GetPlayerById(playerId);
 
@@ -1712,7 +1701,6 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
-        this.isDirty = true;
     }
 
     public void OnCreatureAttack(
@@ -1846,7 +1834,6 @@ public class EffectManager : MonoBehaviour
 
                     AddToQueues(effects);
                     DecrementIsWaiting();
-                    this.isDirty = true;
                 }
             ));
         }
@@ -1891,7 +1878,6 @@ public class EffectManager : MonoBehaviour
 
                     AddToQueues(effects);
                     DecrementIsWaiting();
-                    this.isDirty = true;
                 }
             ));
         }
@@ -1944,7 +1930,6 @@ public class EffectManager : MonoBehaviour
                         AddToQueues(effects);
 
                         DecrementIsWaiting();
-                        this.isDirty = true;
                     }
                 );
             }
@@ -1967,7 +1952,6 @@ public class EffectManager : MonoBehaviour
                         AddToQueues(effects);
 
                         DecrementIsWaiting();
-                        this.isDirty = true;
                     }
                 );
             }
@@ -2000,7 +1984,6 @@ public class EffectManager : MonoBehaviour
                         AddToQueues(effects);
 
                         DecrementIsWaiting();
-                        this.isDirty = true;
                     }
                 );
             }
@@ -2024,7 +2007,6 @@ public class EffectManager : MonoBehaviour
                         AddToQueues(effects);
 
                         DecrementIsWaiting();
-                        this.isDirty = true;
                     }
                 );
             }
@@ -2058,42 +2040,28 @@ public class EffectManager : MonoBehaviour
             }
 
             AddToQueues(effects);
-            this.isDirty = true;
         }
         else if (card.Name == Card.CARD_NAME_BLUE_GIPSY_V3)
         {
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-
-            List<Effect> effects = new List<Effect>();
-
             int damageTaken = targetedCreature.TakeDamage(20);
-            effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-
-            AddToQueues(effects);
-            this.isDirty = true;
+            AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
         }
         else if (card.Name == Card.CARD_NAME_FROSTLAND_THRASHER_8)
         {
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-            List<Effect> effects = new List<Effect>();
-
             targetedCreature.DeathNote();
-            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
-
-            AddToQueues(effects);
-            this.isDirty = true;
+            AddToQueues(GetEffectsOnCreatureDeath(targetedCreature));
         }
         else if (card.Name == Card.CARD_NAME_PAL_V1)
         {
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
             targetedCreature.AddBuff(Card.BUFF_CATEGORY_ZERO_TWENTY);
-            this.isDirty = true;
         }
         else if (card.Name == Card.CARD_NAME_FIRESMITH_APPRENTICE)
         {
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
             targetedCreature.AddBuff(Card.BUFF_CATEGORY_TEN_TEN);
-            this.isDirty = true;
         }
         else
         {
@@ -2199,7 +2167,6 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
-        this.isDirty = true;
     }
 
     private List<Effect> SpellTargetedLightningBolt(string playerId, BoardCreature targetedCreature)
@@ -2322,7 +2289,6 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
-        this.isDirty = true;
     }
 
     private List<Effect> SpellUntargetedRiotUp(string playerId)
