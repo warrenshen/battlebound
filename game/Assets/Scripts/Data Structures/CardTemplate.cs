@@ -28,11 +28,11 @@ public class CardTemplate
     public enum ClassColor { Neutral, Fire, Earth, Water, Dark, Light };
     public ClassColor classColor;
 
-    public static Color COLOR_FIRE = new Color(1, 0.72f, 0.74f);
-    public static Color COLOR_EARTH = new Color(0.72f, 1, 0.72f);
-    public static Color COLOR_WATER = new Color(0.66f, 0.90f, 1);
-    public static Color COLOR_DARK = new Color(0.88f, 0.66f, 1);
-    public static Color COLOR_LIGHT = new Color(0.95f, 1, 0.66f);
+    public static Color COLOR_FIRE = new Color(0.6087f, 0.118f, 0.078f);
+    public static Color COLOR_EARTH = new Color(0.024f, 0.463f, 0.29f); //new Color(0.310f, 0.533f, 0.463f);
+    public static Color COLOR_WATER = new Color(0.204f, 0.184f, 0.576f);
+    public static Color COLOR_DARK = new Color(0.255f, 0.067f, 0.412f);
+    public static Color COLOR_LIGHT = new Color(1, 0.7647f, 0.1686f);
 
     public static Dictionary<ClassColor, Color> CLASS_TO_COLOR = new Dictionary<ClassColor, Color>()
     {

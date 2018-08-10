@@ -5,7 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class Deck
 {
-    //to-do: make deck reference a DeckRaw, so not redundantly storing things like name and DeckClass?
     private string name;
     public string Name => name;
 

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using GameSparks.Api.Responses;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
+using GameSparks.Api.Responses;
 using TMPro;
 
 [System.Serializable]
@@ -10,123 +12,93 @@ public class CollectionManager : MonoBehaviour
 {
     [SerializeField]
     private List<Card> collection;
-    private List<DeckRaw> decksRaw;
+    [SerializeField]
+    private List<string> deckNames;
 
     [SerializeField]
     private Dictionary<string, Card> idToCard;
 
     [SerializeField]
-    private List<CollectionCardObject> activeDecklist;  //list that is currently rendered/being changed
-    public List<CollectionCardObject> ActiveDecklist => activeDecklist;
+    private List<CollectionCardObject> cardsInDeck;  //list that is currently rendered/being changed
+    public List<CollectionCardObject> CardsInDeck => cardsInDeck;
     private int activeDeck;
 
-    public GameObject cutoutPrefab;
-    public GameObject deckPanelPrefab;
+    [SerializeField]
+    private List<Button> deckButtons;
+    [SerializeField]
+    private GameObject deckSelection;
+    [SerializeField]
+    private GameObject rightSidebar;
+    [SerializeField]
+    private GameObject collectionObject;
 
-    private GameObject buildPanel;
-    private Collider buildPanelCollider;
-    public GameObject collectionObject;
-
-    private CollectionCardObject lastClickedCard;
     private CollectionCardObject selectedCard;
     private LogEventResponse cardsResponse;
 
+    public bool editMode = false;
+
+    [SerializeField]
+    private GraphicRaycaster m_Raycaster;
+    [SerializeField]
+    private EventSystem m_EventSystem;
+    private PointerEventData m_PointerEventData;
+
     public static CollectionManager Instance { get; private set; }
+
 
     private void Awake()
     {
         Instance = this;
         this.collection = new List<Card>();
-        this.decksRaw = new List<DeckRaw>();
+        this.deckNames = new List<string>();
         this.idToCard = new Dictionary<string, Card>();
     }
 
     private void Start()
     {
-        this.collectionObject = GameObject.Find("Collection");
-        this.buildPanel = GameObject.Find("Build Panel");
-        this.buildPanelCollider = buildPanel.GetComponent<BoxCollider>() as Collider;
-
         DeckStore.Instance().GetDecksWithCallback(Callback);
     }
 
     private void Callback()
     {
+        deckNames = DeckStore.Instance().GetDeckNames();
+        for (int i = 0; i < deckButtons.Count; ++i)
+        {
+            deckButtons[i].onClick.AddListener(EnterEditMode);
+        }
+
         List<Card> cards = DeckStore.Instance().GetCards();
         this.collection = cards;
 
         CreateCardObjects();
-        CreateDecksView();
     }
 
     private void Update()
     {
-        RaycastMouse();
-        RaycastMouseUp();
-        ScrollToPan(Vector3.up);  //to-do only allow situationally
-    }
-
-    private void ScrollToPan(Vector3 axes)
-    {
-        collectionObject.transform.Translate(axes * Input.mouseScrollDelta.y * -0.1F);
-    }
-
-    private void RaycastMouse()
-    {
-        if (!Input.GetMouseButton(0))
-            return;
-        if (!ActionManager.Instance.HasDragTarget())
-            return;
-
-        selectedCard = ActionManager.Instance.GetDragTarget() as CollectionCardObject;     //assumed due to scene file
-        Ray ray = new Ray(selectedCard.transform.position, Camera.main.transform.forward);
-        RaycastHit hit;
-        if (selectedCard && buildPanelCollider.Raycast(ray, out hit, 100.0F))
+        if (editMode)
         {
-            MinifyCard(selectedCard);
-        }
-        else
-        {
-            RevertMinify(selectedCard);
-        }
-    }
-
-    private void RaycastMouseUp()
-    {
-        if (!Input.GetMouseButtonUp(0))
-            return;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        bool raycastHit = Physics.Raycast(ray, out hit, 100.0F);
-
-        CollectionCardObject hitCardObject = hit.collider.GetComponent<CollectionCardObject>();
-        if (hitCardObject != null && this.activeDecklist.Contains(hitCardObject))   //if hit a card object, and it is minified
-        {
-            RemoveFromDecklist(hitCardObject);
-        }
-        else if (buildPanelCollider.Raycast(ray, out hit, 100.0F) && selectedCard)
-        {
-            //add to deck
-            AddToDecklist(selectedCard);
-        }
-        else if (ActionManager.Instance.HasDragTarget())
-        {
-            ActionManager.Instance.GetDragTarget().Release();
+            ScrollToVerticalPan();
         }
 
-        //check for double clicks
-        //if (hitCardObject != null)
-        //{
-        //    if (hitCardObject == lastClickedCard &&
-        //        (Time.time - hitCardObject.lastClickedTime) < 0.5F &&
-        //        (Time.time - hitCardObject.lastDoubleClickedTime) > 2)
-        //    {
-        //        hitCardObject.DoubleClickUp();
-        //    }
-        //    hitCardObject.lastClickedTime = Time.time;
-        //}
-        lastClickedCard = hitCardObject;
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            //Set up the new Pointer Event
+            m_PointerEventData = new PointerEventData(m_EventSystem);
+            //Set the Pointer Event Position to that of the mouse position
+            m_PointerEventData.position = Input.mousePosition;
+
+            //Create a list of Raycast Results
+            List<RaycastResult> results = new List<RaycastResult>();
+
+            //Raycast using the Graphics Raycaster and mouse click position
+            m_Raycaster.Raycast(m_PointerEventData, results);
+
+            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+            foreach (RaycastResult result in results)
+            {
+                Debug.Log("Hit " + result.gameObject.name);
+            }
+        }
     }
 
     private void OnSaveButton()
@@ -134,75 +106,15 @@ public class CollectionManager : MonoBehaviour
         SaveCollectionRequest();
     }
 
-    private void OnBackButton()
-    {
-        CreateDecksView();
-        RotateToDecks();
-    }
-
-    private void CreateDecksView()
-    {
-        GameObject placeholders = GameObject.Find("Deck Panel Placeholders");
-        int count = 0;
-
-        foreach (string deckName in DeckStore.Instance().GetDeckNames())
-        {
-            Transform t = placeholders.transform.GetChild(count);
-            GameObject created = GameObject.Instantiate(deckPanelPrefab, t.position, t.localRotation);
-            created.transform.Find("Deck Name").GetComponent<TextMeshPro>().text = deckName;
-
-            DeckRaw deckRaw = new DeckRaw(
-                deckName,
-                DeckStore.Instance().GetCardIdsByDeckName(deckName),
-                DeckRaw.DeckClass.Warrior
-            );
-            decksRaw.Add(deckRaw);
-            created.GetComponent<DeckPanel>().Initialize(deckRaw);
-            ++count;
-        }
-    }
-
-    public void AddToDecklist(CollectionCardObject collectionCardObject)
-    {
-        //add to data structure
-        collectionCardObject.SetMinify(true);
-        this.activeDecklist.Add(collectionCardObject);
-
-        //reposition all cutouts
-        RenderDecklist();
-    }
-
-    public void RemoveFromDecklist(CollectionCardObject collectionCardObject)
-    {
-        collectionCardObject.SetMinify(false);
-
-        this.activeDecklist.Remove(collectionCardObject);
-        collectionCardObject.Release();
-        RenderDecklist();  //do some resetting of collection/gray cards, reposition the rest of the cards in the panel
-    }
-
-    private void RenderDecklist()
-    {
-        for (int i = 0; i < this.activeDecklist.Count; i++)
-        {
-            this.PositionForDecklist(this.activeDecklist[i], i);
-        }
-    }
-
-    private void PositionForDecklist(CollectionCardObject targetObject, int index)
-    {
-        CardTween.move(targetObject, buildPanel.transform.position + Vector3.down * (index + 1) * 0.4F, ActionManager.TWEEN_DURATION);
-    }
-
     private void SaveCollectionRequest()
     {
         List<string> cardIds = new List<string>();
-        foreach (CollectionCardObject elem in this.activeDecklist)
+        foreach (CollectionCardObject elem in this.cardsInDeck)
         {
             cardIds.Add(elem.Card.Id);
         }
-        string previousName = decksRaw[activeDeck].name;
-        string newName = decksRaw[activeDeck].name;   //to-do, let name be changed, and pull from input field
+        string previousName = deckNames[activeDeck];
+        string newName = deckNames[activeDeck];   //to-do, let name be changed, and pull from input field
 
         DeckStore.Instance().CreateUpdatePlayerDeckWithCallback(
             cardIds,
@@ -217,14 +129,33 @@ public class CollectionManager : MonoBehaviour
 
     }
 
+    private void ScrollToVerticalPan()
+    {
+        float vertical = Mathf.Clamp(collectionObject.transform.localPosition.y + Input.mouseScrollDelta.y * -0.1F, -0.5f, 100);
+        collectionObject.transform.localPosition = new Vector3(collectionObject.transform.localPosition.x, vertical, collectionObject.transform.localPosition.z);
+    }
+
+    private void EnterEditMode()
+    {
+        LeanTween.moveLocalX(deckSelection, -250, 0.5f).setEaseOutQuad();
+        LeanTween.moveLocalX(rightSidebar, 118.5f, 0.5f).setEaseInQuad();
+
+        LeanTween.moveY(collectionObject, -0.5f, 0.5f)
+                 .setEaseInQuad()
+                 .setOnComplete(() =>
+                 {
+                     this.editMode = true;
+                 });
+    }
+
     private void CreateCardObjects()
     {
         int index = 0;
         int rowSize = 4;
 
-        Vector3 topLeft = new Vector3(-5.65f, 3.11f, 18.18f);
-        Vector3 horizontalOffset = new Vector3(2.75f, 0f, 0f);
-        Vector3 verticalOffset = new Vector3(0f, -3.75f, 0f);
+        Vector3 topLeft = new Vector3(-6f, 3.11f, 0);
+        Vector3 horizontalOffset = new Vector3(2.9f, 0f, 0f);
+        Vector3 verticalOffset = new Vector3(0f, -3.95f, 0f);
 
         Transform grayed = new GameObject("Grayed").transform as Transform;
         grayed.parent = this.collectionObject.transform;
@@ -233,13 +164,15 @@ public class CollectionManager : MonoBehaviour
         {
             GameObject created = new GameObject(card.Name);
             created.transform.parent = collectionObject.transform;
-            created.transform.position = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
+            created.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
 
             CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
             collectionCardObject.Initialize(card);
             idToCard.Add(card.Id, card);
 
             CreateGrayed(created.transform, card).parent = grayed;
+            collectionCardObject.visual.Redraw();
+
             index++;
         }
     }
@@ -258,52 +191,20 @@ public class CollectionManager : MonoBehaviour
             spriteParam.IsAffectedByFilters = true;
         }
         grayed.visual.SetGrayscale(true);
+        grayed.visual.SetOpacity(0.7f);
         grayed.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
 
         return created.transform;
     }
 
-    private void MinifyCard(CollectionCardObject collectionCardObject)
+    public void IncludeCard(CardObject cardObject)
     {
-        if (!collectionCardObject.minified)
-            collectionCardObject.SetMinify(true);
-    }
-
-    private void RevertMinify(CollectionCardObject collectionCardObject)
-    {
-        if (collectionCardObject.minified)
-            collectionCardObject.SetMinify(false);
-        selectedCard = null;
-    }
-
-    public void RotateToCards(DeckRaw deckRaw)
-    {
-        this.activeDeck = decksRaw.IndexOf(deckRaw);
-        Debug.Log("# of cards in deck: " + deckRaw.cardIds.Count);
-
-        GameObject.Find("Deck Name").GetComponent<TextMeshPro>().text = deckRaw.name;
-        LeanTween.rotateY(Camera.main.gameObject, 2, 1f).setEaseOutCubic();
-
-        foreach (string cardId in deckRaw.cardIds)
+        UnityAction action = new UnityAction(() =>
         {
-            this.AddToDecklist(idToCard[cardId].wrapper as CollectionCardObject);
-        }
-    }
-
-    public void RotateToDecks()
-    {
-        ActionManager.Instance.enabled = false;
-        LeanTween.rotateY(Camera.main.gameObject, -90, 1f)
-                 .setEaseOutCubic()
-                 .setOnComplete(() =>
-                 {
-                     ActionManager.Instance.enabled = true;
-                 });
-
-        List<CollectionCardObject> inDecklist = new List<CollectionCardObject>(this.activeDecklist);
-        foreach (CollectionCardObject cardInDeck in inDecklist)
-        {
-            this.RemoveFromDecklist(cardInDeck);
-        }
+            Debug.Log(cardObject.name);
+            cardObject.gameObject.SetActive(false);
+            cardObject.visual.ResetParams();
+        });
+        cardObject.Burn(action, 0.2F);
     }
 }

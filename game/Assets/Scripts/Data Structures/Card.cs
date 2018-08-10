@@ -388,7 +388,7 @@ public abstract class Card
             Debug.LogError("cardVisual for SetHyperCardArtwork is null.");
             return;
         }
-        //set sprites and set textmeshpro labels using TmpTextObjects (?)
+        //set sprites and set TextMeshPro labels using TmpTextObjects (?)
         cardVisual.SetTextFieldWithKey("Title", card.GetName());
         cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
         cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());

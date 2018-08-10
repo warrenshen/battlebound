@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
 public class BattleCardObject : CardObject
 {
-    public static Vector3 CARD_VISUAL_SIZE = new Vector3(3.55f, 3, 3);
+    public static Vector3 CARD_VISUAL_SIZE = new Vector3(3.75f, 3, 3);
 
     [SerializeField]
     protected Player owner;
@@ -112,35 +111,6 @@ public class BattleCardObject : CardObject
         {
             this.visual.transform.Rotate(0, 180, 0, Space.Self);
         }
-    }
-
-    public void Burn(UnityAction onBurnFinish)
-    {
-        StartCoroutine("Dissolve", new object[2] { 1, onBurnFinish });  //called when overdraw
-    }
-
-    private IEnumerator Dissolve(object[] args)
-    {
-        int duration = (int)args[0];
-        UnityAction onBurnFinish = args[1] as UnityAction;
-
-        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
-
-        float elapsedTime = 0;
-        bool textHidden = false;
-        while (elapsedTime < duration)
-        {
-            if (elapsedTime > duration / 2.5f && !textHidden)
-            {
-                this.visual.EmptyAllText();
-                textHidden = true;
-            }
-            this.visual.BurningAmount = Mathf.Lerp(0, 1, (elapsedTime / duration));
-            elapsedTime += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        Recycle();
-        onBurnFinish.Invoke();
     }
 
     public ChallengeCard GetChallengeCard()
@@ -285,10 +255,5 @@ public class BattleCardObject : CardObject
     public void DoubleClickUp()
     {
         Debug.Log(gameObject.name + " double clicked.");
-    }
-
-    public override void Release()
-    {
-
     }
 }

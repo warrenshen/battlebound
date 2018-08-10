@@ -611,7 +611,7 @@ namespace HyperCard
 
                         hideSprite.boolValue = DrawMiniToggle("Hide", hideSprite.boolValue);
 
-                        EditorGUI.BeginDisabledGroup(true);
+                        EditorGUI.BeginDisabledGroup(false);
                         spriteRenderer.objectReferenceValue = EditorGUILayout.ObjectField(spriteRenderer.objectReferenceValue, typeof(SpriteRenderer), true, GUILayout.ExpandWidth(true));
                         EditorGUI.EndDisabledGroup();
 
