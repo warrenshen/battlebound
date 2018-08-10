@@ -78,15 +78,6 @@ namespace HyperCard
         public SerializedProperty _periodicalFxDelayOnMax;
         public SerializedProperty _periodicalFxFadeDelay;
 
-        public SerializedProperty _enableSpriteSheet;
-        public SerializedProperty _spriteSheetTex;
-        public SerializedProperty _spriteSheetSize;
-        public SerializedProperty _spriteSheetSpeed;
-        public SerializedProperty _spriteSheetOffsetX;
-        public SerializedProperty _spriteSheetOffsetY;
-        public SerializedProperty _spriteSheetScale;
-        public SerializedProperty _spriteSheetColor;
-        public SerializedProperty _spriteSheetRemoveBlack;
         public SerializedProperty _blackAndWhite;
         public SerializedProperty _enableOutline;
         public SerializedProperty _enableBackOutline;
@@ -232,16 +223,6 @@ namespace HyperCard
                 _periodicalFxDelayOnMin = serializedObject.FindProperty("PeriodicalFxDelayOnMin");
                 _periodicalFxDelayOnMax = serializedObject.FindProperty("PeriodicalFxDelayOnMax");
                 _periodicalFxFadeDelay = serializedObject.FindProperty("PeriodicalFxFadeDelay");
-
-                _enableSpriteSheet = serializedObject.FindProperty("EnableSpriteSheet");
-                _spriteSheetTex = serializedObject.FindProperty("SpriteSheetTex");
-                _spriteSheetSize = serializedObject.FindProperty("SpriteSheetSize");
-                _spriteSheetSpeed = serializedObject.FindProperty("SpriteSheetSpeed");
-                _spriteSheetOffsetX = serializedObject.FindProperty("SpriteSheetOffsetX");
-                _spriteSheetOffsetY = serializedObject.FindProperty("SpriteSheetOffsetY");
-                _spriteSheetScale = serializedObject.FindProperty("SpriteSheetScale");
-                _spriteSheetColor = serializedObject.FindProperty("SpriteSheetColor");
-                _spriteSheetRemoveBlack = serializedObject.FindProperty("SpriteSheetRemoveBlack");
 
                 _blackAndWhite = serializedObject.FindProperty("BlackAndWhite");
                 _enableOutline = serializedObject.FindProperty("EnableOutline");
@@ -804,31 +785,6 @@ namespace HyperCard
                     GUILayout.Label(_periodicalFxAlpha.floatValue.ToString());
                     GUILayout.Space(10f);
                 }
-
-                if (DrawHeader("Artwork - Sprites Sheet FX"))
-                {
-                    _enableSpriteSheet.boolValue = DrawToggle(_enableSpriteSheet.boolValue);
-
-                    _spriteSheetTex.objectReferenceValue = (Texture2D)EditorGUILayout.ObjectField("Sprites sheet", _spriteSheetTex.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
-                    _spriteSheetSize.vector2Value = EditorGUILayout.Vector2Field("Sheet size", _spriteSheetSize.vector2Value);
-
-                    EditorGUILayout.HelpBox("Size corresponds to the number of columns by the number of rows.", MessageType.Info);
-
-                    _spriteSheetRemoveBlack.boolValue = DrawToggle("Remove sheet black background", _spriteSheetRemoveBlack.boolValue);
-
-                    _spriteSheetSpeed.floatValue = EditorGUILayout.FloatField("Speed", _spriteSheetSpeed.floatValue);
-
-                    _spriteSheetOffsetX.floatValue = EditorGUILayout.Slider("Offset X", _spriteSheetOffsetX.floatValue, 0, 1);
-                    _spriteSheetOffsetY.floatValue = EditorGUILayout.Slider("Offset Y", _spriteSheetOffsetY.floatValue, 0, 1);
-
-                    _spriteSheetColor.colorValue = EditorGUILayout.ColorField("Color", _spriteSheetColor.colorValue);
-
-                    _spriteSheetScale.vector2Value = EditorGUILayout.Vector2Field("Scale", _spriteSheetScale.vector2Value);
-
-                    GUILayout.Space(10f);
-                }
-
-                GUILayout.Space(10f);
 
                 if (DrawHeader("Card - Outline"))
                 {

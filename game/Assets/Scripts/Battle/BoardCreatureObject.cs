@@ -11,8 +11,8 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     public const float UPDATE_STATS_GROWTH_FACTOR = 1.4F;
     public const float ATTACK_DELAY = 0.66F;
 
-    private static Vector3 BOARD_CARD_SIZE = new Vector3(5, 3.7F, 1);
-    private static Vector3 COLLIDER_SIZE = new Vector3(3.5F, 4.5F, 1);
+    private static Vector3 BOARD_CARD_SIZE = new Vector3(5.55F, 3.7F, 1);
+    private static Vector3 COLLIDER_SIZE = new Vector3(3.8F, 4.5F, 1);
     private static Vector3 INSPECT_CARD_SIZE = new Vector3(5, 4.28F, 1);
 
     public static Color LIGHT_GREEN = new Color(0.33F, 1, 0.33F);

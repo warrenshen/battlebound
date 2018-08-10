@@ -303,16 +303,6 @@ Shader "HyperCard/Card (Face)"
          uniform float _BurnAlphaCut;
          uniform float _BurnExposure;
 
-         uniform int _SpriteSheet_Enabled;
-         uniform sampler2D _SpriteSheetTex;
-         uniform float4 _SpriteSheetTex_ST;
-         uniform float2 _SpriteSheetOffset;
-         uniform float2 _SpriteSheetScale;
-
-         uniform float _SpriteSheetIndex;
-         uniform float _SpriteSheetCols;
-         uniform float _SpriteSheetRows;
-
          uniform int _Glitter_Enabled;
          uniform sampler2D _GlitterMask; 
          uniform float4 _GlitterMask_ST;
@@ -610,119 +600,6 @@ Shader "HyperCard/Card (Face)"
          ENDCG
      }
      
-     Pass
-     {
-         Stencil {
-             Ref [_Stencil]
-             Comp equal
-             Pass keep 
-         }
-
-         Blend SrcAlpha OneMinusSrcAlpha 
-
-         CGPROGRAM
-         #pragma vertex vert 
-         #pragma fragment frag
-
-         #include "UnityCG.cginc"
-
-         uniform sampler2D _CardMask;
-
-         uniform int _SpriteSheet_Enabled;
-         uniform sampler2D _SpriteSheetTex;
-         uniform float4 _SpriteSheetTex_ST;
-         uniform float2 _SpriteSheetOffset;
-         uniform float2 _SpriteSheetScale;
-
-         uniform float _SpriteSheetIndex;
-         uniform float _SpriteSheetCols;
-         uniform float _SpriteSheetRows;
-         uniform float4 _SpriteSheetColor;
-         uniform int _SpriteSheet_RmvBlackBg;
-
-         uniform int _BlackAndWhite;
-
-         uniform float _CardOpacity;
-
-         uniform sampler2D _CardAlpha;
-
-         struct appdata_t
-         {
-             float4 vertex : POSITION;
-             float2 texcoord0 : TEXCOORD0;
-             float2 texcoord : TEXCOORD1;
-         };
-
-         struct v2f
-         {
-             float4 vertex : SV_POSITION;
-             float texcoord0 : TEXCOORD0;
-             float2 texcoord : TEXCOORD1;
-         };
-
-         v2f vert(appdata_t v)
-         {
-             v2f o;
-             o.vertex = UnityObjectToClipPos(v.vertex);
-             o.texcoord0 = v.texcoord0;
-             o.texcoord = (v.texcoord - _SpriteSheetOffset) * _SpriteSheetScale;
-
-             return o;
-         }
-
-         float4 frag(v2f IN) : SV_TARGET
-         {
-             // Sprite Sheet
-             if (_SpriteSheet_Enabled == 1)
-             {
-                 float ss_row = floor((_SpriteSheetIndex / _SpriteSheetCols)); // Row
-                 float2 ss_v = float2((_SpriteSheetIndex - (_SpriteSheetCols * ss_row)), ss_row).gr;
-                 float3 ss_t = ((float3(ss_v.g, (abs((1.0 - _SpriteSheetRows)).rr - ss_v)) + float3(IN.texcoord, 0.0)) * float3((float2(1, 1) / float2(_SpriteSheetCols, _SpriteSheetRows)), 0.0));
-
-                 float4 ss_col = tex2D(_SpriteSheetTex, TRANSFORM_TEX(ss_t, _SpriteSheetTex));
-
-                 if (_SpriteSheet_RmvBlackBg == 1) 
-                 {
-                     float bg = (ss_col.r + ss_col.g + ss_col.b) / 3.0;
-
-                     ss_col = float4(ss_col.rgb, bg);
-                 }
-
-                 // x
-                 if (((IN.texcoord.r / _SpriteSheetScale.r) > (1 / _SpriteSheetScale.r)) || ((IN.texcoord.r / _SpriteSheetScale.r) < 0))
-                 {
-                     discard;
-                 }
-
-                 // y
-                 if (((IN.texcoord.g / _SpriteSheetScale.g) > (1 / _SpriteSheetScale.g)) || ((IN.texcoord.g / _SpriteSheetScale.g) < 0))
-                 {
-                     discard;
-                 }
-
-                 if (ss_col.a < 0.1) discard;
-
-                 if (_BlackAndWhite == 1) {
-                     ss_col = (ss_col.r + ss_col.g + ss_col.b) / 3;
-                 };
-
-                 ss_col *= _SpriteSheetColor;
-
-                 float2 card_mask =  tex2D(_CardMask, (IN.texcoord / _SpriteSheetScale) + _SpriteSheetOffset);
-
-                 ss_col.a *= card_mask.g;
-                 //ss_col.a *= _CardOpacity;
-
-                 if (ss_col.a < 0.1) discard;
-
-                 return ss_col;
-             }
-
-             return 0;
-         }
-
-         ENDCG
-     }
  }
  Fallback "VertexLit" //added by nick, adds vertex based shadows
 }

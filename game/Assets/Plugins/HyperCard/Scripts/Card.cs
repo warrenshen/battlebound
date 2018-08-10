@@ -221,17 +221,6 @@ namespace HyperCard
         public float PeriodicalFxDelayOnMax = 1;
         public float PeriodicalFxFadeDelay = 0;
 
-        // sprite sheet
-        public bool EnableSpriteSheet;
-        public Texture2D SpriteSheetTex;
-        public Vector2 SpriteSheetSize;
-        public float SpriteSheetSpeed = 1;
-        public float SpriteSheetOffsetX = 0;
-        public float SpriteSheetOffsetY = 0;
-        public Vector2 SpriteSheetScale = Vector2.one;
-        public Color SpriteSheetColor = Color.white;
-        public bool SpriteSheetRemoveBlack = false;
-
         // outline
         public bool EnableOutline = false;
         public bool EnableBackOutline = false;
@@ -405,7 +394,6 @@ namespace HyperCard
             var backMat = new Material(mat[1]);
 
             ComputePeriodicalFx();
-            ComputeSpriteSheet();
 
             var mask = CardMask;
 
@@ -605,9 +593,6 @@ namespace HyperCard
                 faceMat.SetTextureScale("_MixNoiseTextureMask", MixNoiseMaskScale);
             }
 
-            // spritesheet
-            faceMat.SetInt("_SpriteSheet_Enabled", EnableSpriteSheet ? 1 : 0);
-
             // holo, removed by nick 6/30/18, needed the sampler for background
 
             // Glitter
@@ -670,7 +655,7 @@ namespace HyperCard
                 var mat = new Material(txt.TmpObject.fontSharedMaterial);
                 txt.TmpObject.overrideColorTags = BlackAndWhite;
                 mat.SetFloat("_Stencil", Stencil);
-                //mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
+                mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
                 mat.name = Guid.NewGuid().ToString();
                 txt.TmpObject.fontMaterial = mat;
             }
@@ -748,7 +733,6 @@ namespace HyperCard
             }
 
             ComputePeriodicalFx();
-            ComputeSpriteSheet();
 
             var mat = Renderer.sharedMaterials;
 
@@ -844,51 +828,6 @@ namespace HyperCard
         private int _index;
         private float _sheetTime;
         private float _nextSheetTime;
-
-        private void ComputeSpriteSheet()
-        {
-            if (!EnableSpriteSheet)
-            {
-                return;
-            }
-
-            var mat = Renderer.sharedMaterials;
-
-            if (SpriteSheetTex == null) return;
-
-            if (SpriteSheetSize.x <= 0 || SpriteSheetSize.y <= 0)
-            {
-                Debug.LogError("Sprite speet size invalid.");
-                return;
-            }
-
-            mat[0].SetInt("_SpriteSheet_Enabled", EnableSpriteSheet ? 1 : 0);
-            mat[0].SetTexture("_SpriteSheetTex", SpriteSheetTex);
-
-            mat[0].SetVector("_SpriteSheetOffset", new Vector2(SpriteSheetOffsetX, SpriteSheetOffsetY));
-            mat[0].SetVector("_SpriteSheetScale", SpriteSheetScale);
-
-            mat[0].SetFloat("_SpriteSheetCols", SpriteSheetSize.x);
-            mat[0].SetFloat("_SpriteSheetRows", SpriteSheetSize.y);
-
-            mat[0].SetColor("_SpriteSheetColor", SpriteSheetColor);
-            mat[0].SetInt("_SpriteSheet_RmvBlackBg", SpriteSheetRemoveBlack ? 1 : 0);
-
-            _sheetTime += Time.deltaTime;
-
-            if (!(_sheetTime > _nextSheetTime)) return;
-
-            _index = _index % (int)(SpriteSheetSize.x * SpriteSheetSize.y);
-
-            mat[0].SetFloat("_SpriteSheetIndex", _index);
-
-            _nextSheetTime = _fxTime + (SpriteSheetSpeed / 100f);
-            _nextSheetTime -= _fxTime;
-
-            _sheetTime = 0;
-
-            _index += 1;
-        }
 
         public void SetCardArtwork(Texture2D front, Texture2D back)
         {
