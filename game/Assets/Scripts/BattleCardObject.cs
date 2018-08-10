@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [System.Serializable]
 public class BattleCardObject : CardObject
 {
-    public static Vector3 CARD_VISUAL_SIZE = new Vector3(3.85f, 3.1f, 3);
+    public static Vector3 CARD_VISUAL_SIZE = new Vector3(3.85f, 3.0f, 3);
 
     [SerializeField]
     protected Player owner;
