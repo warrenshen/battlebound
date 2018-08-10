@@ -117,9 +117,10 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        ToggleEndTurnButton();
+
         if (BattleState.Instance().IsNormalMode() && !EffectManager.IsWaiting())
         {
-            ToggleEndTurnButton();
             WatchMouseActions();
         }
     }
