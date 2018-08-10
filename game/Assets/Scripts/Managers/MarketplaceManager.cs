@@ -172,7 +172,13 @@ public class MarketplaceManager : MonoBehaviour
     {
         if (this.mode == MARKETPLACE_MODE_BUY)
         {
-            foreach (BuyableCardListItem item in contentPanel.GetComponentsInChildren<BuyableCardListItem>())
+            BuyableCardListItem[] buyableCardListItems = contentPanel.GetComponentsInChildren<BuyableCardListItem>();
+            if (buyableCardListItems == null)
+            {
+                Debug.LogError("Null!");
+            }
+
+            foreach (BuyableCardListItem item in buyableCardListItems)
             {
                 SetBuyableListItemToPool(item);
             }

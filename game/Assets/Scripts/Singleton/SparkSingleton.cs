@@ -42,6 +42,8 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private List<UnityAction> authenticatedCallbacks;
 
     private UnityAction loginRegisterCallback;
+    private string loginRegisterErrorMessage;
+    public string LoginRegisterErrorMessage => loginRegisterErrorMessage;
 
     private void Awake()
     {
@@ -114,50 +116,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
     public void ClearAuthenticatedCallbacks()
     {
         this.authenticatedCallbacks = new List<UnityAction>();
-    }
-
-    private void SendGetGameVersionRequest()
-    {
-
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("GetGameVersion");
-        request.Send(OnGetGameVersionSuccess, OnGetGameVersionError);
-    }
-
-    private void OnGetGameVersionSuccess(LogEventResponse response)
-    {
-        GSData scriptData = response.ScriptData;
-        string version = scriptData.GetString("version");
-
-        try
-        {
-            float versionFloat = float.Parse(version);
-            if (Application.version == version)
-            {
-                this.isLatestVersion = true;
-            }
-        }
-        catch (FormatException)
-        {
-            Debug.LogError("Invalid version from server");
-        }
-
-        if (FlagHelper.IsLogVerbose())
-        {
-            if (this.isLatestVersion)
-            {
-                Debug.Log("Game version is latest.");
-            }
-            else
-            {
-                Debug.Log("Game version is NOT latest.");
-            }
-        }
-    }
-
-    private void OnGetGameVersionError(LogEventResponse response)
-    {
-        Debug.LogError("GetGameVersion request error.");
     }
 
     private void SendGetPlayerDataRequest()
@@ -247,6 +205,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
     public void Login(string name, string password, UnityAction onAuthFinish)
     {
+        this.loginRegisterErrorMessage = "";
         this.loginRegisterCallback = onAuthFinish;
 
         AuthenticationRequest request = new AuthenticationRequest();
@@ -261,12 +220,22 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private void OnLoginSuccess(AuthenticationResponse response)
     {
         PlayerPrefs.SetInt(PLAYER_PREF_HAS_LOGGED_IN, 1);
+        this.isAuthenticated = true;
         SendGetPlayerDataRequest();
         this.loginRegisterCallback.Invoke();
     }
 
     private void OnLoginError(AuthenticationResponse response)
     {
+        GSData scriptData = response.Errors;
+        if (scriptData.GetString("DETAILS") == "UNRECOGNISED")
+        {
+            this.loginRegisterErrorMessage = "Invalid login or password";
+        }
+        else
+        {
+            this.loginRegisterErrorMessage = "Something went wrong, please try again later";
+        }
         this.loginRegisterCallback.Invoke();
     }
 
@@ -319,6 +288,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         UnityAction onAuthFinish
     )
     {
+        this.loginRegisterErrorMessage = "";
         this.loginRegisterCallback = onAuthFinish;
 
         RegistrationRequest request = new RegistrationRequest();
@@ -333,17 +303,59 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
     private void OnRegisterSuccess(RegistrationResponse response)
     {
+        this.isAuthenticated = true;
         SendGetPlayerDataRequest();
         this.loginRegisterCallback.Invoke();
     }
 
     private void OnRegisterError(RegistrationResponse response)
     {
+        GSData scriptData = response.Errors;
+        if (scriptData.GetString("USERNAME") == "TAKEN")
+        {
+            Debug.Log(scriptData.GetString("USERNAME"));
+            Debug.Log(scriptData.GetString("errorMessage"));
+            this.loginRegisterErrorMessage = "Email already taken.";
+        }
+        else
+        {
+            this.loginRegisterErrorMessage = "Something went wrong, please try again later";
+        }
+        this.loginRegisterCallback.Invoke();
+    }
+
+    public void SendUpdateDisplayNameRequest(string displayName, UnityAction onAuthFinish)
+    {
+        this.loginRegisterErrorMessage = "";
+        this.loginRegisterCallback = onAuthFinish;
+
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("UpdateDisplayName");
+        request.SetEventAttribute("displayName", displayName);
+        request.Send(OnUpdateDisplayNameSuccess, OnUpdateDisplayNameError);
+    }
+
+    private void OnUpdateDisplayNameSuccess(LogEventResponse response)
+    {
+        GSData scriptData = response.ScriptData;
+        this.displayName = scriptData.GetString("displayName");
+        this.loginRegisterCallback.Invoke();
+    }
+
+    private void OnUpdateDisplayNameError(LogEventResponse response)
+    {
+        GSData scriptData = response.Errors;
+        this.loginRegisterErrorMessage = scriptData.GetString("errorMessage");
         this.loginRegisterCallback.Invoke();
     }
 
     public bool HasLoggedIn()
     {
         return PlayerPrefs.GetInt(PLAYER_PREF_HAS_LOGGED_IN) == 1;
+    }
+
+    public bool IsDisplayNameValid()
+    {
+        return this.displayName != null && this.displayName.Length > 0;
     }
 }
