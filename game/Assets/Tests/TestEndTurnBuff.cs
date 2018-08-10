@@ -3,7 +3,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-public class TestEndTurn
+public class TestEndTurnBuff
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",
@@ -20,47 +20,47 @@ public class TestEndTurn
         ""hand"": [],
         ""field"": [
             {
-                ""id"": ""ID_PLAYER-4"",
+                ""id"": ""ID_PLAYER-22"",
                 ""playerId"": ""ID_PLAYER"",
                 ""level"": 1,
                 ""category"": 0,
-                ""attack"": 20,
-                ""health"": 20,
-                ""cost"": 20,
-                ""name"": ""Emberkitty"",
+                ""attack"": 10,
+                ""health"": 30,
+                ""cost"": 10,
+                ""name"": ""Firesmith Apprentice"",
                 ""description"": """",
                 ""abilities"": [
-                    13
+                    43
                 ],
-                ""attackStart"": 20,
-                ""costStart"": 20,
-                ""healthStart"": 20,
-                ""healthMax"": 20,
-                ""buffs"": [],
+                ""attackStart"": 10,
+                ""costStart"": 30,
+                ""healthStart"": 10,
+                ""healthMax"": 10,
+                ""buffsField"": [],
                 ""canAttack"": 0,
                 ""isFrozen"": 0,
-                ""spawnRank"": 0
+                ""spawnRank"": 1
             },
             {
-                ""id"": ""ID_PLAYER-3"",
+                ""id"": ""ID_PLAYER-24"",
                 ""playerId"": ""ID_PLAYER"",
                 ""level"": 1,
                 ""category"": 0,
-                ""attack"": 20,
-                ""health"": 10,
+                ""attack"": 10,
+                ""health"": 30,
                 ""cost"": 20,
-                ""name"": ""Young Kyo"",
+                ""name"": ""PAL_V1"",
                 ""description"": """",
                 ""abilities"": [
-                    15
+                    40
                 ],
-                ""attackStart"": 20,
+                ""attackStart"": 10,
                 ""costStart"": 20,
-                ""healthStart"": 20,
-                ""healthMax"": 20,
-                ""buffs"": [],
+                ""healthStart"": 30,
+                ""healthMax"": 30,
+                ""buffsField"": [],
                 ""canAttack"": 0,
-                ""isFrozen"": 2,
+                ""isFrozen"": 0,
                 ""spawnRank"": 2
             },
             {
@@ -109,26 +109,7 @@ public class TestEndTurn
                 ""id"": ""EMPTY""
             },
             {
-                ""id"": ""ID_ENEMY-3"",
-                ""playerId"": ""ID_ENEMY"",
-                ""level"": 1,
-                ""category"": 0,
-                ""attack"": 20,
-                ""health"": 20,
-                ""cost"": 20,
-                ""name"": ""Young Kyo"",
-                ""description"": """",
-                ""abilities"": [
-                    15
-                ],
-                ""attackStart"": 20,
-                ""costStart"": 20,
-                ""healthStart"": 20,
-                ""healthMax"": 20,
-                ""buffs"": [],
-                ""canAttack"": 0,
-                ""isFrozen"": 0,
-                ""spawnRank"": 1
+                ""id"": ""EMPTY""
             }
         ],
         ""mulliganCards"": []
@@ -170,24 +151,26 @@ public class TestEndTurn
         GameObject.Destroy(this.effectManager.gameObject);
     }
 
-    [Test]
-    public void DecrementIsFrozenEndTurnTest()
-    {
-        EffectManager.Instance.OnEndTurn("ID_PLAYER", null);
-
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-3");
-
-        Assert.AreEqual(1, playerCreature.IsFrozen);
-    }
-
     [UnityTest]
-    public IEnumerator AttackInFrontEndTurnTest()
+    public IEnumerator BuffRandomFriendlyEndTurnTest()
     {
+        BoardCreature firesmithCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-22");
+        BoardCreature palCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-24");
+
+        Assert.AreEqual(10, firesmithCreature.GetAttack());
+        Assert.AreEqual(30, firesmithCreature.GetHealthMax());
+
+        Assert.AreEqual(10, palCreature.GetAttack());
+        Assert.AreEqual(30, palCreature.GetHealthMax());
+
         EffectManager.Instance.OnEndTurn("ID_PLAYER", null);
 
-        yield return null;
+        yield return new WaitForSeconds(3);
 
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-3");
-        Assert.AreEqual(10, enemyCreature.Health);
+        Assert.AreEqual(10, firesmithCreature.GetAttack());
+        Assert.AreEqual(50, firesmithCreature.GetHealthMax());
+
+        Assert.AreEqual(20, palCreature.GetAttack());
+        Assert.AreEqual(40, palCreature.GetHealthMax());
     }
 }
