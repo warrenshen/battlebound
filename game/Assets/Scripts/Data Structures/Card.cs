@@ -433,16 +433,31 @@ public abstract class Card
 
     public const string BUFF_CATEGORY_UNSTABLE_POWER = "BUFF_CATEGORY_UNSTABLE_POWER";
     public const string BUFF_CATEGORY_BESTOWED_VIGOR = "BUFF_CATEGORY_BESTOWED_VIGOR";
+    public const string BUFF_CATEGORY_ZERO_TWENTY = "BUFF_CATEGORY_ZERO_TWENTY";
+    public const string BUFF_CATEGORY_TEN_TEN = "BUFF_CATEGORY_TEN_TEN";
+    public const string BUFF_CATEGORY_THIRTY_THIRTY = "BUFF_CATEGORY_THIRTY_THIRTY";
+    public const string BUFF_CATEGORY_TWENTY_TWENTY = "BUFF_CATEGORY_TWENTY_TWENTY";
+    public const string BUFF_CATEGORY_TEN_THIRTY = "BUFF_CATEGORY_TEN_THIRTY";
 
     public static readonly string[] VALID_BUFFS_FIELD = {
         BUFF_CATEGORY_UNSTABLE_POWER,
         BUFF_CATEGORY_BESTOWED_VIGOR,
+        BUFF_CATEGORY_ZERO_TWENTY,
+        BUFF_CATEGORY_TEN_TEN,
+        BUFF_CATEGORY_THIRTY_THIRTY,
+        BUFF_CATEGORY_TWENTY_TWENTY,
+        BUFF_CATEGORY_TEN_THIRTY,
     };
 
     public static readonly Dictionary<int, string> BUFF_FIELD_CODE_TO_STRING = new Dictionary<int, string>
     {
         { 1001, BUFF_CATEGORY_UNSTABLE_POWER },
         { 1002, BUFF_CATEGORY_BESTOWED_VIGOR },
+        { 1003, BUFF_CATEGORY_ZERO_TWENTY },
+        { 1004, BUFF_CATEGORY_TEN_TEN },
+        { 1005, BUFF_CATEGORY_THIRTY_THIRTY },
+        { 1006, BUFF_CATEGORY_TWENTY_TWENTY },
+        { 1007, BUFF_CATEGORY_TEN_THIRTY },
     };
 
     public const string BUFF_HAND_DECREASE_COST_BY_COLOR = "BUFF_HAND_DECREASE_COST_BY_COLOR";
@@ -598,6 +613,10 @@ public abstract class Card
             }
             else
             {
+                if (abilityCode == null)
+                {
+                    Debug.LogError("What");
+                }
                 int abilityInt = Int32.Parse(abilityCode);
                 abilityStrings.Add(ABILITY_CODE_TO_STRING[abilityInt]);
             }

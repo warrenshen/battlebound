@@ -153,7 +153,22 @@ public class BoardCreature : Targetable
                 case Card.BUFF_CATEGORY_BESTOWED_VIGOR:
                     attack += 20;
                     break;
+                case Card.BUFF_CATEGORY_ZERO_TWENTY:
+                    break;
+                case Card.BUFF_CATEGORY_TEN_TEN:
+                    attack += 10;
+                    break;
+                case Card.BUFF_CATEGORY_THIRTY_THIRTY:
+                    attack += 30;
+                    break;
+                case Card.BUFF_CATEGORY_TWENTY_TWENTY:
+                    attack += 20;
+                    break;
+                case Card.BUFF_CATEGORY_TEN_THIRTY:
+                    attack += 10;
+                    break;
                 default:
+                    Debug.LogError(string.Format("Unhandled buff: {0}", buff));
                     break;
             }
         }
@@ -189,10 +204,28 @@ public class BoardCreature : Targetable
         {
             switch (buff)
             {
+                case Card.CARD_NAME_UNSTABLE_POWER:
+                    break;
                 case Card.BUFF_CATEGORY_BESTOWED_VIGOR:
                     health += 10;
                     break;
+                case Card.BUFF_CATEGORY_ZERO_TWENTY:
+                    health += 20;
+                    break;
+                case Card.BUFF_CATEGORY_TEN_TEN:
+                    health += 10;
+                    break;
+                case Card.BUFF_CATEGORY_THIRTY_THIRTY:
+                    health += 30;
+                    break;
+                case Card.BUFF_CATEGORY_TWENTY_TWENTY:
+                    health += 20;
+                    break;
+                case Card.BUFF_CATEGORY_TEN_THIRTY:
+                    health += 30;
+                    break;
                 default:
+                    Debug.LogError(string.Format("Unhandled buff: {0}", buff));
                     break;
             }
         }
@@ -414,6 +447,34 @@ public class BoardCreature : Targetable
         }
 
         this.buffsField.Add(buff);
+
+        switch (buff)
+        {
+            case Card.CARD_NAME_UNSTABLE_POWER:
+                break;
+            case Card.BUFF_CATEGORY_BESTOWED_VIGOR:
+                this.health += 10;
+                break;
+            case Card.BUFF_CATEGORY_ZERO_TWENTY:
+                this.health += 20;
+                break;
+            case Card.BUFF_CATEGORY_TEN_TEN:
+                this.health += 10;
+                break;
+            case Card.BUFF_CATEGORY_THIRTY_THIRTY:
+                this.health += 30;
+                break;
+            case Card.BUFF_CATEGORY_TWENTY_TWENTY:
+                this.health += 20;
+                break;
+            case Card.BUFF_CATEGORY_TEN_THIRTY:
+                this.health += 30;
+                break;
+            default:
+                Debug.LogError(string.Format("Unhandled buff: {0}", buff));
+                break;
+        }
+
         Redraw();
     }
 

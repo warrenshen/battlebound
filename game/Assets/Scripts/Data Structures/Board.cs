@@ -141,6 +141,15 @@ public class Board
         return playingField.GetAliveCreatures();
     }
 
+    public List<BoardCreature> GetAliveCreaturesByPlayerIdExceptCardId(string playerId, string cardId)
+    {
+        return new List<BoardCreature>(
+            GetAliveCreaturesByPlayerId(playerId).Where(
+                boardCreature => boardCreature.GetCardId() != cardId
+            )
+        );
+    }
+
     public List<BoardCreature> GetOpponentAliveCreaturesByPlayerId(string playerId)
     {
         string opponentId = this.playerIdToOpponentId[playerId];
