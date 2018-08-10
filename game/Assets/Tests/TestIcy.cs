@@ -3,7 +3,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-public class TestDuskDweller
+public class TestIcy
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",
@@ -20,7 +20,27 @@ public class TestDuskDweller
         ""hand"": [],
         ""field"": [
             {
-                ""id"": ""EMPTY""
+                ""id"": ""ID_PLAYER-28"",
+                ""playerId"": ""ID_PLAYER"",
+                ""level"": 1,
+                ""category"": 0,
+                ""color"": 1,
+                ""attack"": 40,
+                ""health"": 80,
+                ""cost"": 70,
+                ""name"": ""Sabre, Crystalline Dragon"",
+                ""description"": """",
+                ""abilities"": [
+                    42
+                ],
+                ""attackStart"": 40,
+                ""costStart"": 70,
+                ""healthStart"": 80,
+                ""healthMax"": 80,
+                ""buffs"": [],
+                ""canAttack"": 1,
+                ""isFrozen"": 0,
+                ""spawnRank"": 3
             },
             {
                 ""id"": ""EMPTY""
@@ -50,35 +70,32 @@ public class TestDuskDweller
         ""health"": 100,
         ""healthMax"": 100,
         ""armor"": 0,
-        ""cardCount"": 33,
+        ""cardCount"": 30,
         ""deckSize"": 30,
         ""mode"": 0,
         ""hand"": [],
         ""field"": [
             {
-                ""id"": ""ID_ENEMY-24"",
+                ""id"": ""ID_ENEMY-9"",
                 ""playerId"": ""ID_ENEMY"",
                 ""level"": 1,
                 ""category"": 0,
-                ""attack"": 20,
-                ""health"": 10,
-                ""cost"": 30,
-                ""name"": ""Dusk Dweller"",
+                ""attack"": 40,
+                ""health"": 60,
+                ""cost"": 60,
+                ""name"": ""Temple Guardian"",
                 ""description"": """",
                 ""abilities"": [
-                    34
+                    2
                 ],
-                ""attackStart"": 20,
-                ""costStart"": 30,
-                ""healthStart"": 10,
-                ""healthMax"": 10,
+                ""attackStart"": 40,
+                ""costStart"": 60,
+                ""healthStart"": 60,
+                ""healthMax"": 60,
                 ""buffs"": [],
                 ""canAttack"": 0,
                 ""isFrozen"": 0,
                 ""spawnRank"": 0
-            },
-            {
-                ""id"": ""EMPTY""
             },
             {
                 ""id"": ""ID_ENEMY-25"",
@@ -86,19 +103,19 @@ public class TestDuskDweller
                 ""level"": 1,
                 ""category"": 0,
                 ""attack"": 40,
-                ""health"": 50,
-                ""cost"": 60,
-                ""name"": ""Young Kyo"",
+                ""health"": 80,
+                ""cost"": 70,
+                ""name"": ""Sabre, Crystalline Dragon"",
                 ""description"": """",
                 ""abilities"": [
-                    35
+                    42
                 ],
                 ""attackStart"": 40,
-                ""costStart"": 60,
-                ""healthStart"": 50,
-                ""healthMax"": 50,
+                ""costStart"": 70,
+                ""healthStart"": 80,
+                ""healthMax"": 80,
                 ""buffs"": [],
-                ""canAttack"": 0,
+                ""canAttack"": 1,
                 ""isFrozen"": 0,
                 ""spawnRank"": 1
             },
@@ -106,26 +123,10 @@ public class TestDuskDweller
                 ""id"": ""EMPTY""
             },
             {
-                ""id"": ""ID_ENEMY-26"",
-                ""playerId"": ""ID_ENEMY"",
-                ""level"": 1,
-                ""category"": 0,
-                ""attack"": 60,
-                ""health"": 80,
-                ""cost"": 100,
-                ""name"": ""Phantom Skullcrusher"",
-                ""description"": """",
-                ""abilities"": [
-                    36
-                ],
-                ""attackStart"": 60,
-                ""costStart"": 100,
-                ""healthStart"": 80,
-                ""healthMax"": 80,
-                ""buffs"": [],
-                ""canAttack"": 1,
-                ""isFrozen"": 0,
-                ""spawnRank"": 2
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
             },
             {
                 ""id"": ""EMPTY""
@@ -171,21 +172,46 @@ public class TestDuskDweller
     }
 
     [UnityTest]
-    public IEnumerator ResummonDeathwishTest()
+    public IEnumerator FreezeEnemyOnAttackTest()
     {
-        Card card = Card.CreateByNameAndLevel("ID_PLAYER-0", Card.CARD_NAME_TOUCH_OF_ZEUS, 1);
-        ChallengeCard challengeCard = card.GetChallengeCard("ID_PLAYER");
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-28");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
 
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-24");
-
-        EffectManager.Instance.OnSpellTargetedPlay(
-            challengeCard,
+        EffectManager.Instance.OnCreatureAttack(
+            playerCreature,
             enemyCreature
         );
 
-        yield return new WaitForSeconds(3);
+        yield return null;
 
-        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-        Assert.AreEqual("ID_ENEMY-33", enemyCreature.GetCardId());
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
+        Assert.AreEqual(60, enemyCreature.Health);
+        Assert.AreEqual(1, enemyCreature.IsFrozen);
+
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-28");
+        Assert.AreEqual(40, playerCreature.Health);
+        Assert.AreEqual(0, playerCreature.IsFrozen);
+    }
+
+    [UnityTest]
+    public IEnumerator FreezeEnemyOnDefendTest()
+    {
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-28");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-25");
+
+        EffectManager.Instance.OnCreatureAttack(
+            playerCreature,
+            enemyCreature
+        );
+
+        yield return null;
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-25");
+        Assert.AreEqual(40, enemyCreature.Health);
+        Assert.AreEqual(1, enemyCreature.IsFrozen);
+
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-28");
+        Assert.AreEqual(40, playerCreature.Health);
+        Assert.AreEqual(2, playerCreature.IsFrozen);
     }
 }

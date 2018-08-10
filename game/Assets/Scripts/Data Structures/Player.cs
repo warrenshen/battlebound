@@ -113,9 +113,24 @@ public class Player
         AddCardsOnResume(handCards);
     }
 
-    public void SetMode(int mode)
+    public string GetCardId()
     {
-        this.mode = mode;
+        return this.avatar.GetCardId();
+    }
+
+    public int GetHealth()
+    {
+        return this.avatar.Health;
+    }
+
+    public int TakeDamage(int amount)
+    {
+        return this.avatar.TakeDamage(amount);
+    }
+
+    public int Heal(int amount)
+    {
+        return this.avatar.Heal(amount);
     }
 
     public void PlayCard(BattleCardObject battleCardObject)
@@ -131,16 +146,6 @@ public class Player
     {
         TextMeshPro manaText = GameObject.Find(name + " Mana").GetComponent<TextMeshPro>();
         manaText.text = String.Format("{0}/{1}", mana.ToString(), maxMana.ToString());
-    }
-
-    public int TakeDamage(int amount)
-    {
-        return this.avatar.TakeDamage(amount);
-    }
-
-    public int Heal(int amount)
-    {
-        return this.avatar.Heal(amount);
     }
 
     public void EndTurn()
@@ -604,8 +609,7 @@ public class Player
                     .move(createdBattleCard, createdBattleCard.transform.position, CardTween.TWEEN_DURATION)
                     .setOnComplete(() =>
                     {
-                        createdBattleCard.Burn(() => RepositionCards());
-                        EffectManager.Instance.OnDrawCardFinish();
+                        createdBattleCard.Burn(() => RepositionCards(() => EffectManager.Instance.OnDrawCardFinish()));
                     });
             });
     }
@@ -745,6 +749,24 @@ public class Player
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_DUSK_DWELLER, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TALUSREAVER, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PHANTOM_SKULLCRUSHER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLUE_GIPSY_V3, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTLAND_THRASHER_8, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CYBER_SENTINEL, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PAL_V1, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORTRESS_KNIGHT, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TERRATANK, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CULYSSA, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SAPLET, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESMITH_APPRENTICE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORGEMECH, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIGHTHUNTER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BRINGER_OF_DAWN, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_EMILIA_AIRHEART, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PEARL_NYMPH, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TARA_SWAN_PRINCESS, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTSPORE, 1));
 
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_UNSTABLE_POWER, 4));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_TOUCH_OF_ZEUS, 1));

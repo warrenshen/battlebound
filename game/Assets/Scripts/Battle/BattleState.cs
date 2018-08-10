@@ -498,8 +498,7 @@ public class BattleState
         Player player = GetPlayerById(playerId);
         // TODO: animate and remove debug.
         Debug.Log("Receive move draw card deck empty");
-        player.RepositionCards();
-        EffectManager.Instance.OnDrawCardFinish();
+        player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());
     }
 
     private void ReceiveMovePlayMinion(

@@ -604,8 +604,7 @@ public class BattleManager : MonoBehaviour
             {
                 // TODO: should on draw card finish call in reposition cards?
                 SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position, delay: 0.2F);
-                player.RepositionCards();  //can override completioon behavior by calling setOnComplete again
-                EffectManager.Instance.OnDrawCardFinish();
+                player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());  //can override completioon behavior by calling setOnComplete again
             });
         });
     }

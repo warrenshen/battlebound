@@ -147,6 +147,14 @@ public class Board
         return GetAliveCreaturesByPlayerId(opponentId);
     }
 
+    public List<BoardCreature> GetOpponentFrozenCreaturesByPlayerId(string playerId)
+    {
+        return new List<BoardCreature>(
+            GetOpponentAliveCreaturesByPlayerId(playerId)
+                .Where(boardCreature => boardCreature.IsFrozen > 0)
+        );
+    }
+
     public BoardCreature GetCreatureByPlayerIdAndCardId(string playerId, string cardId)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
@@ -400,16 +408,12 @@ public class Board
          */
         public List<BoardCreature> GetAliveCreatures()
         {
-            List<BoardCreature> boardCreatures = new List<BoardCreature>();
-            for (int i = 0; i < this.creatures.Length; i++)
-            {
-                BoardCreature boardCreature = this.creatures[i];
-                if (boardCreature != null && boardCreature.Health > 0)
-                {
-                    boardCreatures.Add(creatures[i]);
-                }
-            }
-            return boardCreatures;
+            return new List<BoardCreature>(
+                this.creatures.Where(
+                    boardCreature => boardCreature != null &&
+                    boardCreature.Health > 0
+                )
+            );
         }
 
         public int GetIndexByCardId(string cardId)

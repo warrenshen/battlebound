@@ -222,17 +222,13 @@ public class TestDeathwish
             playerCreature
         );
 
-        yield return null;
+        yield return new WaitForSeconds(3);
 
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
         Assert.AreEqual(null, enemyCreature);
 
-        yield return null;
-
         PlayerAvatar enemyAvatar = BattleState.Instance().Opponent.Avatar;
         Assert.AreEqual(90, enemyAvatar.Health);
-
-        yield return null;
 
         playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
         Assert.AreEqual(null, playerCreature);
@@ -249,25 +245,16 @@ public class TestDeathwish
             playerCreature
         );
 
-        yield return null;
+        yield return new WaitForSeconds(3);
 
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
         Assert.AreEqual(null, enemyCreature);
 
-        yield return null;
-
-        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 1);
-        Assert.AreEqual(0, enemyCreature.Health);
-
-        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 2);
-        Assert.AreEqual(10, enemyCreature.Health);
-
-        yield return null;
-
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 1);
         Assert.AreEqual(null, enemyCreature);
 
-        yield return null;
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 2);
+        Assert.AreEqual(10, enemyCreature.Health);
 
         playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 1);
         Assert.AreEqual(null, playerCreature);

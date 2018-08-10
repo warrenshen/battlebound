@@ -75,6 +75,8 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE,
         Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
+        Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY,
+        Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
 
         // Deathrattle.
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
@@ -119,6 +121,8 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE,
         Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES,
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
+        Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY,
+        Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
     };
 
     private static readonly List<string> EFFECT_DEATH_RATTLE = new List<string>
@@ -402,7 +406,7 @@ public class EffectManager : MonoBehaviour
     {
         Player player = BattleState.Instance().GetPlayerById(effect.PlayerId);
         int damageTaken = player.TakeDamage(amount);
-        AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
+        AddToQueues(GetEffectsOnFaceDamageTaken(player, damageTaken));
     }
 
     private void EffectSummonCreature(Effect effect)
@@ -562,6 +566,8 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY:
             case Card.CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE:
             case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN:
                 AbilityBattlecry(effect);
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
@@ -645,6 +651,11 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES:
                 AbilitySilenceAllOpponentCreatures(effect);
+                break;
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN:
+                AbilityAttackKillRandomFrozen(effect);
+                break;
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
@@ -788,7 +799,7 @@ public class EffectManager : MonoBehaviour
         );
 
         int damageTaken = targetedPlayer.TakeDamage(amount);
-        effects.AddRange(GetEffectsOnFaceDamageTaken(targetedPlayer.Avatar, damageTaken));
+        effects.AddRange(GetEffectsOnFaceDamageTaken(targetedPlayer, damageTaken));
 
 
         effects.Add(
@@ -1006,7 +1017,7 @@ public class EffectManager : MonoBehaviour
         string playerId = effect.PlayerId;
         Player player = BattleState.Instance().GetPlayerById(playerId);
         int damageTaken = player.TakeDamage(amount);
-        AddToQueues(GetEffectsOnFaceDamageTaken(player.Avatar, damageTaken));
+        AddToQueues(GetEffectsOnFaceDamageTaken(player, damageTaken));
     }
 
     private void AbilityHealAdjacent(Effect effect, int amount)
@@ -1158,6 +1169,52 @@ public class EffectManager : MonoBehaviour
         foreach (BoardCreature boardCreature in opponentCreatures)
         {
             boardCreature.Silence();
+        }
+    }
+
+    private void AbilityAttackKillRandomFrozen(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
+
+        List<BoardCreature> frozenCreatures = Board.Instance().GetOpponentFrozenCreaturesByPlayerId(playerId);
+        if (frozenCreatures.Count <= 0)
+        {
+            return;
+        }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            BoardCreature randomCreature;
+
+            if (BattleSingleton.Instance.IsEnvironmentTest())
+            {
+                randomCreature = frozenCreatures[0];
+            }
+            else
+            {
+                int randomIndex = UnityEngine.Random.Range(0, frozenCreatures.Count);
+                randomCreature = frozenCreatures[randomIndex];
+            }
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGET);
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(boardCreature.GetChallengeCard());
+            moveAttributes.SetFieldId(randomCreature.GetPlayerId());
+            moveAttributes.SetTargetId(randomCreature.GetCardId());
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -1490,6 +1547,9 @@ public class EffectManager : MonoBehaviour
             BoardCreature attackingCreature = attackingTargetable as BoardCreature;
             BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
+            Player attackingPlayer = BattleState.Instance().GetPlayerById(attackingCreature.GetPlayerId());
+            Player defendingPlayer = BattleState.Instance().GetPlayerById(defendingCreature.GetPlayerId());
+
             if (attackingCreature.CanAttack <= 0)
             {
                 Debug.LogError("Fight called when canAttack is 0 or below!");
@@ -1522,8 +1582,28 @@ public class EffectManager : MonoBehaviour
                     {
                         damageDone = defendingCreature.TakeDamage(attackingCreature.GetAttack());
                     }
+
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+                    if (
+                        attackingCreature.HasAbility(Card.CARD_ABILITY_ICY) &&
+                        defendingCreature.Health > 0 &&
+                        defendingCreature.IsFrozen <= 0
+                    )
+                    {
+                        defendingCreature.Freeze(1);
+                    }
+
+                    if (
+                        attackingCreature.HasAbility(Card.CARD_ABILITY_PIERCING) &&
+                        defendingCreature.Health <= 0
+                    )
+                    {
+                        int attackingDamagePierce = attackingCreature.GetAttack() - damageDone;
+                        int attackingDamageDoneFace = defendingPlayer.TakeDamage(attackingDamagePierce);
+                        effects.AddRange(GetEffectsOnFaceDamageTaken(defendingPlayer, attackingDamageDoneFace));
+                    }
 
                     int damageTaken;
 
@@ -1535,8 +1615,28 @@ public class EffectManager : MonoBehaviour
                     {
                         damageTaken = attackingCreature.TakeDamage(defendingCreature.GetAttack());
                     }
+
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
                     effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
+
+                    if (
+                        defendingCreature.HasAbility(Card.CARD_ABILITY_ICY) &&
+                        attackingCreature.Health > 0 &&
+                        attackingCreature.IsFrozen <= 1
+                    )
+                    {
+                        attackingCreature.Freeze(2);
+                    }
+
+                    if (
+                        defendingCreature.HasAbility(Card.CARD_ABILITY_PIERCING) &&
+                        attackingCreature.Health <= 0
+                    )
+                    {
+                        int defendingDamagePierce = defendingCreature.GetAttack() - damageTaken;
+                        int defendingDamageDoneFace = defendingPlayer.TakeDamage(defendingDamagePierce);
+                        effects.AddRange(GetEffectsOnFaceDamageTaken(attackingPlayer, defendingDamageDoneFace));
+                    }
 
                     int adjacentAttack = 0;
                     if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN))
@@ -1603,7 +1703,7 @@ public class EffectManager : MonoBehaviour
                 {
                     int damageDone = defendingAvatar.TakeDamage(attackingCreature.GetAttack());
                     effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-                    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar, damageDone));
+                    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar.GetPlayer(), damageDone));
 
                     // Need to call redraw to update outline for can attack.
                     attackingCreature.Redraw();
@@ -1682,7 +1782,7 @@ public class EffectManager : MonoBehaviour
                     {
                         int damageDone = defendingAvatar.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnFaceDamageTaken(
-                        defendingAvatar,
+                            defendingAvatar.GetPlayer(),
                             damageDone
                         );
                         AddToQueues(effects);
@@ -1740,7 +1840,7 @@ public class EffectManager : MonoBehaviour
                     {
                         int damageDone = defendingAvatar.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnFaceDamageTaken(
-                        defendingAvatar,
+                            defendingAvatar.GetPlayer(),
                             damageDone
                         );
                         AddToQueues(effects);
@@ -1775,10 +1875,34 @@ public class EffectManager : MonoBehaviour
                 else
                 {
                     boardCreature.DeathNote();
-                    boardCreature.Redraw();
                     effects.AddRange(GetEffectsOnCreatureDeath(boardCreature));
                 }
             }
+
+            AddToQueues(effects);
+            this.isWaiting = false;
+            this.isDirty = true;
+        }
+        else if (card.Name == Card.CARD_NAME_BLUE_GIPSY_V3)
+        {
+            BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+
+            List<Effect> effects = new List<Effect>();
+
+            int damageTaken = targetedCreature.TakeDamage(20);
+            effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+
+            AddToQueues(effects);
+            this.isWaiting = false;
+            this.isDirty = true;
+        }
+        else if (card.Name == Card.CARD_NAME_FROSTLAND_THRASHER_8)
+        {
+            BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+            List<Effect> effects = new List<Effect>();
+
+            targetedCreature.DeathNote();
+            effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
 
             AddToQueues(effects);
             this.isWaiting = false;
@@ -1903,7 +2027,6 @@ public class EffectManager : MonoBehaviour
     private List<Effect> SpellTargetedUnstablePower(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
-        targetedCreature.Redraw();
         // No triggered effects on unstable power for now.
         return new List<Effect>();
     }
@@ -1955,7 +2078,6 @@ public class EffectManager : MonoBehaviour
     private List<Effect> SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.DeathNote();
-        targetedCreature.Redraw();
         return GetEffectsOnCreatureDeath(targetedCreature);
     }
 
@@ -1963,7 +2085,6 @@ public class EffectManager : MonoBehaviour
     {
         targetedCreature.AddBuff(Card.BUFF_CATEGORY_BESTOWED_VIGOR);
         targetedCreature.Heal(10);
-        targetedCreature.Redraw();
         return new List<Effect>();
     }
 
@@ -2333,21 +2454,21 @@ public class EffectManager : MonoBehaviour
     }
 
     private List<Effect> GetEffectsOnFaceDamageTaken(
-        PlayerAvatar playerAvatar,
+        Player player,
         int amount
     )
     {
-        string playerId = playerAvatar.GetPlayerId();
+        string playerId = player.Id;
 
         List<Effect> effects = new List<Effect>();
 
-        if (playerAvatar.Health <= 0)
+        if (player.GetHealth() <= 0)
         {
             effects.Add(
                 new Effect(
-                    playerAvatar.Owner.Id,
+                    playerId,
                     EFFECT_PLAYER_AVATAR_DIE,
-                    playerAvatar.GetCardId(),
+                    player.GetCardId(),
                     0
                 )
             );
