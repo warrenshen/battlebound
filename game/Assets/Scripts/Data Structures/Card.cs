@@ -397,24 +397,28 @@ public abstract class Card
         switch (card.GetRarity())
         {
             case Card.RarityType.Common:
-                cardVisual.SetTextFieldWithKey("Rarity", "N");
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[0]);
                 break;
             case Card.RarityType.Uncommon:
-                cardVisual.SetTextFieldWithKey("Rarity", "UN");
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[1]);
                 break;
             case Card.RarityType.Rare:
-                cardVisual.SetTextFieldWithKey("Rarity", "R");
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[2]);
                 break;
             case Card.RarityType.Epic:
-                cardVisual.SetTextFieldWithKey("Rarity", "EP");
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[3]);
                 break;
             case Card.RarityType.Legendary:
-                cardVisual.SetTextFieldWithKey("Rarity", "LG");
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[4]);
                 break;
             case Card.RarityType.Cosmic:
-                cardVisual.SetTextFieldWithKey("Rarity", "CL");
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[5]);
+                break;
+            default:
+                cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[0]);
                 break;
         }
+        cardVisual.UpdateCustomSprites();
 
         bool isCreature = card.GetType() == typeof(CreatureCard);
         if (isCreature)

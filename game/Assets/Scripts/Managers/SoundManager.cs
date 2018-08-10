@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +25,7 @@ public class SoundManager : MonoBehaviour
         Transform root = transform.Find(name);
         if (root == null)
         {
-            Debug.LogWarning("Could not play sound because no sound root found in pool.");
+            Debug.LogWarning(String.Format("Could not play sound `{0}` because no sound root found in pool.", name));
             return;
         }
 

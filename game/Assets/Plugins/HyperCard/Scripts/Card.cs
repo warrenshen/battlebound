@@ -329,12 +329,12 @@ namespace HyperCard
             this.CardFaceBackgroundArtworkOffset = copyFrom.CardFaceBackgroundArtworkOffset;
 
             this.CardOpacity = copyFrom.CardOpacity;
-            this.GetTextFieldWithKey("Cost").Value = copyFrom.GetTextFieldWithKey("Cost").Value;
-            this.GetTextFieldWithKey("Attack").Value = copyFrom.GetTextFieldWithKey("Attack").Value;
-            this.GetTextFieldWithKey("Health").Value = copyFrom.GetTextFieldWithKey("Health").Value;
-            this.GetTextFieldWithKey("Title").Value = copyFrom.GetTextFieldWithKey("Title").Value;
-            this.GetTextFieldWithKey("Rarity").Value = copyFrom.GetTextFieldWithKey("Rarity").Value;
-            this.GetTextFieldWithKey("Description").Value = copyFrom.GetTextFieldWithKey("Description").Value;
+            this.SetTextFieldWithKey("Cost", copyFrom.GetTextFieldWithKey("Cost").Value);
+            this.SetTextFieldWithKey("Attack", copyFrom.GetTextFieldWithKey("Attack").Value);
+            this.SetTextFieldWithKey("Health", copyFrom.GetTextFieldWithKey("Health").Value);
+            this.SetTextFieldWithKey("Title", copyFrom.GetTextFieldWithKey("Title").Value);
+            this.SetTextFieldWithKey("Rarity", copyFrom.GetTextFieldWithKey("Rarity").Value);
+            this.SetTextFieldWithKey("Description", copyFrom.GetTextFieldWithKey("Description").Value);
 
             this.Redraw();
         }
@@ -394,9 +394,9 @@ namespace HyperCard
             var backMat = new Material(mat[1]);
 
             ComputePeriodicalFx();
-
             var mask = CardMask;
 
+#if UNITY_EDITOR
             switch (DebugBlend)
             {
                 case BlendDebug.Red:
@@ -419,6 +419,7 @@ namespace HyperCard
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+#endif
 
             faceMat.SetInt("_Stencil", Stencil);
             backMat.SetInt("_Stencil", Stencil);
@@ -901,12 +902,36 @@ namespace HyperCard
 
         public void SetTextFieldWithKey(string key, string value)
         {
-            foreach (TextMeshProParam element in this.TmpTextObjects)
+            TextMeshProParam target = GetTextFieldWithKey(key);
+            if (target == null)
+            {
+                Debug.LogWarning(String.Format("No text field with key `{0}` found.", key));
+                return;
+            }
+
+            target.Value = value;
+        }
+
+        public CustomSpriteParam GetSpriteWithKey(string key)
+        {
+            foreach (CustomSpriteParam element in this.SpriteObjects)
             {
                 if (element.Key != key)
                     continue;
-                element.Value = value;
+                return element;
             }
+            return null;
+        }
+
+        public void SetSpriteWithKey(string key, Texture2D value)
+        {
+            CustomSpriteParam target = GetSpriteWithKey(key);
+            if (target == null)
+            {
+                Debug.LogWarning(String.Format("No text field with key `{0}` found.", key));
+                return;
+            }
+            target.Value = value;
         }
 
         public void SetFrameColor(Color color)
