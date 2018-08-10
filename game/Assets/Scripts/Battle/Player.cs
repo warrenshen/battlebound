@@ -755,18 +755,18 @@ public class Player
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PAL_V1, 1));
         //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORTRESS_KNIGHT, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TERRATANK, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CULYSSA, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CULYSSA, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
         //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SAPLET, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESMITH_APPRENTICE, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORGEMECH, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIGHTHUNTER, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BRINGER_OF_DAWN, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_EMILIA_AIRHEART, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PEARL_NYMPH, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TARA_SWAN_PRINCESS, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTSPORE, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIGHTHUNTER, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BRINGER_OF_DAWN, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_EMILIA_AIRHEART, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PEARL_NYMPH, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TARA_SWAN_PRINCESS, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTSPORE, 1));
 
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_UNSTABLE_POWER, 4));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_TOUCH_OF_ZEUS, 1));
@@ -779,9 +779,9 @@ public class Player
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_MUDSLINGING, 1));
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEATH_NOTE, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BOMBS_AWAY, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GRAVE_DIGGING, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_THE_SEVEN, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BOMBS_AWAY, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GRAVE_DIGGING, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_THE_SEVEN, 1));
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BATTLE_ROYALE, 1));
 

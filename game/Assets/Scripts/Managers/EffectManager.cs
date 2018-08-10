@@ -11,7 +11,8 @@ public class EffectManager : MonoBehaviour
     private List<Effect> lQueue; // Low priority.
 
     private bool isReady; // Ready => process queues.
-    private bool isWaiting; // Waiting => wait for server move.
+    private int isWaiting; // Waiting > 0 => do not auto-process more server moves.
+
     private bool isDirty; // Dirty => compare device vs server state when queues empty.
     public bool IsDirty => isDirty;
 
@@ -64,6 +65,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
         Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY,
         Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN,
+        Card.CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY,
 
         // Battlecry.
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
@@ -80,6 +82,8 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
+        Card.CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY,
+        Card.CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY,
 
         // Deathrattle.
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
@@ -90,6 +94,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
+        Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
         EFFECT_PLAYER_AVATAR_DIE,
@@ -105,6 +110,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_END_TURN_DRAW_CARD,
         Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY,
         Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN,
+        Card.CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY,
     };
 
     private static readonly List<string> EFFECTS_START_TURN = new List<string>
@@ -141,6 +147,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
+        Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
     };
 
     private static readonly List<string> EFFECTS_DAMAGE_TAKEN = new List<string>
@@ -208,7 +215,7 @@ public class EffectManager : MonoBehaviour
     {
         if (Instance != null)
         {
-            return Instance.isWaiting || !Instance.isReady;
+            return Instance.isWaiting > 0 || !Instance.isReady;
         }
         else
         {
@@ -221,7 +228,7 @@ public class EffectManager : MonoBehaviour
         Instance = this;
 
         this.isReady = false;
-        this.isWaiting = false;
+        this.isWaiting = 0;
 
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
@@ -240,7 +247,7 @@ public class EffectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.isWaiting || !this.isReady)
+        if (this.isWaiting > 0 || !this.isReady)
         {
             return;
         }
@@ -267,7 +274,12 @@ public class EffectManager : MonoBehaviour
                 }
             }
 
-            BattleState.Instance().ProcessMoveQueue();
+            int moveRank = BattleState.Instance().ProcessMoveQueue();
+            if (moveRank >= 0)
+            {
+                //this.isDirty = true;
+            }
+            //if ()
         }
         else if (this.hQueue.Count > 0)
         {
@@ -566,6 +578,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD:
             case Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY:
             case Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN:
+            case Card.CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY:
                 AbilityEndTurn(effect);
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
@@ -582,6 +595,8 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES:
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY:
             case Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN:
+            case Card.CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY:
                 AbilityBattlecry(effect);
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
@@ -593,6 +608,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_RESUMMON:
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS:
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
+            case Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE:
                 AbilityDeathRattle(effect);
                 break;
             case EFFECT_CHANGE_TURN_DRAW_CARD:
@@ -610,7 +626,7 @@ public class EffectManager : MonoBehaviour
 
     private void AbilityBattlecry(Effect effect)
     {
-        this.isWaiting = true;
+        IncrementIsWaiting();
         StartCoroutine("AbilityBattlecryCoroutine", effect);
     }
 
@@ -622,7 +638,6 @@ public class EffectManager : MonoBehaviour
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
 
         yield return new WaitForSeconds(0.5f);
-        this.isWaiting = false;
 
         switch (effect.Name)
         {
@@ -666,16 +681,23 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN:
                 AbilityAttackKillRandomFrozen(effect);
                 break;
+            case Card.CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY:
+                AbilityBoostAdjacentFriendly(effect);
+                break;
+            case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY:
+                AbilityHealFace(effect, 20);
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
         }
+
+        DecrementIsWaiting();
     }
 
     private void AbilityDeathRattle(Effect effect)
     {
-        this.isWaiting = true;
+        IncrementIsWaiting();
         StartCoroutine("AbilityDeathRattleCoroutine", effect);
     }
 
@@ -687,7 +709,6 @@ public class EffectManager : MonoBehaviour
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
 
         yield return new WaitForSeconds(0.5f);
-        this.isWaiting = false;
 
         switch (effect.Name)
         {
@@ -718,15 +739,20 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
                 AbilityDeathRattleSummonSummonedDragon(effect);
                 break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE:
+                AbilityDeathRattleReviveHighestCostCreature(effect);
+                break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
         }
+
+        DecrementIsWaiting();
     }
 
     private void AbilityEndTurn(Effect effect)
     {
-        this.isWaiting = true;
+        IncrementIsWaiting();
         StartCoroutine("AbilityEndTurnCoroutine", effect);
     }
 
@@ -738,7 +764,6 @@ public class EffectManager : MonoBehaviour
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
 
         yield return new WaitForSeconds(0.5f);
-        this.isWaiting = false;
 
         switch (effect.Name)
         {
@@ -764,10 +789,15 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD:
                 AbilityDrawCard(effect);
                 break;
+            case Card.CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY:
+                AbilityHealFace(effect, 30);
+                break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
         }
+
+        DecrementIsWaiting();
     }
 
     private void EffectPlayerAvatarDie(Effect effect)
@@ -794,8 +824,13 @@ public class EffectManager : MonoBehaviour
             effect.PlayerId,
             effect.CardId
         );
-
         boardCreature.Heal(amount);
+    }
+
+    private void AbilityHealFace(Effect effect, int amount)
+    {
+        Player player = BattleState.Instance().GetPlayerById(effect.PlayerId);
+        player.Heal(amount);
     }
 
     private void AbilityDrawCard(Effect effect)
@@ -844,6 +879,34 @@ public class EffectManager : MonoBehaviour
             effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
         }
         AddToQueues(effects);
+    }
+
+    private void AbilityBoostAdjacentFriendly(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        List<BoardCreature> adjacentCreatures =
+            Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
+                playerId,
+                cardId
+            );
+
+        string buff;
+        switch (effect.Name)
+        {
+            case Card.CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY:
+                buff = Card.BUFF_CATEGORY_THIRTY_THIRTY;
+                break;
+            default:
+                Debug.LogError(string.Format("Unhandled effect for boost adjacent friendly: {0}", effect.Name));
+                return;
+        }
+
+        foreach (BoardCreature adjacentCreature in adjacentCreatures)
+        {
+            adjacentCreature.AddBuff(buff);
+        }
     }
 
     private void AbilityBoostRandomFriendly(Effect effect)
@@ -902,7 +965,6 @@ public class EffectManager : MonoBehaviour
 
         int damageTaken = targetedPlayer.TakeDamage(amount);
         effects.AddRange(GetEffectsOnFaceDamageTaken(targetedPlayer, damageTaken));
-
 
         effects.Add(
             new Effect(
@@ -1110,8 +1172,6 @@ public class EffectManager : MonoBehaviour
         {
             adjacentCreature.GrantTaunt();
         }
-
-        // No AddToQueues for now.
     }
 
     private void AbilityDamagePlayerFace(Effect effect, int amount)
@@ -1218,7 +1278,7 @@ public class EffectManager : MonoBehaviour
         return spawnCard;
     }
 
-    private void AbilityReviveHighestCostCreature(Effect effect)
+    private List<Effect> GetEffectsForReviveHighestCostCreature(Effect effect)
     {
         string playerId = effect.PlayerId;
 
@@ -1227,7 +1287,7 @@ public class EffectManager : MonoBehaviour
 
         if (sortedDeadCards.Count <= 0)
         {
-            return;
+            return new List<Effect>();
         }
 
         int highestCost = -1;
@@ -1257,8 +1317,12 @@ public class EffectManager : MonoBehaviour
             -1
         );
 
-        List<Effect> effects = new List<Effect> { summonEffect };
-        AddToQueues(effects);
+        return new List<Effect> { summonEffect };
+    }
+
+    private void AbilityReviveHighestCostCreature(Effect effect)
+    {
+        AddToQueues(GetEffectsForReviveHighestCostCreature(effect));
     }
 
     private void AbilitySilenceAllOpponentCreatures(Effect effect)
@@ -1435,6 +1499,20 @@ public class EffectManager : MonoBehaviour
         AddToQueues(effects);
     }
 
+    private void AbilityDeathRattleReviveHighestCostCreature(Effect effect)
+    {
+        List<Effect> effects = GetEffectsForReviveHighestCostCreature(effect);
+        effects.Add(
+            new Effect(
+                effect.PlayerId,
+                EFFECT_CARD_DIE_AFTER_DEATH_RATTLE,
+                effect.CardId,
+                effect.SpawnRank
+            )
+        );
+        AddToQueues(effects);
+    }
+
     private void BuffUnstablePower(Effect effect)
     {
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
@@ -1453,12 +1531,12 @@ public class EffectManager : MonoBehaviour
 
     public void OnDrawCardFinish()
     {
-        this.isWaiting = false;
+        DecrementIsWaiting();
     }
 
     public void OnSummonCreatureFinish()
     {
-        this.isWaiting = false;
+        DecrementIsWaiting();
     }
 
     public void OnPlayMulligan(string playerId, List<int> deckCardIndices)
@@ -1469,7 +1547,7 @@ public class EffectManager : MonoBehaviour
 
     public void OnDrawMulliganStart()
     {
-        this.isWaiting = true;
+        IncrementIsWaiting();
     }
 
     public void OnDrawMulliganFinish(string playerId)
@@ -1485,26 +1563,26 @@ public class EffectManager : MonoBehaviour
         }
         else
         {
-            this.isWaiting = false;
+            DecrementIsWaiting();
         }
     }
 
     private IEnumerator WaitForOneSecondCoroutine()
     {
         yield return new WaitForSeconds(1);
-        this.isWaiting = false;
+        DecrementIsWaiting();
     }
 
     public void OnFinishMulligan()
     {
         this.isDirty = true;
-        this.isWaiting = true;
+        IncrementIsWaiting();
         BattleState.Instance().EndMulligan();
     }
 
     public void OnFinishMulliganFinish()
     {
-        this.isWaiting = false;
+        DecrementIsWaiting();
     }
 
     public void OnStartTurn(string playerId)
@@ -1670,7 +1748,7 @@ public class EffectManager : MonoBehaviour
 
             List<Effect> effects = new List<Effect>();
 
-            this.isWaiting = true;
+            IncrementIsWaiting();
             attackingCreature.FightAnimationWithCallback(
                 defendingCreature,
                 new UnityAction(() =>
@@ -1767,7 +1845,7 @@ public class EffectManager : MonoBehaviour
                     }
 
                     AddToQueues(effects);
-                    this.isWaiting = false;
+                    DecrementIsWaiting();
                     this.isDirty = true;
                 }
             ));
@@ -1799,7 +1877,7 @@ public class EffectManager : MonoBehaviour
 
             //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
 
-            this.isWaiting = true;
+            IncrementIsWaiting();
             attackingCreature.FightAnimationWithCallback(
                 defendingAvatar,
                 new UnityAction(() =>
@@ -1812,7 +1890,7 @@ public class EffectManager : MonoBehaviour
                     attackingCreature.Redraw();
 
                     AddToQueues(effects);
-                    this.isWaiting = false;
+                    DecrementIsWaiting();
                     this.isDirty = true;
                 }
             ));
@@ -1851,8 +1929,7 @@ public class EffectManager : MonoBehaviour
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-                this.isWaiting = true;
-
+                IncrementIsWaiting();
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
                     attackingTargetable.GetTargetableTransform(),
@@ -1866,7 +1943,7 @@ public class EffectManager : MonoBehaviour
                         );
                         AddToQueues(effects);
 
-                        this.isWaiting = false;
+                        DecrementIsWaiting();
                         this.isDirty = true;
                     }
                 );
@@ -1875,8 +1952,7 @@ public class EffectManager : MonoBehaviour
             {
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-                this.isWaiting = true;
-
+                IncrementIsWaiting();
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
                     attackingTargetable.GetTargetableTransform(),
@@ -1890,7 +1966,7 @@ public class EffectManager : MonoBehaviour
                         );
                         AddToQueues(effects);
 
-                        this.isWaiting = false;
+                        DecrementIsWaiting();
                         this.isDirty = true;
                     }
                 );
@@ -1909,8 +1985,7 @@ public class EffectManager : MonoBehaviour
             {
                 BoardCreature defendingCreature = defendingTargetable as BoardCreature;
 
-                this.isWaiting = true;
-
+                IncrementIsWaiting();
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
                     attackingTargetable.GetTargetableTransform(),
@@ -1924,7 +1999,7 @@ public class EffectManager : MonoBehaviour
                         );
                         AddToQueues(effects);
 
-                        this.isWaiting = false;
+                        DecrementIsWaiting();
                         this.isDirty = true;
                     }
                 );
@@ -1933,8 +2008,8 @@ public class EffectManager : MonoBehaviour
             {
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
-                this.isWaiting = true;
-
+                IncrementIsWaiting();
+                Debug.Log(this.isWaiting);
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
                     attackingTargetable.GetTargetableTransform(),
@@ -1948,7 +2023,7 @@ public class EffectManager : MonoBehaviour
                         );
                         AddToQueues(effects);
 
-                        this.isWaiting = false;
+                        DecrementIsWaiting();
                         this.isDirty = true;
                     }
                 );
@@ -1983,7 +2058,6 @@ public class EffectManager : MonoBehaviour
             }
 
             AddToQueues(effects);
-            this.isWaiting = false;
             this.isDirty = true;
         }
         else if (card.Name == Card.CARD_NAME_BLUE_GIPSY_V3)
@@ -1996,7 +2070,6 @@ public class EffectManager : MonoBehaviour
             effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
 
             AddToQueues(effects);
-            this.isWaiting = false;
             this.isDirty = true;
         }
         else if (card.Name == Card.CARD_NAME_FROSTLAND_THRASHER_8)
@@ -2008,27 +2081,26 @@ public class EffectManager : MonoBehaviour
             effects.AddRange(GetEffectsOnCreatureDeath(targetedCreature));
 
             AddToQueues(effects);
-            this.isWaiting = false;
             this.isDirty = true;
         }
         else if (card.Name == Card.CARD_NAME_PAL_V1)
         {
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
             targetedCreature.AddBuff(Card.BUFF_CATEGORY_ZERO_TWENTY);
-            this.isWaiting = false;
             this.isDirty = true;
         }
         else if (card.Name == Card.CARD_NAME_FIRESMITH_APPRENTICE)
         {
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
             targetedCreature.AddBuff(Card.BUFF_CATEGORY_TEN_TEN);
-            this.isWaiting = false;
             this.isDirty = true;
         }
         else
         {
             Debug.LogError("Invalid card for move random target.");
         }
+
+        DecrementIsWaiting();
     }
 
     /*
@@ -2089,6 +2161,8 @@ public class EffectManager : MonoBehaviour
 
             BattleState.Instance().AddServerMove(challengeMove);
         }
+
+        DecrementIsWaiting();
     }
 
     public void OnSpellTargetedPlay(
@@ -2231,7 +2305,7 @@ public class EffectManager : MonoBehaviour
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
             case Card.CARD_NAME_BOMBS_AWAY:
-                effects = SpellUntargetedSprayNPray(playerId, challengeCard);
+                effects = SpellUntargetedBombsAway(playerId, challengeCard);
                 break;
             case Card.CARD_NAME_GRAVE_DIGGING:
                 effects = SpellUntargetedGraveDigging(playerId);
@@ -2345,7 +2419,7 @@ public class EffectManager : MonoBehaviour
         return effects;
     }
 
-    private List<Effect> SpellUntargetedSprayNPray(string playerId, ChallengeCard card)
+    private List<Effect> SpellUntargetedBombsAway(string playerId, ChallengeCard card)
     {
         List<Effect> effects = new List<Effect>();
 
@@ -2596,7 +2670,7 @@ public class EffectManager : MonoBehaviour
 
     private void WaitForServerMove(int moveRank)
     {
-        this.isWaiting = true;
+        IncrementIsWaiting();
         StartCoroutine("WaitForServerMoveCoroutine", new object[1] { moveRank });
     }
 
@@ -2616,14 +2690,36 @@ public class EffectManager : MonoBehaviour
                 {
                     // Reload state from server and reload scene.
                     BattleSingleton.Instance.SendGetActiveChallengeRequest();
+                    timeCounter = 0.0;
                 }
                 else
                 {
                     Debug.LogError("Stuck in waiting mode for five seconds.");
-                    this.isWaiting = false;
+                    this.isWaiting = 0;
+                    timeCounter = 0.0;
                     yield return null;
                 }
             }
+        }
+
+        yield return null;
+    }
+
+    private void IncrementIsWaiting()
+    {
+        this.isWaiting += 1;
+        if (this.isWaiting > 2)
+        {
+            Debug.LogError("Increment is waiting to > 2.");
+        }
+    }
+
+    private void DecrementIsWaiting()
+    {
+        this.isWaiting -= 1;
+        if (this.isWaiting < 0)
+        {
+            Debug.LogError("Decrement is waiting to < 0.");
         }
     }
 }

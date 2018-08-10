@@ -184,15 +184,28 @@ public class Hand
 
             Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.15f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
-            LeanTween
-                .rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 3f, 0), CardTween.TWEEN_DURATION)
-                .setOnComplete(() =>
-                {
-                    if (onRepositionFinish != null)
+
+            if (k == size - 1)
+            {
+                // If this animation is for the last card in hand, add set on complete.
+                LeanTween
+                    .rotateLocal(battleCardObject.gameObject, new Vector3(rotation_x, pos * 3f, 0), CardTween.TWEEN_DURATION)
+                    .setOnComplete(() =>
                     {
-                        onRepositionFinish.Invoke();
-                    }
-                });
+                        if (onRepositionFinish != null)
+                        {
+                            onRepositionFinish.Invoke();
+                        }
+                    });
+            }
+            else
+            {
+                LeanTween.rotateLocal(
+                    battleCardObject.gameObject,
+                    new Vector3(rotation_x, pos * 3f, 0),
+                    CardTween.TWEEN_DURATION
+                );
+            }
         }
     }
 
