@@ -36,6 +36,7 @@ public class EffectManager : MonoBehaviour
     {
         Card.CARD_ABILITY_LIFE_STEAL,
         Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+        Card.CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
         EFFECT_CARD_DIE,
         EFFECT_SUMMON_CREATURE,
     };
@@ -129,7 +130,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
     };
 
-    private static readonly List<string> EFFECT_DEATH_RATTLE = new List<string>
+    private static readonly List<string> EFFECTS_DEATH_RATTLE = new List<string>
     {
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
@@ -142,9 +143,10 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
     };
 
-    private static readonly List<string> EFFECT_DAMAGE_TAKEN = new List<string>
+    private static readonly List<string> EFFECTS_DAMAGE_TAKEN = new List<string>
     {
         Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
+        Card.CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
     };
 
     private class Effect
@@ -375,6 +377,9 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY:
                 AbilityDamageTakenDamagePlayerFace(effect, 30);
                 break;
+            case Card.CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY:
+                AbilityDamageTakenAttackFace(effect, 20);
+                break;
             case EFFECT_CARD_DIE:
                 EffectCardDie(effect);
                 break;
@@ -411,6 +416,13 @@ public class EffectManager : MonoBehaviour
         Player player = BattleState.Instance().GetPlayerById(effect.PlayerId);
         int damageTaken = player.TakeDamage(amount);
         AddToQueues(GetEffectsOnFaceDamageTaken(player, damageTaken));
+    }
+
+    private void AbilityDamageTakenAttackFace(Effect effect, int amount)
+    {
+        Player opponent = BattleState.Instance().GetOpponentByPlayerId(effect.PlayerId);
+        int damageTaken = opponent.TakeDamage(amount);
+        AddToQueues(GetEffectsOnFaceDamageTaken(opponent, damageTaken));
     }
 
     private void EffectSummonCreature(Effect effect)
@@ -766,7 +778,7 @@ public class EffectManager : MonoBehaviour
         playerAvatar.Die();
 
         ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(Board.Instance().GetOpponentIdByPlayerId(playerId));
+        challengeMove.SetPlayerId(BattleState.Instance().GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
         BattleState.Instance().AddDeviceMove(challengeMove);
 
@@ -884,7 +896,7 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        Player targetedPlayer = Board.Instance().GetOpponentByPlayerId(
+        Player targetedPlayer = BattleState.Instance().GetOpponentByPlayerId(
             effect.PlayerId
         );
 
@@ -1160,6 +1172,7 @@ public class EffectManager : MonoBehaviour
         spawnCard.SetSpawnRank(spawnRank);
 
         spawnCard.SetId(player.GetNewCardId());
+        spawnCard.SetPlayerId(playerId);
         spawnCard.SetCost(spawnCard.CostStart);
         spawnCard.SetAttack(spawnCard.AttackStart);
         spawnCard.SetHealth(spawnCard.HealthStart);
@@ -1462,7 +1475,7 @@ public class EffectManager : MonoBehaviour
     public void OnDrawMulliganFinish(string playerId)
     {
         Player player = BattleState.Instance().GetPlayerById(playerId);
-        Player enemy = Board.Instance().GetOpponentByPlayerId(playerId);
+        Player enemy = BattleState.Instance().GetOpponentByPlayerId(playerId);
         if (
             player.Mode == Player.PLAYER_STATE_MODE_MULLIGAN_WAITING &&
             enemy.Mode == Player.PLAYER_STATE_MODE_MULLIGAN_WAITING
@@ -1578,7 +1591,7 @@ public class EffectManager : MonoBehaviour
             {
                 effects.Add(
                     new Effect(
-                        Board.Instance().GetOpponentIdByPlayerId(playerId),
+                        BattleState.Instance().GetOpponentIdByPlayerId(playerId),
                         Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
                         opponentCreature.GetCardId(),
                         opponentCreature.SpawnRank
@@ -2495,7 +2508,7 @@ public class EffectManager : MonoBehaviour
 
         if (amount > 0)
         {
-            foreach (string effectName in EFFECT_DAMAGE_TAKEN)
+            foreach (string effectName in EFFECTS_DAMAGE_TAKEN)
             {
                 if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
                 {
@@ -2525,7 +2538,7 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        foreach (string effectName in EFFECT_DEATH_RATTLE)
+        foreach (string effectName in EFFECTS_DEATH_RATTLE)
         {
             if (boardCreature.HasAbility(effectName) || boardCreature.HasBuff(effectName))
             {

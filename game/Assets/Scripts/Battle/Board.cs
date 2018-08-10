@@ -6,8 +6,6 @@ using UnityEngine.Events;
 
 public class Board
 {
-    private Dictionary<string, string> playerIdToOpponentId;
-
     private Dictionary<string, PlayingField> playerIdToField;
 
     private Dictionary<string, PlayerAvatar> playerIdToAvatar;
@@ -25,7 +23,6 @@ public class Board
 
     public Board()
     {
-        this.playerIdToOpponentId = new Dictionary<string, string>();
         this.playerIdToField = new Dictionary<string, PlayingField>();
         this.playerIdToAvatar = new Dictionary<string, PlayerAvatar>();
     }
@@ -43,26 +40,6 @@ public class Board
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
         playingField.SpawnCardsFromChallengeState(fieldCards);
-    }
-
-    public void RegisterPlayerOpponent(string playerId, string opponentId)
-    {
-        this.playerIdToOpponentId[playerId] = opponentId;
-    }
-
-    public string GetOpponentIdByPlayerId(string playerId)
-    {
-        return this.playerIdToOpponentId[playerId];
-    }
-
-    public Player GetOpponentByPlayerId(string playerId)
-    {
-        BattleState battleState = BattleState.Instance();
-        if (battleState == null)
-        {
-            throw new Exception("BattleState does not exist.");
-        }
-        return battleState.GetPlayerById(GetOpponentIdByPlayerId(playerId));
     }
 
     public bool IsBoardPlaceOpen(string playerId, int index)
@@ -152,7 +129,7 @@ public class Board
 
     public List<BoardCreature> GetOpponentAliveCreaturesByPlayerId(string playerId)
     {
-        string opponentId = this.playerIdToOpponentId[playerId];
+        string opponentId = BattleState.Instance().GetOpponentIdByPlayerId(playerId);
         return GetAliveCreaturesByPlayerId(opponentId);
     }
 
@@ -186,7 +163,10 @@ public class Board
     public BoardCreature GetInFrontCreatureByPlayerIdAndCardId(string playerId, string cardId)
     {
         int opponentIndex = GetInFrontIndexByPlayerIdAndCardId(playerId, cardId);
-        return GetCreatureByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
+        return GetCreatureByPlayerIdAndIndex(
+            BattleState.Instance().GetOpponentIdByPlayerId(playerId),
+            opponentIndex
+        );
     }
 
     public Transform GetInFrontBoardPlaceByPlayerIdAndCardId(string playerId, string cardId)
@@ -198,7 +178,10 @@ public class Board
         }
 
         int opponentIndex = GetInFrontIndexByPlayerIdAndCardId(playerId, cardId);
-        return GetBoardPlaceByPlayerIdAndIndex(this.playerIdToOpponentId[playerId], opponentIndex);
+        return GetBoardPlaceByPlayerIdAndIndex(
+            BattleState.Instance().GetOpponentIdByPlayerId(playerId),
+            opponentIndex
+        );
     }
 
     public int GetIndexByPlayerIdAndCardId(string playerId, string cardId)
@@ -210,7 +193,7 @@ public class Board
     public int GetClosestAvailableIndexByPlayerId(string playerId, int index)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
-        List<int> offsets = new List<int> { 1, -1, 2, -2, 3, -3, 4, -4, 5, -5 };
+        List<int> offsets = new List<int> { 0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5 };
 
         foreach (int offset in offsets)
         {
@@ -263,10 +246,7 @@ public class Board
 
     public BoardCreature GetOpponentRandomCreature(string playerId)
     {
-        string opponentId = this.playerIdToOpponentId[playerId];
-
-        List<BoardCreature> opponentCreatures = GetAliveCreaturesByPlayerId(opponentId);
-
+        List<BoardCreature> opponentCreatures = GetOpponentAliveCreaturesByPlayerId(playerId);
         if (opponentCreatures.Count <= 0)
         {
             return null;
@@ -285,10 +265,9 @@ public class Board
 
     public Targetable GetOpponentRandomTargetable(string playerId)
     {
-        string opponentId = this.playerIdToOpponentId[playerId];
+        string opponentId = BattleState.Instance().GetOpponentIdByPlayerId(playerId);
 
         List<Targetable> opponentTargetables = new List<Targetable>();
-
         List<BoardCreature> opponentCreatures = GetAliveCreaturesByPlayerId(opponentId);
         opponentTargetables.AddRange(opponentCreatures);
         opponentTargetables.Add(BattleState.Instance().GetPlayerById(opponentId).Avatar);
