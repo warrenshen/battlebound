@@ -11,7 +11,6 @@ function findAuctionsExceptSeller(address) {
     address = prefixHex(address.toLowerCase());
 
     const API = Spark.getGameDataService();
-    
     const cardsDataQuery = API.S("seller").ne(address);
     const cardsDataQueryResult = API.queryItems("Card", cardsDataQuery);
     const cardsDataQueryResultError = cardsDataQueryResult.error();
@@ -44,7 +43,6 @@ function findAuctionsBySeller(address) {
     address = prefixHex(address.toLowerCase());
     
     const API = Spark.getGameDataService();
-    
     const cardsDataQuery = API.S("seller").eq(address);
     const cardsDataQueryResult = API.queryItems("Card", cardsDataQuery);
     const cardsDataQueryResultError = cardsDataQueryResult.error();
@@ -90,7 +88,6 @@ function syncAuctionByTokenId(tokenId) {
     const auctionOnChain = fetchAuctionByCardInt(tokenId);
     
     const API = Spark.getGameDataService();
-    
     const bCardId = "B" + tokenId.toString();
     var cardDataItem = API.getItem("Card", bCardId).document();
     if (cardDataItem === null) {

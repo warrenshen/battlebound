@@ -8,9 +8,9 @@
 require("ScriptDataModule");
 require("InitializePlayerModule");
 
-if (!Spark.hasScriptErrors() && Spark.getPlayer() !== null) {
-    initializePlayer();
-    setScriptSuccess();
-} else {
+if (Spark.hasScriptErrors() || Spark.getPlayer() == null) {
     setScriptError("Something went wrong with registration.");
 }
+
+initializePlayer();
+setScriptSuccess();
