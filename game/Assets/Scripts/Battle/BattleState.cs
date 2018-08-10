@@ -852,13 +852,21 @@ public class BattleState
         }
 
         ChallengeMove serverMove = this.serverMoveQueue[0];
-        VerifyChallengeState(
-            serverMove.Rank - 1,
-            GetPlayerState(),
-            GetOpponentState(),
-            this.spawnCount,
-            this.deadCards.Count
-        );
+        if (
+            !(
+                serverMove.PlayerId == this.you.Id &&
+                PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
+            )
+        )
+        {
+            VerifyChallengeState(
+                serverMove.Rank - 1,
+                GetPlayerState(),
+                GetOpponentState(),
+                this.spawnCount,
+                this.deadCards.Count
+            );
+        }
         this.serverMoves.Add(serverMove);
 
         if (

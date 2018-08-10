@@ -6,9 +6,6 @@
     private PlayerState opponentState;
     public PlayerState OpponentState => opponentState;
 
-    private int moveCount;
-    public int MoveCount => moveCount;
-
     private int spawnCount;
     public int SpawnCount => spawnCount;
 
@@ -18,14 +15,12 @@
     public ChallengeState(
         PlayerState playerState,
         PlayerState opponentState,
-        int moveCount,
         int spawnCount,
         int deadCount
     )
     {
         this.playerState = playerState;
         this.opponentState = opponentState;
-        this.moveCount = moveCount;
         this.spawnCount = spawnCount;
         this.deadCount = deadCount;
     }

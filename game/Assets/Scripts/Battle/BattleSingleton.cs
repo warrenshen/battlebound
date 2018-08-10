@@ -271,10 +271,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
             this.initDeadCards = new List<ChallengeCard>();
         }
 
-        this.moveRankToChallengeState[this.moveCount] = new ChallengeState(
+        this.moveRankToChallengeState[this.moveCount - 1] = new ChallengeState(
             this.playerState,
             this.opponentState,
-            this.moveCount,
             this.spawnCount,
             this.deadCount
         );
@@ -629,6 +628,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
     )
     {
         if (moveRank < 0)
+        {
+            return true;
+        }
+
+        if (!this.moveRankToChallengeState.ContainsKey(moveRank))
         {
             return true;
         }
