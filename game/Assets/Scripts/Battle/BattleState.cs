@@ -303,7 +303,7 @@ public class BattleState
 
     public bool CanReceiveChallengeMove()
     {
-        return true;
+        return !BattleManager.Instance.IsAnimating;
     }
 
     public int GetNewSpawnRank()
