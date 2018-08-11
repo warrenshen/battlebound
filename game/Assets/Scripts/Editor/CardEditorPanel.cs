@@ -20,7 +20,7 @@ public class CardEditorPanel : EditorWindow
     private int lineMargin = 5;
 
     private static int imageHeight = 350;
-    private static int imageWidth = 240;
+    private static int imageWidth = 270;
 
     private Material frameMat;
     private Material frontMat;
@@ -357,7 +357,7 @@ public class CardEditorPanel : EditorWindow
             EditorGUI.PrefixLabel(new Rect(23, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
         }
         frameMat.color = CardTemplate.ColorFromClass(template.classColor);
-        EditorGUI.DrawPreviewTexture(new Rect(0, position.height - 420, 295, 390), this.cardFrame, frameMat);  //hardcoded for card frame
+        EditorGUI.DrawPreviewTexture(new Rect(0, position.height - 420, 325, 390), this.cardFrame, frameMat);  //hardcoded for card frame
     }
 
     private void CardDefaultSection(CardTemplate template, int verticalOffset)
