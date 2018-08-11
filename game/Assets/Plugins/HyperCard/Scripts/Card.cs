@@ -333,7 +333,6 @@ namespace HyperCard
             this.SetTextFieldWithKey("Attack", copyFrom.GetTextFieldWithKey("Attack").Value);
             this.SetTextFieldWithKey("Health", copyFrom.GetTextFieldWithKey("Health").Value);
             this.SetTextFieldWithKey("Title", copyFrom.GetTextFieldWithKey("Title").Value);
-            this.SetTextFieldWithKey("Rarity", copyFrom.GetTextFieldWithKey("Rarity").Value);
             this.SetTextFieldWithKey("Description", copyFrom.GetTextFieldWithKey("Description").Value);
 
             this.Redraw();
