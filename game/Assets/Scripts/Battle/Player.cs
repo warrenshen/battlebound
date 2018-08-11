@@ -152,7 +152,6 @@ public class Player
     {
         this.hasTurn = false;
         this.turnCount += 1;
-        this.hand.RecedeCards();
     }
 
     public void NewTurn()
@@ -552,7 +551,6 @@ public class Player
         if (shouldCallEffectManager)
         {
             this.hand.RepositionCards(
-                0,
                 new UnityAction(() => EffectManager.Instance.OnFinishMulliganFinish())
             );
         }
@@ -688,7 +686,7 @@ public class Player
 
     public void RepositionCards(UnityAction onRepositionFinish = null)
     {
-        this.hand.RepositionCards(0, onRepositionFinish);
+        this.hand.RepositionCards(onRepositionFinish);
     }
 
     public string GetNewCardId()
@@ -701,56 +699,56 @@ public class Player
         string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
         List<Card> cards = new List<Card>();
 
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLESSED_NEWBORN, 2));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBUG_CATELYN, 2));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEMPLE_GUARDIAN, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WATERBORNE_RAZORBACK, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BOMBSHELL_BOMBADIER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_MARSHWATER_SQUEALER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TAJI_THE_FEARLESS, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_YOUNG_KYO, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_EMBERKITTY, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESTRIDED_TIGRESS, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_UNKINDLED_JUNIOR, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FLAMEBELCHER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBORN_MENACE, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEA_GREENLEAF, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WAVE_CHARMER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_POSEIDONS_HANDMAIDEN, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_NESSA_NATURES_CHAMPION, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BUBBLE_SQUIRTER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SWIFT_SHELLBACK, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SENTIENT_SEAKING, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CRYSTAL_SNAPPER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BATTLECLAD_GASDON, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_REDHAIRED_PALADIN, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESWORN_GODBLADE, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_RITUAL_HATCHLING, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_HELLBRINGER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_HOOFED_LUSH, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_DIONYSIAN_TOSSPOT, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SEAHORSE_SQUIRE, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TRIDENT_BATTLEMAGE, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SNEERBLADE, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TIMEWARP_KINGPIN, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LUX, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_THUNDEROUS_DESPERADO, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CEREBOAROUS, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_GUPPEA, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_RHYNOKARP, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PRICKLEPILLAR, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ADDERSPINE_WEEVIL, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_THIEF_OF_NIGHT, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_POWER_SIPHONER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIL_RUSTY, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_INFERNO_902, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CHAR_BOT_451, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_MEGAPUNK, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_DUSK_DWELLER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TALUSREAVER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PHANTOM_SKULLCRUSHER, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLUE_GIPSY_V3, 1));
-        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTLAND_THRASHER_8, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLESSED_NEWBORN, 2));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBUG_CATELYN, 2));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEMPLE_GUARDIAN, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WATERBORNE_RAZORBACK, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BOMBSHELL_BOMBADIER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_MARSHWATER_SQUEALER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TAJI_THE_FEARLESS, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_YOUNG_KYO, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_EMBERKITTY, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESTRIDED_TIGRESS, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_UNKINDLED_JUNIOR, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FLAMEBELCHER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBORN_MENACE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEA_GREENLEAF, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WAVE_CHARMER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_POSEIDONS_HANDMAIDEN, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_NESSA_NATURES_CHAMPION, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BUBBLE_SQUIRTER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SWIFT_SHELLBACK, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SENTIENT_SEAKING, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CRYSTAL_SNAPPER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BATTLECLAD_GASDON, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_REDHAIRED_PALADIN, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESWORN_GODBLADE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_RITUAL_HATCHLING, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_HELLBRINGER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_HOOFED_LUSH, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_DIONYSIAN_TOSSPOT, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SEAHORSE_SQUIRE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TRIDENT_BATTLEMAGE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SNEERBLADE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TIMEWARP_KINGPIN, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LUX, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_THUNDEROUS_DESPERADO, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CEREBOAROUS, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_GUPPEA, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_RHYNOKARP, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PRICKLEPILLAR, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ADDERSPINE_WEEVIL, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_THIEF_OF_NIGHT, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_POWER_SIPHONER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIL_RUSTY, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_INFERNO_902, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CHAR_BOT_451, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_MEGAPUNK, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_DUSK_DWELLER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TALUSREAVER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PHANTOM_SKULLCRUSHER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLUE_GIPSY_V3, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTLAND_THRASHER_8, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CYBER_SENTINEL, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PAL_V1, 1));
         //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORTRESS_KNIGHT, 1));
@@ -770,20 +768,20 @@ public class Player
 
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_UNSTABLE_POWER, 4));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_TOUCH_OF_ZEUS, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RAZE_TO_ASHES, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEEP_FREEZE, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BRR_BRR_BLIZZARD, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RIOT_UP, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_WIDESPREAD_FROSTBITE, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GREEDY_FINGERS, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_MUDSLINGING, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEATH_NOTE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RAZE_TO_ASHES, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEEP_FREEZE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BRR_BRR_BLIZZARD, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_RIOT_UP, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_WIDESPREAD_FROSTBITE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GREEDY_FINGERS, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_SILENCE_OF_THE_LAMBS, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_MUDSLINGING, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_DEATH_NOTE, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BOMBS_AWAY, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_GRAVE_DIGGING, 1));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_THE_SEVEN, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
-        //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BATTLE_ROYALE, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
+        cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BATTLE_ROYALE, 1));
 
         Deck chosen = new Deck(deckName, cards);
         return chosen;
