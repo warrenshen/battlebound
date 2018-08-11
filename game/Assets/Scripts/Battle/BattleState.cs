@@ -327,6 +327,71 @@ public class BattleState
         return rank;
     }
 
+    public void ReceiveChallengeMove(ChallengeMove challengeMove)
+    {
+        // If device's log of server moves or move queue contains the new server move
+        // already, skip this move. This can happen because the device adds
+        // its own mock server moves to the log for optimistic rendering.
+        foreach (ChallengeMove serverMove in GetServerMoves())
+        {
+            if (
+                serverMove.PlayerId == challengeMove.PlayerId &&
+                serverMove.Category == challengeMove.Category &&
+                serverMove.Rank == challengeMove.Rank
+            )
+            {
+                if (FlagHelper.IsLogVerbose())
+                {
+                    Debug.Log(
+                        string.Format(
+                            "[SKIPPED] Server move queue ADD for {0} with rank {1}",
+                            challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
+                            challengeMove.Rank
+                        )
+                    );
+                    Debug.Log(JsonUtility.ToJson(challengeMove));
+                }
+                return;
+            }
+        }
+        foreach (ChallengeMove serverMove in this.serverMoveQueue)
+        {
+            if (
+                serverMove.PlayerId == challengeMove.PlayerId &&
+                serverMove.Category == challengeMove.Category &&
+                serverMove.Rank == challengeMove.Rank
+            )
+            {
+                if (FlagHelper.IsLogVerbose())
+                {
+                    Debug.Log(
+                        string.Format(
+                            "[SKIPPED] Server move queue ADD for {0} with rank {1}",
+                            challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
+                            challengeMove.Rank
+                        )
+                    );
+                    Debug.Log(JsonUtility.ToJson(challengeMove));
+                }
+                return;
+            }
+        }
+
+        if (FlagHelper.IsLogVerbose())
+        {
+            Debug.Log(
+                string.Format(
+                    "Server move queue ADD for {0} with rank {1}",
+                    challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
+                    challengeMove.Rank
+                )
+            );
+            Debug.Log(JsonUtility.ToJson(challengeMove));
+        }
+        this.serverMoveQueue.Add(challengeMove);
+        this.serverMoveCount += 1;
+    }
+
     public int AddServerMove(ChallengeMove challengeMove)
     {
         if (
@@ -777,49 +842,6 @@ public class BattleState
         }
     }
 
-    public void ReceiveChallengeMove(ChallengeMove challengeMove)
-    {
-        // If device's log of server moves contains the new server move
-        // already, skip this move. This can happen because the device adds
-        // its own mock server moves to the log for optimistic rendering.
-        foreach (ChallengeMove serverMove in GetServerMoves())
-        {
-            if (
-                serverMove.PlayerId == this.you.Id &&
-                serverMove.PlayerId == challengeMove.PlayerId &&
-                serverMove.Category == challengeMove.Category &&
-                serverMove.Rank == challengeMove.Rank
-            )
-            {
-                if (FlagHelper.IsLogVerbose())
-                {
-                    Debug.Log(
-                        string.Format(
-                            "[SKIPPED] Server move queue ADD for {0} with rank {1}",
-                            challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
-                            challengeMove.Rank
-                        )
-                    );
-                    Debug.Log(JsonUtility.ToJson(challengeMove));
-                }
-                return;
-            }
-        }
-        if (FlagHelper.IsLogVerbose())
-        {
-            Debug.Log(
-                string.Format(
-                    "[Server move queue ADD for {0} with rank {1}",
-                    challengeMove.PlayerId != null ? GetPlayerById(challengeMove.PlayerId).Name : "_",
-                    challengeMove.Rank
-                )
-            );
-            Debug.Log(JsonUtility.ToJson(challengeMove));
-        }
-        this.serverMoveQueue.Add(challengeMove);
-        this.serverMoveCount += 1;
-    }
-
     // Challenge moves that cannot be predicted by device.
     private static List<string> OPPONENT_SERVER_CHALLENGE_MOVES = new List<string>
     {
@@ -852,22 +874,6 @@ public class BattleState
         }
 
         ChallengeMove serverMove = this.serverMoveQueue[0];
-        if (
-            !(
-                serverMove.PlayerId == this.you.Id &&
-                PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
-            )
-        )
-        {
-            VerifyChallengeState(
-                serverMove.Rank - 1,
-                GetPlayerState(),
-                GetOpponentState(),
-                this.spawnCount,
-                this.deadCards.Count
-            );
-        }
-        this.serverMoves.Add(serverMove);
 
         if (
             serverMove.PlayerId == this.opponent.Id &&
@@ -927,7 +933,23 @@ public class BattleState
         }
 
         this.serverMoveQueue.RemoveAt(0);
-        // Compare device server state?
+        if (
+            !(
+                serverMove.PlayerId == this.you.Id &&
+                PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
+            )
+        )
+        {
+            VerifyChallengeState(
+                serverMove.Rank - 1,
+                GetPlayerState(),
+                GetOpponentState(),
+                this.spawnCount,
+                this.deadCards.Count
+            );
+        }
+        this.serverMoves.Add(serverMove);
+
         if (
             serverMove.PlayerId == this.you.Id &&
             PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
