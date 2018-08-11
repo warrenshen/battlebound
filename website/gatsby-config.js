@@ -1,30 +1,42 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
+    title: "Gatsby Starter - Dimension by HTML5 UP",
+    author: "Hunter Chang",
+    description: "A Gatsby.js Starter based on Dimension by HTML5 UP"
   },
+  pathPrefix: '/',
   plugins: [
-    `gatsby-plugin-react-helmet`,
-    { resolve: `gatsby-plugin-nprogress`,
+    {
+      resolve: `gatsby-source-filesystem`,
       options: {
-        // Setting a color is optional.
-        color: `tomato`,
-        // Disable the loading spinner.
-        showSpinner: true,
-      }
+        path: `${__dirname}/src/posts`,
+        name: "posts",
+      },
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/src/pages`,
-        name: "markdown-pages",
+        name: `images`,
+        path: `${__dirname}/src/images`,
       },
     },
-    `gatsby-transformer-remark`,
     {
-      resolve: 'gatsby-plugin-netlify-cms',
+      resolve: `gatsby-transformer-remark`,
       options: {
-        modulePath: `${__dirname}/src/cms/cms.js`,
+        plugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 630,
+            },
+          },
+          "gatsby-remark-copy-linked-files",
+        ],
       },
-    }
-  ]
+    },
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-sass`
+  ],
 }

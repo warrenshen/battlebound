@@ -1,51 +1,40 @@
 {
-  "name": "gatsby-starter-default",
-  "description": "Gatsby default starter",
+  "name": "gatsby-starter-dimension",
+  "description": "Gatsby Starter - Dimension by HTML5 UP",
   "version": "1.0.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Hunter Chang",
   "dependencies": {
-    "animate.css": "^3.5.2",
-    "bootstrap": "^3.3.7",
-    "color": "^2.0.0",
-    "gatsby": "^1.6.5",
-    "gatsby-link": "^1.6.5",
-    "gatsby-plugin-netlify-cms": "^1.0.5",
-    "gatsby-plugin-nprogress": "^1.0.7",
-    "gatsby-plugin-react-helmet": "^1.0.1",
-    "gatsby-source-filesystem": "^1.5.16",
-    "gatsby-transformer-remark": "^1.7.30",
-    "gsap": "^1.20.2",
-    "radium": "^0.19.4",
-    "react-reveal": "^0.1.1",
-    "scrollmagic": "^2.0.5",
-    "web3": "^1.0.0-beta.35"
+    "gatsby": "^1.9.235",
+    "gatsby-link": "^1.6.39",
+    "gatsby-image": "^1.0.42",
+    "gatsby-plugin-google-analytics": "^1.0.24",
+    "gatsby-plugin-react-helmet": "^1.0.8",
+    "gatsby-plugin-sass": "^1.0.23",
+    "gatsby-plugin-sharp": "^1.6.41",
+    "gatsby-remark-copy-linked-files": "^1.5.30",
+    "gatsby-remark-images": "^1.5.56",
+    "gatsby-source-filesystem": "^1.5.27",
+    "gatsby-transformer-remark": "^1.7.37",
+    "gatsby-transformer-sharp": "^1.6.22",
+    "lodash": "^4.17.4"
   },
+  "homepage": "https://github.com/ChangoMan/gatsby-starter-dimension",
   "keywords": [
     "gatsby"
   ],
   "license": "MIT",
   "main": "n/a",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChangoMan/gatsby-starter-dimension.git"
+  },
   "scripts": {
-    "build": "gatsby build",
-    "develop": "gatsby develop",
-    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write 'src/**/*.js'",
+    "dev": "gatsby develop",
+    "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "git subtree push --prefix public origin gh-pages"
-  },
-  "devDependencies": {
-    "prettier": "^1.5.2"
-  },
-  "overrides": {
-    "gsap": {
-      "main": [
-        "./src/uncompressed/TweenMax.js"
-      ]
-    },
-    "scrollmagic": {
-      "main": [
-        "./scrollmagic/uncompressed/ScrollMagic.js",
-        "./scrollmagic/uncompressed/plugins/animation.gsap.js"
-      ]
-    }
+    "develop": "gatsby develop",
+    "build": "gatsby build",
+    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
+    "fix-semi": "eslint --quiet --ignore-pattern node_modules --ignore-pattern public --parser babel-eslint --no-eslintrc --rule '{\"semi\": [2, \"never\"], \"no-extra-semi\": [2]}' --fix gatsby-node.js"
   }
 }
