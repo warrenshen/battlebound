@@ -283,7 +283,7 @@ public class BattleManager : MonoBehaviour
 
     private void OnEndTurnClick()
     {
-        if (BattleState.Instance().ActivePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)   // dont allow end turn button click in non-normal state
+        if (BattleState.Instance().ActivePlayer.Mode != Player.PLAYER_STATE_MODE_NORMAL)
         {
             return;
         }
@@ -574,19 +574,21 @@ public class BattleManager : MonoBehaviour
             pivotPoint = this.enemyDrawCardFixedTransform;
         }
 
-        LeanTween.rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION).setEaseInQuad();
-        return CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-                 .setEaseInQuad()
-                 .setOnComplete(() =>
-        {
-            CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-                 .setOnComplete(() =>
+        LeanTween
+            .rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION)
+            .setEaseInQuad();
+        return CardTween
+            .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+            .setEaseInQuad()
+            .setOnComplete(() =>
             {
-                // TODO: should on draw card finish call in reposition cards?
-                SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position, delay: 0.2F);
-                player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());  //can override completioon behavior by calling setOnComplete again
+                CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                     .setOnComplete(() =>
+                {
+                    SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position, delay: 0.2F);
+                    player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());  //can override completioon behavior by calling setOnComplete again
+                });
             });
-        });
     }
 
     public void AnimateDrawCardForMulligan(

@@ -127,15 +127,7 @@ public class Hand
         }
     }
 
-    public void RecedeCards()
-    {
-        RepositionCards(-1);
-    }
-
-    public void RepositionCards(
-        float verticalShift = 0,
-        UnityAction onRepositionFinish = null
-    )
+    public void RepositionCards(UnityAction onRepositionFinish = null)
     {
         int size = this.Size();
         //if no cards, return
@@ -182,7 +174,7 @@ public class Hand
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.15f * pos, vertical) + verticalShift * battleCardObject.transform.forward;
+            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.15f * pos, vertical);
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
 
             if (k == size - 1)
