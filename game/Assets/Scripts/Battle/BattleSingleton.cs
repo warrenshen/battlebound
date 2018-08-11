@@ -114,8 +114,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
         GSData scriptData = message.ScriptData;
         InitializeChallenge(scriptData);
-
-        SceneManager.LoadScene("Battle");
     }
 
     private void ChallengeTurnTakenMessageHandler(ChallengeTurnTakenMessage message)
@@ -609,8 +607,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
         GSData scriptData = response.ScriptData;
         InitializeChallenge(scriptData);
-
-        SceneManager.LoadScene("Battle");
     }
 
     private void OnGetActiveChallengeError(LogEventResponse response)
@@ -697,7 +693,8 @@ public class BattleSingleton : Singleton<BattleSingleton>
         Debug.Log("Setting challengeId to: " + this.challengeId);
 
         ProcessChallengeScriptData(scriptData, false);
-
         this.challengeStarted = true;
+
+        SceneManager.LoadScene("Battle");
     }
 }

@@ -276,7 +276,7 @@ public class ChallengeCard
         }
         else if (this.attack != other.Attack)
         {
-            return string.Format("Level: {0} vs {1} [{2}]", this.attack, other.Attack, string.Format("{0}, {1}", this.id, other.Name));
+            return string.Format("Attack: {0} vs {1} [{2}]", this.attack, other.Attack, string.Format("{0}, {1}", this.id, other.Name));
         }
         else if (this.attackStart != other.AttackStart)
         {
