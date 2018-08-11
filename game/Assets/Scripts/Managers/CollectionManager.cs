@@ -11,7 +11,7 @@ using TMPro;
 public class CollectionManager : MonoBehaviour
 {
     [SerializeField]
-    private List<Card> collection;
+    private List<CollectionCardObject> collection;
     [SerializeField]
     private List<string> deckNames;
 
@@ -53,7 +53,7 @@ public class CollectionManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        this.collection = new List<Card>();
+        this.collection = new List<CollectionCardObject>();
         this.deckNames = new List<string>();
         this.idToCard = new Dictionary<string, Card>();
     }
@@ -72,9 +72,7 @@ public class CollectionManager : MonoBehaviour
         }
 
         List<Card> cards = DeckStore.Instance().GetCards();
-        this.collection = cards;
-
-        CreateCardObjects();
+        this.collection = CreateCardObjects(cards);
     }
 
     private void Update()
@@ -101,12 +99,12 @@ public class CollectionManager : MonoBehaviour
                 //Raycast using the Graphics Raycaster and mouse click position
                 List<RaycastResult> results = new List<RaycastResult>();
                 m_Raycaster.Raycast(m_PointerEventData, results);
-                CheckForDecklist(results, ActionManager.Instance.GetDragTarget());
+                CheckForDecklist(results, ActionManager.Instance.GetDragTarget() as CollectionCardObject);
             }
         }
     }
 
-    private void CheckForDecklist(List<RaycastResult> hit, CardObject cardObject)
+    private void CheckForDecklist(List<RaycastResult> hit, CollectionCardObject cardObject)
     {
         foreach (RaycastResult element in hit)
         {
@@ -164,7 +162,7 @@ public class CollectionManager : MonoBehaviour
                  });
     }
 
-    private void CreateCardObjects()
+    private List<CollectionCardObject> CreateCardObjects(List<Card> cards)
     {
         int index = 0;
         int rowSize = 4;
@@ -175,22 +173,25 @@ public class CollectionManager : MonoBehaviour
 
         Transform grayed = new GameObject("Grayed").transform as Transform;
         grayed.parent = this.collectionObject.transform;
+        List<CollectionCardObject> createdCardObjects = new List<CollectionCardObject>();
 
-        foreach (Card card in collection)
+        foreach (Card card in cards)
         {
-            GameObject created = new GameObject(card.Name);
-            created.transform.parent = collectionObject.transform;
-            created.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
 
-            CollectionCardObject collectionCardObject = created.AddComponent<CollectionCardObject>();
-            collectionCardObject.Initialize(card);
+            CollectionCardObject collectionCardObject = CollectionCardObject.Create(card);
+            collectionCardObject.transform.parent = collectionObject.transform;
+            collectionCardObject.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
+            collectionCardObject.SetBothResetValues();
+
             idToCard.Add(card.Id, card);
 
-            CreateGrayed(created.transform, card).parent = grayed;
+            CreateGrayed(collectionCardObject.transform, card).parent = grayed;
             collectionCardObject.visual.Redraw();
 
+            createdCardObjects.Add(collectionCardObject);
             index++;
         }
+        return createdCardObjects;
     }
 
     private Transform CreateGrayed(Transform source, Card card)
@@ -213,13 +214,47 @@ public class CollectionManager : MonoBehaviour
         return created.transform;
     }
 
-    public void IncludeCard(CardObject cardObject)
+    public void IncludeCard(CollectionCardObject cardObject)
     {
         cardObject.visual.SetOutline(false);
-        GameObject cutout = Instantiate(cardCutout, cutoutContent.transform);
+        Button cutout = Instantiate(cardCutout, cutoutContent.transform).GetComponent<Button>();
+        cutout.GetComponentInChildren<Text>().text = cardObject.Card.Name;
+        cutout.onClick.AddListener(new UnityAction(() =>
+        {
+            RemoveCard(cutout, cardObject);
+        }));
+
+        collection.Remove(cardObject);
+        cardsInDeck.Add(cardObject);
+
         cardObject.Burn(new UnityAction(() =>
         {
-            //Play a nice sound
-        }), 0.33f);
+            //Do something?
+        }), 0.2f);
+    }
+
+    public void RemoveCard(Button source, CollectionCardObject cardObject)
+    {
+        source.transform.parent = this.rightSidebar.transform;
+        LeanTween.moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
+                 .setEaseOutCubic()
+                 .setOnComplete(() =>
+                 {
+                     Destroy(source.gameObject); //to-do: play effect
+                 });
+        cardsInDeck.Remove(cardObject);
+        collection.Add(cardObject);
+
+        //instantiate card, reset
+        CollectionCardObject created = CollectionCardObject.Create(cardObject.Card);
+        created.transform.parent = this.collectionObject.transform;
+
+        CardObject.Reset reset = cardObject.GetThisResetValues();
+        created.transform.localPosition = reset.position;
+        created.transform.localRotation = reset.rotation;
+        created.transform.localScale = reset.scale;
+        created.SetBothResetValues();
+
+        created.visual.Redraw();
     }
 }

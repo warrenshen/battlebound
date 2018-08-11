@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
+using System.Collections;
 
 [System.Serializable]
 public class CollectionCardObject : CardObject
@@ -9,10 +11,21 @@ public class CollectionCardObject : CardObject
 
     private bool grabbed = false;
 
+    public new static CollectionCardObject Create(Card card)
+    {
+        GameObject created = new GameObject(card.Name);
+        CollectionCardObject cardObject = created.AddComponent<CollectionCardObject>();
+        cardObject.Initialize(card);
+        return cardObject;
+    }
+
     public override void Initialize(Card card)
     {
         //does the visual stuff using templateData
         base.Initialize(card);
+
+        this.visual.BurnColor = Color.cyan;
+        this.visual.BurnEndColor = Color.white;
     }
 
     public void InitializeHollow(Card card) //no cutout, no wrapper assignment, no collider
@@ -67,5 +80,23 @@ public class CollectionCardObject : CardObject
             this.visual.SetOutline(false);
             this.grabbed = false;
         });
+    }
+
+    public void ResetTransform()
+    {
+        this.transform.localPosition = this.reset.position;
+        this.transform.localScale = this.reset.scale;
+        this.transform.localRotation = this.reset.rotation;
+    }
+
+    public void SetBothResetValues()
+    {
+        this.SetThisResetValues();
+        this.SetVisualResetValues();
+    }
+
+    public Reset GetThisResetValues()
+    {
+        return this.reset;
     }
 }

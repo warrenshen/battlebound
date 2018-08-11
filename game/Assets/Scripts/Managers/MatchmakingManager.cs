@@ -91,10 +91,7 @@ public class MatchmakingManager : MonoBehaviour
 
         foreach (Card card in cards)
         {
-            GameObject created = new GameObject(card.Name);
-            CardObject cardObject = created.AddComponent<CardObject>();
-            cardObject.Initialize(card);
-
+            CardObject cardObject = CardObject.Create(card);
             this.renderedCardObjects.Add(cardObject);
         }
 

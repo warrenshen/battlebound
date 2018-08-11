@@ -28,6 +28,14 @@ public class CardObject : MouseWatchable
     [SerializeField]
     public Reset reset;
 
+    public static CardObject Create(Card card)
+    {
+        GameObject created = new GameObject(card.Name);
+        CardObject cardObject = created.AddComponent<CardObject>();
+        cardObject.Initialize(card);
+        return cardObject;
+    }
+
     public virtual void Initialize(Card card)
     {
         this.card = card;
@@ -119,6 +127,5 @@ public class CardObject : MouseWatchable
         }
         Recycle();
         onBurnFinish.Invoke();
-        yield return null;
     }
 }

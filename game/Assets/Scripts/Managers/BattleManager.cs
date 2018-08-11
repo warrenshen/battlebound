@@ -994,9 +994,7 @@ public class BattleManager : MonoBehaviour
         foreach (ExperienceCard item in experienceCards)
         {
             Card card = item.GetCard();
-            GameObject created = new GameObject(card.Name);
-            CardObject cardObject = created.AddComponent<CardObject>();
-            cardObject.Initialize(card);
+            CardObject cardObject = CardObject.Create(card);
 
             Vector3 offset = (index % rowSize) * Vector3.right * 1.8f + (index / rowSize) * Vector3.down * 3.6f;
             CardTween.move(cardObject, endOverlay.transform.position + offset, CardTween.TWEEN_DURATION);

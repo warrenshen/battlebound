@@ -568,15 +568,13 @@ public class Player
 
     public BattleCardObject AddMulliganCard(Card card, int index, UnityAction onAnimationFinish = null)
     {
-        GameObject created = new GameObject(card.Name);
-        BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
-        battleCardObject.Initialize(this, card);
+        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
+        battleCardObject.transform.parent = GetHandTransform();
+
         foreach (HyperCard.Card.CustomSpriteParam spriteParam in battleCardObject.visual.SpriteObjects)
         {
             spriteParam.IsAffectedByFilters = true;
         }
-
-        created.transform.parent = GetHandTransform();
 
         this.hand.InsertCardObject(battleCardObject, index);
 
@@ -593,51 +591,41 @@ public class Player
 
     public void AddDrawnCardHandFull(Card card)
     {
-        GameObject created = new GameObject(card.Name);
-        BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
-        createdBattleCard.Initialize(this, card);
-
-        created.transform.parent = GetHandTransform();
+        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
+        battleCardObject.transform.parent = GetHandTransform();
 
         this.deckSize -= 1;
-        BattleManager.Instance.AnimateDrawCard(this, createdBattleCard)
+        BattleManager.Instance.AnimateDrawCard(this, battleCardObject)
             .setOnComplete(() =>
             {
                 CardTween
-                    .move(createdBattleCard, createdBattleCard.transform.position, CardTween.TWEEN_DURATION)
+                    .move(battleCardObject, battleCardObject.transform.position, CardTween.TWEEN_DURATION)
                     .setOnComplete(() =>
                     {
-                        createdBattleCard.Burn(() => RepositionCards(() => EffectManager.Instance.OnDrawCardFinish()));
+                        battleCardObject.Burn(() => RepositionCards(() => EffectManager.Instance.OnDrawCardFinish()));
                     });
             });
     }
 
     public BattleCardObject AddDrawnCard(Card card)
     {
-        GameObject created = new GameObject(card.Name);
-        BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
-        createdBattleCard.Initialize(this, card);
-
-        created.transform.parent = GetHandTransform();
+        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
+        battleCardObject.transform.parent = GetHandTransform();
 
         this.deckSize -= 1;
-        this.hand.AddCardObject(createdBattleCard);
+        this.hand.AddCardObject(battleCardObject);
 
-        BattleManager.Instance.AnimateDrawCard(this, createdBattleCard);
-        return createdBattleCard;
+        BattleManager.Instance.AnimateDrawCard(this, battleCardObject);
+        return battleCardObject;
     }
 
     public BattleCardObject AddCardOnResume(Card card)
     {
-        GameObject created = new GameObject(card.Name);
-        BattleCardObject createdBattleCard = created.AddComponent<BattleCardObject>();
-        createdBattleCard.Initialize(this, card);
+        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
+        battleCardObject.transform.parent = GetHandTransform();
 
-        created.transform.parent = GetHandTransform();
-
-        this.hand.AddCardObject(createdBattleCard);
-
-        return createdBattleCard;
+        this.hand.AddCardObject(battleCardObject);
+        return battleCardObject;
     }
 
     private void AddCardsOnResume(List<Card> cards)

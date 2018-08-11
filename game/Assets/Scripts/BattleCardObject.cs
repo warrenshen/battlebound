@@ -16,6 +16,14 @@ public class BattleCardObject : CardObject
 
     private int costFromServer;
 
+    public new static BattleCardObject Create(Player player, Card card)
+    {
+        GameObject created = new GameObject(card.Name);
+        BattleCardObject battleCardObject = created.AddComponent<BattleCardObject>();
+        battleCardObject.Initialize(player, card);
+        return battleCardObject;
+    }
+
     public void Initialize(Player player, Card card)
     {
         base.Initialize(card);
