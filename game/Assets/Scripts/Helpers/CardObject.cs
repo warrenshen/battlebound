@@ -93,7 +93,7 @@ public class CardObject : MouseWatchable
     public void Burn(UnityAction onBurnFinish, float duration = 1F)
     {
         StartCoroutine("Dissolve", new object[2] { duration, onBurnFinish });  //called when overdraw
-        SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
+        //SoundManager.Instance.PlaySound("BurnDestroySFX", this.transform.position);
     }
 
     protected virtual IEnumerator Dissolve(object[] args)
@@ -105,6 +105,9 @@ public class CardObject : MouseWatchable
         bool textHidden = false;
         while (elapsedTime < duration)
         {
+            if (LeanTween.isTweening(this.gameObject))
+                LeanTween.cancel(this.gameObject);
+
             if (elapsedTime > duration / 2.5f && !textHidden)
             {
                 this.visual.EmptyAllText();

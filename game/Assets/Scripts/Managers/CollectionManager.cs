@@ -26,9 +26,13 @@ public class CollectionManager : MonoBehaviour
     [SerializeField]
     private List<Button> deckButtons;
     [SerializeField]
+    private GameObject cardCutout;
+    [SerializeField]
     private GameObject deckSelection;
     [SerializeField]
     private GameObject rightSidebar;
+    [SerializeField]
+    private GameObject cutoutContent;
     [SerializeField]
     private GameObject collectionObject;
 
@@ -80,24 +84,36 @@ public class CollectionManager : MonoBehaviour
             ScrollToVerticalPan();
         }
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        CastGraphicsRaycast();
+    }
+
+    private void CastGraphicsRaycast()
+    {
+        if (Input.GetMouseButtonUp(0))
         {
-            //Set up the new Pointer Event
-            m_PointerEventData = new PointerEventData(m_EventSystem);
-            //Set the Pointer Event Position to that of the mouse position
-            m_PointerEventData.position = Input.mousePosition;
-
-            //Create a list of Raycast Results
-            List<RaycastResult> results = new List<RaycastResult>();
-
-            //Raycast using the Graphics Raycaster and mouse click position
-            m_Raycaster.Raycast(m_PointerEventData, results);
-
-            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
-            foreach (RaycastResult result in results)
+            if (ActionManager.Instance.HasDragTarget())
             {
-                Debug.Log("Hit " + result.gameObject.name);
+                //Set up the new Pointer Event, Set the Pointer Event Position to that of the mouse position
+                m_PointerEventData = new PointerEventData(m_EventSystem);
+                m_PointerEventData.position = Input.mousePosition;
+
+                //Create a list of Raycast Results
+                //Raycast using the Graphics Raycaster and mouse click position
+                List<RaycastResult> results = new List<RaycastResult>();
+                m_Raycaster.Raycast(m_PointerEventData, results);
+                CheckForDecklist(results, ActionManager.Instance.GetDragTarget());
             }
+        }
+    }
+
+    private void CheckForDecklist(List<RaycastResult> hit, CardObject cardObject)
+    {
+        foreach (RaycastResult element in hit)
+        {
+            if (element.gameObject != rightSidebar)
+                continue;
+
+            IncludeCard(cardObject);
         }
     }
 
@@ -137,8 +153,8 @@ public class CollectionManager : MonoBehaviour
 
     private void EnterEditMode()
     {
-        LeanTween.moveLocalX(deckSelection, -250, 0.5f).setEaseOutQuad();
-        LeanTween.moveLocalX(rightSidebar, 118.5f, 0.5f).setEaseInQuad();
+        LeanTween.moveLocalX(deckSelection, -800, 0.5f).setEaseOutQuad();
+        LeanTween.moveLocalX(rightSidebar, 400, 0.5f).setEaseInQuad();
 
         LeanTween.moveY(collectionObject, -0.5f, 0.5f)
                  .setEaseInQuad()
@@ -153,7 +169,7 @@ public class CollectionManager : MonoBehaviour
         int index = 0;
         int rowSize = 4;
 
-        Vector3 topLeft = new Vector3(-6f, 3.11f, 0);
+        Vector3 topLeft = new Vector3(-5.95f, 3.11f, 0);
         Vector3 horizontalOffset = new Vector3(2.9f, 0f, 0f);
         Vector3 verticalOffset = new Vector3(0f, -3.95f, 0f);
 
@@ -199,12 +215,11 @@ public class CollectionManager : MonoBehaviour
 
     public void IncludeCard(CardObject cardObject)
     {
-        UnityAction action = new UnityAction(() =>
+        cardObject.visual.SetOutline(false);
+        GameObject cutout = Instantiate(cardCutout, cutoutContent.transform);
+        cardObject.Burn(new UnityAction(() =>
         {
-            Debug.Log(cardObject.name);
-            cardObject.gameObject.SetActive(false);
-            cardObject.visual.ResetParams();
-        });
-        cardObject.Burn(action, 0.2F);
+            //Play a nice sound
+        }), 0.33f);
     }
 }
