@@ -18,19 +18,26 @@ import web from '../assets/services-icons/web-icon.png';
 const circleColour = "#f5f6f7";
 
 const ServicesShelf = () =>
-  <section className="diagonal anticlockwise" style={styles.section}>
-    <SectionHeading title="Features" />
+  // <section className="diagonal anticlockwise" style={styles.section}>
+  <section className="anticlockwise" style={styles.section}>
+    <SectionHeading
+      title={"Features"}
+      subtitle={"Powered by a Hybrid Decentralized-Centralized Architecture"}
+    />
     <div className="container">
       <div className="row">
         <div style={styles.col} className="col-xs-6 col-sm-4">
-          <CircleIcon iconURL={web} description="Web design" />
+          <CircleIcon iconURL={web} description="Provable Rarity" />
         </div>
         <div style={styles.col} className="col-xs-6 col-sm-4">
-          <CircleIcon iconURL={print} description="Print & Brochure design" />
+          <CircleIcon iconURL={print} description="True Ownership" />
         </div>
         <div style={styles.col} className="clearfix visible-xs-block"></div>
         <div style={styles.col} className="col-xs-6 col-sm-4">
-          <CircleIcon iconURL={logo} description="Logos & branding" />
+          <CircleIcon iconURL={logo} description="Real Tradability" />
+        </div>
+        <div style={styles.col} className="col-xs-6 col-sm-4">
+          <CircleIcon iconURL={logo} description="Actual Gameplay" />
         </div>
         <div style={styles.col} className="clearfix visible-sm-block visible-md-block"></div>
       </div>

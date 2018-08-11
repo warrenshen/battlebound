@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'gatsby-link';
 import Radium from 'radium';
 
-import bg from '../assets/header-bg-2500.jpg';
+import bg from '../assets/screens/screen-old-menu.png';
 import logo from '../assets/logo.png';
 
 const HeaderShelf = () =>
@@ -11,8 +11,8 @@ const HeaderShelf = () =>
       <div style={{ display: "table", width: "100%", height: "100%" }}>
         <div style={{ display: "table-cell", verticalAlign: "middle" }}>
           <div id="logo-strapline">
-            <img id="logo" src={logo} style={styles.logo} />
-            <hr style={styles.hr} />
+            {/* <img id="logo" src={logo} style={styles.logo} /> */}
+            {/* <hr style={styles.hr} /> */}
             <h1 id="strapline" style={styles.h1}>Battlebound</h1>
           </div>
         </div>

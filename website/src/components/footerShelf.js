@@ -4,7 +4,9 @@ import Link from 'gatsby-link';
 import sharedStyles from '../shared/sharedStyles';
 import colours from '../shared/colours';
 
+import discord from '../assets/footer-icons/discord-icon.png';
 import twitter from '../assets/footer-icons/twitter-icon.png';
+
 import instagram from '../assets/footer-icons/instagram-icon.png';
 import pinterest from '../assets/footer-icons/pinterest-icon.png';
 
@@ -14,9 +16,11 @@ class FooterShelf extends React.Component{
 
   render(){
     return (
-      <section className="diagonal clockwise" style={styles.section}>
+      // <section className="diagonal clockwise" style={styles.section}>
+      <section className="clockwise" style={styles.section}>
         <div style={styles.footer}>
           <ul style={styles.ul}>
+            <li style={styles.li}><a style={styles.a} href=""><img src={discord} /></a></li>
             <li style={styles.li}><a style={styles.a} href="https://twitter.com/playbattlebound"><img src={twitter} /></a></li>
           </ul>
           <p style={styles.p}>Copyright 2018 &copy; Battlebound Inc</p>
@@ -36,7 +40,7 @@ styles.section = {
 
 styles.footer = {
   background: colours.backgroundGrey,
-  padding: "30px 0 5px"
+  padding: "30px 0px"
 }
 
 styles.ul = {
@@ -47,8 +51,8 @@ styles.ul = {
 
 styles.li = {
   display: "inline-block",
-  width: "25px",
-  margin: "0 3%"
+  width: "30px",
+  margin: "0px 6px",
 }
 
 styles.a = {

@@ -16,15 +16,16 @@ import Circle from './decorations/circle';
 import Triangle from './decorations/triangle';
 
 const ContactShelf = () =>
-  <section className="diagonal anticlockwise" style={styles.section}>
-    <SectionHeading style={{color: "white"}} title="Have A Chat?" smallText="Want to" />
+  // <section className="diagonal anticlockwise" style={styles.section}>
+  <section className="anticlockwise" style={styles.section}>
+    <SectionHeading style={{color: "#0284FB"}} title="Contact" />
     <div className="container">
       <div className="row text-center">
-        <div style={styles.col} className="col-xs-6 col-sm-4"><CircleIcon iconURL={email} circleColour="#7FB9FF" textColor="white" description="steph@etcetera.design" /></div>
+        {/* <div style={styles.col} className="col-xs-6 col-sm-4"><CircleIcon iconURL={email} circleColour="#7FB9FF" textColor="white" description="steph@etcetera.design" /></div>
         <div style={styles.col} className="col-xs-6 col-sm-4"><CircleIcon iconURL={phone} circleColour="#7FB9FF" textColor="white" description="07875261339" /></div>
         <div className="clearfix visible-xs-block"></div>
         <div style={styles.col} className="col-xs-6 col-sm-4 col-centered"><CircleIcon iconURL={social} circleColour="#7FB9FF" textColor="white" description="@_etceteradesign" /></div>
-        <div className="clearfix visible-sm-block visible-md-block"></div>
+        <div className="clearfix visible-sm-block visible-md-block"></div> */}
       </div>
     </div>
   </section>
@@ -32,7 +33,7 @@ const ContactShelf = () =>
 var styles = {};
 
 styles.section = {
-  background: colours.blue,
+  background: "	#1C2849",
   paddingBottom: "10%",
   position: "relative"
 }

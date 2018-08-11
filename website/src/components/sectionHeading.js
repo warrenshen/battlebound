@@ -6,8 +6,15 @@ class SectionHeading extends React.Component {
   render(){
 
     return (
-      <div style={styles.container}>
-      <h2 style={Object.assign({}, styles.sectionHeading, this.props.style)}>{this.props.title}<span style={styles.span}>{this.props.smallText}</span></h2>
+      <div style={styles.wrapper}>
+        <div style={styles.container}>
+          <h1 style={Object.assign({}, styles.sectionHeading, this.props.style)}>
+            {this.props.title}
+          </h1>
+          <h4>
+            {this.props.subtitle}
+          </h4>
+        </div>
       </div>
       );
 
@@ -19,21 +26,29 @@ export default SectionHeading;
 
 let styles = {};
 
+styles.wrapper = {
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: "36px 0px",
+}
+
 styles.container = {
-  textAlign: "center"
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
 }
 
 styles.sectionHeading = {
   fontFamily: 'Apercu-Bold',
   textTransform: 'uppercase',
-  color: colours.blue,
   fontSize: '4.5vh',
   letterSpacing: '0.06em',
-  textAlign: 'center',
   position: "relative",
   display: "inline-block",
-  margin: "0 auto",
-  marginBottom: "2em"
+  color: colours.blue,
 }
 
 styles.span = {

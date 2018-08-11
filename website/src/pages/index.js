@@ -9,6 +9,7 @@ import Color from 'color';
 // require('scrollmagic/scrollmagic/uncompressed/plugins/animation.gsap');
 
 import HeaderShelf from '../components/headerShelf';
+import PresaleShelf from '../components/presaleShelf';
 import ServicesShelf from '../components/servicesShelf';
 import WorkShelf from '../components/workShelf';
 import ContactShelf from '../components/contactShelf';
@@ -58,10 +59,11 @@ class IndexPage extends React.Component{
   render(){
     return (<div id="pin-container">
       <HeaderShelf />
-      <WorkShelf data={this.props.data} />
+      <WorkShelf />
+      {/* <PresaleShelf /> */}
       <ServicesShelf />
       <ContactShelf />
-      <FooterShelf circle="true" />
+      <FooterShelf />
     </div>)
   }
 
@@ -71,22 +73,3 @@ var styles = {
 }
 
 export default IndexPage
-
-export const pageQuery = graphql`
-  query IndexPage {
-    allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
-      edges {
-        node {
-          id
-          excerpt(pruneLength: 250)
-          frontmatter {
-            date(formatString: "MMMM DD, YYYY")
-            path
-            title
-            thumbnail
-          }
-        }
-      }
-    }
-  }
-`;

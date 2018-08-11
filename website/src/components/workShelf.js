@@ -8,21 +8,6 @@ import ProjectScreenshot from './projectScreenshot';
 
 import SectionHeading from "./sectionHeading";
 
-import tajiTheFearlessImage from "../assets/cards/taji-the-fearless.png";
-import poseidensHandmaidenImage from "../assets/cards/poseidens-handmaiden.png";
-
-import reebok1 from '../assets/work/reebok1.jpg';
-import buffalo1 from '../assets/work/buffalo7-1.png';
-import federal1 from '../assets/work/federal1.jpg';
-import openmarket1 from '../assets/work/openmarket1.jpg';
-import jamie1 from '../assets/work/jamie1.jpg';
-import festivalofyou1 from '../assets/work/festivalofyou1.jpg';
-import mercury1 from '../assets/work/mercury1.jpg';
-
-import DottedCircle from './decorations/dottedCircle';
-import Circle from './decorations/circle';
-import Triangle from './decorations/triangle';
-
 class WorkShelf extends React.Component {
 
   componentDidMount(){
@@ -81,51 +66,13 @@ class WorkShelf extends React.Component {
 
   render(){
 
-    const { allMarkdownRemark } = this.props.data;
-    const { edges } = allMarkdownRemark;
-
-    return (<section id="work-section" className="diagonal clockwise" style={styles.section}>
-      <SectionHeading title="Presale" />
-
-      <div className="container-fluid" style={styles.container}>
-        <div className="row no-gutters">
-          <div className="col-sm-6" style={styles.presaleSection}>
-            <img src={tajiTheFearlessImage} style={styles.featuredImage} />
-            <h3>0.56 ETH</h3>
-          </div>
-          <div className="col-sm-6" style={styles.presaleSection}>
-            <img src={poseidensHandmaidenImage} style={styles.featuredImage} />
-            <h3>0.76 ETH</h3>
-          </div>
-        </div>
-      </div>
-
-      <div style={styles.projectsContainer}>
-        <div className="projects-flex">
-          <div id="project1" className="project-screenshot">
-            <ProjectScreenshot screenshotURL={buffalo1} description="Buffalo 7" />
-          </div>
-          <div id="project2" className="project-screenshot">
-            <ProjectScreenshot screenshotURL={federal1} description="Menu Design: Federal Caf&eacute;" />
-          </div>
-          <div id="project3" className="project-screenshot">
-            <ProjectScreenshot screenshotURL={openmarket1} description="Open Market" />
-          </div>
-          <div id="project4" className="project-screenshot">
-            <ProjectScreenshot screenshotURL={jamie1} description="Jamie's Veg Patch" />
-          </div>
-          <div id="project5" className="project-screenshot">
-            <ProjectScreenshot screenshotURL={festivalofyou1} description="Festival Of You" />
-          </div>
-          <div id="project6" className="project-screenshot">
-            <ProjectScreenshot screenshotURL={mercury1} description="Mercury Logistics" />
-          </div>
-        </div>
-      </div>
-
-    </section>);
+    return (
+      // <section id="work-section" className="diagonal clockwise" style={styles.section}>
+      <section id="work-section" className="clockwise" style={styles.section}>
+        <SectionHeading title={"What is Battlebound?"} subtitle={"Blockchain-backed Trading Card Game"} />
+      </section>
+    );
   }
-
 }
 
 
