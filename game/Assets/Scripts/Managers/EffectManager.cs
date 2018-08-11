@@ -1992,7 +1992,6 @@ public class EffectManager : MonoBehaviour
                 PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
 
                 IncrementIsWaiting();
-                Debug.Log(this.isWaiting);
                 this.fXManager.ThrowEffectWithCallback(
                     "ExplosivePropVFX",
                     attackingTargetable.GetTargetableTransform(),

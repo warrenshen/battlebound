@@ -7,7 +7,10 @@ using TMPro;
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
-    private static float CARD_DISPLACEMENT_THRESHOLD = 25;
+    private const float CARD_DISPLACEMENT_THRESHOLD = 25;
+
+    private bool isAnimating;
+    public bool IsAnimating => isAnimating;
 
     public int battleLayer;
     public int boardOrBattleLayer;
@@ -69,6 +72,8 @@ public class BattleManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        this.isAnimating = false;
 
         this.attackCommand.SetWidth(0);
         this.validTargets = new List<TargetableObject>();
@@ -574,6 +579,7 @@ public class BattleManager : MonoBehaviour
             pivotPoint = this.enemyDrawCardFixedTransform;
         }
 
+        EnableIsAnimating();
         LeanTween
             .rotate(battleCardObject.gameObject, pivotPoint.rotation.eulerAngles, CardTween.TWEEN_DURATION)
             .setEaseInQuad();
@@ -582,12 +588,17 @@ public class BattleManager : MonoBehaviour
             .setEaseInQuad()
             .setOnComplete(() =>
             {
-                CardTween.move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
-                     .setOnComplete(() =>
-                {
-                    SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position, delay: 0.2F);
-                    player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());  //can override completioon behavior by calling setOnComplete again
-                });
+                CardTween
+                    .move(battleCardObject, pivotPoint.position, CardTween.TWEEN_DURATION)
+                    .setOnComplete(() =>
+                    {
+                        SoundManager.Instance.PlaySound("DealSFX", battleCardObject.transform.position, delay: 0.2F);
+                        player.RepositionCards(() =>
+                        {
+                            EffectManager.Instance.OnDrawCardFinish();
+                            DisableIsAnimating();
+                        });
+                    });
             });
     }
 
@@ -608,6 +619,7 @@ public class BattleManager : MonoBehaviour
 
         battleCardObject.visual.SetOutline(true);
 
+        EnableIsAnimating();
         LeanTween.scale(
             battleCardObject.gameObject,
             battleCardObject.reset.scale,
@@ -621,12 +633,13 @@ public class BattleManager : MonoBehaviour
             )
             .setEaseInQuad()
             .setOnComplete(() => // Note we cannot add a setOnComplete to CardTween below.
+            {
+                if (onAnimateFinish != null)
                 {
-                    if (onAnimateFinish != null)
-                    {
-                        onAnimateFinish.Invoke();
-                    }
-                });
+                    onAnimateFinish.Invoke();
+                }
+                DisableIsAnimating();
+            });
         CardTween
             .moveLocal(
                 battleCardObject,
@@ -639,6 +652,7 @@ public class BattleManager : MonoBehaviour
     public void HideMulliganOverlay()
     {
         GameObject overlay = GameObject.Find("Mulligan Overlay");
+        EnableIsAnimating();
         LeanTween.move(
             overlay,
             overlay.transform.position + overlay.transform.up * -3,
@@ -652,6 +666,7 @@ public class BattleManager : MonoBehaviour
 
                 SetBoardCenterText(string.Format("{0} Turn", BattleState.Instance().ActivePlayer.Name));
                 SetPassiveCursor();
+                DisableIsAnimating();
             });
     }
 
@@ -1034,6 +1049,7 @@ public class BattleManager : MonoBehaviour
 
     private LTDescr AnimateCardPlayed(BattleCardObject battleCardObject)
     {
+        EnableIsAnimating();
         LeanTween
             .rotateLocal(battleCardObject.visual.gameObject, new Vector3(0, 180, 0), CardTween.TWEEN_DURATION)
             .setEaseInQuad();
@@ -1042,12 +1058,18 @@ public class BattleManager : MonoBehaviour
             .setEaseInQuad();
         return CardTween
                 .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION)
-                .setEaseInQuad();
+                .setEaseInQuad()
+                .setOnComplete(() =>
+                {
+                    battleCardObject.noInteraction = false;
+                    DisableIsAnimating();
+                });
     }
 
     public void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
     {
         SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
+        EnableIsAnimating();
         AnimateCardPlayed(battleCardObject)
             .setOnComplete(() =>
             {
@@ -1055,13 +1077,16 @@ public class BattleManager : MonoBehaviour
                 .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
                 .setOnComplete(() =>
                 {
+                    battleCardObject.noInteraction = false;
                     PlayCardToBoard(battleCardObject, fieldIndex);
+                    DisableIsAnimating();
                 });
             });
     }
 
     public void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, BoardCreature targetedCreature)
     {
+        EnableIsAnimating();
         AnimateCardPlayed(battleCardObject)
             .setOnComplete(() =>
             {
@@ -1069,13 +1094,16 @@ public class BattleManager : MonoBehaviour
                     .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
                     .setOnComplete(() =>
                     {
+                        battleCardObject.noInteraction = false;
                         PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+                        DisableIsAnimating();
                     });
             });
     }
 
     public void EnemyPlaySpellUntargetedAnim(BattleCardObject battleCardObject)
     {
+        EnableIsAnimating();
         AnimateCardPlayed(battleCardObject)
             .setOnComplete(() =>
             {
@@ -1083,7 +1111,9 @@ public class BattleManager : MonoBehaviour
                 .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
                 .setOnComplete(() =>
                 {
+                    battleCardObject.noInteraction = false;
                     PlayUntargetedSpellFromServer(battleCardObject);
+                    DisableIsAnimating();
                 });
             });
     }
@@ -1133,5 +1163,15 @@ public class BattleManager : MonoBehaviour
         BattleState.Instance().You.Avatar.ShowEmoteOnObject(id);
 
         Debug.Log(String.Format("Emote request sent, emote {0}.", id));
+    }
+
+    private void EnableIsAnimating()
+    {
+        this.isAnimating = true;
+    }
+
+    private void DisableIsAnimating()
+    {
+        this.isAnimating = false;
     }
 }
