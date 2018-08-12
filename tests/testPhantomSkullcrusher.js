@@ -669,6 +669,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-24",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 20,
@@ -699,6 +700,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-25",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 40,
@@ -729,6 +731,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-26",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 60,
@@ -884,6 +887,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[0].attack, 20);
             assert.equal(opponentField[0].health, 10);
             assert.equal(opponentField[0].abilities.indexOf(34) >= 0, true);
+            assert.equal(opponentField[0].color, 4);
 
             resolve();
           }
@@ -939,6 +943,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[2].attack, 20);
             assert.equal(opponentField[2].health, 10);
             assert.equal(opponentField[2].abilities.indexOf(34) >= 0, true);
+            assert.equal(opponentField[2].color, 4);
 
             assert.equal(opponentField[3].id, "ID_OPPONENT-34");
             assert.equal(opponentField[3].name, "Dusk Dweller");
@@ -946,6 +951,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[3].attack, 20);
             assert.equal(opponentField[3].health, 10);
             assert.equal(opponentField[3].abilities.indexOf(34) >= 0, true);
+            assert.equal(opponentField[3].color, 4);
 
             resolve();
           }
@@ -1001,6 +1007,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[4].attack, 40);
             assert.equal(opponentField[4].health, 50);
             assert.equal(opponentField[4].abilities.indexOf(35) >= 0, true);
+            assert.equal(opponentField[4].color, 4);
 
             assert.equal(opponentField[5].id, "ID_OPPONENT-34");
             assert.equal(opponentField[5].name, "Summoned Dragon");
@@ -1008,6 +1015,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[5].attack, 40);
             assert.equal(opponentField[5].health, 50);
             assert.equal(opponentField[5].abilities.indexOf(35) >= 0, true);
+            assert.equal(opponentField[5].color, 4);
 
             resolve();
           }
@@ -1030,6 +1038,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-24",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 20,
@@ -1060,6 +1069,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-25",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 40,
@@ -1090,6 +1100,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-26",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 60,
@@ -1252,6 +1263,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[2].attack, 20);
             assert.equal(opponentField[2].health, 10);
             assert.equal(opponentField[2].abilities.indexOf(34) >= 0, true);
+            assert.equal(opponentField[2].color, 4);
 
             assert.equal(opponentField[3].id, "NOT_EMPTY");
 
@@ -1308,6 +1320,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[4].attack, 40);
             assert.equal(opponentField[4].health, 50);
             assert.equal(opponentField[4].abilities.indexOf(35) >= 0, true);
+            assert.equal(opponentField[4].color, 4);
 
             assert.equal(opponentField[5].id, "NOT_EMPTY");
 
@@ -1332,6 +1345,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-24",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 20,
@@ -1362,6 +1376,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-25",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 40,
@@ -1392,6 +1407,7 @@ describe("phantom skullcrusher", function() {
             {
               "id": "ID_OPPONENT-26",
               "playerId": "ID_OPPONENT",
+              "color": 4,
               "level": 1,
               "category": 0,
               "attack": 60,
@@ -1636,6 +1652,7 @@ describe("phantom skullcrusher", function() {
               {
                 "id": "ID_OPPONENT-24",
                 "playerId": "ID_OPPONENT",
+                "color": 4,
                 "level": 1,
                 "category": 0,
                 "attack": 20,
@@ -1853,6 +1870,7 @@ describe("phantom skullcrusher", function() {
               {
                 "id": "ID_OPPONENT-24",
                 "playerId": "ID_OPPONENT",
+                "color": 4,
                 "level": 1,
                 "category": 0,
                 "attack": 20,
