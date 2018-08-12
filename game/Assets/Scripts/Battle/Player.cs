@@ -277,11 +277,7 @@ public class Player
      */
     private void DrawCardForce()
     {
-        ChallengeMove challengeMove = new ChallengeMove();
-        challengeMove.SetPlayerId(this.id);
-        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_DRAW_CARD);
-        BattleState.Instance().AddDeviceMove(challengeMove);
-
+        DrawCardDevice();
         DrawCardMock();
     }
 

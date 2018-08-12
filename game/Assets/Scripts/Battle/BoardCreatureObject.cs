@@ -115,22 +115,26 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         }
         else
         {
-            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
+            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.boardCreature.GetCardName()));
         }
 
-        if (this.summonAnimClips != null && this.summonAnimClips.Count >= 2)
+        if (
+            this.summonAnimation != null &&
+            this.summonAnimClips != null &&
+            this.summonAnimClips.Count >= 2
+        )
         {
             this.summonAnimation.Play(summonAnimClips[0]);
             this.summonAnimation.CrossFade(summonAnimClips[1], 3F);    //should group with sound as a method
         }
         else
         {
-            Debug.LogWarning(string.Format("Missing summon animation for card {0}", this.name));
+            Debug.LogWarning(string.Format("Missing summon animation for card {0}", this.boardCreature.GetCardName()));
         }
 
         //move/animate
         Vector3 delta = (this.transform.position - other.transform.position) / 1.5f;
-        Vector3 originalPosition = this.summonAnimation.transform.position;
+        Vector3 originalPosition = this.summoned.transform.position;
 
         LeanTween.scale(this.summoned, this.summoned.transform.localScale * 1.2f, 2f).setEasePunch();
         LeanTween
@@ -567,7 +571,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         }
         else
         {
-            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.name));
+            Debug.LogWarning(string.Format("Missing audio source for card {0}", this.boardCreature.GetCardName()));
         }
     }
 
