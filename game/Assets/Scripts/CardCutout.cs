@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,27 +27,8 @@ public class CardCutout : MonoBehaviour
         this.card = cardObject.Card;
         this.reset = cardObject.GetThisResetValues();
 
-        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(cardObject.Card.GetFrontImage());
-        this.front.sprite = Sprite.Create(
-            texture,
-            new Rect(0.0f, 0.0f, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            100.0f
-        );
-        texture = ResourceSingleton.Instance.GetImageTextureByName(cardObject.Card.GetBackImage());
-        if (texture != null)
-        {
-            this.back.sprite = Sprite.Create(
-                texture,
-                new Rect(0.0f, 0.0f, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f),
-                100.0f
-            );
-        }
-        else
-        {
-            Debug.LogError(String.Format("Could not find ImageTextureByName for image name {0}", cardObject.Card.GetBackImage()));
-        }
+        this.front.sprite = ResourceSingleton.Instance.GetSpriteByName(this.card.GetFrontImage());
+        this.back.sprite = ResourceSingleton.Instance.GetSpriteByName(this.card.GetBackImage());
 
         this.name = cardObject.Card.GetName();
         this.cost = cardObject.Card.GetCost();

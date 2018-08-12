@@ -56,6 +56,8 @@ public class CollectionManager : MonoBehaviour
     private GameObject collectionCardObjectPrefab;
     private Stack<CollectionCardObject> collectionCardObjectPool;
 
+    private Stack<CardCutout> cardCutoutPool;
+
     public static CollectionManager Instance { get; private set; }
 
     private void Awake()
@@ -174,42 +176,41 @@ public class CollectionManager : MonoBehaviour
         collectionObject.transform.localPosition = new Vector3(collectionObject.transform.localPosition.x, vertical, collectionObject.transform.localPosition.z);
     }
 
-
     private void EnterEditMode(int deckId)
     {
+        LoadDecklist(deckId);
+
         LeanTween.moveLocalX(deckSelection, -800, TWEEN_TIME).setEaseOutQuad();
         LeanTween.moveLocalX(rightSidebar, 320, TWEEN_TIME).setEaseInQuad();
+        LeanTween
+            .moveY(collectionObject, -0.5f, TWEEN_TIME)
+            .setEaseInQuad()
+            .setOnComplete(() =>
+            {
+                this.editMode = true;
+                this.activeDeck = deckId;
 
-        LeanTween.moveY(collectionObject, -0.5f, TWEEN_TIME)
-                 .setEaseInQuad()
-                 .setOnComplete(() =>
-                 {
-                     this.editMode = true;
-                     this.activeDeck = deckId;
-
-                     InputField deckNameField = rightSidebar.GetComponentInChildren<InputField>();
-                     deckNameField.text = decks[deckId];
-
-                     LoadDecklist(deckId);
-                 });
+                InputField deckNameField = rightSidebar.GetComponentInChildren<InputField>();
+                deckNameField.text = decks[deckId];
+            });
     }
 
     private void ExitEditMode()
     {
-        LeanTween.moveLocalX(deckSelection, 0, TWEEN_TIME).setEaseOutQuad();
+        this.editMode = false;
         LeanTween.moveLocalX(rightSidebar, 480, TWEEN_TIME).setEaseInQuad();
-
         LeanTween
             .moveY(collectionObject, -10, TWEEN_TIME)
             .setEaseOutQuad()
             .setOnComplete(() =>
             {
-                this.editMode = false;
-                foreach (Transform child in cutoutContent.transform)
+                foreach (CardCutout cardCutout in this.cardCutoutPool)
                 {
-                    RemoveCard(child.GetComponent<CardCutout>());
+                    RemoveCard(cardCutout);
                 }
             });
+
+        LeanTween.moveLocalX(deckSelection, 0, TWEEN_TIME).setEaseOutQuad();
     }
 
     private void LoadDecklist(int deckId)
@@ -251,7 +252,7 @@ public class CollectionManager : MonoBehaviour
 
     private Transform CreateGrayed(Transform source, Card card)
     {
-        GameObject created = new GameObject("_gray_" + card.Name);
+        GameObject created = new GameObject("_gray_" + card.Id);
         created.transform.position = source.position;
 
         //do visual stuff
@@ -309,8 +310,9 @@ public class CollectionManager : MonoBehaviour
                 }
             }
         }
+
         //create cutout and set to child
-        CardCutout cutout = Instantiate(cardCutout, cutoutContent.transform).GetComponent<CardCutout>();
+        CardCutout cutout = InitializeCardCutout();
         cutout.transform.localPosition = Vector3.zero;
         cutout.transform.SetSiblingIndex(insertionIndex);
 
@@ -324,21 +326,17 @@ public class CollectionManager : MonoBehaviour
         cardsInDeck.Add(cardObject.Card);
         UpdateDeckSize();
 
-        cardObject.Burn(new UnityAction(() =>
-        {
-            //Do something?
-        }), 0.2f);
+        cardObject.Burn(new UnityAction(() => { }), 0.2f);
     }
 
-    public void RemoveCard(CardCutout source)
+    private void RemoveCard(CardCutout source)
     {
-        //source.transform.parent = this.rightSidebar.transform;
         LeanTween
             .moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
             .setEaseOutCubic()
             .setOnComplete(() =>
             {
-                Destroy(source.gameObject); //to-do: play effect
+                RecycleCardCutout(source);
             });
 
         //instantiate card, reset
@@ -367,7 +365,6 @@ public class CollectionManager : MonoBehaviour
     {
         this.collectionCardObjectPrefab = Resources.Load("Prefabs/CollectionCardObject") as GameObject;
         this.collectionCardObjectPool = new Stack<CollectionCardObject>();
-
         for (int i = 0; i < 40; i++)
         {
             GameObject collectionCardGameObject = Instantiate(
@@ -379,6 +376,20 @@ public class CollectionManager : MonoBehaviour
             collectionCardGameObject.SetActive(false);
             CollectionCardObject collectionCardObject = collectionCardGameObject.GetComponent<CollectionCardObject>();
             this.collectionCardObjectPool.Push(collectionCardObject);
+        }
+
+        this.cardCutoutPool = new Stack<CardCutout>();
+        for (int i = 0; i < 30; i++)
+        {
+            GameObject cardCutoutGameObject = Instantiate(
+                this.cardCutout,
+                transform.position,
+                Quaternion.identity
+            );
+            cardCutoutGameObject.SetActive(false);
+            CardCutout cardCutout = cardCutoutGameObject.GetComponent<CardCutout>();
+            cardCutout.transform.SetParent(this.cutoutContent.transform, false);
+            this.cardCutoutPool.Push(cardCutout);
         }
     }
 
@@ -410,5 +421,23 @@ public class CollectionManager : MonoBehaviour
         collectionCardObject.Initialize(card);
         collectionCardObject.gameObject.SetActive(true);
         return collectionCardObject;
+    }
+
+    private void RecycleCardCutout(CardCutout cardCutout)
+    {
+        cardCutout.gameObject.SetActive(false);
+        this.cardCutoutPool.Push(cardCutout);
+    }
+
+    public CardCutout InitializeCardCutout()
+    {
+        if (this.cardCutoutPool.Count <= 0)
+        {
+            Debug.LogError("Card cutout pool is empty!");
+        }
+
+        CardCutout cardCutout = this.cardCutoutPool.Pop();
+        cardCutout.gameObject.SetActive(true);
+        return cardCutout;
     }
 }
