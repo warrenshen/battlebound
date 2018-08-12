@@ -1276,6 +1276,7 @@ function abilityDeathRattleSummonDuskDwellers(challengeStateData, effect) {
         healthStart: 10,
         abilitiesStart: [CARD_ABILITY_DEATH_RATTLE_RESUMMON],
         description: "",
+        color: 4,
     };
     const closestIndex = _selectClosestAvailableIndex(challengeStateData, playerId, fieldIndex);
 
@@ -1320,6 +1321,7 @@ function abilityDeathRattleSummonSummonedDragons(challengeStateData, effect) {
         healthStart: 50,
         abilitiesStart: [CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS],
         description: "",
+        color: 4,
     };
     const closestIndex = _selectClosestAvailableIndex(challengeStateData, playerId, fieldIndex);
 

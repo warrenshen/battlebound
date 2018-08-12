@@ -350,7 +350,6 @@ function _updateHandCardCosts(playerState) {
         }
     });
     
-    Spark.getLog().debug(BUFF_HAND_DECREASE_COST_BY_COLOR);
     hand.forEach(function(card) {
         const color = card.color;
         if (color <= 0) {
