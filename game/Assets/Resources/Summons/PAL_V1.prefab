@@ -628,8 +628,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1152860950039630}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.008, y: 0.008, z: 1}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalScale: {x: 0.0021, y: 0.0021, z: 1}
   m_Children:
   - {fileID: 4827783561801582}
   m_Father: {fileID: 4639599465629086}
@@ -1012,7 +1012,7 @@ Animation:
   - {fileID: 7400000, guid: d6b27ec01f39c4046a88d04781f84bd3, type: 2}
   - {fileID: 7400000, guid: 389db8a5131c77741b6b4d61b2f651dd, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
 --- !u!114 &114591051774193598
@@ -7663,7 +7663,7 @@ MonoBehaviour:
   mLocalTransform: {fileID: 4377346621917362}
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
-  updatePrefabs: 1
+  updatePrefabs: 0
 --- !u!137 &137959251602430612
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

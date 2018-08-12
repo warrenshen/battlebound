@@ -60,7 +60,8 @@ public abstract class Card
     public const string CARD_NAME_FROSTLAND_THRASHER_8 = "Frostland THRASHER-8";
     public const string CARD_NAME_CYBER_SENTINEL = "Cyber Sentinel";
     public const string CARD_NAME_PAL_V1 = "PAL_V1";
-    public const string CARD_NAME_FORTRESS_KNIGHT = "Fortress Knight";
+    public const string CARD_NAME_ARC_KNIGHT = "Arc Knight";
+    public const string CARD_NAME_ARMORED_WARDEN = "Armored Warden";
     public const string CARD_NAME_TERRATANK = "Terratank";
     public const string CARD_NAME_CULYSSA = "Culyssa";
     public const string CARD_NAME_SABRE_CRYSTALLINE_DRAGON = "Sabre, Crystalline Dragon";
@@ -149,9 +150,10 @@ public abstract class Card
         CARD_NAME_FROSTLAND_THRASHER_8,
         CARD_NAME_CYBER_SENTINEL,
         CARD_NAME_PAL_V1,
-        //CARD_NAME_FORTRESS_KNIGHT,
+        CARD_NAME_ARC_KNIGHT,
+        CARD_NAME_ARMORED_WARDEN,
         CARD_NAME_TERRATANK,
-        //CARD_NAME_CULYSSA,
+        CARD_NAME_CULYSSA,
         CARD_NAME_ABYSSAL_EEL,
         //CARD_NAME_SAPLET,
         CARD_NAME_FIRESMITH_APPRENTICE,

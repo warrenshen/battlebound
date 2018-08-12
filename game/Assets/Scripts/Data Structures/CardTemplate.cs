@@ -55,11 +55,11 @@ public class CardTemplate
     public CardTemplate()
     {
         //empty constructor
-        this.frontScale = new Vector2(1, 1.66F);
-        this.frontOffset = new Vector2(0, -0.66F);
+        this.frontScale = new Vector2(0.65f, 0.85f);
+        this.frontOffset = new Vector2(0, 0);
 
-        this.backScale = new Vector2(1, 1.66F);
-        this.backOffset = new Vector2(0, -0.66F);
+        this.backScale = new Vector2(1, 1);
+        this.backOffset = new Vector2(0, 0);
 
         this.rarity = Card.RarityType.Common;
         this.cardType = Card.CardType.Creature;
