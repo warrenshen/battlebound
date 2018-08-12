@@ -902,6 +902,7 @@ public class BattleState
         }
         else if (this.deviceMoveQueue.Count <= 0)
         {
+            Debug.LogError("WOAH");
             return -1;
         }
         else

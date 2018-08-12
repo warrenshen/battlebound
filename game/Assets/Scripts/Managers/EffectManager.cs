@@ -246,6 +246,14 @@ public class EffectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Time.frameCount % 5 == 0)
+        {
+            UpdateHelper();
+        }
+    }
+
+    private void UpdateHelper()
+    {
         if (!this.isReady || this.isWaiting > 0)
         {
             return;
@@ -832,7 +840,7 @@ public class EffectManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
-            player.DrawCardsMock(1);
+            player.DrawCardMock();
         }
     }
 
@@ -1083,7 +1091,7 @@ public class EffectManager : MonoBehaviour
 
         if (!FlagHelper.IsServerEnabled())
         {
-            boardCreature.Owner.DrawCardsMock(1);
+            boardCreature.Owner.DrawCardMock();
         }
     }
 

@@ -81,6 +81,14 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void Update()
     {
+        if (Time.frameCount % 5 == 0)
+        {
+            UpdateHelper();
+        }
+    }
+
+    private void UpdateHelper()
+    {
         if (this.moveQueue.Count > 0)
         {
             EmitChallengeMove();

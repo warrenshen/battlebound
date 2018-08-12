@@ -227,7 +227,7 @@ public class Player
         return BattleState.Instance().AddDeviceMove(challengeMove);
     }
 
-    private void DrawCardMock(bool isMulligan = false)
+    public void DrawCardMock(bool isMulligan = false)
     {
         ChallengeMove challengeMove = new ChallengeMove();
         challengeMove.SetPlayerId(this.id);
@@ -261,15 +261,6 @@ public class Player
         }
 
         BattleState.Instance().AddServerMove(challengeMove);
-    }
-
-    public void DrawCardsMock(int amount)
-    {
-        while (amount > 0)
-        {
-            DrawCardMock();
-            amount--;
-        }
     }
 
     /*
