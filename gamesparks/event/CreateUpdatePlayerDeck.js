@@ -52,6 +52,8 @@ cardIds.forEach(function(cardId) {
 
 if (cardIds.length > 30) {
     setScriptError("Deck should not have more than 30 cards.");
+} else if (cardIds.length < 30) {
+    setScriptError("Deck should not have less than 30 cards.");
 }
 
 // Verify that there is at most two cards of the same template.

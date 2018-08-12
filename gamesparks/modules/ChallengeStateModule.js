@@ -132,6 +132,7 @@ function getChallengeStateForPlayer(playerId, challengeId) {
     Spark.setScriptData("newMoves", response.newMoves);
     Spark.setScriptData("moveCount", response.moveCount);
     Spark.setScriptData("spawnCount", response.spawnCount);
+    Spark.setScriptData("deadCount", response.deadCards.length);
     
     return challenge;
 }
@@ -160,6 +161,7 @@ function getChallengeStateForPlayerWithPastMoves(playerId, challengeId) {
     Spark.setScriptData("moves", response.moves);
     Spark.setScriptData("moveCount", response.moveCount);
     Spark.setScriptData("spawnCount", response.spawnCount);
+    Spark.setScriptData("deadCount", response.deadCards.length);
     Spark.setScriptData("deadCards", response.deadCards);
     
     return challenge;
