@@ -11,6 +11,7 @@ public class CardObject : MouseWatchable
     protected Card card;
     public Card Card => card;
 
+    [SerializeField]
     protected BoxCollider colliderBox;
 
     public HyperCard.Card visual;
@@ -44,13 +45,22 @@ public class CardObject : MouseWatchable
 
         //make render changes according to card class here
         LoadCardArtwork();
-        this.visual = VisualizeCard();
+        if (this.visual == null)
+        {
+            this.visual = VisualizeCard();
+        }
+        else
+        {
+            this.visual.ResetParams();
+            Card.SetHyperCardFromData(ref this.visual, this.card);
+            Card.SetHyperCardArtwork(ref this.visual, this.card);
+        }
 
         SetThisResetValues();
         SetVisualResetValues();
 
         //set sprite etc here
-        colliderBox = gameObject.AddComponent<BoxCollider>() as BoxCollider;
+        colliderBox = gameObject.GetComponent<BoxCollider>() as BoxCollider;
         colliderBox.size = CardObject.CARD_BOUNDS;
     }
 

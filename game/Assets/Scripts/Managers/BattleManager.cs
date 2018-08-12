@@ -67,6 +67,9 @@ public class BattleManager : MonoBehaviour
     private Sprite[] emoteSprites;
     public Sprite[] EmoteSprites => emoteSprites;
 
+    private GameObject battleCardObjectPrefab;
+    private Stack<BattleCardObject> battleCardObjectPool;
+
     public static BattleManager Instance { get; private set; }
 
     private void Awake()
@@ -78,6 +81,8 @@ public class BattleManager : MonoBehaviour
         this.attackCommand.SetWidth(0);
         this.validTargets = new List<TargetableObject>();
         ChooseRandomSetting();
+
+        InitializeBattleCardObjectPool();
     }
 
     private void Start()
@@ -881,7 +886,7 @@ public class BattleManager : MonoBehaviour
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED);
 
         ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-        moveAttributes.SetCardId(battleCardObject.Card.Id);
+        moveAttributes.SetCardId(battleCardObject.GetCardId());
         moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
         moveAttributes.SetFieldId(targetedCreatureObject.GetPlayerId());
         moveAttributes.SetTargetId(targetedCreatureObject.GetCardId());
@@ -896,7 +901,7 @@ public class BattleManager : MonoBehaviour
                 targetedCreatureObject.GetCardId()
             );
             BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
-                battleCardObject.Card.Id,
+                battleCardObject.GetCardId(),
                 attributes
             );
         }
@@ -947,7 +952,7 @@ public class BattleManager : MonoBehaviour
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED);
 
         ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
-        moveAttributes.SetCardId(battleCardObject.Card.Id);
+        moveAttributes.SetCardId(battleCardObject.GetCardId());
         moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
 
         challengeMove.SetMoveAttributes(moveAttributes);
@@ -956,7 +961,7 @@ public class BattleManager : MonoBehaviour
         if (FlagHelper.IsServerEnabled())
         {
             BattleSingleton.Instance.SendChallengePlaySpellUntargetedRequest(
-                battleCardObject.Card.Id
+                battleCardObject.GetCardId()
             );
         }
 
@@ -984,7 +989,7 @@ public class BattleManager : MonoBehaviour
     public void UseCard(BattleCardObject battleCardObject)
     {
         SoundManager.Instance.PlaySound("PlayCardSFX", transform.position);
-        battleCardObject.Recycle();
+        RecycleBattleCardObject(battleCardObject);
     }
 
     private void RenderEXPChanges(List<ExperienceCard> experienceCards)
@@ -1171,5 +1176,59 @@ public class BattleManager : MonoBehaviour
     private void DisableIsAnimating()
     {
         this.isAnimating = false;
+    }
+
+    private void InitializeBattleCardObjectPool()
+    {
+        this.battleCardObjectPrefab = Resources.Load("Prefabs/BattleCardObject") as GameObject;
+        this.battleCardObjectPool = new Stack<BattleCardObject>();
+
+        for (int i = 0; i < 40; i++)
+        {
+            GameObject battleCardGameObject = Instantiate(
+                this.battleCardObjectPrefab,
+                transform.position,
+                Quaternion.identity
+            );
+            battleCardGameObject.transform.parent = this.transform;
+            battleCardGameObject.SetActive(false);
+            BattleCardObject battleCardObject = battleCardGameObject.GetComponent<BattleCardObject>();
+            this.battleCardObjectPool.Push(battleCardObject);
+        }
+    }
+
+    private void RecycleBattleCardObject(BattleCardObject battleCardObject)
+    {
+        battleCardObject.gameObject.SetActive(false);
+        battleCardObject.transform.parent = this.transform;
+        this.battleCardObjectPool.Push(battleCardObject);
+    }
+
+    public BattleCardObject InitializeBattleCardObject(
+        Player player,
+        Card card,
+        Transform transform
+    )
+    {
+        BattleCardObject battleCardObject;
+
+        if (this.battleCardObjectPool.Count <= 0)
+        {
+            GameObject battleCardGameObject = Instantiate(
+                this.battleCardObjectPrefab,
+                transform.position,
+                Quaternion.identity
+            );
+            battleCardObject = battleCardGameObject.GetComponent<BattleCardObject>();
+        }
+        else
+        {
+            battleCardObject = this.battleCardObjectPool.Pop();
+        }
+
+        battleCardObject.Initialize(player, card);
+        battleCardObject.transform.parent = transform;
+        battleCardObject.gameObject.SetActive(true);
+        return battleCardObject;
     }
 }

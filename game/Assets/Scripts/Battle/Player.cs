@@ -138,7 +138,7 @@ public class Player
         this.mana -= battleCardObject.GetCost();
         RenderMana();
 
-        this.hand.RemoveByCardId(battleCardObject.Card.Id);
+        this.hand.RemoveByCardId(battleCardObject.GetCardId());
         this.hand.RepositionCards();
     }
 
@@ -555,8 +555,11 @@ public class Player
 
     public BattleCardObject AddMulliganCard(Card card, int index, UnityAction onAnimationFinish = null)
     {
-        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
-        battleCardObject.transform.parent = GetHandTransform();
+        BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
+            this,
+            card,
+            GetHandTransform()
+        );
 
         foreach (HyperCard.Card.CustomSpriteParam spriteParam in battleCardObject.visual.SpriteObjects)
         {
@@ -578,8 +581,11 @@ public class Player
 
     public void AddDrawnCardHandFull(Card card)
     {
-        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
-        battleCardObject.transform.parent = GetHandTransform();
+        BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
+            this,
+            card,
+            GetHandTransform()
+        );
 
         this.deckSize -= 1;
         BattleManager.Instance.AnimateDrawCard(this, battleCardObject)
@@ -596,8 +602,11 @@ public class Player
 
     public BattleCardObject AddDrawnCard(Card card)
     {
-        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
-        battleCardObject.transform.parent = GetHandTransform();
+        BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
+            this,
+            card,
+            GetHandTransform()
+        );
 
         this.deckSize -= 1;
         this.hand.AddCardObject(battleCardObject);
@@ -608,8 +617,11 @@ public class Player
 
     public BattleCardObject AddCardOnResume(Card card)
     {
-        BattleCardObject battleCardObject = BattleCardObject.Create(this, card);
-        battleCardObject.transform.parent = GetHandTransform();
+        BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
+            this,
+            card,
+            GetHandTransform()
+        );
 
         this.hand.AddCardObject(battleCardObject);
         return battleCardObject;

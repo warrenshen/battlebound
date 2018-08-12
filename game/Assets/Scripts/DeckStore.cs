@@ -41,10 +41,13 @@ public class DeckStore
         ResetStore();
     }
 
-    private void ResetStore()
+    private void ResetStore(bool shouldUpdateCards = true)
     {
         this.containsData = false;
-        this.cardIdToCard = new Dictionary<string, Card>();
+        if (shouldUpdateCards)
+        {
+            this.cardIdToCard = new Dictionary<string, Card>();
+        }
         this.deckNameToDeck = new Dictionary<string, List<string>>();
     }
 
@@ -160,10 +163,7 @@ public class DeckStore
 
     private void OnSaveCollectionSuccess(LogEventResponse response)
     {
-        ResetStore();
-
-        ParseScriptData(response.ScriptData);
-
+        ParseScriptData(response.ScriptData, false);
         InvokeAwaitingAction();
     }
 
@@ -181,10 +181,7 @@ public class DeckStore
 
     private void OnGetCollectionSuccess(LogEventResponse response)
     {
-        ResetStore();
-
         ParseScriptData(response.ScriptData);
-
         InvokeAwaitingAction();
     }
 
@@ -202,17 +199,21 @@ public class DeckStore
         }
     }
 
-    private void ParseScriptData(GSData scriptData)
+    private void ParseScriptData(GSData scriptData, bool shouldUpdateCards = true)
     {
-        GSData decksData = scriptData.GetGSData("decks");
-        List<GSData> cardsData = scriptData.GetGSDataList("cards");
+        ResetStore(shouldUpdateCards);
 
-        List<Card> cards = ParseCardsFromScriptData(cardsData);
-        foreach (Card card in cards)
+        if (shouldUpdateCards)
         {
-            this.cardIdToCard.Add(card.Id, card);
+            List<GSData> cardsData = scriptData.GetGSDataList("cards");
+            List<Card> cards = ParseCardsFromScriptData(cardsData);
+            foreach (Card card in cards)
+            {
+                this.cardIdToCard.Add(card.Id, card);
+            }
         }
 
+        GSData decksData = scriptData.GetGSData("decks");
         foreach (string deckName in new List<string>(decksData.BaseData.Keys))
         {
             List<string> cardIds = decksData.GetStringList(deckName);

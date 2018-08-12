@@ -31,7 +31,7 @@ public class CardSingleton : Singleton<CardSingleton>
 
         for (int i = 0; i < CARD_POOL_SIZE; i++)
         {
-            GameObject created = Instantiate(this.GetCardPrefab(), transform.position, Quaternion.identity);
+            GameObject created = Instantiate(GetCardPrefab(), transform.position, Quaternion.identity);
             created.transform.parent = cardPoolRoot;
             created.SetActive(false);
             HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
