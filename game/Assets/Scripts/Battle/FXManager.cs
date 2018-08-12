@@ -16,6 +16,18 @@ public class FXManager : IFXManager
         );
     }
 
+    public void PlayEffectWithCallback(
+        string effectName,
+        string soundName,
+        Transform transform,
+        UnityAction onEffectFinish
+    )
+    {
+        FXPoolManager.Instance.PlayEffect(effectName, transform.position);
+        SoundManager.Instance.PlaySound(soundName, transform.position);
+        EffectManager.Instance.WaitAndInvokeCallback(0.5f, onEffectFinish);
+    }
+
     public void ThrowEffectWithCallback(
         string effectName,
         Transform fromTransform,

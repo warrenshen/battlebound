@@ -10,6 +10,16 @@ public class FXManagerMock : IFXManager
     )
     { }
 
+    public void PlayEffectWithCallback(
+        string effectName,
+        string soundName,
+        Transform transform,
+        UnityAction onEffectFinish
+    )
+    {
+        onEffectFinish.Invoke();
+    }
+
     public void ThrowEffectWithCallback(
         string effectName,
         Transform fromTransform,

@@ -2151,70 +2151,72 @@ public class EffectManager : MonoBehaviour
         switch (challengeCard.Name)
         {
             case Card.CARD_NAME_TOUCH_OF_ZEUS:
-                effects = SpellTargetedLightningBolt(playerId, targetedCreature);
+                SpellTargetedTouchOfZeus(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_UNSTABLE_POWER:
-                effects = SpellTargetedUnstablePower(playerId, targetedCreature);
+                SpellTargetedUnstablePower(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_DEEP_FREEZE:
-                effects = SpellTargetedDeepFreeze(playerId, targetedCreature);
+                SpellTargetedDeepFreeze(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_WIDESPREAD_FROSTBITE:
-                effects = SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
+                SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_DEATH_NOTE:
-                effects = SpellTargetedDeathNote(playerId, targetedCreature);
+                SpellTargetedDeathNote(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_BESTOWED_VIGOR:
-                effects = SpellTargetedBestowedVigor(playerId, targetedCreature);
+                SpellTargetedBestowedVigor(playerId, targetedCreature);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", challengeCard.Name));
                 break;
         }
-
-        AddToQueues(effects);
     }
 
-    private List<Effect> SpellTargetedLightningBolt(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedTouchOfZeus(string playerId, BoardCreature targetedCreature)
     {
-        SoundManager.Instance.PlaySound("ShockSFX", targetedCreature.GetTargetableTransform().position);
-        FXPoolManager.Instance.PlayEffect("LightningShotVFX", targetedCreature.GetTargetableTransform().position);
-
-        List<Effect> effects = new List<Effect>();
-
-        int damageTaken = targetedCreature.TakeDamage(30);
-        effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-
-        return effects;
+        IncrementIsWaiting();
+        this.fXManager.PlayEffectWithCallback(
+            "LightningShotVFX",
+            "ShockSFX",
+            targetedCreature.GetTargetableTransform(),
+            () =>
+            {
+                int damageTaken = targetedCreature.TakeDamage(30);
+                AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+                DecrementIsWaiting();
+            }
+        );
     }
 
-    private List<Effect> SpellTargetedUnstablePower(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedUnstablePower(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.AddBuff(Card.BUFF_CATEGORY_UNSTABLE_POWER);
         // No triggered effects on unstable power for now.
-        return new List<Effect>();
     }
 
-    private List<Effect> SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)
     {
-        SoundManager.Instance.PlaySound("IceCastSFX", targetedCreature.GetTargetableTransform().position);
-        FXPoolManager.Instance.PlayEffect("DeepFreezeVFX", targetedCreature.GetTargetableTransform().position);
-
-        List<Effect> effects = new List<Effect>();
-
-        int damageTaken = targetedCreature.TakeDamage(10);
-        if (targetedCreature.Health > 0)
-        {
-            targetedCreature.Freeze(1);
-        }
-
-        effects.AddRange(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-
-        return effects;
+        IncrementIsWaiting();
+        this.fXManager.PlayEffectWithCallback(
+            "DeepFreezeVFX",
+            "IceCastSFX",
+            targetedCreature.GetTargetableTransform(),
+            () =>
+            {
+                int damageTaken = targetedCreature.TakeDamage(10);
+                if (targetedCreature.Health > 0)
+                {
+                    targetedCreature.Freeze(1);
+                }
+                AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+                DecrementIsWaiting();
+            }
+        );
     }
 
-    private List<Effect> SpellTargetedWidespreadFrostbite(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedWidespreadFrostbite(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.Freeze(2);
 
@@ -2240,25 +2242,28 @@ public class EffectManager : MonoBehaviour
         }
 
         // No triggered effects on freeze for now.
-        return new List<Effect>();
     }
 
-    private List<Effect> SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
     {
-        Vector3 position = targetedCreature.GetTargetableTransform().position;
-        FXPoolManager.Instance.PlayEffect("DeathNoteVFX", position);
-        SoundManager.Instance.PlaySound("StabSFX", position);
-        SoundManager.Instance.PlaySound("SlashSFX", position);
-
-        targetedCreature.DeathNote();
-        return GetEffectsOnCreatureDeath(targetedCreature);
+        IncrementIsWaiting();
+        this.fXManager.PlayEffectWithCallback(
+            "DeathNoteVFX",
+            "StabSFX",
+            targetedCreature.GetTargetableTransform(),
+            () =>
+            {
+                targetedCreature.DeathNote();
+                AddToQueues(GetEffectsOnCreatureDeath(targetedCreature));
+                DecrementIsWaiting();
+            }
+        );
     }
 
-    private List<Effect> SpellTargetedBestowedVigor(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedBestowedVigor(string playerId, BoardCreature targetedCreature)
     {
         targetedCreature.AddBuff(Card.BUFF_CATEGORY_BESTOWED_VIGOR);
         targetedCreature.Heal(10);
-        return new List<Effect>();
     }
 
     public void OnSpellUntargetedPlay(ChallengeCard challengeCard)
@@ -2685,6 +2690,22 @@ public class EffectManager : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    public void WaitAndInvokeCallback(float duration, UnityAction callback)
+    {
+        StartCoroutine(
+            "WaitAndInvokeCallbackCoroutine",
+            new object[2] { duration, callback }
+        );
+    }
+
+    private IEnumerator WaitAndInvokeCallbackCoroutine(object[] args)
+    {
+        float duration = (float)args[0];
+        UnityAction callback = (UnityAction)args[1];
+        yield return new WaitForSeconds(duration);
+        callback.Invoke();
     }
 
     private void IncrementIsWaiting()
