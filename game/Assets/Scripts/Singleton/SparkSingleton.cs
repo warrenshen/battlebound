@@ -36,6 +36,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private int rankGlobal;
     public int RankGlobal => rankGlobal;
 
+    private int rankElo;
+    public int RankElo => rankElo;
+
     private BigInteger balance;
     private int level;
 
@@ -80,6 +83,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
             this.displayName = null;
             this.address = null;
             this.rankGlobal = -1;
+            this.rankElo = -1;
             this.balance = new BigInteger("0");
             this.level = 0;
         }
@@ -162,6 +166,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.playerId = scriptData.GetString("playerId");
         this.displayName = scriptData.GetString("displayName");
         this.address = scriptData.GetString("address");
+
         if (scriptData.GetInt("rankGlobal") == null)
         {
             this.rankGlobal = 0;
@@ -169,6 +174,14 @@ public class SparkSingleton : Singleton<SparkSingleton>
         else
         {
             this.rankGlobal = (int)scriptData.GetInt("rankGlobal");
+        }
+        if (scriptData.GetInt("rankElo") == null)
+        {
+            this.rankElo = 0;
+        }
+        else
+        {
+            this.rankElo = (int)scriptData.GetInt("rankElo");
         }
 
         string balanceString = scriptData.GetString("balance");
