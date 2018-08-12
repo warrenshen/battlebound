@@ -1667,8 +1667,8 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
             attackingCard.health <= 0
         ) {
             const defendingDamagePierce = defendingCard.attack - defendingDamageDone;
-            const defendingDamageDoneFace = damageFace(defenderState, defendingDamagePierce);
-            newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, playerId, attackerState, defendingDamagePierce));
+            const defendingDamageDoneFace = damageFace(attackerState, defendingDamagePierce);
+            newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, playerId, attackerState, defendingDamageDoneFace));
         }
 
         var adjacentAttack = 0;
