@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class FXManager : IFXManager
@@ -26,6 +27,24 @@ public class FXManager : IFXManager
         FXPoolManager.Instance.PlayEffect(effectName, transform.position);
         SoundManager.Instance.PlaySound(soundName, transform.position);
         EffectManager.Instance.WaitAndInvokeCallback(0.5f, onEffectFinish);
+    }
+
+    public void PlayEffectsWithCallback(
+        List<string> effectNames,
+        List<string> soundNames,
+        Transform transform,
+        UnityAction onEffectsFinish
+    )
+    {
+        foreach (string effectName in effectNames)
+        {
+            FXPoolManager.Instance.PlayEffect(effectName, transform.position);
+        }
+        foreach (string soundName in soundNames)
+        {
+            SoundManager.Instance.PlaySound(soundName, transform.position);
+        }
+        EffectManager.Instance.WaitAndInvokeCallback(0.5f, onEffectsFinish);
     }
 
     public void ThrowEffectWithCallback(

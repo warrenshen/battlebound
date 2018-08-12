@@ -93,6 +93,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
         Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
+        Card.CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
 
         EFFECT_PLAYER_AVATAR_DIE,
@@ -146,6 +147,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS,
         Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS,
         Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
+        Card.CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
     };
 
     private static readonly List<string> EFFECTS_DAMAGE_TAKEN = new List<string>
@@ -245,14 +247,6 @@ public class EffectManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (Time.frameCount % 5 == 0)
-        {
-            UpdateHelper();
-        }
-    }
-
-    private void UpdateHelper()
     {
         if (!this.isReady || this.isWaiting > 0)
         {
@@ -606,6 +600,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS:
             case Card.CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS:
             case Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE:
+            case Card.CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX:
                 AbilityDeathRattle(effect);
                 break;
             case EFFECT_CHANGE_TURN_DRAW_CARD:
@@ -738,6 +733,9 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE:
                 AbilityDeathRattleReviveHighestCostCreature(effect);
+                break;
+            case Card.CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX:
+                AbilityHealFriendlyMax(effect);
                 break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
@@ -1792,7 +1790,7 @@ public class EffectManager : MonoBehaviour
                     )
                     {
                         int defendingDamagePierce = defendingCreature.GetAttack() - damageTaken;
-                        int defendingDamageDoneFace = defendingPlayer.TakeDamage(defendingDamagePierce);
+                        int defendingDamageDoneFace = attackingPlayer.TakeDamage(defendingDamagePierce);
                         effects.AddRange(GetEffectsOnFaceDamageTaken(attackingPlayer, defendingDamageDoneFace));
                     }
 
@@ -2228,9 +2226,9 @@ public class EffectManager : MonoBehaviour
     private void SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
     {
         IncrementIsWaiting();
-        this.fXManager.PlayEffectWithCallback(
-            "DeathNoteVFX",
-            "StabSFX",
+        this.fXManager.PlayEffectsWithCallback(
+            new List<string> { "DeathNoteVFX" },
+            new List<string> { "StabSFX", "SlashSFX" },
             targetedCreature.GetTargetableTransform(),
             () =>
             {

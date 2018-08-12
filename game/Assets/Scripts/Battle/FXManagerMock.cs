@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class FXManagerMock : IFXManager
@@ -18,6 +19,16 @@ public class FXManagerMock : IFXManager
     )
     {
         onEffectFinish.Invoke();
+    }
+
+    public void PlayEffectsWithCallback(
+        List<string> effectNames,
+        List<string> soundNames,
+        Transform transform,
+        UnityAction onEffectsFinish
+    )
+    {
+        onEffectsFinish.Invoke();
     }
 
     public void ThrowEffectWithCallback(
