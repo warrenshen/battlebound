@@ -3,7 +3,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-public class TestDeathSpells
+public class TestSpellsDeath
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",

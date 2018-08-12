@@ -11,7 +11,7 @@ public class TestPiercing
         ""hasTurn"": 1,
         ""manaCurrent"": 20,
         ""manaMax"": 20,
-        ""health"": 100,
+        ""health"": 90,
         ""healthMax"": 100,
         ""armor"": 0,
         ""cardCount"": 30,
@@ -44,7 +44,27 @@ public class TestPiercing
                 ""spawnRank"": 6
             },
             {
-                ""id"": ""EMPTY""
+                ""id"": ""ID_PLAYER-14"",
+                ""playerId"": ""ID_PLAYER"",
+                ""level"": 1,
+                ""category"": 0,
+                ""attack"": 20,
+                ""health"": 10,
+                ""cost"": 30,
+                ""name"": ""Lux"",
+                ""description"": """",
+                ""abilities"": [
+                    28
+                ],
+                ""attackStart"": 20,
+                ""costStart"": 30,
+                ""healthStart"": 30,
+                ""healthMax"": 30,
+                ""buffsField"": [],
+                ""canAttack"": 1,
+                ""isFrozen"": 0,
+                ""isSilenced"": 0,
+                ""spawnRank"": 7
             },
             {
                 ""id"": ""EMPTY""
@@ -87,7 +107,6 @@ public class TestPiercing
                 ""name"": ""Lux"",
                 ""description"": """",
                 ""abilities"": [
-                    1,
                     28
                 ],
                 ""attackStart"": 20,
@@ -101,7 +120,28 @@ public class TestPiercing
                 ""spawnRank"": 1
             },
             {
-                ""id"": ""EMPTY""
+                ""id"": ""ID_ENEMY-9"",
+                ""playerId"": ""ID_ENEMY"",
+                ""level"": 1,
+                ""category"": 0,
+                ""color"": 1,
+                ""attack"": 40,
+                ""health"": 30,
+                ""cost"": 30,
+                ""name"": ""Lighthunter"",
+                ""description"": """",
+                ""abilities"": [
+                    45
+                ],
+                ""attackStart"": 40,
+                ""costStart"": 30,
+                ""healthStart"": 30,
+                ""healthMax"": 30,
+                ""buffs"": [],
+                ""canAttack"": 0,
+                ""isFrozen"": 0,
+                ""isSilenced"": 0,
+                ""spawnRank"": 2
             },
             {
                 ""id"": ""EMPTY""
@@ -156,7 +196,7 @@ public class TestPiercing
     }
 
     [UnityTest]
-    public IEnumerator DamageOpponentOnPierceTest()
+    public IEnumerator DamageEnemyHeroOnPierceTest()
     {
         BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-13");
         BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-8");
@@ -174,7 +214,36 @@ public class TestPiercing
         playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-13");
         Assert.AreEqual(10, playerCreature.Health);
 
-        Player player = BattleState.Instance().GetPlayerById("ID_ENEMY");
-        Assert.AreEqual(70, player.GetHealth());
+        Player enemy = BattleState.Instance().GetPlayerById("ID_ENEMY");
+        Assert.AreEqual(70, enemy.GetHealth());
+
+        Player player = BattleState.Instance().GetPlayerById("ID_PLAYER");
+        Assert.AreEqual(90, player.GetHealth());
+    }
+
+    [UnityTest]
+    public IEnumerator DamagePlayerHeroByPierceTest()
+    {
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-14");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
+
+        EffectManager.Instance.OnCreatureAttack(
+            playerCreature,
+            enemyCreature
+        );
+
+        yield return null;
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
+        Assert.AreEqual(10, enemyCreature.Health);
+
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 1);
+        Assert.AreEqual(null, playerCreature);
+
+        Player player = BattleState.Instance().GetPlayerById("ID_PLAYER");
+        Assert.AreEqual(60, player.GetHealth());
+
+        Player enemy = BattleState.Instance().GetPlayerById("ID_ENEMY");
+        Assert.AreEqual(100, enemy.GetHealth());
     }
 }
