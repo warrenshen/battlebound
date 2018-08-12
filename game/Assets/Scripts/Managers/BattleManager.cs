@@ -67,6 +67,7 @@ public class BattleManager : MonoBehaviour
     private Sprite[] emoteSprites;
     public Sprite[] EmoteSprites => emoteSprites;
 
+    [SerializeField]
     private GameObject battleCardObjectPrefab;
     private Stack<BattleCardObject> battleCardObjectPool;
 
@@ -1180,7 +1181,7 @@ public class BattleManager : MonoBehaviour
 
     private void InitializeBattleCardObjectPool()
     {
-        this.battleCardObjectPrefab = Resources.Load("Prefabs/BattleCardObject") as GameObject;
+        //this.battleCardObjectPrefab = Resources.Load("Prefabs/BattleCardObject") as GameObject;
         this.battleCardObjectPool = new Stack<BattleCardObject>();
 
         for (int i = 0; i < 40; i++)
