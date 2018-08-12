@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -10,17 +12,20 @@ using TMPro;
 [System.Serializable]
 public class CollectionManager : MonoBehaviour
 {
+    private const int REQUIRED_DECK_SIZE = 30;
+    private const float TWEEN_TIME = 0.5f;
+
     [SerializeField]
     private List<CollectionCardObject> collection;
     [SerializeField]
-    private List<string> deckNames;
+    private List<string> decks;
 
     [SerializeField]
     private Dictionary<string, Card> idToCard;
 
     [SerializeField]
-    private List<CollectionCardObject> cardsInDeck;  //list that is currently rendered/being changed
-    public List<CollectionCardObject> CardsInDeck => cardsInDeck;
+    private List<Card> cardsInDeck;  //list that is currently rendered/being changed
+    public List<Card> CardsInDeck => cardsInDeck;
     private int activeDeck;
 
     [SerializeField]
@@ -35,6 +40,11 @@ public class CollectionManager : MonoBehaviour
     private GameObject cutoutContent;
     [SerializeField]
     private GameObject collectionObject;
+
+    [SerializeField]
+    private Text activeDeckName;
+    [SerializeField]
+    private Text deckSize;
 
     private CollectionCardObject selectedCard;
     private LogEventResponse cardsResponse;
@@ -54,8 +64,9 @@ public class CollectionManager : MonoBehaviour
     {
         Instance = this;
         this.collection = new List<CollectionCardObject>();
-        this.deckNames = new List<string>();
+        this.decks = new List<string>();
         this.idToCard = new Dictionary<string, Card>();
+        this.cardsInDeck = new List<Card>();
     }
 
     private void Start()
@@ -65,10 +76,20 @@ public class CollectionManager : MonoBehaviour
 
     private void Callback()
     {
-        deckNames = DeckStore.Instance().GetDeckNames();
+        decks = DeckStore.Instance().GetDeckNames();
         for (int i = 0; i < deckButtons.Count; ++i)
         {
-            deckButtons[i].onClick.AddListener(EnterEditMode);
+            if (i < decks.Count)
+            {
+                //set names if deck exists
+                deckButtons[i].GetComponentInChildren<Text>().text = decks[i];
+            }
+            else
+            {
+                decks.Add(String.Format("Deck {0}", i));
+            }
+            int deckId = i;
+            deckButtons[i].onClick.AddListener(new UnityAction(() => EnterEditMode(deckId)));
         }
 
         List<Card> cards = DeckStore.Instance().GetCards();
@@ -77,45 +98,50 @@ public class CollectionManager : MonoBehaviour
 
     private void Update()
     {
-        if (editMode)
-        {
-            ScrollToVerticalPan();
-        }
-
         CastGraphicsRaycast();
     }
 
     private void CastGraphicsRaycast()
     {
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (ActionManager.Instance.HasDragTarget())
-            {
-                //Set up the new Pointer Event, Set the Pointer Event Position to that of the mouse position
-                m_PointerEventData = new PointerEventData(m_EventSystem);
-                m_PointerEventData.position = Input.mousePosition;
+        //Set up the new Pointer Event, Set the Pointer Event Position to that of the mouse position
+        m_PointerEventData = new PointerEventData(m_EventSystem);
+        m_PointerEventData.position = Input.mousePosition;
 
-                //Create a list of Raycast Results
-                //Raycast using the Graphics Raycaster and mouse click position
-                List<RaycastResult> results = new List<RaycastResult>();
-                m_Raycaster.Raycast(m_PointerEventData, results);
-                CheckForDecklist(results, ActionManager.Instance.GetDragTarget() as CollectionCardObject);
+        //Create a list of Raycast Results
+        //Raycast using the Graphics Raycaster and mouse click position
+        List<RaycastResult> results = new List<RaycastResult>();
+        m_Raycaster.Raycast(m_PointerEventData, results);
+
+        if (!CheckForDecklist(results))
+        {
+            if (editMode)
+            {
+                ScrollToVerticalPan();
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonUp(0) && ActionManager.Instance.HasDragTarget())
+            {
+                CollectionCardObject cardObject = ActionManager.Instance.GetDragTarget() as CollectionCardObject;
+                IncludeCard(cardObject);
             }
         }
     }
 
-    private void CheckForDecklist(List<RaycastResult> hit, CollectionCardObject cardObject)
+    private bool CheckForDecklist(List<RaycastResult> hit)
     {
         foreach (RaycastResult element in hit)
         {
             if (element.gameObject != rightSidebar)
                 continue;
 
-            IncludeCard(cardObject);
+            return true;
         }
+        return false;
     }
 
-    private void OnSaveButton()
+    public void OnSaveButton()
     {
         SaveCollectionRequest();
     }
@@ -123,12 +149,12 @@ public class CollectionManager : MonoBehaviour
     private void SaveCollectionRequest()
     {
         List<string> cardIds = new List<string>();
-        foreach (CollectionCardObject elem in this.cardsInDeck)
+        foreach (Card elem in this.cardsInDeck)
         {
-            cardIds.Add(elem.Card.Id);
+            cardIds.Add(elem.Id);
         }
-        string previousName = deckNames[activeDeck];
-        string newName = deckNames[activeDeck];   //to-do, let name be changed, and pull from input field
+        string previousName = decks[activeDeck];
+        string newName = activeDeckName.text;
 
         DeckStore.Instance().CreateUpdatePlayerDeckWithCallback(
             cardIds,
@@ -140,7 +166,7 @@ public class CollectionManager : MonoBehaviour
 
     private void SaveCallback()
     {
-
+        ExitEditMode();
     }
 
     private void ScrollToVerticalPan()
@@ -149,18 +175,51 @@ public class CollectionManager : MonoBehaviour
         collectionObject.transform.localPosition = new Vector3(collectionObject.transform.localPosition.x, vertical, collectionObject.transform.localPosition.z);
     }
 
-    private void EnterEditMode()
-    {
-        LeanTween.moveLocalX(deckSelection, -800, 0.5f).setEaseOutQuad();
-        LeanTween.moveLocalX(rightSidebar, 400, 0.5f).setEaseInQuad();
 
-        LeanTween.moveY(collectionObject, -0.5f, 0.5f)
+    private void EnterEditMode(int deckId)
+    {
+        LeanTween.moveLocalX(deckSelection, -800, TWEEN_TIME).setEaseOutQuad();
+        LeanTween.moveLocalX(rightSidebar, 320, TWEEN_TIME).setEaseInQuad();
+
+        LeanTween.moveY(collectionObject, -0.5f, TWEEN_TIME)
                  .setEaseInQuad()
                  .setOnComplete(() =>
                  {
                      this.editMode = true;
+                     this.activeDeck = deckId;
+
+                     InputField deckNameField = rightSidebar.GetComponentInChildren<InputField>();
+                     deckNameField.text = decks[deckId];
+
+                     LoadDecklist(deckId);
                  });
     }
+
+    private void ExitEditMode()
+    {
+        LeanTween.moveLocalX(deckSelection, 0, TWEEN_TIME).setEaseOutQuad();
+        LeanTween.moveLocalX(rightSidebar, 480, TWEEN_TIME).setEaseInQuad();
+
+        LeanTween.moveY(collectionObject, -10, TWEEN_TIME)
+                 .setEaseOutQuad()
+                 .setOnComplete(() =>
+                 {
+                     this.editMode = false;
+                     foreach (Transform child in cutoutContent.transform)
+                     {
+                         RemoveCard(child.GetComponent<CardCutout>());
+                     }
+                 });
+    }
+
+    private void LoadDecklist(int deckId)
+    {
+        foreach (Card card in DeckStore.Instance().GetCardsByDeckName(decks[deckId]))
+        {
+            IncludeCard(card.wrapper as CollectionCardObject);
+        }
+    }
+
 
     private List<CollectionCardObject> CreateCardObjects(List<Card> cards)
     {
@@ -214,18 +273,53 @@ public class CollectionManager : MonoBehaviour
         return created.transform;
     }
 
+
     public void IncludeCard(CollectionCardObject cardObject)
     {
-        cardObject.visual.SetOutline(false);
-        Button cutout = Instantiate(cardCutout, cutoutContent.transform).GetComponent<Button>();
-        cutout.GetComponentInChildren<Text>().text = cardObject.Card.Name;
-        cutout.onClick.AddListener(new UnityAction(() =>
+        if (cardsInDeck.Count >= REQUIRED_DECK_SIZE)
         {
-            RemoveCard(cutout, cardObject);
+            LeanTween.scale(deckSize.gameObject, Vector3.one * 1.3f, 1).setEasePunch();
+            return;
+        }
+
+        cardObject.visual.SetOutline(false);
+
+        //get insertion index
+        int cardCost = cardObject.Card.GetCost();
+        string cardName = cardObject.Card.GetName();
+        int insertionIndex = cutoutContent.transform.childCount;
+
+        for (int i = 0; i < cutoutContent.transform.childCount; ++i)
+        {
+            CardCutout selected = cutoutContent.transform.GetChild(i).GetComponent<CardCutout>();
+            if (cardCost < selected.Cost)
+            {
+                insertionIndex = i;
+                break;
+            }
+            else if (cardCost == selected.Cost)
+            {
+                if (String.Compare(cardName, selected.name, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    insertionIndex = i;
+                    break;
+                }
+            }
+        }
+        //create cutout and set to child
+        CardCutout cutout = Instantiate(cardCutout, cutoutContent.transform).GetComponent<CardCutout>();
+        cutout.transform.localPosition = Vector3.zero;
+        cutout.transform.SetSiblingIndex(insertionIndex);
+
+        cutout.Render(cardObject);
+        cutout.GetComponent<Button>().onClick.AddListener(new UnityAction(() =>
+        {
+            RemoveCard(cutout);
         }));
 
         collection.Remove(cardObject);
-        cardsInDeck.Add(cardObject);
+        cardsInDeck.Add(cardObject.Card);
+        UpdateDeckSize();
 
         cardObject.Burn(new UnityAction(() =>
         {
@@ -233,28 +327,35 @@ public class CollectionManager : MonoBehaviour
         }), 0.2f);
     }
 
-    public void RemoveCard(Button source, CollectionCardObject cardObject)
+    public void RemoveCard(CardCutout source)
     {
-        source.transform.parent = this.rightSidebar.transform;
+        //source.transform.parent = this.rightSidebar.transform;
         LeanTween.moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
                  .setEaseOutCubic()
                  .setOnComplete(() =>
                  {
                      Destroy(source.gameObject); //to-do: play effect
                  });
-        cardsInDeck.Remove(cardObject);
-        collection.Add(cardObject);
 
         //instantiate card, reset
-        CollectionCardObject created = CollectionCardObject.Create(cardObject.Card);
+        CollectionCardObject created = CollectionCardObject.Create(source.GetCard());
         created.transform.parent = this.collectionObject.transform;
 
-        CardObject.Reset reset = cardObject.GetThisResetValues();
+        CardObject.Reset reset = source.GetReset();
         created.transform.localPosition = reset.position;
         created.transform.localRotation = reset.rotation;
         created.transform.localScale = reset.scale;
         created.SetBothResetValues();
 
         created.visual.Redraw();
+
+        cardsInDeck.Remove(source.GetCard());
+        collection.Add(created);
+        UpdateDeckSize();
+    }
+
+    private void UpdateDeckSize()
+    {
+        deckSize.text = String.Format("{0}/{1}", cardsInDeck.Count, REQUIRED_DECK_SIZE);
     }
 }
