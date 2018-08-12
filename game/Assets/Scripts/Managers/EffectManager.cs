@@ -133,6 +133,8 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY,
         Card.CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN,
+        Card.CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY,
+        Card.CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY,
     };
 
     private static readonly List<string> EFFECTS_DEATH_RATTLE = new List<string>
