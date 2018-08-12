@@ -472,7 +472,21 @@ public abstract class Card
         }
         //set sprites and set TextMeshPro labels using TmpTextObjects (?)
         cardVisual.SetTextFieldWithKey("Title", card.GetName());
-        cardVisual.SetTextFieldWithKey("Description", card.GetDescription());
+
+        if (card.GetType() == typeof(CreatureCard))
+        {
+            cardVisual.SetTextFieldWithKey(
+                "Description",
+                Card.GetDecriptionByAbilities((card as CreatureCard).GetAbilities())
+            );
+        }
+        else
+        {
+            cardVisual.SetTextFieldWithKey(
+                "Description",
+                card.GetDescription()
+            );
+        }
         cardVisual.SetTextFieldWithKey("Cost", card.GetCost().ToString());
         cardVisual.SetFrameColor(CardTemplate.ColorFromClass(card.GetClassColor()));
 
