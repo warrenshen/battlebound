@@ -480,7 +480,6 @@ public class BattleManager : MonoBehaviour
 
         if (target.GetCost() > target.Owner.Mana)
         {
-            Debug.Log("Mana");
             //can't play card due to mana
             this.ResetCardToHand();
             return false;
@@ -1181,7 +1180,6 @@ public class BattleManager : MonoBehaviour
 
     private void InitializeBattleCardObjectPool()
     {
-        //this.battleCardObjectPrefab = Resources.Load("Prefabs/BattleCardObject") as GameObject;
         this.battleCardObjectPool = new Stack<BattleCardObject>();
 
         for (int i = 0; i < 40; i++)

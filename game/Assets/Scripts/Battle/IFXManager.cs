@@ -9,6 +9,13 @@ public interface IFXManager
         Transform toTransform
     );
 
+    void PlayEffectWithCallback(
+        string effectName,
+        string soundName,
+        Transform transform,
+        UnityAction onEffectFinish
+    );
+
     void ThrowEffectWithCallback(
         string effectName,
         Transform fromTransform,
