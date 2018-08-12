@@ -12,6 +12,8 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
     private Dictionary<string, Texture2D> imageNameToTexture;
 
+    private Dictionary<string, Sprite> imageNameToSprite;
+
     private new void Awake()
     {
         base.Awake();
@@ -34,6 +36,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         }
 
         this.imageNameToTexture = new Dictionary<string, Texture2D>();
+        this.imageNameToSprite = new Dictionary<string, Sprite>();
 
         foreach (string cardName in this.cardNametoTemplate.Keys)
         {
@@ -41,9 +44,39 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             string frontImage = cardTemplate.frontImage;
             string backImage = cardTemplate.backImage;
             string effectName = cardTemplate.effectPrefab;
-            this.imageNameToTexture[frontImage] = Resources.Load(frontImage) as Texture2D;
-            this.imageNameToTexture[backImage] = Resources.Load(backImage) as Texture2D;
+
+            Texture2D frontTexture = Resources.Load(frontImage) as Texture2D;
+            Texture2D backTexture = Resources.Load(backImage) as Texture2D;
+            this.imageNameToTexture[frontImage] = frontTexture;
+            this.imageNameToTexture[backImage] = backTexture;
             this.effectNameToPrefab[effectName] = Resources.Load(effectName) as GameObject;
+
+            if (frontTexture != null)
+            {
+                this.imageNameToSprite[frontImage] = Sprite.Create(
+                    frontTexture,
+                    new Rect(0.0f, 0.0f, frontTexture.width, frontTexture.height),
+                    new Vector2(0.5f, 0.5f),
+                    100.0f
+                );
+            }
+            else
+            {
+                this.imageNameToSprite[frontImage] = null;
+            }
+            if (backTexture != null)
+            {
+                this.imageNameToSprite[backImage] = Sprite.Create(
+                    backTexture,
+                    new Rect(0.0f, 0.0f, backTexture.width, backTexture.height),
+                    new Vector2(0.5f, 0.5f),
+                    100.0f
+                );
+            }
+            else
+            {
+                this.imageNameToSprite[backImage] = null;
+            }
         }
 
         foreach (string creatureName in Card.CARD_NAMES_CREATURE)
@@ -102,6 +135,22 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         }
 
         return this.imageNameToTexture[imageName];
+    }
+
+    public Sprite GetSpriteByName(string imageName)
+    {
+        if (imageName == null)
+        {
+            return null;
+        }
+
+        if (!this.imageNameToTexture.ContainsKey(imageName))
+        {
+            Debug.LogError(string.Format("Image name {0} does not exist in resource cache.", imageName));
+            return null;
+        }
+
+        return this.imageNameToSprite[imageName];
     }
 
     public List<string> GetCreatureNames()
