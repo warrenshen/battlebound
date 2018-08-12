@@ -57,6 +57,7 @@ public class CollectionManager : MonoBehaviour
     private Stack<CollectionCardObject> collectionCardObjectPool;
 
     private Stack<CardCutout> cardCutoutPool;
+    private List<CardCutout> sortedCardCutouts;
 
     public static CollectionManager Instance { get; private set; }
 
@@ -67,6 +68,7 @@ public class CollectionManager : MonoBehaviour
         this.decks = new List<string>();
         this.cardsInDeck = new List<Card>();
 
+        this.sortedCardCutouts = new List<CardCutout>();
         InitializeCollectionCardObjectPool();
     }
 
@@ -215,6 +217,7 @@ public class CollectionManager : MonoBehaviour
 
     private void LoadDecklist(int deckId)
     {
+        this.sortedCardCutouts = new List<CardCutout>();
         foreach (Card card in DeckStore.Instance().GetCardsByDeckName(decks[deckId]))
         {
             IncludeCard(card.wrapper as CollectionCardObject);
@@ -291,23 +294,48 @@ public class CollectionManager : MonoBehaviour
         //get insertion index
         int cardCost = cardObject.Card.GetCost();
         string cardName = cardObject.Card.GetName();
-        int insertionIndex = cutoutContent.transform.childCount;
+        int cardLevel = cardObject.Card.Level;
+        int insertionIndex = this.sortedCardCutouts.Count;
 
-        for (int i = 0; i < cutoutContent.transform.childCount; ++i)
+        for (int i = 0; i < this.sortedCardCutouts.Count; i += 1)
         {
-            CardCutout selected = cutoutContent.transform.GetChild(i).GetComponent<CardCutout>();
-            if (cardCost < selected.Cost)
+            CardCutout currentCardCutout = sortedCardCutouts[i];
+            if (cardCost < currentCardCutout.GetCost())
             {
                 insertionIndex = i;
                 break;
             }
-            else if (cardCost == selected.Cost)
+            else if (cardCost > currentCardCutout.GetCost())
             {
-                if (String.Compare(cardName, selected.GetCard().Name, StringComparison.OrdinalIgnoreCase) < 0)
-                {
-                    insertionIndex = i;
-                    break;
-                }
+                continue;
+
+            }
+
+            if (String.Compare(cardName, currentCardCutout.GetName(), StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                insertionIndex = i;
+                break;
+            }
+            else if (String.Compare(cardName, currentCardCutout.GetName(), StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                continue;
+            }
+
+            if (cardCost < currentCardCutout.GetCost())
+            {
+                insertionIndex = i;
+                break;
+            }
+            else if (cardCost > currentCardCutout.GetCost())
+            {
+                continue;
+
+            }
+
+            if (cardLevel < currentCardCutout.GetLevel())
+            {
+                insertionIndex = i;
+                break;
             }
         }
 
@@ -322,8 +350,10 @@ public class CollectionManager : MonoBehaviour
             RemoveCard(cutout);
         }));
 
-        collection.Remove(cardObject);
-        cardsInDeck.Add(cardObject.Card);
+        this.sortedCardCutouts.Insert(insertionIndex, cutout);
+        this.collection.Remove(cardObject);
+        this.cardsInDeck.Add(cardObject.Card);
+
         UpdateDeckSize();
 
         cardObject.Burn(new UnityAction(() => { }), 0.2f);
@@ -331,6 +361,11 @@ public class CollectionManager : MonoBehaviour
 
     private void RemoveCard(CardCutout source)
     {
+        int removeIndex = this.sortedCardCutouts.FindIndex(
+            cardCutout => cardCutout.GetId() == source.GetId()
+        );
+        this.sortedCardCutouts.RemoveAt(removeIndex);
+
         LeanTween
             .moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
             .setEaseOutCubic()

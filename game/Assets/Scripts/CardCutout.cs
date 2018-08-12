@@ -17,9 +17,6 @@ public class CardCutout : MonoBehaviour
     [SerializeField]
     private Text nameLabel;
 
-    private int cost;
-    public int Cost => cost;
-
     [SerializeField]
     private Text costLabel;
 
@@ -31,15 +28,33 @@ public class CardCutout : MonoBehaviour
         this.front.sprite = ResourceSingleton.Instance.GetSpriteByName(this.card.GetFrontImage());
         this.back.sprite = ResourceSingleton.Instance.GetSpriteByName(this.card.GetBackImage());
 
-        this.name = cardObject.Card.GetName();
-        this.cost = cardObject.Card.GetCost();
-        this.nameLabel.text = this.name;
-        this.costLabel.text = this.cost.ToString();
+        this.nameLabel.text = GetName();
+        this.costLabel.text = GetCost().ToString();
     }
 
     public Card GetCard()
     {
         return this.card;
+    }
+
+    public string GetId()
+    {
+        return this.card.Id;
+    }
+
+    public int GetLevel()
+    {
+        return this.card.Level;
+    }
+
+    public string GetName()
+    {
+        return this.card.GetName();
+    }
+
+    public int GetCost()
+    {
+        return this.card.GetCost();
     }
 
     public CardObject.Reset GetReset()
