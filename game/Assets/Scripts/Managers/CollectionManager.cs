@@ -27,8 +27,6 @@ public class CollectionManager : MonoBehaviour
     [SerializeField]
     private List<Button> deckButtons;
     [SerializeField]
-    private GameObject cardCutout;
-    [SerializeField]
     private GameObject deckSelection;
     [SerializeField]
     private GameObject rightSidebar;
@@ -56,6 +54,8 @@ public class CollectionManager : MonoBehaviour
     private GameObject collectionCardObjectPrefab;
     private Stack<CollectionCardObject> collectionCardObjectPool;
 
+    [SerializeField]
+    private GameObject cardCutoutPrefab;
     private Stack<CardCutout> cardCutoutPool;
     private List<CardCutout> sortedCardCutouts;
 
@@ -206,10 +206,11 @@ public class CollectionManager : MonoBehaviour
             .setEaseOutQuad()
             .setOnComplete(() =>
             {
-                foreach (CardCutout cardCutout in this.cardCutoutPool)
+                foreach (CardCutout cardCutout in new List<CardCutout>(this.sortedCardCutouts))
                 {
                     RemoveCard(cardCutout);
                 }
+                this.sortedCardCutouts = new List<CardCutout>();
             });
 
         LeanTween.moveLocalX(deckSelection, 0, TWEEN_TIME).setEaseOutQuad();
@@ -340,17 +341,17 @@ public class CollectionManager : MonoBehaviour
         }
 
         //create cutout and set to child
-        CardCutout cutout = InitializeCardCutout();
-        cutout.transform.localPosition = Vector3.zero;
-        cutout.transform.SetSiblingIndex(insertionIndex);
+        CardCutout cardCutout = InitializeCardCutout();
+        cardCutout.transform.localPosition = Vector3.zero;
+        cardCutout.transform.SetSiblingIndex(insertionIndex);
 
-        cutout.Render(cardObject);
-        cutout.SetClickListener(new UnityAction(() =>
+        cardCutout.Render(cardObject);
+        cardCutout.SetClickListener(new UnityAction(() =>
         {
-            RemoveCard(cutout);
+            RemoveCard(cardCutout);
         }));
 
-        this.sortedCardCutouts.Insert(insertionIndex, cutout);
+        this.sortedCardCutouts.Insert(insertionIndex, cardCutout);
         this.collection.Remove(cardObject);
         this.cardsInDeck.Add(cardObject.Card);
 
@@ -417,7 +418,7 @@ public class CollectionManager : MonoBehaviour
         for (int i = 0; i < 30; i++)
         {
             GameObject cardCutoutGameObject = Instantiate(
-                this.cardCutout,
+                this.cardCutoutPrefab,
                 transform.position,
                 Quaternion.identity
             );
