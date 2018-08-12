@@ -303,7 +303,7 @@ public class CollectionManager : MonoBehaviour
             }
             else if (cardCost == selected.Cost)
             {
-                if (String.Compare(cardName, selected.name, StringComparison.OrdinalIgnoreCase) < 0)
+                if (String.Compare(cardName, selected.GetCard().Name, StringComparison.OrdinalIgnoreCase) < 0)
                 {
                     insertionIndex = i;
                     break;

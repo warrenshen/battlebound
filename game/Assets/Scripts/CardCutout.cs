@@ -19,6 +19,7 @@ public class CardCutout : MonoBehaviour
 
     private int cost;
     public int Cost => cost;
+
     [SerializeField]
     private Text costLabel;
 
