@@ -430,6 +430,10 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         {
             this.visual.SetTextFieldWithKey("Description", "");
         }
+        else
+        {
+            this.visual.SetTextFieldWithKey("Description", Card.GetDecriptionByAbilities(this.boardCreature.Abilities));
+        }
 
         if (attack > creatureCard.GetAttack())
         {

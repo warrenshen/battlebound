@@ -353,6 +353,88 @@ public abstract class Card
         { 50, CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY },
     };
 
+    public static readonly Dictionary<string, string> ABILITY_TO_DESCRIPTION = new Dictionary<string, string>
+    {
+        { CARD_ABILITY_CHARGE, "Charge" },
+        { CARD_ABILITY_TAUNT, "Defend" },
+        { CARD_ABILITY_SHIELD, "Shield" },
+        { CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN, "" },
+        { CARD_ABILITY_BATTLE_CRY_DRAW_CARD, "Warcry: Draw a card" },
+        { CARD_ABILITY_LIFE_STEAL, "Lifesteal" },
+        { CARD_ABILITY_DEATH_RATTLE_DRAW_CARD, "Deathwish: Draw a card" },
+        { CARD_ABILITY_END_TURN_HEAL_TEN, "Turnover: Recover 10 health" },
+        { CARD_ABILITY_END_TURN_HEAL_TWENTY, "Turnover: Recover 20 health" },
+        { CARD_ABILITY_END_TURN_DRAW_CARD, "Turnover: Draw a card" },
+        { CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN, "Deathwish: Deal 10 damage to enemy hero" },
+        { CARD_ABILITY_EACH_KILL_DRAW_CARD, "" },
+        { CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY, "Deathwish: Throw three bombs at random enemies, each dealing 10 damage" },
+        { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN, "Turnover: Deal 10 damage to opposite enemy creature" },
+        { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY, "Turnover: Deal 20 damage to opposite enemy creature" },
+        { CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN, "Warcry: Deal 10 damage to opposite enemy creature" },
+        { CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY, "Warcry: Deal 20 damage to opposite enemy creature" },
+        { CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY, "When this creature takes damage, deal 30 damage to your hero" },
+        { CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT, "Warcry: Condemn opposite enemy creature" },
+        { CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX, "Warcry: Heal all friendly creatures to max health" },
+        { CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY, "Warcry: Grant Defend to adjacent creatures" },
+        { CARD_ABILITY_LETHAL, "Lethal" },
+        { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN, "When this creature attacks, deal 10 damage to adjacent enemy creatures" },
+        { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK, "When this creature attacks, deal damage to adjacent enemy creatures" },
+        { CARD_ABILITY_BATTLE_CRY_DAMAGE_PLAYER_FACE_BY_TWENTY, "Warcry: Sacrifice 20 health from your hero" },
+        { CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD, "Draw a card on any turnover"},
+        { CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_TWENTY, "Warcry: Heal 20 health to adjacent creatures" },
+        { CARD_ABILITY_BATTLE_CRY_HEAL_ADJACENT_BY_FOURTY, "Warcry: Heal 40 health to adjacent creatures" },
+        { CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY, "Warcry: Heal 40 health all creatures" },
+        { CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE, "Warcry: Revive your highest cost friendly fallen creature" },
+        { CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY, "Deathwish: Deal 20 damage to all enemy creatures" },
+        { CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES, "Warcry: Condemn all enemy creatures" },
+        { CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY, "Deathwish: Deal 30 damage to all creatures" },
+        { CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY, "Deathwish: Deal 20 damage to enemy hero" },
+        { CARD_ABILITY_DEATH_RATTLE_RESUMMON, "Deathwish: Resummon this creature" },
+        { CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS, "Deathwish: Resummon two Dusk Dweller creatures"},
+        { CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS, "Deathwish: Resummon two Talusreaver creatures" },
+        { CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY, "Warcry: Deal 20 damage to a random frozen enemy creature" },
+        { CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN, "Warcry: Destroy a random frozen enemy creature" },
+        { CARD_ABILITY_PLAY_SPELL_DRAW_CARD, "Whenever you play a spell, draw a card" },
+        { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY, "Turnover: Buff a random friendly +0/+20" },
+        { CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY, "When this creatures takes damage, deal 20 damage to enemy hero" },
+        { CARD_ABILITY_ICY, "When this creature interacts with an enemy creature, freeze said enemy creature" },
+        { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN, "Turnover: Buff a random friendly +10/+10" },
+        { CARD_ABILITY_BATTLE_CRY_BOOST_ADJACENT_THIRTY_THIRTY, "Warcry: Buff adjacent creatures +30/+30" },
+        { CARD_ABILITY_PIERCING, "Piercing" },
+        { CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY, "Turnover: Heal 30 health to your hero" },
+        { CARD_ABILITY_DOUBLE_STRIKE, "Doublestrike" },
+        { CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX, "Deathwish: Heal all friendly creatures to max health" },
+        { CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE, "Deathwish: Revive your highest cost fallen creature" },
+        { CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY, "Warcry: Heal 20 health to your hero" },
+    };
+
+    public static string GetDecriptionByAbilities(List<string> abilities)
+    {
+        string description = "";
+        foreach (string ability in abilities)
+        {
+            if (ability == CARD_EMPTY_ABILITY)
+            {
+                continue;
+            }
+            if (!ABILITY_TO_DESCRIPTION.ContainsKey(ability))
+            {
+                Debug.LogError(string.Format("Ability to description does not contain ability: {0}", ability));
+                continue;
+            }
+
+            if (description.Length == 0)
+            {
+                description += ABILITY_TO_DESCRIPTION[ability];
+            }
+            else
+            {
+                description += string.Format("; {0}", ABILITY_TO_DESCRIPTION);
+            }
+        }
+        return description;
+    }
+
     public static void SetHyperCardArtwork(ref HyperCard.Card cardVisual, Card card)
     {
         if (card == null)
