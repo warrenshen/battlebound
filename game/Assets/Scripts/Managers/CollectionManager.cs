@@ -345,7 +345,7 @@ public class CollectionManager : MonoBehaviour
         cutout.transform.SetSiblingIndex(insertionIndex);
 
         cutout.Render(cardObject);
-        cutout.GetComponent<Button>().onClick.AddListener(new UnityAction(() =>
+        cutout.SetClickListener(new UnityAction(() =>
         {
             RemoveCard(cutout);
         }));

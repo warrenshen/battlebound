@@ -1,11 +1,15 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class CardCutout : MonoBehaviour
 {
     [SerializeField]
     private Card card;
+
+    [SerializeField]
+    private Button button;
+
     private CardObject.Reset reset;
 
     [SerializeField]
@@ -60,5 +64,11 @@ public class CardCutout : MonoBehaviour
     public CardObject.Reset GetReset()
     {
         return this.reset;
+    }
+
+    public void SetClickListener(UnityAction listener)
+    {
+        this.button.onClick.RemoveAllListeners();
+        this.button.onClick.AddListener(listener);
     }
 }
