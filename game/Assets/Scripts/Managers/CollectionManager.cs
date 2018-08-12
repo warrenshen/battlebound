@@ -7,7 +7,6 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 using GameSparks.Api.Responses;
-using TMPro;
 
 [System.Serializable]
 public class CollectionManager : MonoBehaviour
@@ -19,9 +18,6 @@ public class CollectionManager : MonoBehaviour
     private List<CollectionCardObject> collection;
     [SerializeField]
     private List<string> decks;
-
-    [SerializeField]
-    private Dictionary<string, Card> idToCard;
 
     [SerializeField]
     private List<Card> cardsInDeck;  //list that is currently rendered/being changed
@@ -57,16 +53,19 @@ public class CollectionManager : MonoBehaviour
     private EventSystem m_EventSystem;
     private PointerEventData m_PointerEventData;
 
-    public static CollectionManager Instance { get; private set; }
+    private GameObject collectionCardObjectPrefab;
+    private Stack<CollectionCardObject> collectionCardObjectPool;
 
+    public static CollectionManager Instance { get; private set; }
 
     private void Awake()
     {
         Instance = this;
         this.collection = new List<CollectionCardObject>();
         this.decks = new List<string>();
-        this.idToCard = new Dictionary<string, Card>();
         this.cardsInDeck = new List<Card>();
+
+        InitializeCollectionCardObjectPool();
     }
 
     private void Start()
@@ -200,16 +199,17 @@ public class CollectionManager : MonoBehaviour
         LeanTween.moveLocalX(deckSelection, 0, TWEEN_TIME).setEaseOutQuad();
         LeanTween.moveLocalX(rightSidebar, 480, TWEEN_TIME).setEaseInQuad();
 
-        LeanTween.moveY(collectionObject, -10, TWEEN_TIME)
-                 .setEaseOutQuad()
-                 .setOnComplete(() =>
-                 {
-                     this.editMode = false;
-                     foreach (Transform child in cutoutContent.transform)
-                     {
-                         RemoveCard(child.GetComponent<CardCutout>());
-                     }
-                 });
+        LeanTween
+            .moveY(collectionObject, -10, TWEEN_TIME)
+            .setEaseOutQuad()
+            .setOnComplete(() =>
+            {
+                this.editMode = false;
+                foreach (Transform child in cutoutContent.transform)
+                {
+                    RemoveCard(child.GetComponent<CardCutout>());
+                }
+            });
     }
 
     private void LoadDecklist(int deckId)
@@ -219,7 +219,6 @@ public class CollectionManager : MonoBehaviour
             IncludeCard(card.wrapper as CollectionCardObject);
         }
     }
-
 
     private List<CollectionCardObject> CreateCardObjects(List<Card> cards)
     {
@@ -236,13 +235,10 @@ public class CollectionManager : MonoBehaviour
 
         foreach (Card card in cards)
         {
-
-            CollectionCardObject collectionCardObject = CollectionCardObject.Create(card);
+            CollectionCardObject collectionCardObject = InitializeCollectionCardObject(card);
             collectionCardObject.transform.parent = collectionObject.transform;
             collectionCardObject.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
             collectionCardObject.SetBothResetValues();
-
-            idToCard.Add(card.Id, card);
 
             CreateGrayed(collectionCardObject.transform, card).parent = grayed;
             collectionCardObject.visual.Redraw();
@@ -337,15 +333,16 @@ public class CollectionManager : MonoBehaviour
     public void RemoveCard(CardCutout source)
     {
         //source.transform.parent = this.rightSidebar.transform;
-        LeanTween.moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
-                 .setEaseOutCubic()
-                 .setOnComplete(() =>
-                 {
-                     Destroy(source.gameObject); //to-do: play effect
-                 });
+        LeanTween
+            .moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
+            .setEaseOutCubic()
+            .setOnComplete(() =>
+            {
+                Destroy(source.gameObject); //to-do: play effect
+            });
 
         //instantiate card, reset
-        CollectionCardObject created = CollectionCardObject.Create(source.GetCard());
+        CollectionCardObject created = InitializeCollectionCardObject(source.GetCard());
         created.transform.parent = this.collectionObject.transform;
 
         CardObject.Reset reset = source.GetReset();
@@ -364,5 +361,54 @@ public class CollectionManager : MonoBehaviour
     private void UpdateDeckSize()
     {
         deckSize.text = String.Format("{0}/{1}", cardsInDeck.Count, REQUIRED_DECK_SIZE);
+    }
+
+    private void InitializeCollectionCardObjectPool()
+    {
+        this.collectionCardObjectPrefab = Resources.Load("Prefabs/CollectionCardObject") as GameObject;
+        this.collectionCardObjectPool = new Stack<CollectionCardObject>();
+
+        for (int i = 0; i < 40; i++)
+        {
+            GameObject collectionCardGameObject = Instantiate(
+                this.collectionCardObjectPrefab,
+                transform.position,
+                Quaternion.identity
+            );
+            collectionCardGameObject.transform.parent = this.transform;
+            collectionCardGameObject.SetActive(false);
+            CollectionCardObject collectionCardObject = collectionCardGameObject.GetComponent<CollectionCardObject>();
+            this.collectionCardObjectPool.Push(collectionCardObject);
+        }
+    }
+
+    private void RecycleCollectionCardObject(CollectionCardObject collectionCardObject)
+    {
+        collectionCardObject.gameObject.SetActive(false);
+        collectionCardObject.transform.parent = this.transform;
+        this.collectionCardObjectPool.Push(collectionCardObject);
+    }
+
+    public CollectionCardObject InitializeCollectionCardObject(Card card)
+    {
+        CollectionCardObject collectionCardObject;
+
+        if (this.collectionCardObjectPool.Count <= 0)
+        {
+            GameObject collectionCardGameObject = Instantiate(
+                this.collectionCardObjectPrefab,
+                transform.position,
+                Quaternion.identity
+            );
+            collectionCardObject = collectionCardGameObject.GetComponent<CollectionCardObject>();
+        }
+        else
+        {
+            collectionCardObject = this.collectionCardObjectPool.Pop();
+        }
+
+        collectionCardObject.Initialize(card);
+        collectionCardObject.gameObject.SetActive(true);
+        return collectionCardObject;
     }
 }

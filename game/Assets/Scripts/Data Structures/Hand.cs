@@ -31,7 +31,7 @@ public class Hand
     {
         foreach (BattleCardObject battleCardObject in this.battleCardObjects)
         {
-            if (battleCardObject.Card.Id == cardId)
+            if (battleCardObject.GetCardId() == cardId)
             {
                 return battleCardObject;
             }
@@ -70,7 +70,9 @@ public class Hand
 
     public void RemoveByCardId(string cardId)
     {
-        int removeIndex = this.battleCardObjects.FindIndex(element => element.Card.Id == cardId);
+        int removeIndex = this.battleCardObjects.FindIndex(
+            element => element.GetCardId() == cardId
+        );
 
         if (removeIndex < 0)
         {
@@ -143,13 +145,13 @@ public class Hand
             if (battleCardObject.gameObject.layer != cardLayer)
                 battleCardObject.gameObject.SetLayer(cardLayer);
 
-            if (battleCardObject.Card.Id != "HIDDEN" && cardIdSet.Contains(battleCardObject.Card.Id))
+            if (battleCardObject.GetCardId() != "HIDDEN" && cardIdSet.Contains(battleCardObject.GetCardId()))
             {
                 Debug.LogError("Duplicate card IDs in hand!");
             }
             else
             {
-                cardIdSet.Add(battleCardObject.Card.Id);
+                cardIdSet.Add(battleCardObject.GetCardId());
             }
         }
 
