@@ -1883,6 +1883,7 @@ public class EffectManager : MonoBehaviour
         string targetId
     )
     {
+        string cardId = card.Id;
         if (fieldId == null || targetId == null)
         {
             Debug.LogError("Invalid parameters given to function.");
@@ -2031,25 +2032,73 @@ public class EffectManager : MonoBehaviour
         }
         else if (card.Name == Card.CARD_NAME_BLUE_GIPSY_V3)
         {
+            BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-            int damageTaken = targetedCreature.TakeDamage(20);
-            AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+
+            IncrementIsWaiting();
+            this.fXManager.ThrowEffectWithCallback(
+                "ExplosivePropVFX",
+                boardCreature.GetTargetableTransform(),
+                targetedCreature.GetTargetableTransform(),
+                () =>
+                {
+                    int damageTaken = targetedCreature.TakeDamage(20);
+                    AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+                    DecrementIsWaiting();
+                }
+            );
         }
         else if (card.Name == Card.CARD_NAME_FROSTLAND_THRASHER_8)
         {
+            BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-            targetedCreature.DeathNote();
-            AddToQueues(GetEffectsOnCreatureDeath(targetedCreature));
+
+            IncrementIsWaiting();
+            this.fXManager.ThrowEffectWithCallback(
+                "ExplosivePropVFX",
+                boardCreature.GetTargetableTransform(),
+                targetedCreature.GetTargetableTransform(),
+                () =>
+                {
+                    targetedCreature.DeathNote();
+                    AddToQueues(GetEffectsOnCreatureDeath(targetedCreature));
+                    DecrementIsWaiting();
+                }
+            );
         }
         else if (card.Name == Card.CARD_NAME_PAL_V1)
         {
+            BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-            targetedCreature.AddBuff(Card.BUFF_CATEGORY_ZERO_TWENTY);
+
+            IncrementIsWaiting();
+            this.fXManager.ThrowEffectWithCallback(
+                "ExplosivePropVFX",
+                boardCreature.GetTargetableTransform(),
+                targetedCreature.GetTargetableTransform(),
+                () =>
+                {
+                    targetedCreature.AddBuff(Card.BUFF_CATEGORY_ZERO_TWENTY);
+                    DecrementIsWaiting();
+                }
+            );
         }
         else if (card.Name == Card.CARD_NAME_FIRESMITH_APPRENTICE)
         {
+            BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
-            targetedCreature.AddBuff(Card.BUFF_CATEGORY_TEN_TEN);
+
+            IncrementIsWaiting();
+            this.fXManager.ThrowEffectWithCallback(
+                "ExplosivePropVFX",
+                boardCreature.GetTargetableTransform(),
+                targetedCreature.GetTargetableTransform(),
+                () =>
+                {
+                    targetedCreature.AddBuff(Card.BUFF_CATEGORY_TEN_TEN);
+                    DecrementIsWaiting();
+                }
+            );
         }
         else
         {
