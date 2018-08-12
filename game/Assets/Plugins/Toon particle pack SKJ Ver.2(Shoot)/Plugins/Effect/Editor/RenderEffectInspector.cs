@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Collections;
@@ -10,8 +12,8 @@ using System;
 public class RenderEffectInspector : Editor
 {
     public bool m_EnableSortLayer = false;
-	private string[] m_LayerName;
-	private int[] m_LayerID;
+    private string[] m_LayerName;
+    private int[] m_LayerID;
 
     void OnEnable()
     {
@@ -40,7 +42,7 @@ public class RenderEffectInspector : Editor
         ParticleSystem particleSystem = renderEffect.gameObject.GetComponent<ParticleSystem>();
         EditorGUILayout.BeginVertical();
 
-        
+
         if (particleSystem == null)
         {
             EditorGUILayout.BeginHorizontal();
@@ -60,7 +62,7 @@ public class RenderEffectInspector : Editor
             }
         }
 
-        if(particleSystem == null)
+        if (particleSystem == null)
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Open Sort Layer Option");
@@ -87,16 +89,18 @@ public class RenderEffectInspector : Editor
                 EditorGUI.indentLevel--;
             }
         }
-		Renderer render = renderEffect.gameObject.GetComponent<Renderer>();
-		if (render != null) {
-			if (GUILayout.Button ("Refresh Material")) {
-				renderEffect.RefreshMaterial ();
-			}
-			EditorGUILayout.LabelField ("Materials");
-		}
+        Renderer render = renderEffect.gameObject.GetComponent<Renderer>();
+        if (render != null)
+        {
+            if (GUILayout.Button("Refresh Material"))
+            {
+                renderEffect.RefreshMaterial();
+            }
+            EditorGUILayout.LabelField("Materials");
+        }
         EditorGUI.indentLevel++;
         int index = 0;
-        foreach(MaterialEffect matEffect in renderEffect.m_MaterialEffects)
+        foreach (MaterialEffect matEffect in renderEffect.m_MaterialEffects)
         {
             string strIndex = "Element:" + index + "    ";
             if (matEffect.m_EffectMaterial == null)
@@ -107,7 +111,7 @@ public class RenderEffectInspector : Editor
             }
             else
             {
-                if(GUILayout.Button(strIndex + matEffect.m_EffectMaterial.name))
+                if (GUILayout.Button(strIndex + matEffect.m_EffectMaterial.name))
                 {
                     matEffect.m_EditorExtend = !matEffect.m_EditorExtend;
                 }
@@ -201,17 +205,21 @@ public class RenderEffectInspector : Editor
                     EditorGUIUtility.ExitGUI();
                 }
             }
-			if (render.GetType () == typeof(TrailRenderer)) {
-				if (GUILayout.Button ("Clear Trail")) {
-					TrailRenderer trailRender =  render.GetComponent<TrailRenderer> ();
-					trailRender.Clear();
-				}
-			}
+            if (render.GetType() == typeof(TrailRenderer))
+            {
+                if (GUILayout.Button("Clear Trail"))
+                {
+                    TrailRenderer trailRender = render.GetComponent<TrailRenderer>();
+                    trailRender.Clear();
+                }
+            }
             EditorGUI.indentLevel--;
         }
 
-        
+
         EditorGUILayout.EndVertical();
     }
-    
+
 }
+
+#endif

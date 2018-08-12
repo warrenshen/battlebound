@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
@@ -10,8 +12,8 @@ public class ShaderMaterialsEditor : ShaderGUI
         bool bEnableDisTex = false;
         bool bEnableUVRotation = false;
         bool bEnableUVScroll = false;
-		bool bEnableUVMirror = false;
-		bool bEnableBloom = false;
+        bool bEnableUVMirror = false;
+        bool bEnableBloom = false;
         bool bRange01 = false;
         bool bRange02 = false;
         bool bRange03 = false;
@@ -19,7 +21,7 @@ public class ShaderMaterialsEditor : ShaderGUI
         Material targetMat = materialEditor.target as Material;
         foreach (MaterialProperty property in properties)
         {
-			materialEditor.ShaderProperty (property, property.displayName);
+            materialEditor.ShaderProperty(property, property.displayName);
 
 
             if (property.type == MaterialProperty.PropType.Texture)
@@ -41,10 +43,10 @@ public class ShaderMaterialsEditor : ShaderGUI
                 }
 
             }
-         //   else if (property.type == MaterialProperty.PropType.Color)
-         //   {
+            //   else if (property.type == MaterialProperty.PropType.Color)
+            //   {
 
-         //   }
+            //   }
             else if (property.type == MaterialProperty.PropType.Range)
             {
 
@@ -101,7 +103,7 @@ public class ShaderMaterialsEditor : ShaderGUI
                 }
 
             }
-            else if (property.type == MaterialProperty.PropType.Float)            
+            else if (property.type == MaterialProperty.PropType.Float)
             {
                 if (property.name.Equals("_MainRotation")
                     && property.floatValue != 0.0f)
@@ -137,7 +139,7 @@ public class ShaderMaterialsEditor : ShaderGUI
                         bEnableUVScroll = true;
                     }
                 }
-                
+
             }
         }
         if (bEnableCutOut)
@@ -166,8 +168,8 @@ public class ShaderMaterialsEditor : ShaderGUI
         {
             targetMat.DisableKeyword("Enable_UVRotation");
         }
-       
-		if (bEnableUVScroll)
+
+        if (bEnableUVScroll)
         {
             targetMat.EnableKeyword("Enable_UVScroll");
         }
@@ -176,21 +178,23 @@ public class ShaderMaterialsEditor : ShaderGUI
             targetMat.DisableKeyword("Enable_UVScroll");
         }
 
-		if (bEnableUVMirror)        
-		{
-			targetMat.EnableKeyword("Enable_UVMirror");
-		}
-		else
-		{
-			targetMat.DisableKeyword("Enable_UVMirror");
-		}
+        if (bEnableUVMirror)
+        {
+            targetMat.EnableKeyword("Enable_UVMirror");
+        }
+        else
+        {
+            targetMat.DisableKeyword("Enable_UVMirror");
+        }
 
-		if (bEnableBloom) {
-			targetMat.EnableKeyword("Enable_Bloom");
-		} 
-		else {
-			targetMat.DisableKeyword("Enable_Bloom");
-		}
+        if (bEnableBloom)
+        {
+            targetMat.EnableKeyword("Enable_Bloom");
+        }
+        else
+        {
+            targetMat.DisableKeyword("Enable_Bloom");
+        }
 
         if (bRange01)
         {
@@ -231,3 +235,5 @@ public class ShaderMaterialsEditor : ShaderGUI
     }
 
 }
+
+#endif
