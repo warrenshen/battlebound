@@ -105,13 +105,7 @@ namespace HyperCard
             public Vector3 Position = Vector3.zero;
             public Vector2 Scale = Vector2.one;
             public bool ShowAdvancedSettings;
-            public float Zoom = 1;
             public int RenderQueue = 3000;
-            public Texture2D DistortionMask;
-            public float DistortionFreq;
-            public float DistortionAmp;
-            public float DistortionSpeed;
-            public Vector2 DistortionDir;
             public bool IsAffectedByFilters;
         }
 
@@ -133,7 +127,6 @@ namespace HyperCard
             spriteObject.Color = Color.white;
             spriteObject.Key = "Sprite" + index;
             spriteObject.Scale = Vector2.one;
-            spriteObject.Zoom = 1;
             spriteObject.RenderQueue = 3000;
             spriteObject.IsAffectedByFilters = true;
 
@@ -652,40 +645,16 @@ namespace HyperCard
 
             foreach (var txt in TmpTextObjects.Where(x => x.TmpObject != null))
             {
-                var mat = new Material(txt.TmpObject.fontSharedMaterial);
                 txt.TmpObject.overrideColorTags = BlackAndWhite;
-                mat.SetFloat("_Stencil", Stencil);
-                mat.SetInt("_StencilComp", (int)CompareFunction.Equal);
-                mat.name = Guid.NewGuid().ToString();
-                txt.TmpObject.fontMaterial = mat;
             }
+
+            Material spriteMat = new Material(BaseSpriteMat);
 
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
-                var spriteMat = x.Sprite.sharedMaterials;
-
-                if (spriteMat[0] == null)
-                {
-                    spriteMat[0] = BaseSpriteMat;
-                    x.Sprite.sharedMaterials = spriteMat;
-                }
-
-                var spriteNewMat = new Material(spriteMat[0]);
-
-                spriteNewMat.SetFloat("_Stencil", Stencil);
-                spriteNewMat.SetInt("_StencilComp", (int)CompareFunction.Equal);
-                spriteNewMat.name = Guid.NewGuid().ToString();
-                spriteNewMat.renderQueue = x.RenderQueue;
-                spriteNewMat.SetFloat("_Zoom", x.Zoom);
-                spriteNewMat.SetTexture("_DistortionMask", x.DistortionMask);
-                spriteNewMat.SetFloat("_DistortionFreq", x.DistortionFreq);
-                spriteNewMat.SetFloat("_DistortionAmp", x.DistortionAmp);
-                spriteNewMat.SetFloat("_DistortionSpeed", x.DistortionSpeed);
-                spriteNewMat.SetVector("_DistortionDir", x.DistortionDir);
-
-                spriteNewMat.SetInt("_BlackAndWhite", BlackAndWhite && x.IsAffectedByFilters ? 1 : 0);
-
-                x.Sprite.material = spriteNewMat;
+                spriteMat.renderQueue = x.RenderQueue;
+                spriteMat.SetInt("_BlackAndWhite", BlackAndWhite && x.IsAffectedByFilters ? 1 : 0);
+                x.Sprite.material = spriteMat;
             }
         }
 
@@ -693,7 +662,6 @@ namespace HyperCard
         {
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
-                //color.a *= CardOpacity;
                 x.Sprite.color = x.Color;
 
                 if (x.Value != null)
@@ -703,7 +671,6 @@ namespace HyperCard
 
                 x.Sprite.gameObject.transform.localPosition = new Vector3(x.Position.x / 10, x.Position.y / 10, 0.01f + x.Position.z);
                 x.Sprite.gameObject.transform.localScale = new Vector3(x.Scale.x / 10, x.Scale.y / 10, 1);
-
                 x.Sprite.gameObject.SetActive(!x.IsHidden);
             }
         }

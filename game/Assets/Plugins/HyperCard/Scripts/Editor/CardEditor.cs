@@ -570,15 +570,9 @@ namespace HyperCard
                         var sprite = spriteItem.FindPropertyRelative("Value");
                         var spriteColor = spriteItem.FindPropertyRelative("Color");
                         var spritePosition = spriteItem.FindPropertyRelative("Position");
-                        var spriteZoom = spriteItem.FindPropertyRelative("Zoom");
                         var spriteRenderQueue = spriteItem.FindPropertyRelative("RenderQueue");
                         var spriteScale = spriteItem.FindPropertyRelative("Scale");
                         var showAdvancedSettings = spriteItem.FindPropertyRelative("ShowAdvancedSettings");
-                        var spriteDistMask = spriteItem.FindPropertyRelative("DistortionMask");
-                        var spriteDistFreq = spriteItem.FindPropertyRelative("DistortionFreq");
-                        var spriteDistAmp = spriteItem.FindPropertyRelative("DistortionAmp");
-                        var spriteDistSpeed = spriteItem.FindPropertyRelative("DistortionSpeed");
-                        var spriteDistDir = spriteItem.FindPropertyRelative("DistortionDir");
                         var spriteIsAffectedByFilters = spriteItem.FindPropertyRelative("IsAffectedByFilters");
 
                         var hideSprite = spriteItem.FindPropertyRelative("IsHidden");
@@ -612,7 +606,6 @@ namespace HyperCard
                         {
                             spriteKey.stringValue = EditorGUILayout.TextField("Key", spriteKey.stringValue);
                             sprite.objectReferenceValue = EditorGUILayout.ObjectField("Sprite", sprite.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
-                            spriteZoom.floatValue = EditorGUILayout.FloatField("Zoom", spriteZoom.floatValue);
                             GUILayout.Space(20f);
 
                             spritePosition.vector3Value = EditorGUILayout.Vector3Field("Position", spritePosition.vector3Value);
@@ -627,15 +620,6 @@ namespace HyperCard
                                 GUILayout.Space(20f);
 
                                 spriteColor.colorValue = EditorGUILayout.ColorField("Color", spriteColor.colorValue);
-
-                                GUILayout.Space(20f);
-                                spriteDistMask.objectReferenceValue = EditorGUILayout.ObjectField("Mask", spriteDistMask.objectReferenceValue, typeof(Texture2D), false, GUILayout.ExpandWidth(false));
-                                spriteDistFreq.floatValue = EditorGUILayout.FloatField("Distortion frequency", spriteDistFreq.floatValue);
-                                spriteDistAmp.floatValue = EditorGUILayout.FloatField("Amplitude mult.", spriteDistAmp.floatValue);
-                                spriteDistSpeed.floatValue = EditorGUILayout.FloatField("Distortion speed", spriteDistSpeed.floatValue);
-                                spriteDistDir.vector2Value = EditorGUILayout.Vector2Field("Direction", spriteDistDir.vector2Value);
-
-                                GUILayout.Space(20f);
 
                                 spriteIsAffectedByFilters.boolValue = DrawToggle("Affected by filters ?", spriteIsAffectedByFilters.boolValue);
                             }
