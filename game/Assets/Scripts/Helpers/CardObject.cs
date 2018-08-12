@@ -33,6 +33,8 @@ public class CardObject : MouseWatchable
     {
         GameObject created = new GameObject(card.Name);
         CardObject cardObject = created.AddComponent<CardObject>();
+        BoxCollider boxCollider = created.AddComponent<BoxCollider>();
+        cardObject.colliderBox = boxCollider;
         cardObject.Initialize(card);
         return cardObject;
     }
@@ -60,8 +62,7 @@ public class CardObject : MouseWatchable
         SetVisualResetValues();
 
         //set sprite etc here
-        colliderBox = gameObject.GetComponent<BoxCollider>() as BoxCollider;
-        colliderBox.size = CardObject.CARD_BOUNDS;
+        this.colliderBox.size = CardObject.CARD_BOUNDS;
     }
 
     protected virtual void LoadCardArtwork()
