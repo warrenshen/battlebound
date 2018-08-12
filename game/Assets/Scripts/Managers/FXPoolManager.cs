@@ -86,6 +86,13 @@ public class FXPoolManager : MonoBehaviour
         return chosen;
     }
 
+    public GameObject PlayEffect(string effect)
+    {
+        Transform chosen = GetEffect(effect);
+        chosen.gameObject.SetActive(true);
+        return chosen.gameObject;
+    }
+
     public GameObject PlayEffect(string effect, Vector3 pos)
     {
         Transform chosen = GetEffect(effect);

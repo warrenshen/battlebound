@@ -2178,8 +2178,8 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellTargetedLightningBolt(string playerId, BoardCreature targetedCreature)
     {
-        //SoundManager.Instance.PlaySound("ShockSFX", targetedCreature.transform.position);
-        //FXPoolManager.Instance.PlayEffect("LightningBoltVFX", targetedCreature.transform.position);
+        SoundManager.Instance.PlaySound("ShockSFX", targetedCreature.GetTargetableTransform().position);
+        FXPoolManager.Instance.PlayEffect("LightningShotVFX", targetedCreature.GetTargetableTransform().position);
 
         List<Effect> effects = new List<Effect>();
 
@@ -2198,6 +2198,9 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellTargetedDeepFreeze(string playerId, BoardCreature targetedCreature)
     {
+        SoundManager.Instance.PlaySound("IceCastSFX", targetedCreature.GetTargetableTransform().position);
+        FXPoolManager.Instance.PlayEffect("DeepFreezeVFX", targetedCreature.GetTargetableTransform().position);
+
         List<Effect> effects = new List<Effect>();
 
         int damageTaken = targetedCreature.TakeDamage(10);
@@ -2242,6 +2245,11 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> SpellTargetedDeathNote(string playerId, BoardCreature targetedCreature)
     {
+        Vector3 position = targetedCreature.GetTargetableTransform().position;
+        FXPoolManager.Instance.PlayEffect("DeathNoteVFX", position);
+        SoundManager.Instance.PlaySound("StabSFX", position);
+        SoundManager.Instance.PlaySound("SlashSFX", position);
+
         targetedCreature.DeathNote();
         return GetEffectsOnCreatureDeath(targetedCreature);
     }
@@ -2331,6 +2339,7 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
+        FXPoolManager.Instance.PlayEffect("RazeToAshesVFX");
         foreach (BoardCreature targetedCreature in opponentAliveCreatures)
         {
             int damageTaken = targetedCreature.TakeDamage(50);
