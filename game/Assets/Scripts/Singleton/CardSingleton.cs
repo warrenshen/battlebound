@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CardSingleton : Singleton<CardSingleton>
@@ -8,7 +6,7 @@ public class CardSingleton : Singleton<CardSingleton>
     private GameObject cardPrefab;
 
     private Stack<HyperCard.Card> cardVisualPool;
-    private static int CARD_POOL_SIZE = 40;
+    private static int CARD_POOL_SIZE = 30;
 
     [SerializeField]
     private Dictionary<string, GameObject> summonPool;
