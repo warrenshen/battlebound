@@ -282,7 +282,14 @@ public class CollectionManager : MonoBehaviour
             return;
         }
 
-        cardObject.visual.SetOutline(false);
+        if (cardObject.visual != null)
+        {
+            cardObject.visual.SetOutline(false);
+        }
+        else
+        {
+            Debug.LogError(String.Format("CardObject visual is null for {0}", cardObject.Card.GetName()));
+        }
 
         //get insertion index
         int cardCost = cardObject.Card.GetCost();
