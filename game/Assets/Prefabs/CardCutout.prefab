@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 224233548671685194}
   - component: {fileID: 222337683501703720}
   - component: {fileID: 114934765042169026}
+  - component: {fileID: 114098863370899976}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -72,8 +73,9 @@ GameObject:
   - component: {fileID: 224036730088146922}
   - component: {fileID: 222674868910842136}
   - component: {fileID: 114893043535148570}
+  - component: {fileID: 114231346868615616}
   m_Layer: 5
-  m_Name: Label
+  m_Name: Cost Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,8 +93,9 @@ GameObject:
   - component: {fileID: 114550978526378354}
   - component: {fileID: 114659261114333838}
   - component: {fileID: 114540656933405638}
+  - component: {fileID: 114881689952841584}
   m_Layer: 5
-  m_Name: CardCutoutUI
+  m_Name: CardCutout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -132,6 +135,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114098863370899976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1105496574383674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.65882355}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114120160683195928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,6 +230,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114231346868615616
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1673663270399754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114382355882038630
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -264,7 +295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -319,6 +350,21 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114881689952841584
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895682311612426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8d1739eec2b4daa899fc42d0fd2b44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  front: {fileID: 114120160683195928}
+  back: {fileID: 114205490072758330}
+  nameLabel: {fileID: 114934765042169026}
+  costLabel: {fileID: 114893043535148570}
 --- !u!114 &114893043535148570
 MonoBehaviour:
   m_ObjectHideFlags: 1
