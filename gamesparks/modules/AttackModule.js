@@ -94,6 +94,10 @@ function silenceCard(card) {
     card.health = Math.min(card.health, card.healthMax);
 }
 
+function freezeCard(card, amount) {
+    card.isFrozen = Math.max(card.isFrozen, amount);
+}
+
 function buffFieldCard(card, buff) {
     if (VALID_BUFF_FIELDS.indexOf(buff) < 0) {
         setScriptError("Invalid buff field: " + buff);
