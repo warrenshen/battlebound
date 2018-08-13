@@ -875,6 +875,12 @@ describe("challenge events", function() {
             const opponentField = opponentState.field;
             assert.equal(opponentField[0].id, "EMPTY");
 
+            const deadCards = challengeStateData.deadCards;
+            assert.equal(deadCards.length, 1);
+
+            assert.equal(deadCards[0].id, "C12-ID_OPPONENT-8");
+            assert.equal(deadCards[0].spawnRank, 1);
+
             resolve();
           }
         );
