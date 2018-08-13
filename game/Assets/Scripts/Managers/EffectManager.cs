@@ -403,6 +403,7 @@ public class EffectManager : MonoBehaviour
             effect.PlayerId,
             effect.CardId
         );
+        BattleState.Instance().AddDeadCard(boardCreature.GetChallengeCard());
         Board.Instance().RemoveCreatureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
@@ -504,22 +505,7 @@ public class EffectManager : MonoBehaviour
 
     private void EffectCardDieAfterDeathRattle(Effect effect)
     {
-        BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(
-            effect.PlayerId,
-            effect.CardId
-        );
-
-        if (boardCreature == null)
-        {
-            Debug.LogError("Invalid effect - board creature does not exist.");
-            return;
-        }
-
-        Board.Instance().RemoveCreatureByPlayerIdAndCardId(
-            effect.PlayerId,
-            effect.CardId
-        );
-        boardCreature.Die();
+        EffectCardDie(effect);
     }
 
     private void EffectRandomTarget(Effect effect)
@@ -2625,8 +2611,6 @@ public class EffectManager : MonoBehaviour
 
     private List<Effect> GetEffectsOnCreatureDeath(BoardCreature boardCreature)
     {
-        BattleState.Instance().AddDeadCard(boardCreature.GetChallengeCard());
-
         List<Effect> effects = new List<Effect>();
 
         foreach (string effectName in EFFECTS_DEATH_RATTLE)
