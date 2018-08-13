@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class BattleCardObject : CardObject
@@ -76,6 +77,8 @@ public class BattleCardObject : CardObject
             cost -= 10;
         }
 
+        // Cost cannot be negative.
+        cost = Math.Max(cost, 0);
         return cost;
     }
 
