@@ -382,6 +382,8 @@ function _updateHandCardCosts(playerState) {
             baseCost -= 10;
         }
         
+        // Cost cannot be negative.
+        baseCost = Math.max(baseCost, 0);
         card.cost = baseCost;
     });
 }
