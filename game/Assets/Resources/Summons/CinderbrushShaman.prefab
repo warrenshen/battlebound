@@ -592,7 +592,6 @@ GameObject:
   - component: {fileID: 114336725551190432}
   - component: {fileID: 111633550302869778}
   - component: {fileID: 137970803355970874}
-  - component: {fileID: 114208005467471108}
   m_Layer: 13
   m_Name: prefab_0393
   m_TagString: Untagged
@@ -1480,8 +1479,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1644258874278682}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.001, y: 0.001, z: 1}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalScale: {x: 0.0022, y: 0.00225, z: 1}
   m_Children:
   - {fileID: 4998645978941900}
   m_Father: {fileID: 4058437081390448}
@@ -2173,21 +2172,9 @@ Animation:
   - {fileID: 7400000, guid: a0a4b16919fb7944f921d1b3de4c2588, type: 2}
   - {fileID: 7400000, guid: 1761e310557f2914d8a5a131374ef8f4, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &114208005467471108
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1644258874278682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
 --- !u!114 &114336725551190432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2637,7 +2624,7 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  animationData: {fileID: 11400000, guid: c2686d17888bb894b9f06d9eefe0cf09, type: 2}
+  animationData: {fileID: 0}
   animationDataGUID: c2686d17888bb894b9f06d9eefe0cf09
   mMaterialSource:
   - {fileID: 2100000, guid: 6e8dbda04f04a8944ba47cd838cb8503, type: 2}
