@@ -232,6 +232,9 @@ public class TestSpellsDeath
 
         PlayerAvatar playerAvatar = BattleState.Instance().GetPlayerById("ID_ENEMY").Avatar;
         Assert.AreEqual(100, playerAvatar.Health);
+
+        Assert.AreEqual(1, BattleState.Instance().GetDeadCards().Count);
+        Assert.AreEqual("ID_ENEMY-8", BattleState.Instance().GetDeadCards()[0].Id);
     }
 
     [UnityTest]
@@ -282,10 +285,25 @@ public class TestSpellsDeath
         playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 2);
         Assert.AreEqual(null, playerCreature);
 
-        PlayerAvatar playerAvatar = BattleState.Instance().GetPlayerById("ID_PLAYER").Avatar;
-        Assert.AreEqual(90, playerAvatar.Health);
+        Player player = BattleState.Instance().GetPlayerById("ID_PLAYER");
+        Assert.AreEqual(90, player.GetHealth());
 
-        PlayerAvatar enemyAvatar = BattleState.Instance().GetPlayerById("ID_ENEMY").Avatar;
-        Assert.AreEqual(90, playerAvatar.Health);
+        Player enemy = BattleState.Instance().GetPlayerById("ID_ENEMY");
+        Assert.AreEqual(90, enemy.GetHealth());
+
+        Assert.AreEqual(4, BattleState.Instance().GetDeadCards().Count);
+
+        // Note that the presence of deathwishes result in dead order not matching spawn rank completely.
+        Assert.AreEqual("ID_PLAYER-5", BattleState.Instance().GetDeadCards()[0].Id);
+        Assert.AreEqual(1, BattleState.Instance().GetDeadCards()[0].SpawnRank);
+
+        Assert.AreEqual("ID_ENEMY-8", BattleState.Instance().GetDeadCards()[1].Id);
+        Assert.AreEqual(4, BattleState.Instance().GetDeadCards()[1].SpawnRank);
+
+        Assert.AreEqual("ID_PLAYER-6", BattleState.Instance().GetDeadCards()[2].Id);
+        Assert.AreEqual(2, BattleState.Instance().GetDeadCards()[2].SpawnRank);
+
+        Assert.AreEqual("ID_ENEMY-7", BattleState.Instance().GetDeadCards()[3].Id);
+        Assert.AreEqual(3, BattleState.Instance().GetDeadCards()[3].SpawnRank);
     }
 }

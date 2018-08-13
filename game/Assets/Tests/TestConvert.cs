@@ -159,5 +159,7 @@ public class TestConvert
         Assert.AreEqual(1, playerCreature.IsFrozen);
         Assert.AreEqual(true, playerCreature.IsSilenced);
         Assert.AreEqual(2, playerCreature.Abilities.Count);
+
+        Assert.AreEqual(0, BattleState.Instance().GetDeadCards().Count);
     }
 }

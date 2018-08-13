@@ -233,6 +233,9 @@ public class TestSpellsTargeted
 
         Player player = BattleState.Instance().GetPlayerById("ID_PLAYER");
         Assert.AreEqual(90, player.GetHealth());
+
+        Assert.AreEqual(1, BattleState.Instance().GetDeadCards().Count);
+        Assert.AreEqual("ID_ENEMY-7", BattleState.Instance().GetDeadCards()[0].Id);
     }
 
     [UnityTest]
@@ -276,5 +279,8 @@ public class TestSpellsTargeted
 
         Player player = BattleState.Instance().GetPlayerById("ID_PLAYER");
         Assert.AreEqual(90, player.GetHealth());
+
+        Assert.AreEqual(1, BattleState.Instance().GetDeadCards().Count);
+        Assert.AreEqual("ID_ENEMY-7", BattleState.Instance().GetDeadCards()[0].Id);
     }
 }

@@ -172,22 +172,24 @@ public class TestBasicAttack
     [UnityTest]
     public IEnumerator CreatureAttackCreatureTest()
     {
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-4");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-3");
 
         EffectManager.Instance.OnCreatureAttack(
             playerCreature,
             enemyCreature
         );
 
-        yield return null;
+        yield return new WaitForSeconds(3);
 
         playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
         Assert.AreEqual(null, playerCreature);
 
-        yield return null;
-
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
         Assert.AreEqual(null, enemyCreature);
+
+        Assert.AreEqual(2, BattleState.Instance().GetDeadCards().Count);
+        Assert.AreEqual("ID_PLAYER-4", BattleState.Instance().GetDeadCards()[0].Id);
+        Assert.AreEqual("ID_ENEMY-3", BattleState.Instance().GetDeadCards()[1].Id);
     }
 }
