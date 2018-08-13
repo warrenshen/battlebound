@@ -2236,16 +2236,6 @@ public class EffectManager : MonoBehaviour
     {
         targetedCreature.Freeze(2);
 
-        BoardCreature inFrontCreature = Board.Instance().GetInFrontCreatureByPlayerIdAndCardId(
-            targetedCreature.GetPlayerId(),
-            targetedCreature.GetCardId()
-        );
-
-        if (inFrontCreature != null)
-        {
-            inFrontCreature.Freeze(2);
-        }
-
         List<BoardCreature> adjacentCreatures =
             Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
                 targetedCreature.GetPlayerId(),
