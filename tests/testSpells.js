@@ -2459,6 +2459,16 @@ describe("challenge events", function() {
             assert.equal(opponentField[1].id, "EMPTY");
             assert.equal(opponentField[3].id, "EMPTY");
 
+            const deadCards = challengeStateData.deadCards;
+            assert.equal(deadCards.length, 3);
+
+            assert.equal(deadCards[0].id, "ID_OPPONENT-0");
+            assert.equal(deadCards[0].spawnRank, 1);
+            assert.equal(deadCards[1].id, "ID_OPPONENT-1");
+            assert.equal(deadCards[1].spawnRank, 2);
+            assert.equal(deadCards[2].id, "ID_PLAYER-19");
+            assert.equal(deadCards[2].spawnRank, 4);
+
             resolve();
           }
         );
@@ -2781,6 +2791,28 @@ describe("challenge events", function() {
             assert.equal(opponentField[1].id, "EMPTY");
             assert.equal(opponentField[2].id, "EMPTY");
             assert.equal(opponentField[3].id, "EMPTY");
+
+            // Note that the presence of deathwishes result in dead order not matching spawn rank completely.
+            const deadCards = challengeStateData.deadCards;
+            assert.equal(deadCards.length, 6);
+
+            assert.equal(deadCards[0].id, "ID_OPPONENT-0");
+            assert.equal(deadCards[0].spawnRank, 1);
+
+            assert.equal(deadCards[1].id, "ID_OPPONENT-1");
+            assert.equal(deadCards[1].spawnRank, 2);
+
+            assert.equal(deadCards[2].id, "ID_PLAYER-19");
+            assert.equal(deadCards[2].spawnRank, 4);
+
+            assert.equal(deadCards[3].id, "ID_PLAYER-18");
+            assert.equal(deadCards[3].spawnRank, 3);
+
+            assert.equal(deadCards[4].id, "ID_OPPONENT-5");
+            assert.equal(deadCards[4].spawnRank, 6);
+
+            assert.equal(deadCards[5].id, "ID_PLAYER-6");
+            assert.equal(deadCards[5].spawnRank, 7);
 
             resolve();
           }

@@ -1643,6 +1643,10 @@ describe("challenge events", function() {
             assert.equal(opponentState.health, 100);
             assert.equal(opponentState.healthMax, 100);
 
+            // Converted creatures do not die.
+            const deadCards = challengeStateData.deadCards;
+            assert.equal(deadCards.length, 0);
+
             resolve();
           }
         );
