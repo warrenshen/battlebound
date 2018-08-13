@@ -460,10 +460,6 @@ public class BattleState
 
     public List<ChallengeCard> GetDeadCardsByPlayerId(string playerId)
     {
-        //foreach (ChallengeCard deadCard in this.deadCards)
-        //{
-        //    Debug.Log(JsonUtility.ToJson(deadCard));
-        //}
         return new List<ChallengeCard>(
             this.deadCards.Where(deadCard => deadCard.PlayerId == playerId)
         );
@@ -902,7 +898,6 @@ public class BattleState
         }
         else if (this.deviceMoveQueue.Count <= 0)
         {
-            Debug.LogError("WOAH");
             return -1;
         }
         else
