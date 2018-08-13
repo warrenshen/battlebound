@@ -63,7 +63,7 @@ public class CollectionCardObject : CardObject
     public override void MouseDown()
     {
         this.visual.transform.Translate(Vector3.back * CollectionCardObject.FOCUS_OFFSET, Space.Self);
-        this.visual.SetOutlineColors(Color.white, this.visual.InitialOutlineEndColor);
+        this.visual.SetOutlineColors(Color.white, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
         ActionManager.Instance.SetDragTarget(this);
         this.grabbed = true;
     }
@@ -72,7 +72,7 @@ public class CollectionCardObject : CardObject
     {
         ActionManager.Instance.ResetTarget(this).setOnComplete(() =>
         {
-            this.visual.SetOutlineColors(this.visual.InitialOutlineStartColor, this.visual.InitialOutlineEndColor);
+            this.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
             this.visual.transform.localPosition = this.visual.reset.position;
             this.visual.transform.localScale = this.visual.reset.scale;
             this.visual.SetOutline(false);

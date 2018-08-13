@@ -297,7 +297,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
         cardVisual.SetOpacity(0.8f);
         cardVisual.SetBlackAndWhite(true);
-        cardVisual.SetOutlineColors(cardVisual.InitialOutlineStartColor, cardVisual.InitialOutlineEndColor);
+        cardVisual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
 
         return cardVisual;
     }
@@ -583,7 +583,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     // MouseWatchable functions.
     public override void EnterHover()
     {
-        this.visual.SetOutlineColors(Color.white, this.visual.InitialOutlineEndColor);
+        this.visual.SetOutlineColors(Color.white, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
         if (!this.raisedCard)
         {
             RaiseCardVisual();
@@ -600,7 +600,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
     public override void ExitHover()
     {
-        this.visual.SetOutlineColors(this.visual.InitialOutlineStartColor, this.visual.InitialOutlineEndColor);
+        this.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
         if (this.raisedCard)
         {
             LowerCardVisual();

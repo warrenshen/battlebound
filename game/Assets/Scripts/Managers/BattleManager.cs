@@ -8,6 +8,8 @@ using TMPro;
 public class BattleManager : MonoBehaviour
 {
     private const float CARD_DISPLACEMENT_THRESHOLD = 25;
+    private const float NORMAL_ATTACK_ARROW_WIDTH = 1.66f;
+    private const float ACTIVE_ATTACK_ARROW_WIDTH = 2.50f;
 
     private bool isAnimating;
     public bool IsAnimating => isAnimating;
@@ -153,7 +155,7 @@ public class BattleManager : MonoBehaviour
 
         //to-do: don't show attack arrow unless mouse no longer in bounds of board creature? raise object of interest?
         attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
-        attackCommand.SetWidth(1.66f);
+        attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
 
         //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
         ActionManager.Instance.SetCursor(4);
@@ -166,11 +168,11 @@ public class BattleManager : MonoBehaviour
             BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
             if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
             {
-                target.visual.SetOutlineColors(Color.yellow, Color.green);
+                target.visual.SetOutlineColors(Color.white, Color.green);
             }
             else
             {
-                target.visual.SetOutlineColors(target.visual.InitialOutlineStartColor, target.visual.InitialOutlineEndColor);
+                target.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
             }
         }
     }
@@ -261,11 +263,13 @@ public class BattleManager : MonoBehaviour
                     this.validTargets.Contains(hit.collider.GetComponent<TargetableObject>())
                 )
                 {
-                    ActionManager.Instance.SetCursor(5);
+                    ActionManager.Instance.SetCursor(5);  //valid target!
+                    this.attackCommand.SetWidth(ACTIVE_ATTACK_ARROW_WIDTH);
                 }
                 else
                 {
                     ActionManager.Instance.SetCursor(4);
+                    this.attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
                 }
             }
         }
@@ -456,7 +460,7 @@ public class BattleManager : MonoBehaviour
         BattleCardObject selected = ActionManager.Instance.GetDragTarget().GetComponent<BattleCardObject>();
         if (selected != null)
         {
-            selected.visual.SetOutlineColors(selected.visual.InitialOutlineStartColor, selected.visual.InitialOutlineEndColor);
+            selected.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
             ActionManager.Instance.ResetTarget();
         }
     }

@@ -42,13 +42,9 @@ namespace HyperCard
     public class Card : MonoBehaviour
     {
         // Begin Nick Extensions
-        private Color initialOutlineStartColor;
-        public Color InitialOutlineStartColor => initialOutlineStartColor;
-
-        private Color initialOutlineEndColor;
-        public Color InitialOutlineEndColor => initialOutlineEndColor;
+        public static Color DEFAULT_OUTLINE_START_COLOR = new Color(1, 0.8f, 0);
+        public static Color DEFAULT_OUTLINE_END_COLOR = new Color(1, 0.25F, 0);
         // End Nick ext.
-
 
         public Renderer Renderer
         {
@@ -620,8 +616,6 @@ namespace HyperCard
             StartCoroutine(ApplyCulling());
 
             _fxOffTime = UnityEngine.Random.Range(PeriodicalFxDelayOffMin, PeriodicalFxDelayOffMax);
-            this.initialOutlineStartColor = this.OutlineColor;
-            this.initialOutlineEndColor = this.OutlineEndColor;
         }
 
         private void OnEnable()
