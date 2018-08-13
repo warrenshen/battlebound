@@ -293,7 +293,7 @@ public class Board
         return -1;
     }
 
-    [System.Serializable]
+    //[System.Serializable]
     public class PlayingField
     {
         [SerializeField]

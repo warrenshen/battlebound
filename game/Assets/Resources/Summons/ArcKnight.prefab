@@ -53,7 +53,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4761165860232598}
   m_Layer: 13
-  m_Name: ArkKnight
+  m_Name: ArcKnight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -409,8 +409,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1090261646283426}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.001466003, y: 0.001466003, z: 1}
+  m_LocalPosition: {x: 0, y: -0.75, z: 0}
+  m_LocalScale: {x: 0.0035, y: 0.0042, z: 1}
   m_Children:
   - {fileID: 4660122455851508}
   m_Father: {fileID: 4761165860232598}
@@ -4298,7 +4298,7 @@ MonoBehaviour:
   mLocalTransform: {fileID: 4247452629103062}
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
-  updatePrefabs: 1
+  updatePrefabs: 0
 --- !u!137 &137696045852602966
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
