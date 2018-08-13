@@ -274,7 +274,11 @@ function effectCardDie(challengeStateData, effect) {
     const playerState = challengeStateData.current[playerId];
     const playerField = playerState.field;
     const playerIndex = playerField.findIndex(function(fieldCard) { return fieldCard.id === cardId });
-
+    
+    const card = playerField[playerIndex];
+    card.deathRank = getNewDeathRank(challengeStateData);
+    addChallengeDeadCard(challengeStateData, card);
+    
     if (playerIndex < 0) {
         setScriptError("Cannot do die for invalid card ID: " + cardId);
     }
@@ -442,14 +446,7 @@ function _effectRandomSprayNPray(challengeStateData, effect) {
 
 // Literally remove card from field, dying breath already handled.
 function effectCardDieAfterDeathRattle(challengeStateData, effect) {
-    const playerId = effect.playerId;
-    const playerState = challengeStateData.current[playerId];
-    const playerField = playerState.field;
-    const playerIndex = playerField.findIndex(function(fieldCard) { return fieldCard.id === effect.cardId });
-
-    playerField[playerIndex] = { id: "EMPTY" };
-
-    return [];
+    return effectCardDie(challengeStateData, effect);
 }
 
 function processLQueue(challengeStateData, effect) {
@@ -1422,9 +1419,6 @@ function _getEffectsOnCardDamageTaken(challengeStateData, card, amount) {
 }
 
 function _getEffectsOnCardDeath(challengeStateData, card) {
-    card.deathRank = getNewDeathRank(challengeStateData);
-    addChallengeDeadCard(challengeStateData, card);
-
     const newEffects = [];
 
     EFFECTS_DEATH_RATTLE.forEach(function(effectName) {
