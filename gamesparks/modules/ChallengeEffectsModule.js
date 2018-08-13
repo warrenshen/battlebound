@@ -1624,10 +1624,9 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
         
         if (
             hasCardAbilityOrBuff(attackingCard, CARD_ABILITY_ICY) &&
-            defendingCard.health > 0 &&
-            defendingCard.isFrozen <= 0
+            defendingCard.health > 0
         ) {
-            defendingCard.isFrozen = 1;
+            freezeCard(defendingCard, 1);
         }
 
         if (
@@ -1650,10 +1649,9 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
         
         if (
             hasCardAbilityOrBuff(defendingCard, CARD_ABILITY_ICY) &&
-            attackingCard.health > 0 &&
-            attackingCard.isFrozen <= 1
+            attackingCard.health > 0
         ) {
-            attackingCard.isFrozen = 2;
+            freezeCard(attackingCard, 2);
         }
         
         if (
@@ -1765,30 +1763,15 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
     } else if (playedCard.name === SPELL_NAME_DEEP_FREEZE) {
         damageDone = damageCard(opponentCard, 10);
         if (opponentCard.health > 0) {
-            opponentCard.isFrozen = 1;
+            freezeCard(opponentCard, 1);
         }
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, opponentCard, damageDone));
     } else if (playedCard.name === SPELL_NAME_WIDESPREAD_FROSTBITE) {
-        opponentCard.isFrozen = 2;
-
-        const playerIndex = 5 - opponentIndex;
-        const oppositeCard = playerField[playerIndex];
-        if (oppositeCard.id != "EMPTY") {
-            oppositeCard.isFrozen = 2;
-        }
-
-        if (opponentIndex > 0) {
-            const leftCard = opponentField[opponentIndex - 1];
-            if (leftCard.id != "EMPTY") {
-                leftCard.isFrozen = 1;
-            }
-        }
-        if (opponentIndex < 5) {
-            const rightCard = opponentField[opponentIndex + 1];
-            if (rightCard.id != "EMPTY") {
-                rightCard.isFrozen = 1;
-            }
-        }
+        freezeCard(opponentCard, 2);
+        const adjacentCards = _getAdjacentCardsByPlayerIdAndCardId(challengeStateData, fieldId, targetId);
+        adjacentCards.forEach(function(adjacentCard) {
+            freezeCard(adjacentCard, 1);
+        });
     } else if (playedCard.name === SPELL_NAME_DEATH_NOTE) {
         damageCardMax(opponentCard);
         newEffects = newEffects.concat(_getEffectsOnCardDeath(challengeStateData, opponentCard));
@@ -1852,8 +1835,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
             }
-
-            fieldCard.isFrozen = 1;
+            freezeCard(fieldCard, 1);
         });
     } else if (playedCard.name === SPELL_NAME_RIOT_UP) {
         playerField.forEach(function(fieldCard) {
