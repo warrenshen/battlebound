@@ -683,7 +683,7 @@ public abstract class Card
     {
         if (string.IsNullOrEmpty(name))
         {
-            Debug.LogError("Invalid name parameter.");
+            Debug.LogError(string.Format("Invalid name parameter: {0}", name));
             return null;
         }
 
