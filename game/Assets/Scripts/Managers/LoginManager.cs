@@ -61,7 +61,7 @@ public class LoginManager : MonoBehaviour
                     if (SparkSingleton.Instance.IsAuthenticated)
                     {
                         dialogUI.Close();
-                        Application.LoadLevel("Menu");
+                        LO_LoadingScreen.LoadScene("Menu");
                     }
                     else
                     {
@@ -199,7 +199,7 @@ public class LoginManager : MonoBehaviour
                 if (SparkSingleton.Instance.IsDisplayNameValid())
                 {
                     dialogUI.Close();
-                    Application.LoadLevel("Menu");
+                    LO_LoadingScreen.LoadScene("Menu");
                 }
                 else
                 {
