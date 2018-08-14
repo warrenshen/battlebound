@@ -1131,7 +1131,6 @@ public class EffectManager : MonoBehaviour
                 playerId,
                 cardId
             );
-
         foreach (BoardCreature adjacentCreature in adjacentCreatures)
         {
             adjacentCreature.GrantTaunt();

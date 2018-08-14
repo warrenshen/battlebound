@@ -347,7 +347,7 @@ public class ChallengeCard
         List<string> exceptTwoAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
         if (exceptOneAbilities.Count > 0 || exceptTwoAbilities.Count > 0)
         {
-            return string.Format("Abilities: {0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
+            return string.Format("{0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
         }
 
         return null;
@@ -371,7 +371,7 @@ public class ChallengeCard
         List<string> exceptTwoBuffsHand = buffsHandTwo.Except(buffsHandOne).ToList();
         if (exceptOneBuffsHand.Count > 0 || exceptTwoBuffsHand.Count > 0)
         {
-            return string.Format("BuffsHand: {0} vs {1}", string.Join(",", buffsHandOne), string.Join(",", buffsHandTwo));
+            return string.Format("{0} vs {1}", string.Join(",", buffsHandOne), string.Join(",", buffsHandTwo));
         }
 
         return null;
@@ -395,7 +395,7 @@ public class ChallengeCard
         List<string> exceptTwoBuffsField = buffsFieldTwo.Except(buffsFieldOne).ToList();
         if (exceptOneBuffsField.Count > 0 || exceptTwoBuffsField.Count > 0)
         {
-            return string.Format("BuffsField: {0} vs {1}", string.Join(",", buffsFieldOne), string.Join(",", buffsFieldTwo));
+            return string.Format("{0} vs {1}", string.Join(",", buffsFieldOne), string.Join(",", buffsFieldTwo));
         }
 
         return null;
