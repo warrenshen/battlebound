@@ -259,7 +259,7 @@ public class ActionManager : MonoBehaviour
         this.active = val;
     }
 
-    private void LoadMainMenu()
+    public void LoadMainMenu()
     {
         Application.LoadLevel("Menu");
     }
