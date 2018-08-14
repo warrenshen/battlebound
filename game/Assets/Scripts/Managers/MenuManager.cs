@@ -123,24 +123,9 @@ public class MenuManager : MonoBehaviour
         DeckStore.Instance().GetDecksWithCallback(null);
     }
 
-    public void LoadMatchmaking()
-    {
-        Application.LoadLevel("Matchmaking");
-    }
-
-    public void LoadCollection()
-    {
-        Application.LoadLevel("Collection");
-    }
-
-    public void LoadMarketplace()
-    {
-        Application.LoadLevel("Marketplace");
-    }
-
     public void LoadWallet()
     {
-        Application.LoadLevel("Wallet");
+        LO_LoadingScreen.LoadScene("Wallet");
     }
 
     public void HoverEnterEffect(GameObject target)
