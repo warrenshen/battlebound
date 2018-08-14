@@ -722,7 +722,14 @@ public abstract class Card
                     Debug.LogError("What");
                 }
                 int abilityInt = Int32.Parse(abilityCode);
-                abilityStrings.Add(ABILITY_CODE_TO_STRING[abilityInt]);
+                if (!ABILITY_CODE_TO_STRING.ContainsKey(abilityInt))
+                {
+                    Debug.LogError(string.Format("Ability code to string does not contain: {0}", abilityInt));
+                }
+                else
+                {
+                    abilityStrings.Add(ABILITY_CODE_TO_STRING[abilityInt]);
+                }
             }
         }
         return abilityStrings;

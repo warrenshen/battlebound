@@ -384,7 +384,7 @@ public class ChallengeCard
             buffsFieldCodes = new List<string>();
         }
 
-        List<string> buffsFieldOne = Card.GetAbilityStringsByCodes(buffsFieldCodes);
+        List<string> buffsFieldOne = Card.GetBuffFieldStringsByCodes(buffsFieldCodes);
 
         if (buffsFieldTwo == null)
         {
