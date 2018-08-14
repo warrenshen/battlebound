@@ -292,6 +292,6 @@ public class WalletManager : MonoBehaviour
 
     private void ReturnToMenu()
     {
-        Application.LoadLevel("Menu");
+        LO_LoadingScreen.LoadScene("Menu");
     }
 }
