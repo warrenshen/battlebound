@@ -72,11 +72,11 @@ public class MarketplaceManager : MonoBehaviour
     {
         if (SparkSingleton.Instance.IsAuthenticated)
         {
-            //GetMarketplaceData();
+            GetMarketplaceData();
         }
         else
         {
-            //SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
+            SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
         }
 
         buyableListItemPool = new Stack<BuyableCardListItem>();

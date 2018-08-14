@@ -1412,7 +1412,7 @@ public class EffectManager : MonoBehaviour
             playerId,
             EFFECT_SUMMON_CREATURE,
             null,
-            effect.SpawnRank
+            effect.SpawnRank + 1
         );
         summonEffect.SetCard(duskDweller.GetChallengeCard(playerId));
         summonEffect.SetFieldIndex(closestIndex);
@@ -1454,7 +1454,7 @@ public class EffectManager : MonoBehaviour
             playerId,
             EFFECT_SUMMON_CREATURE,
             null,
-            effect.SpawnRank
+            effect.SpawnRank + 1
         );
         summonEffect.SetCard(summonedDragon.GetChallengeCard(playerId));
         summonEffect.SetFieldIndex(closestIndex);

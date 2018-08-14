@@ -144,9 +144,13 @@ public class MenuManager : MonoBehaviour
     {
         UMP.ChangeWindow(5);
         if (gallery.gameObject.activeSelf == true)
+        {
             gallery.gameObject.SetActive(false);
+        }
         if (galleryCard.gameObject.activeSelf == true)
+        {
             galleryCard.gameObject.SetActive(false);
+        }
         marketplacePreview.gameObject.SetActive(true);
     }
 
@@ -154,7 +158,9 @@ public class MenuManager : MonoBehaviour
     {
         UMP.ChangeWindow(0);
         if (marketplacePreview.gameObject.activeSelf == true)
+        {
             marketplacePreview.gameObject.SetActive(false);
+        }
         galleryCard.gameObject.SetActive(true);
         gallery.gameObject.SetActive(true);
     }
