@@ -175,7 +175,7 @@ public class BattleManager : MonoBehaviour
             BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
             if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
             {
-                target.visual.SetOutlineColors(Color.cyan, Color.green);
+                target.visual.SetOutlineColors(Color.yellow, Color.green);
             }
             else
             {

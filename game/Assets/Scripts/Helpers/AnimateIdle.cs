@@ -5,8 +5,10 @@ using UnityEngine;
 
 using System.Linq;
 
+[System.Serializable]
 public class AnimateIdle : MonoBehaviour
 {
+    [SerializeField]
     protected dynamic summonAnimation;
     protected List<string> summonAnimClips;
 

@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviour
         this.galleryIndex = Random.Range(0, gallery.childCount);
         SetGalleryCreature();
 
-        InvokeRepeating("RotateGalleryCreature", 2.0f, 5f);
+        InvokeRepeating("RotateGalleryCreature", 2.0f, 4f);
     }
 
     private void SetGalleryCreature()

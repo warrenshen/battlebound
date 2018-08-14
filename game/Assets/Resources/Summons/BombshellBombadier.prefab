@@ -4253,10 +4253,10 @@ Animation:
   m_GameObject: {fileID: 1313566407227120}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 3615395d3e4fe1c45b4482cb09298f5e, type: 2}
+  m_Animation: {fileID: 7400000, guid: 6046471a48f44854dae351f83b87f7c6, type: 2}
   m_Animations:
-  - {fileID: 7400000, guid: 3615395d3e4fe1c45b4482cb09298f5e, type: 2}
   - {fileID: 7400000, guid: 6046471a48f44854dae351f83b87f7c6, type: 2}
+  - {fileID: 7400000, guid: 3615395d3e4fe1c45b4482cb09298f5e, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
@@ -5082,7 +5082,7 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  animationData: {fileID: 0}
+  animationData: {fileID: 11400000, guid: b270465590fa7d647b3174ad439b21b0, type: 2}
   animationDataGUID: b270465590fa7d647b3174ad439b21b0
   mMaterialSource:
   - {fileID: 2100000, guid: d915c963370c4724c9fa08e473741333, type: 2}
@@ -34913,7 +34913,7 @@ MonoBehaviour:
   mLocalTransform: {fileID: 4638265231757944}
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
-  updatePrefabs: 1
+  updatePrefabs: 0
 --- !u!137 &137272152391463732
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
