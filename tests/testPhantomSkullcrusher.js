@@ -706,7 +706,7 @@ describe("phantom skullcrusher", function() {
               "attack": 40,
               "health": 10,
               "cost": 60,
-              "name": "Summoned Dragon",
+              "name": "Talusreaver",
               "description": "Deathwish: Re-summon this creature",
               "abilities": [
                 35
@@ -895,7 +895,7 @@ describe("phantom skullcrusher", function() {
       });
     });
 
-    it("should support summoned dragon", function() {
+    it("should support talusreaver", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -989,20 +989,20 @@ describe("phantom skullcrusher", function() {
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-33");
-            assert.equal(lastMoves[1].attributes.card.name, "Summoned Dragon");
+            assert.equal(lastMoves[1].attributes.card.name, "Talusreaver");
             assert.equal(lastMoves[1].attributes.fieldIndex, 4);
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[2].attributes.card.id, "ID_OPPONENT-34");
-            assert.equal(lastMoves[2].attributes.card.name, "Summoned Dragon");
+            assert.equal(lastMoves[2].attributes.card.name, "Talusreaver");
             assert.equal(lastMoves[2].attributes.fieldIndex, 5);
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
 
             assert.equal(opponentField[4].id, "ID_OPPONENT-33");
-            assert.equal(opponentField[4].name, "Summoned Dragon");
+            assert.equal(opponentField[4].name, "Talusreaver");
             assert.equal(opponentField[4].cost, 60);
             assert.equal(opponentField[4].attack, 40);
             assert.equal(opponentField[4].health, 50);
@@ -1010,7 +1010,7 @@ describe("phantom skullcrusher", function() {
             assert.equal(opponentField[4].color, 4);
 
             assert.equal(opponentField[5].id, "ID_OPPONENT-34");
-            assert.equal(opponentField[5].name, "Summoned Dragon");
+            assert.equal(opponentField[5].name, "Talusreaver");
             assert.equal(opponentField[5].cost, 60);
             assert.equal(opponentField[5].attack, 40);
             assert.equal(opponentField[5].health, 50);
@@ -1075,7 +1075,7 @@ describe("phantom skullcrusher", function() {
               "attack": 40,
               "health": 10,
               "cost": 60,
-              "name": "Summoned Dragon",
+              "name": "Talusreaver",
               "description": "Deathwish: Re-summon this creature",
               "abilities": [
                 35
@@ -1216,7 +1216,7 @@ describe("phantom skullcrusher", function() {
       "nonce": 14
     };
 
-    it("should support summoned dragon", function() {
+    it("should support talusreaver", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -1303,19 +1303,19 @@ describe("phantom skullcrusher", function() {
             assert.equal(lastMoves[1].category, "MOVE_CATEGORY_SUMMON_CREATURE");
             assert.equal(lastMoves[1].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[1].attributes.card.id, "ID_OPPONENT-33");
-            assert.equal(lastMoves[1].attributes.card.name, "Summoned Dragon");
+            assert.equal(lastMoves[1].attributes.card.name, "Talusreaver");
             assert.equal(lastMoves[1].attributes.fieldIndex, 4);
 
             assert.equal(lastMoves[2].category, "MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL");
             assert.equal(lastMoves[2].playerId, "ID_OPPONENT");
             assert.equal(lastMoves[2].attributes.card.id, "ID_OPPONENT-34");
-            assert.equal(lastMoves[2].attributes.card.name, "Summoned Dragon");
+            assert.equal(lastMoves[2].attributes.card.name, "Talusreaver");
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             const opponentField = opponentState.field;
 
             assert.equal(opponentField[4].id, "ID_OPPONENT-33");
-            assert.equal(opponentField[4].name, "Summoned Dragon");
+            assert.equal(opponentField[4].name, "Talusreaver");
             assert.equal(opponentField[4].cost, 60);
             assert.equal(opponentField[4].attack, 40);
             assert.equal(opponentField[4].health, 50);
@@ -1382,7 +1382,7 @@ describe("phantom skullcrusher", function() {
               "attack": 40,
               "health": 10,
               "cost": 60,
-              "name": "Summoned Dragon",
+              "name": "Talusreaver",
               "description": "Deathwish: Re-summon this creature",
               "abilities": [
                 35
@@ -1560,7 +1560,7 @@ describe("phantom skullcrusher", function() {
       });
     });
 
-    it("should support summoned dragon - silenced", function() {
+    it("should support talusreaver - silenced", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",

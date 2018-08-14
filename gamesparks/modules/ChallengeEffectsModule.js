@@ -1267,7 +1267,7 @@ function abilityDeathRattleSummonDuskDwellers(challengeStateData, effect) {
 
     const dirtyCard = {
         playerId: playerId,
-        name: "Dusk Dweller",
+        name: CARD_NAME_DUSK_DWELLER,
         costStart: 30,
         attackStart: 20,
         healthStart: 10,
@@ -1295,7 +1295,7 @@ function abilityDeathRattleSummonDuskDwellers(challengeStateData, effect) {
             playerId: playerId,
             card: _cleanCardForSummon(challengeStateData, dirtyCard),
             name: EFFECT_SUMMON_CREATURE,
-            spawnRank: card.spawnRank,
+            spawnRank: card.spawnRank + 1,
             fieldIndex: closestIndex,
         },
     ];
@@ -1312,7 +1312,7 @@ function abilityDeathRattleSummonSummonedDragons(challengeStateData, effect) {
 
     const dirtyCard = {
         playerId: playerId,
-        name: "Summoned Dragon",
+        name: CARD_NAME_TALUSREAVER,
         costStart: 60,
         attackStart: 40,
         healthStart: 50,
@@ -1340,7 +1340,7 @@ function abilityDeathRattleSummonSummonedDragons(challengeStateData, effect) {
             playerId: playerId,
             card: _cleanCardForSummon(challengeStateData, dirtyCard),
             name: EFFECT_SUMMON_CREATURE,
-            spawnRank: card.spawnRank,
+            spawnRank: card.spawnRank + 1,
             fieldIndex: closestIndex,
         },
     ];
