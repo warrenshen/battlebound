@@ -5,7 +5,7 @@ using System.Collections;
 [System.Serializable]
 public class CardObject : MouseWatchable
 {
-    protected static Vector3 CARD_BOUNDS = new Vector3(2.3F, 3.5F, 0.2F);
+    protected static Vector3 CARD_BOUNDS = new Vector3(2.5F, 3.5F, 0.2F);
 
     [SerializeField]
     protected Card card;
