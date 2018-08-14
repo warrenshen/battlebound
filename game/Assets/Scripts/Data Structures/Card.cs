@@ -433,7 +433,7 @@ public abstract class Card
             }
             else
             {
-                description += string.Format("; {0}", ABILITY_TO_DESCRIPTION);
+                description += string.Format("; {0}", ABILITY_TO_DESCRIPTION[ability]);
             }
         }
         return description;
