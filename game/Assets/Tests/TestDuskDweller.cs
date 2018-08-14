@@ -86,9 +86,9 @@ public class TestDuskDweller
                 ""level"": 1,
                 ""category"": 0,
                 ""attack"": 40,
-                ""health"": 50,
+                ""health"": 30,
                 ""cost"": 60,
-                ""name"": ""Young Kyo"",
+                ""name"": ""Talusreaver"",
                 ""description"": """",
                 ""abilities"": [
                     35
@@ -190,25 +190,31 @@ public class TestDuskDweller
         Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
     }
 
-    //[UnityTest]
-    //public IEnumerator ResummonDeathwishTest()
-    //{
-    //    Card card = Card.CreateByNameAndLevel("ID_PLAYER-0", Card.CARD_NAME_TOUCH_OF_ZEUS, 1);
-    //    ChallengeCard challengeCard = card.GetChallengeCard("ID_PLAYER");
+    [UnityTest]
+    public IEnumerator SummonDuskDwellersDeathwishTest()
+    {
+        Card card = Card.CreateByNameAndLevel("ID_PLAYER-0", Card.CARD_NAME_TOUCH_OF_ZEUS, 1);
+        ChallengeCard challengeCard = card.GetChallengeCard("ID_PLAYER");
 
-    //    BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-24");
+        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-25");
 
-    //    EffectManager.Instance.OnSpellTargetedPlay(
-    //        challengeCard,
-    //        enemyCreature
-    //    );
+        EffectManager.Instance.OnSpellTargetedPlay(
+            challengeCard,
+            enemyCreature
+        );
 
-    //    yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(3);
 
-    //    enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-    //    Assert.AreEqual("ID_ENEMY-33", enemyCreature.GetCardId());
-    //    Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
-    //}
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 2);
+        Assert.AreEqual("ID_ENEMY-33", enemyCreature.GetCardId());
+        Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
+        Assert.AreEqual(Card.CARD_NAME_DUSK_DWELLER, enemyCreature.GetCardName());
+
+        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 3);
+        Assert.AreEqual("ID_ENEMY-34", enemyCreature.GetCardId());
+        Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
+        Assert.AreEqual(Card.CARD_NAME_DUSK_DWELLER, enemyCreature.GetCardName());
+    }
 
     [UnityTest]
     public IEnumerator SummonTalusreaversDeathwishTest()
@@ -228,11 +234,11 @@ public class TestDuskDweller
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 4);
         Assert.AreEqual("ID_ENEMY-33", enemyCreature.GetCardId());
         Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
-        Assert.AreEqual("Talusreaver", enemyCreature.GetCardName());
+        Assert.AreEqual(Card.CARD_NAME_TALUSREAVER, enemyCreature.GetCardName());
 
         enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 5);
         Assert.AreEqual("ID_ENEMY-34", enemyCreature.GetCardId());
         Assert.AreEqual("ID_ENEMY", enemyCreature.GetPlayerId());
-        Assert.AreEqual("Talusreaver", enemyCreature.GetCardName());
+        Assert.AreEqual(Card.CARD_NAME_TALUSREAVER, enemyCreature.GetCardName());
     }
 }

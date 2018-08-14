@@ -417,7 +417,7 @@ public abstract class Card
         string description = "";
         foreach (string ability in abilities)
         {
-            if (ability == CARD_EMPTY_ABILITY)
+            if (ability == CARD_EMPTY_ABILITY || ability == null)
             {
                 continue;
             }
