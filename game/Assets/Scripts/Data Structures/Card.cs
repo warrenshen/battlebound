@@ -55,7 +55,7 @@ public abstract class Card
     public const string CARD_NAME_MEGAPUNK = "MegaPUNK";
     public const string CARD_NAME_DUSK_DWELLER = "Dusk Dweller";
     public const string CARD_NAME_TALUSREAVER = "Talusreaver";
-    public const string CARD_NAME_PHANTOM_SKULLCRUSHER = "Phantom Skullcrusher";
+    public const string CARD_NAME_KRUL_PHANTOM_SKULLCRUSHER = "Krul, Phantom Skullcrusher";
     public const string CARD_NAME_BLUE_GIPSY_V3 = "Blue Gipsy V3";
     public const string CARD_NAME_FROSTLAND_THRASHER_8 = "Frostland THRASHER-8";
     public const string CARD_NAME_CYBER_SENTINEL = "Cyber Sentinel";
@@ -146,7 +146,7 @@ public abstract class Card
         CARD_NAME_MEGAPUNK,
         CARD_NAME_DUSK_DWELLER,
         CARD_NAME_TALUSREAVER,
-        CARD_NAME_PHANTOM_SKULLCRUSHER,
+        CARD_NAME_KRUL_PHANTOM_SKULLCRUSHER,
         CARD_NAME_BLUE_GIPSY_V3,
         CARD_NAME_FROSTLAND_THRASHER_8,
         CARD_NAME_CYBER_SENTINEL,
