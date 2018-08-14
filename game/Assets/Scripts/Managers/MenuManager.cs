@@ -75,13 +75,13 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-            rankString = rankGlobal.ToString("N0");
+            rankString = string.Format("#{0}", rankGlobal.ToString("N0"));
         }
 
         string value;
         if (rankElo > 0)
         {
-            value = string.Format("#{0} [{1}]", rankString, rankElo.ToString());
+            value = string.Format("{0} [{1}]", rankString, rankElo.ToString());
         }
         else
         {

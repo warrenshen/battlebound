@@ -12,12 +12,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private const string PLAYER_PREF_AUTH_TOKEN_KEY = "gamesparks.authtoken";
     private const string PLAYER_PREF_HAS_LOGGED_IN = "PLAYER_PREF_HAS_LOGGED_IN";
 
-    [SerializeField]
-    private string username = "";
-
-    [SerializeField]
-    private string password = "";
-
     private bool isAvailable;
     public bool IsAvailable => isAvailable;
 
@@ -63,13 +57,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.isLatestVersion = false;
 
         LeanTween.init(800);
-
-#if UNITY_EDITOR
-        //if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-        //{
-        //    LoginDevelopment(username, password);
-        //}
-#endif
 
         this.isAvailable = false;
         this.isAuthenticated = false;
