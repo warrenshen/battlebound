@@ -18,6 +18,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
     [SerializeField]
     private string password = "";
 
+    private bool isAvailable;
+    public bool IsAvailable => isAvailable;
+
     private bool isAuthenticated;
     public bool IsAuthenticated => isAuthenticated;
 
@@ -62,14 +65,15 @@ public class SparkSingleton : Singleton<SparkSingleton>
         LeanTween.init(800);
 
 #if UNITY_EDITOR
-        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-        {
-            LoginDevelopment(username, password);
-        }
+        //if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+        //{
+        //    LoginDevelopment(username, password);
+        //}
 #endif
 
-        ClearAuthenticatedCallbacks();
+        this.isAvailable = false;
         this.isAuthenticated = false;
+        ClearAuthenticatedCallbacks();
 
         GS.Instance.GameSparksAvailable = OnGameSparksAvailable;
         GS.Instance.GameSparksAuthenticated = OnGameSparksAuthenticated;
@@ -79,6 +83,8 @@ public class SparkSingleton : Singleton<SparkSingleton>
     {
         if (available)
         {
+            this.isAvailable = true;
+
             this.playerId = null;
             this.displayName = null;
             this.address = null;
@@ -86,9 +92,18 @@ public class SparkSingleton : Singleton<SparkSingleton>
             this.rankElo = -1;
             this.balance = new BigInteger("0");
             this.level = 0;
+
+            if (!GS.Instance.Authenticated)
+            {
+                foreach (UnityAction callback in this.authenticatedCallbacks)
+                {
+                    callback.Invoke();
+                }
+            }
         }
         else
         {
+            this.isAvailable = false;
             Debug.LogWarning("not available...");
         }
     }
@@ -109,7 +124,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
     {
         if (this.isAuthenticated)
         {
-            callback();
+            callback.Invoke();
         }
         else
         {
@@ -206,7 +221,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.isAuthenticated = true;
         foreach (UnityAction callback in this.authenticatedCallbacks)
         {
-            callback();
+            callback.Invoke();
         }
     }
 

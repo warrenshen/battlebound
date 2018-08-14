@@ -6,8 +6,6 @@ public class LoginManager : MonoBehaviour
 {
     private void Start()
     {
-        SparkSingleton.Instance.AddAuthenticatedCallback(Callback);
-
         bool hasLoggedIn = SparkSingleton.Instance.HasLoggedIn();
         if (hasLoggedIn)
         {
@@ -16,15 +14,6 @@ public class LoginManager : MonoBehaviour
         else
         {
             ShowRegister();
-        }
-    }
-
-    private void Callback()
-    {
-        if (SparkSingleton.Instance.IsAuthenticated)
-        {
-            UMPSingleton.Instance.CloseAllDialogs();
-            Application.LoadLevel("Menu");
         }
     }
 
