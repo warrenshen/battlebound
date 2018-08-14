@@ -364,11 +364,6 @@ public class SparkSingleton : Singleton<SparkSingleton>
         this.loginRegisterCallback.Invoke();
     }
 
-    public bool HasLoggedIn()
-    {
-        return PlayerPrefs.GetInt(PLAYER_PREF_HAS_LOGGED_IN) == 1;
-    }
-
     public bool IsDisplayNameValid()
     {
         return this.displayName != null && this.displayName.Length > 0;

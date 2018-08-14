@@ -6,15 +6,19 @@ public class LoginManager : MonoBehaviour
 {
     private void Start()
     {
-        bool hasLoggedIn = SparkSingleton.Instance.HasLoggedIn();
-        if (hasLoggedIn)
-        {
-            ShowLogin();
-        }
-        else
-        {
-            ShowRegister();
-        }
+        ShowOptions();
+    }
+
+    private void ShowOptions()
+    {
+        UMPSingleton.Instance.ShowConfirmationDialog(
+            "Create Account or Log In?",
+            "",
+            new UnityAction(ShowLogin),
+            new UnityAction(ShowRegister),
+            "Log in",
+            "Create account"
+        );
     }
 
     private void ShowLogin()
@@ -27,7 +31,7 @@ public class LoginManager : MonoBehaviour
             new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyLogin),
             new UnityAction(ShowRegister),
             "Log in",
-            "Register",
+            "Cancel",
             InputField.ContentType.Standard,
             InputField.ContentType.Password
         );
@@ -95,8 +99,8 @@ public class LoginManager : MonoBehaviour
             "password confirmation",
             new UnityAction<UMP_ThreeInputDialogUI, string, string, string>(VerifyRegister),
             new UnityAction(ShowLogin),
-            "Register",
-            "Log in",
+            "Create account",
+            "Cancel",
             InputField.ContentType.Standard,
             InputField.ContentType.Password,
             InputField.ContentType.Password
