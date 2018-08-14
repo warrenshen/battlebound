@@ -85,7 +85,7 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-            value = string.Format("#{0}", rankString);
+            value = string.Format("{0}", rankString);
         }
         this.rankLabel.text = value;
     }
