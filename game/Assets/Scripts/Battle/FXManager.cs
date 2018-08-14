@@ -60,7 +60,7 @@ public class FXManager : IFXManager
         );
 
         Vector3 delta = fromTransform.position - toTransform.position;
-        Vector3 parabolaMidpoint = (fromTransform.position + toTransform.position) / 2.0f + Vector3.back * delta.magnitude / 2;
+        Vector3 parabolaMidpoint = (fromTransform.position + toTransform.position) / 2.0f + Vector3.back * delta.magnitude / 2.5f;
         LTSpline ltSpline = new LTSpline(new Vector3[] { fromTransform.position,
                                                          fromTransform.position,
                                                          parabolaMidpoint,
