@@ -18,10 +18,6 @@ public class BattleState
     private int serverMoveCount;
 
     private List<ChallengeCard> deadCards;
-
-    private List<ChallengeMove> serverMoveQueue;
-    private List<ChallengeMove> deviceMoveQueue;
-
     private List<ChallengeMove> serverMoves;
 
     private ChallengeEndState challengeEndState;
@@ -41,6 +37,9 @@ public class BattleState
 
     private Dictionary<string, Player> playerIdToPlayer;
     private Dictionary<string, string> playerIdToOpponentId;
+
+    private List<ChallengeMove> serverMoveQueue;
+    private List<ChallengeMove> deviceMoveQueue;
 
     private static BattleState instance;
 
