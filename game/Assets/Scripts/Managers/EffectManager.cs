@@ -2059,7 +2059,7 @@ public class EffectManager : MonoBehaviour
 
             IncrementIsWaiting();
             this.fXManager.ThrowEffectWithCallback(
-                "ExplosivePropVFX",
+                "LightbulbPropVFX",
                 boardCreature.GetTargetableTransform(),
                 targetedCreature.GetTargetableTransform(),
                 () =>
@@ -2076,7 +2076,7 @@ public class EffectManager : MonoBehaviour
 
             IncrementIsWaiting();
             this.fXManager.ThrowEffectWithCallback(
-                "ExplosivePropVFX",
+                "BlacksmithPropVFX",
                 boardCreature.GetTargetableTransform(),
                 targetedCreature.GetTargetableTransform(),
                 () =>

@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114675849407671446}
   - component: {fileID: 114769802385628476}
   - component: {fileID: 82313608193064216}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: BombVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 4373700696118928}
   - component: {fileID: 198436044195175196}
   - component: {fileID: 199931332757664506}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ElectricalSparksEffect (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -312,7 +312,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -473,7 +473,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.2
+      scalar: 0.05
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -888,7 +888,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -2033,7 +2033,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    inWorldSpace: 0
+    inWorldSpace: 1
   InheritVelocityModule:
     enabled: 0
     m_Mode: 0
@@ -4547,7 +4547,7 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: bb9d486a61f9fc545ba6da4a8a9dc352, type: 2}
+  - {fileID: 2100000, guid: f70f45ac7c9fb644c9a039b7d3aab297, type: 2}
   - {fileID: 2100000, guid: e4f85b2e68822a041b8df56db88fbd27, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -4568,12 +4568,12 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
-  m_VelocityScale: 0.1
+  m_VelocityScale: 0.15
   m_LengthScale: 0
   m_SortingFudge: 0
   m_NormalDirection: 1

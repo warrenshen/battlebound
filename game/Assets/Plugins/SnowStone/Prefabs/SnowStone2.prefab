@@ -10,8 +10,7 @@ GameObject:
   - component: {fileID: 413958}
   - component: {fileID: 3333574}
   - component: {fileID: 2307564}
-  - component: {fileID: 9588034}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SnowStone2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +28,7 @@ GameObject:
   - component: {fileID: 3359642}
   - component: {fileID: 2367508}
   - component: {fileID: 9509030}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: shadow (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,14 +41,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 121424}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.242, y: -14.7886, z: 17.0076}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.050126664, y: -0, z: -0, w: 0.99874294}
+  m_LocalPosition: {x: -13.04017, y: 0.32993698, z: 12.099999}
+  m_LocalScale: {x: 0.28201264, y: 0.3, z: 0.3282072}
   m_Children:
   - {fileID: 484192}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -95.745995, y: 0, z: 0}
 --- !u!4 &484192
 Transform:
   m_ObjectHideFlags: 1
@@ -58,7 +57,7 @@ Transform:
   m_GameObject: {fileID: 182984}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.00009918213, y: 0.0025997162, z: 0.002298355}
-  m_LocalScale: {x: 0.32245198, y: 0.36989325, z: 0.40185302}
+  m_LocalScale: {x: 0.2, y: 0.18, z: 0.24549}
   m_Children: []
   m_Father: {fileID: 413958}
   m_RootOrder: 0
@@ -156,24 +155,6 @@ Animator:
   m_GameObject: {fileID: 182984}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c5eb582c3c2a4be49af0a1867b20078b, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &9588034
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 121424}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 6ed97622b1eecfc42bbcf9916937fbcb, type: 3}
   m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0

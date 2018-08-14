@@ -59,13 +59,21 @@ public class FXManager : IFXManager
             fromTransform.position
         );
 
-        LeanTween
-            .move(effectGameObject, toTransform.position, ActionManager.TWEEN_DURATION * 3)
-            .setEaseInOutCirc()
-            .setOnComplete(() =>
-            {
-                effectGameObject.SetActive(false); // TODO: does this need to be recycled or something?
-                onEffectFinish.Invoke();
-            });
+        Vector3 delta = fromTransform.position - toTransform.position;
+        Vector3 parabolaMidpoint = (fromTransform.position + toTransform.position) / 2.0f + Vector3.back * delta.magnitude / 2;
+        LTSpline ltSpline = new LTSpline(new Vector3[] { fromTransform.position,
+                                                         fromTransform.position,
+                                                         parabolaMidpoint,
+                                                         toTransform.position,
+                                                         toTransform.position });
+
+        LeanTween.moveSpline(effectGameObject, ltSpline, ActionManager.TWEEN_DURATION * 3)
+                 .setOrientToPath(true)
+                 .setEase(LeanTweenType.easeInOutQuad)
+                 .setOnComplete(() =>
+                 {
+                     effectGameObject.SetActive(false); // TODO: does this need to be recycled or something?
+                     onEffectFinish.Invoke();
+                 });
     }
 }

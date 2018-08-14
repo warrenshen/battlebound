@@ -481,7 +481,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
                 this.statusVFX[FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
                 LeanTween
-                    .scale(this.statusVFX[FROZEN_STATUS], Vector3.one, ActionManager.TWEEN_DURATION)
+                    .scale(this.statusVFX[FROZEN_STATUS], Vector3.one * 2, ActionManager.TWEEN_DURATION)
                     .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
                     .setEaseOutCubic()
                     .setOnStart(() =>

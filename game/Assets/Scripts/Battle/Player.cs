@@ -744,7 +744,6 @@ public class Player
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TERRATANK, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CULYSSA, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SAPLET, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESMITH_APPRENTICE, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORGEMECH, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIGHTHUNTER, 1));
