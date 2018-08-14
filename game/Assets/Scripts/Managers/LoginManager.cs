@@ -12,8 +12,8 @@ public class LoginManager : MonoBehaviour
     private void ShowOptions()
     {
         UMPSingleton.Instance.ShowConfirmationDialog(
-            "Create Account or Log In?",
-            "",
+            "Welcome to Battlebound",
+            "Please select an option below.",
             new UnityAction(ShowLogin),
             new UnityAction(ShowRegister),
             "Log in",
