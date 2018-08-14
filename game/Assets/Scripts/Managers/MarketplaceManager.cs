@@ -50,7 +50,7 @@ public class MarketplaceManager : MonoBehaviour
     private Stack<SellableCardListItem> sellableListItemPool;
     private Stack<CancelableListItem> cancelableListItemPool;
     //End Pooling
-    private static int LIST_ITEM_POOL_SIZE = 30;
+    private const int LIST_ITEM_POOL_SIZE = 30;
     private object listItemObject;
 
     public static MarketplaceManager Instance { get; private set; }
@@ -72,11 +72,11 @@ public class MarketplaceManager : MonoBehaviour
     {
         if (SparkSingleton.Instance.IsAuthenticated)
         {
-            GetMarketplaceData();
+            //GetMarketplaceData();
         }
         else
         {
-            SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
+            //SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
         }
 
         buyableListItemPool = new Stack<BuyableCardListItem>();

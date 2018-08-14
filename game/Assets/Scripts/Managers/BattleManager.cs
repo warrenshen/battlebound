@@ -122,10 +122,17 @@ public class BattleManager : MonoBehaviour
 
     private void SendFindMatchRequest()
     {
-        BattleSingleton.Instance.SendFindMatchRequest(
-            MatchmakingManager.MATCH_TYPE_RANKED,
-            "Deck1"
-        );
+        if (SparkSingleton.Instance.IsAuthenticated)
+        {
+            BattleSingleton.Instance.SendFindMatchRequest(
+                MatchmakingManager.MATCH_TYPE_RANKED,
+                "Deck1"
+            );
+        }
+        else
+        {
+            Debug.LogError("In battle scene but not authenticated!");
+        }
     }
 
     private void Update()
