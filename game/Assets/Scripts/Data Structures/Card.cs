@@ -246,6 +246,7 @@ public abstract class Card
     public const string CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX = "CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX";
     public const string CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE = "CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE";
     public const string CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY = "CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY";
+    public const string CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY = "CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY";
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
@@ -300,6 +301,7 @@ public abstract class Card
         CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
         CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
         CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY,
+        CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY,
     };
 
     public static readonly Dictionary<int, string> ABILITY_CODE_TO_STRING = new Dictionary<int, string>
@@ -355,6 +357,7 @@ public abstract class Card
         { 48, CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX },
         { 49, CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE },
         { 50, CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY },
+        { 51, CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY },
     };
 
     public static readonly Dictionary<string, string> ABILITY_TO_DESCRIPTION = new Dictionary<string, string>
@@ -410,6 +413,7 @@ public abstract class Card
         { CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX, "Deathwish: Heal all friendly creatures to max health" },
         { CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE, "Deathwish: Revive your highest cost fallen creature" },
         { CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY, "Warcry: Heal 20 health to your hero" },
+        { CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY, "Warcry: Deal 30 damage to opposite enemy creature" },
     };
 
     public static string GetDecriptionByAbilities(List<string> abilities)
