@@ -329,7 +329,7 @@ public class CardEditorPanel : EditorWindow
             if (this.backgroundTexture != null)
             {
                 float verticalSize = CardEditorPanel.imageHeight * 1 / template.backScale.y;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 390 - 25 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 380 - 25 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
                                                       CardEditorPanel.imageWidth * 1 / template.backScale.x, verticalSize),
                                                       this.backgroundTexture, backMat);
             }
@@ -340,7 +340,7 @@ public class CardEditorPanel : EditorWindow
             if (this.mainTexture != null)
             {
                 float verticalSize = CardEditorPanel.imageHeight * 1 / template.frontScale.y;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 390 - 25 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 380 - 25 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
                                                       CardEditorPanel.imageWidth * 1 / template.frontScale.x, verticalSize),
                                                       this.mainTexture, frontMat);
             }

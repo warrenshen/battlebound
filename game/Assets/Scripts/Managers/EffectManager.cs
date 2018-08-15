@@ -2335,6 +2335,8 @@ public class EffectManager : MonoBehaviour
         List<BoardCreature> opponentAliveCreatures =
             Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
+        SoundManager.Instance.PlaySound("BlizzardSFX", this.transform.position);
+
         foreach (BoardCreature aliveCreature in opponentAliveCreatures)
         {
             aliveCreature.Freeze(1);
@@ -2351,7 +2353,9 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        FXPoolManager.Instance.PlayEffect("RazeToAshesVFX");
+        GameObject vfx = FXPoolManager.Instance.PlayEffect("RazeToAshesVFX");
+        SoundManager.Instance.PlaySound("FireSpellSFX", vfx.transform.position);
+
         foreach (BoardCreature targetedCreature in opponentAliveCreatures)
         {
             int damageTaken = targetedCreature.TakeDamage(50);

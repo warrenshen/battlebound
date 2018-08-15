@@ -12,7 +12,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
     public const float ATTACK_DELAY = 0.66F;
     private const float MAX_RANDOM_DELAY = 0.8F;
 
-    private static Vector3 BOARD_CARD_SIZE = new Vector3(5.55F, 3.7F, 1);
+    private static Vector3 BOARD_CARD_SIZE = new Vector3(5.25F, 3.7F, 1);
     private static Vector3 COLLIDER_SIZE = new Vector3(3.8F, 4.5F, 1);
     private static Vector3 INSPECT_CARD_SIZE = new Vector3(5, 4.28F, 1);
 
