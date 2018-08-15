@@ -10,6 +10,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 {
     public const float UPDATE_STATS_GROWTH_FACTOR = 1.4F;
     public const float ATTACK_DELAY = 0.66F;
+    private const float MAX_RANDOM_DELAY = 0.8F;
 
     private static Vector3 BOARD_CARD_SIZE = new Vector3(5.55F, 3.7F, 1);
     private static Vector3 COLLIDER_SIZE = new Vector3(3.8F, 4.5F, 1);
@@ -232,19 +233,20 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         //Unassign VFXs for creatures that die etc..
         foreach (string ability in this.abilitiesVFX.Keys)
         {
+            //to-do: scale effects down before set active false
             GameObject effect = this.abilitiesVFX[ability];
             FXPoolManager.Instance.UnassignEffect(ability, effect);
         }
 
-        if (this.abilitiesVFX.ContainsKey(FROZEN_STATUS))
+        if (this.statusVFX.ContainsKey(FROZEN_STATUS))
         {
-            GameObject effect = this.abilitiesVFX[FROZEN_STATUS];
-            FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, effect);
+            Unfreeze();
         }
 
-        if (this.abilitiesVFX.ContainsKey(CONDEMNED_STATUS))
+        if (this.statusVFX.ContainsKey(CONDEMNED_STATUS))
         {
-            GameObject effect = this.abilitiesVFX[CONDEMNED_STATUS];
+            //to-do: scale effects down before set active false
+            GameObject effect = this.statusVFX[CONDEMNED_STATUS];
             FXPoolManager.Instance.UnassignEffect(CONDEMNED_STATUS, effect);
         }
     }
@@ -474,8 +476,6 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
 
     private void RenderStatus()
     {
-        float MAX_RANDOM_DELAY = 0.8F;
-
         int isFrozen = this.boardCreature.IsFrozen;
 
         //for frozen or silenced etc status
@@ -483,38 +483,14 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         {
             if (!this.statusVFX.ContainsKey(FROZEN_STATUS))
             {
-                this.summonAnimation.enabled = false;
-                this.statusVFX[FROZEN_STATUS] = FXPoolManager.Instance.AssignEffect(
-                    FROZEN_STATUS,
-                    this.transform
-                ).gameObject;
-
-                this.statusVFX[FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
-                LeanTween
-                    .scale(this.statusVFX[FROZEN_STATUS], Vector3.one * 2 * UnityEngine.Random.Range(0.9f, 1.1f), ActionManager.TWEEN_DURATION)
-                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-                    .setEaseOutCubic()
-                    .setOnStart(() =>
-                    {
-                        SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
-                    });
+                Freeze();
             }
         }
         else
         {
             if (this.statusVFX.ContainsKey(FROZEN_STATUS))
             {
-                LeanTween
-                    .scale(this.statusVFX[FROZEN_STATUS], Vector3.zero, ActionManager.TWEEN_DURATION)
-                    .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-                    .setEaseInCubic().setOnComplete(() =>
-                    {
-                        SoundManager.Instance.PlaySound("UnfreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: -0.3F);
-                        FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
-                        FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, this.statusVFX[FROZEN_STATUS]);
-                        this.summonAnimation.enabled = true;
-                        this.statusVFX.Remove(FROZEN_STATUS);
-                    });
+                Unfreeze();
             }
         }
 
@@ -540,6 +516,43 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
                     });
             }
         }
+    }
+
+    private void Freeze()
+    {
+        this.summonAnimation.enabled = false;
+        this.statusVFX[FROZEN_STATUS] = FXPoolManager.Instance.AssignEffect(
+            FROZEN_STATUS,
+            this.transform
+        ).gameObject;
+
+        this.statusVFX[FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
+        LeanTween
+            .scale(this.statusVFX[FROZEN_STATUS], Vector3.one * 2 * UnityEngine.Random.Range(0.9f, 1.1f), ActionManager.TWEEN_DURATION)
+            .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+            .setEaseOutCubic()
+            .setOnStart(() =>
+            {
+                SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
+            });
+    }
+
+    private void Unfreeze()
+    {
+        FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, this.statusVFX[FROZEN_STATUS]);
+        GameObject freezeObject = this.statusVFX[FROZEN_STATUS];
+        this.statusVFX.Remove(FROZEN_STATUS);
+
+        LeanTween
+            .scale(freezeObject, Vector3.zero, ActionManager.TWEEN_DURATION)
+            .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+            .setEaseInCubic().setOnComplete(() =>
+            {
+                SoundManager.Instance.PlaySound("UnfreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: -0.3F);
+                FXPoolManager.Instance.PlayEffect("UnfreezeVFX", this.transform.position);
+
+                this.summonAnimation.enabled = true;
+            });
     }
 
     private void RenderAbilitiesAndBuffs()
