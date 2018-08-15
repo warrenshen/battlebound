@@ -52,7 +52,7 @@ public class LO_LoadingScreen : MonoBehaviour
     public float fadingAnimationSpeed = 2.0f;
 
     private bool isHintAlphaZero;
- 
+
     void Start()
     {
         // If this is disabled, then disable Title Description object
@@ -100,14 +100,17 @@ public class LO_LoadingScreen : MonoBehaviour
         instance.loadingProcess = SceneManager.LoadSceneAsync(sceneName);
         // Don't allow scene switching
         instance.loadingProcess.allowSceneActivation = false;
+
+        // added by Nick
+        instance.titleDescText = sceneName.ToUpper();
     }
 
     void Awake()
     {
         // Set loading screen invisible at first (panel alpha color)
-		canvasAlpha.alpha = 0f;
+        canvasAlpha.alpha = 0f;
     }
- 
+
     void Update()
     {
         try
@@ -121,7 +124,7 @@ public class LO_LoadingScreen : MonoBehaviour
         {
             Debug.Log("No progress bar");
         }
-         
+
         // Do virtual loading if it's enabled --- and yes, a lot ifs...
         if (enableVirtualLoading == true)
         {
@@ -213,7 +216,7 @@ public class LO_LoadingScreen : MonoBehaviour
                 string hintChose = HintList[Random.Range(0, HintList.Count)];
                 hintsText.text = hintChose;
                 htvTimer = 0.0f;
-            } 
+            }
         }
     }
 }

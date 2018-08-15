@@ -236,13 +236,13 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
             FXPoolManager.Instance.UnassignEffect(ability, effect);
         }
 
-        if (this.boardCreature.IsFrozen > 0 && this.abilitiesVFX.ContainsKey(FROZEN_STATUS))
+        if (this.abilitiesVFX.ContainsKey(FROZEN_STATUS))
         {
             GameObject effect = this.abilitiesVFX[FROZEN_STATUS];
             FXPoolManager.Instance.UnassignEffect(FROZEN_STATUS, effect);
         }
 
-        if (this.boardCreature.IsSilenced && this.abilitiesVFX.ContainsKey(CONDEMNED_STATUS))
+        if (this.abilitiesVFX.ContainsKey(CONDEMNED_STATUS))
         {
             GameObject effect = this.abilitiesVFX[CONDEMNED_STATUS];
             FXPoolManager.Instance.UnassignEffect(CONDEMNED_STATUS, effect);
@@ -405,12 +405,13 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         bool isSilenced = this.boardCreature.IsSilenced;
         CreatureCard creatureCard = this.boardCreature.GetCard();
 
+        HyperCard.Card.TextMeshProParam costText = this.visual.GetTextFieldWithKey("Cost");
         HyperCard.Card.TextMeshProParam attackText = this.visual.GetTextFieldWithKey("Attack");
         HyperCard.Card.TextMeshProParam healthText = this.visual.GetTextFieldWithKey("Health");
 
-        if (!this.visual.GetTextFieldWithKey("Cost").Value.Equals(cost.ToString()))
+        if (!costText.Value.Equals(cost.ToString()))
         {
-            LeanTween.scale(this.visual.GetTextFieldWithKey("Cost").TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
+            LeanTween.scale(costText.TmpObject.gameObject, Vector3.one * UPDATE_STATS_GROWTH_FACTOR, 0.5F).setEasePunch();
         }
         if (!attackText.Value.Equals(attack.ToString()))
         {
@@ -433,6 +434,15 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         else
         {
             this.visual.SetTextFieldWithKey("Description", Card.GetDecriptionByAbilities(this.boardCreature.Abilities));
+        }
+
+        if (cost < creatureCard.GetCost())
+        {
+            costText.TmpObject.color = LIGHT_GREEN;
+        }
+        else
+        {
+            costText.TmpObject.color = Color.white;
         }
 
         if (attack > creatureCard.GetAttack())
