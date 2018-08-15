@@ -208,6 +208,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         int messageNonce = (int)scriptData.GetInt("nonce");
         if (messageNonce <= this.nonce)
         {
+            Debug.LogWarning("Message nonce less than current nonce.");
             return;
         }
 
@@ -612,7 +613,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnGetActiveChallengeSuccess(LogEventResponse response)
     {
         Debug.Log("GetActiveChallenge request success.");
-
         GSData scriptData = response.ScriptData;
         InitializeChallenge(scriptData);
     }

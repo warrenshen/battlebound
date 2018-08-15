@@ -305,10 +305,13 @@ public class ChallengeCard
             return string.Format("Abilities: {0} [{1}]", abilitiesDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
 
-        string abilitiesStartDiff = GetAbilitiesDiff(this.abilitiesStart, other.abilitiesStart);
-        if (abilitiesStartDiff != null)
+        if (!FlagHelper.IsServerEnabled())
         {
-            return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, string.Format("{0}, {1}", this.id, other.Name));
+            string abilitiesStartDiff = GetAbilitiesDiff(this.abilitiesStart, other.abilitiesStart);
+            if (abilitiesStartDiff != null)
+            {
+                return string.Format("AbilitiesStart: {0} [{1}]", abilitiesStartDiff, string.Format("{0}, {1}", this.id, other.Name));
+            }
         }
 
         string buffsHandDiff = GetBuffsHandDiff(this.buffsHand, other.buffsHand);
@@ -318,7 +321,7 @@ public class ChallengeCard
         }
 
         string buffsFieldDiff = GetBuffsFieldDiff(this.buffsField, other.buffsField);
-        if (abilitiesStartDiff != null)
+        if (buffsFieldDiff != null)
         {
             return string.Format("BuffsField: {0} [{1}]", buffsFieldDiff, string.Format("{0}, {1}", this.id, other.Name));
         }
