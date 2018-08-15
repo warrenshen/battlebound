@@ -547,6 +547,23 @@ public class BattleSingleton : Singleton<BattleSingleton>
 
     private void OnChallengeRequestError(LogChallengeEventResponse response, string requestName)
     {
+        if (
+            response.Errors.GetString("error") != null &&
+            response.Errors.GetString("error").ToLower() == "timeout"
+        )
+        {
+            Debug.LogError("No internet connection.");
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Internet Connection Error",
+                "Please check that your device has a working internet connection.",
+                () => SendGetActiveChallengeRequest(),
+                null,
+                "Try again",
+                ""
+            );
+            return;
+        }
+
         string devicePlayerStateString = JsonUtility.ToJson(BattleState.Instance().GetPlayerState());
         string deviceOpponentStateString = JsonUtility.ToJson(BattleState.Instance().GetOpponentState());
 
@@ -555,7 +572,10 @@ public class BattleSingleton : Singleton<BattleSingleton>
         request.SetEventAttribute("challengeId", this.challengeId);
         request.SetEventAttribute("requestName", requestName);
         request.SetEventAttribute("errorMessage", response.Errors.GetString("errorMessage"));
-        request.SetEventAttribute("stackTrace", string.Join(",", response.Errors.GetStringList("stackTrace")));
+        if (response.Errors.GetStringList("stackTrace") != null)
+        {
+            request.SetEventAttribute("stackTrace", string.Join(",", response.Errors.GetStringList("stackTrace")));
+        }
         request.SetEventAttribute("devicePlayerState", devicePlayerStateString);
         request.SetEventAttribute("deviceOpponentState", deviceOpponentStateString);
         request.Send(

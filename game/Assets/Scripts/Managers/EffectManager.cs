@@ -2682,30 +2682,32 @@ public class EffectManager : MonoBehaviour
         double timeCounter = 0.0;
 
         int moveRank = (int)args[0];
-        while (BattleState.Instance().ProcessMoveQueue() != moveRank)
+        bool hasSentRequest = false;
+
+        while (!hasSentRequest && BattleState.Instance().ProcessMoveQueue() != moveRank)
         {
             yield return new WaitForSeconds(0.1f);
 
             timeCounter += 0.1;
             if (timeCounter >= 5.0)
             {
+                Debug.LogError("Stuck in waiting mode for five seconds.");
+                timeCounter = 0.0;
+                DecrementIsWaiting();
+
                 if (FlagHelper.IsServerEnabled())
                 {
                     // Reload state from server and reload scene.
                     BattleSingleton.Instance.SendGetActiveChallengeRequest();
-                    timeCounter = 0.0;
                 }
                 else
                 {
                     Debug.LogError("Stuck in waiting mode for five seconds.");
-                    this.isWaiting = 0;
-                    timeCounter = 0.0;
-                    yield return null;
                 }
+
+                hasSentRequest = true;
             }
         }
-
-        yield return null;
     }
 
     public void WaitAndInvokeCallback(float duration, UnityAction callback)

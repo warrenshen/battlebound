@@ -87,11 +87,12 @@ public class SparkSingleton : Singleton<SparkSingleton>
                     callback.Invoke();
                 }
             }
+            Debug.LogWarning("GS availabe!");
         }
         else
         {
             this.isAvailable = false;
-            Debug.LogWarning("not available...");
+            Debug.LogWarning("GS not available...");
         }
     }
 
