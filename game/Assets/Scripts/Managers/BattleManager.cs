@@ -103,6 +103,8 @@ public class BattleManager : MonoBehaviour
         }
         else if (BattleSingleton.Instance.ChallengeStarted)
         {
+            enemyDrawCardFixedTransform.Rotate(0, 180, 0);
+
             BattleState.InstantiateWithState(
                 BattleSingleton.Instance.PlayerState,
                 BattleSingleton.Instance.OpponentState,

@@ -313,12 +313,14 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         GameObject created = Instantiate(prefab) as GameObject;
         created.transform.parent = this.transform;
         created.transform.localPosition = new Vector3(0, 0, -0.3f);
-        created.transform.Rotate(-15, 0, 0, Space.Self);
-        //created.transform.LookAt(Camera.main.transform);
 
         if (this.boardCreature.GetPlayerId() != BattleState.Instance().You.Id)
         {
-            created.transform.Rotate(30, 180, 0, Space.Self);
+            created.transform.Rotate(15, 180, 0, Space.Self);
+        }
+        else
+        {
+            created.transform.Rotate(-15, 0, 0, Space.Self);
         }
 
         this.audioSources = created.GetComponents<AudioSource>();
