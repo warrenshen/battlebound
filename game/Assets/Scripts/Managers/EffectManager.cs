@@ -68,6 +68,7 @@ public class EffectManager : MonoBehaviour
         // Battlecry.
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
+        Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
         Card.CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY,
@@ -121,6 +122,7 @@ public class EffectManager : MonoBehaviour
     {
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
         Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY,
+        Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY,
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT,
         Card.CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY,
@@ -562,6 +564,7 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY:
             case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
             case Card.CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX:
             case Card.CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT:
@@ -626,6 +629,9 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY:
                 AbilityAttackInFront(effect, 20);
+                break;
+            case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY:
+                AbilityAttackInFront(effect, 30);
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_DRAW_CARD:
                 AbilityDrawCard(effect);
