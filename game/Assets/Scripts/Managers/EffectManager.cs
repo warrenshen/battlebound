@@ -693,6 +693,7 @@ public class EffectManager : MonoBehaviour
         string cardId = effect.CardId;
 
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        boardCreature.Deathwish();
 
         yield return new WaitForSeconds(0.5f);
 

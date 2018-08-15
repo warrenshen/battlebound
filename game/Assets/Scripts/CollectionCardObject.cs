@@ -31,7 +31,7 @@ public class CollectionCardObject : CardObject
         this.card = card;
 
         //make render changes according to card class here
-        this.visual = this.VisualizeCard();
+        this.visual = VisualizeCard();
         this.LoadCardArtwork();
         this.SetThisResetValues();
         this.SetVisualResetValues();

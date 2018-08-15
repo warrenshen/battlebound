@@ -53,7 +53,12 @@ public class CardObject : MouseWatchable
         }
         else
         {
+            this.visual.transform.parent = this.transform;
+            this.visual.transform.localPosition = Vector3.zero;
+            this.visual.transform.localRotation = Quaternion.identity;
+            this.visual.transform.Rotate(0, 180, 0, Space.Self);
             this.visual.ResetParams();
+
             Card.SetHyperCardFromData(ref this.visual, this.card);
             Card.SetHyperCardArtwork(ref this.visual, this.card);
         }
