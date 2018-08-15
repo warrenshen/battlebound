@@ -181,11 +181,8 @@ public class BattleCardObject : CardObject
             return;
         }
 
+        // dont do anything if not your card
         if (FlagHelper.IsServerEnabled() && this.owner.Id != BattleState.Instance().You.Id)
-        {
-            return;
-        }
-        else if (!this.owner.HasTurn)
         {
             return;
         }
@@ -216,9 +213,6 @@ public class BattleCardObject : CardObject
             //LeanTween.scale(this.visual.gameObject, CARD_VISUAL_SIZE, 0.05f);
             return;
         }
-
-        if (!this.owner.HasTurn)
-            return;
         if (ActionManager.Instance.HasDragTarget())
             return;
 
@@ -234,7 +228,6 @@ public class BattleCardObject : CardObject
             BattleManager.Instance.ToggleMulliganCard(this);
             return;
         }
-
         if (!this.owner.HasTurn)
             return;
         if (ActionManager.Instance.HasDragTarget())

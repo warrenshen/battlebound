@@ -16,12 +16,10 @@ public class CollectionManager : MonoBehaviour
 
     [SerializeField]
     private List<CollectionCardObject> collection;
-    [SerializeField]
-    private List<string> decks;
 
     [SerializeField]
-    private List<Card> cardsInDeck;  //list that is currently rendered/being changed
-    public List<Card> CardsInDeck => cardsInDeck;
+    private List<Card> includedCards;  //list that is currently rendered/being changed
+    public List<Card> IncludedCards => includedCards;
     private int activeDeck;
 
     [SerializeField]
@@ -53,10 +51,11 @@ public class CollectionManager : MonoBehaviour
 
     private GameObject collectionCardObjectPrefab;
     private Stack<CollectionCardObject> collectionCardObjectPool;
+    private Stack<CardCutout> cardCutoutPool;
 
     [SerializeField]
     private GameObject cardCutoutPrefab;
-    private Stack<CardCutout> cardCutoutPool;
+    [SerializeField]
     private List<CardCutout> sortedCardCutouts;
 
     public static CollectionManager Instance { get; private set; }
@@ -65,8 +64,7 @@ public class CollectionManager : MonoBehaviour
     {
         Instance = this;
         this.collection = new List<CollectionCardObject>();
-        this.decks = new List<string>();
-        this.cardsInDeck = new List<Card>();
+        this.includedCards = new List<Card>();
 
         this.sortedCardCutouts = new List<CardCutout>();
         InitializeCollectionCardObjectPool();
@@ -79,7 +77,23 @@ public class CollectionManager : MonoBehaviour
 
     private void Callback()
     {
-        decks = DeckStore.Instance().GetDeckNames();
+        UpdateDecks();
+
+        //assign button event listeners now and forever
+        for (int i = 0; i < deckButtons.Count; ++i)
+        {
+            int deckId = i;
+            deckButtons[i].onClick.AddListener(new UnityAction(() => EnterEditMode(deckId)));
+        }
+
+        List<Card> cards = DeckStore.Instance().GetCards();
+        this.collection = CreateCardObjects(cards);
+    }
+
+    private void UpdateDecks()
+    {
+        List<string> decks = DeckStore.Instance().GetDeckNames();
+
         for (int i = 0; i < deckButtons.Count; ++i)
         {
             if (i < decks.Count)
@@ -91,12 +105,7 @@ public class CollectionManager : MonoBehaviour
             {
                 decks.Add(String.Format("Deck {0}", i));
             }
-            int deckId = i;
-            deckButtons[i].onClick.AddListener(new UnityAction(() => EnterEditMode(deckId)));
         }
-
-        List<Card> cards = DeckStore.Instance().GetCards();
-        this.collection = CreateCardObjects(cards);
     }
 
     private void Update()
@@ -110,8 +119,7 @@ public class CollectionManager : MonoBehaviour
         m_PointerEventData = new PointerEventData(m_EventSystem);
         m_PointerEventData.position = Input.mousePosition;
 
-        //Create a list of Raycast Results
-        //Raycast using the Graphics Raycaster and mouse click position
+        //Create a list of Raycast Results, raycast using the Graphics Raycaster and mouse click position
         List<RaycastResult> results = new List<RaycastResult>();
         m_Raycaster.Raycast(m_PointerEventData, results);
 
@@ -152,11 +160,11 @@ public class CollectionManager : MonoBehaviour
     private void SaveCollectionRequest()
     {
         List<string> cardIds = new List<string>();
-        foreach (Card elem in this.cardsInDeck)
+        foreach (Card elem in this.includedCards)
         {
             cardIds.Add(elem.Id);
         }
-        string previousName = decks[activeDeck];
+        string previousName = DeckStore.Instance().GetDeckNames()[activeDeck];
         string newName = activeDeckName.text;
 
         DeckStore.Instance().CreateUpdatePlayerDeckWithCallback(
@@ -193,12 +201,18 @@ public class CollectionManager : MonoBehaviour
                 this.activeDeck = deckId;
 
                 InputField deckNameField = rightSidebar.GetComponentInChildren<InputField>();
-                deckNameField.text = decks[deckId];
+                deckNameField.text = DeckStore.Instance().GetDeckNames()[deckId];
             });
     }
 
     private void ExitEditMode()
     {
+        UpdateDecks();
+        foreach (CardCutout cardCutout in new List<CardCutout>(this.sortedCardCutouts))
+        {
+            RemoveCard(cardCutout);
+        }
+
         this.editMode = false;
         LeanTween.moveLocalX(rightSidebar, 480, TWEEN_TIME).setEaseInQuad();
         LeanTween
@@ -206,20 +220,15 @@ public class CollectionManager : MonoBehaviour
             .setEaseOutQuad()
             .setOnComplete(() =>
             {
-                foreach (CardCutout cardCutout in new List<CardCutout>(this.sortedCardCutouts))
-                {
-                    RemoveCard(cardCutout);
-                }
-                this.sortedCardCutouts = new List<CardCutout>();
-            });
 
+            });
         LeanTween.moveLocalX(deckSelection, 0, TWEEN_TIME).setEaseOutQuad();
     }
 
     private void LoadDecklist(int deckId)
     {
         this.sortedCardCutouts = new List<CardCutout>();
-        foreach (Card card in DeckStore.Instance().GetCardsByDeckName(decks[deckId]))
+        foreach (Card card in DeckStore.Instance().GetCardsByDeckName(DeckStore.Instance().GetDeckNames()[deckId]))
         {
             IncludeCard(card.wrapper as CollectionCardObject);
         }
@@ -277,7 +286,7 @@ public class CollectionManager : MonoBehaviour
 
     public void IncludeCard(CollectionCardObject cardObject)
     {
-        if (cardsInDeck.Count >= REQUIRED_DECK_SIZE)
+        if (includedCards.Count >= REQUIRED_DECK_SIZE)
         {
             LeanTween.scale(deckSize.gameObject, Vector3.one * 1.3f, 1).setEasePunch();
             return;
@@ -300,7 +309,7 @@ public class CollectionManager : MonoBehaviour
 
         for (int i = 0; i < this.sortedCardCutouts.Count; i += 1)
         {
-            CardCutout currentCardCutout = sortedCardCutouts[i];
+            CardCutout currentCardCutout = this.sortedCardCutouts[i];
             if (cardCost < currentCardCutout.GetCost())
             {
                 insertionIndex = i;
@@ -353,7 +362,7 @@ public class CollectionManager : MonoBehaviour
 
         this.sortedCardCutouts.Insert(insertionIndex, cardCutout);
         this.collection.Remove(cardObject);
-        this.cardsInDeck.Add(cardObject.Card);
+        this.includedCards.Add(cardObject.Card);
 
         UpdateDeckSize();
 
@@ -362,10 +371,11 @@ public class CollectionManager : MonoBehaviour
 
     private void RemoveCard(CardCutout source)
     {
-        int removeIndex = this.sortedCardCutouts.FindIndex(
-            cardCutout => cardCutout.GetId() == source.GetId()
-        );
-        this.sortedCardCutouts.RemoveAt(removeIndex);
+        //int removeIndex = this.sortedCardCutouts.FindIndex(
+        //    cardCutout => cardCutout.GetId() == source.GetId()
+        //);
+        //this.sortedCardCutouts.RemoveAt(removeIndex);
+        this.sortedCardCutouts.Remove(source);
 
         LeanTween
             .moveX(source.gameObject, source.transform.position.x + 4, 0.5f)
@@ -387,21 +397,21 @@ public class CollectionManager : MonoBehaviour
 
         created.visual.Redraw();
 
-        cardsInDeck.Remove(source.GetCard());
+        includedCards.Remove(source.GetCard());
         collection.Add(created);
         UpdateDeckSize();
     }
 
     private void UpdateDeckSize()
     {
-        deckSize.text = String.Format("{0}/{1}", cardsInDeck.Count, REQUIRED_DECK_SIZE);
+        deckSize.text = String.Format("{0}/{1}", includedCards.Count, REQUIRED_DECK_SIZE);
     }
 
     private void InitializeCollectionCardObjectPool()
     {
         this.collectionCardObjectPrefab = Resources.Load("Prefabs/CollectionCardObject") as GameObject;
         this.collectionCardObjectPool = new Stack<CollectionCardObject>();
-        for (int i = 0; i < 40; i++)
+        for (int i = 0; i < REQUIRED_DECK_SIZE * 2; i++)
         {
             GameObject collectionCardGameObject = Instantiate(
                 this.collectionCardObjectPrefab,
@@ -415,7 +425,7 @@ public class CollectionManager : MonoBehaviour
         }
 
         this.cardCutoutPool = new Stack<CardCutout>();
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < REQUIRED_DECK_SIZE; i++)
         {
             GameObject cardCutoutGameObject = Instantiate(
                 this.cardCutoutPrefab,
@@ -470,6 +480,7 @@ public class CollectionManager : MonoBehaviour
         if (this.cardCutoutPool.Count <= 0)
         {
             Debug.LogError("Card cutout pool is empty!");
+            return null;
         }
 
         CardCutout cardCutout = this.cardCutoutPool.Pop();

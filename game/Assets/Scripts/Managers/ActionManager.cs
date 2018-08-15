@@ -79,6 +79,7 @@ public class ActionManager : MonoBehaviour
         {
             return;
         }
+
         MouseWatch();
     }
 
@@ -126,11 +127,11 @@ public class ActionManager : MonoBehaviour
             ResetLastHitWatchable();
             hitWatchable.EnterHover();
         }
-        else if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             hitWatchable.MouseDown();
         }
-        else if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             hitWatchable.MouseUp();
         }

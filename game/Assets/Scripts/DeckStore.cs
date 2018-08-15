@@ -9,6 +9,7 @@ using GameSparks.Core;
 using GameSparks.Api.Requests;
 using GameSparks.Api.Responses;
 
+[System.Serializable]
 public class DeckStore
 {
     private bool containsData;
@@ -79,7 +80,7 @@ public class DeckStore
     {
         if (!this.deckNameToDeck.ContainsKey(deckName))
         {
-            Debug.LogError("Invalid deck name paramter - deck does not exist.");
+            Debug.LogError("Invalid deck name parameter - deck does not exist.");
             return new List<Card>();
         }
 
