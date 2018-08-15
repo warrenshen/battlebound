@@ -19,7 +19,7 @@ public class CardEditorPanel : EditorWindow
     private int lineHeight = 20;
     private int lineMargin = 5;
 
-    private static int imageHeight = 350;
+    private static int imageHeight = 383;
     private static int imageWidth = 270;
 
     private Material frameMat;
@@ -329,18 +329,18 @@ public class CardEditorPanel : EditorWindow
             if (this.backgroundTexture != null)
             {
                 float verticalSize = CardEditorPanel.imageHeight * 1 / template.backScale.y;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 370 - 25 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.backOffset.x / template.backScale.x * imageWidth, position.height - 390 - 25 + template.backOffset.y * imageHeight + (imageHeight - verticalSize) * template.backScale.y,
                                                       CardEditorPanel.imageWidth * 1 / template.backScale.x, verticalSize),
                                                       this.backgroundTexture, backMat);
             }
             else
             {
-                EditorGUI.DrawPreviewTexture(new Rect(25, position.height - 370, 240, 350), EditorGUIUtility.whiteTexture, backMat);
+                EditorGUI.DrawPreviewTexture(new Rect(25, position.height - 390, 240, 350), EditorGUIUtility.whiteTexture, backMat);
             }
             if (this.mainTexture != null)
             {
                 float verticalSize = CardEditorPanel.imageHeight * 1 / template.frontScale.y;
-                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 370 - 25 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
+                EditorGUI.DrawPreviewTexture(new Rect(25 - template.frontOffset.x / template.frontScale.x * imageWidth, position.height - 390 - 25 + template.frontOffset.y * imageHeight + (imageHeight - verticalSize) * template.frontScale.y,
                                                       CardEditorPanel.imageWidth * 1 / template.frontScale.x, verticalSize),
                                                       this.mainTexture, frontMat);
             }
@@ -357,7 +357,7 @@ public class CardEditorPanel : EditorWindow
             EditorGUI.PrefixLabel(new Rect(23, position.height - 25, position.width - 6, 20), 0, new GUIContent("No background texture found"));
         }
         frameMat.color = CardTemplate.ColorFromClass(template.classColor);
-        EditorGUI.DrawPreviewTexture(new Rect(0, position.height - 420, 325, 390), this.cardFrame, frameMat);  //hardcoded for card frame
+        EditorGUI.DrawPreviewTexture(new Rect(25, position.height - 400, 275, 375), this.cardFrame, frameMat);  //hardcoded for card frame
     }
 
     private void CardDefaultSection(CardTemplate template, int verticalOffset)
