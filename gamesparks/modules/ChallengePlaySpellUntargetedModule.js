@@ -57,8 +57,8 @@ function handlePlaySpellUntargeted(challengeStateData, playerId, cardId) {
     };
     addChallengeMove(challengeStateData, move);
     
-    processSpellUntargetedPlay(challengeStateData, playerId, playedCard);
-    
     // Remove played card from hand.
     removeCardFromHandByIndex(playerState, handIndex);
+    
+    processSpellUntargetedPlay(challengeStateData, playerId, playedCard);
 }
