@@ -557,8 +557,7 @@ public class Player
     {
         BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
             this,
-            card,
-            GetHandTransform()
+            card
         );
 
         foreach (HyperCard.Card.CustomSpriteParam spriteParam in battleCardObject.visual.SpriteObjects)
@@ -598,8 +597,7 @@ public class Player
     {
         BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
             this,
-            card,
-            GetHandTransform()
+            card
         );
 
         this.deckSize -= 1;
@@ -613,8 +611,7 @@ public class Player
     {
         BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
             this,
-            card,
-            GetHandTransform()
+            card
         );
 
         this.hand.AddCardObject(battleCardObject);

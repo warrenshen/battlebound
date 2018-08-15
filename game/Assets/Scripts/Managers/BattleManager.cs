@@ -1251,8 +1251,7 @@ public class BattleManager : MonoBehaviour
 
     public BattleCardObject InitializeBattleCardObject(
         Player player,
-        Card card,
-        Transform transform
+        Card card
     )
     {
         BattleCardObject battleCardObject;
@@ -1272,7 +1271,7 @@ public class BattleManager : MonoBehaviour
         }
 
         battleCardObject.Initialize(player, card);
-        battleCardObject.transform.parent = transform;
+        battleCardObject.transform.parent = player.GetHandTransform();
         battleCardObject.gameObject.SetActive(true);
         return battleCardObject;
     }

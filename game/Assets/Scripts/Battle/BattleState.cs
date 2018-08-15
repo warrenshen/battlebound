@@ -558,8 +558,7 @@ public class BattleState
         Player player = GetPlayerById(playerId);
         BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
             player,
-            card,
-            player.GetHandTransform()
+            card
         );
 
         if (playerId == this.you.Id)
