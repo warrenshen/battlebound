@@ -103,6 +103,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (BattleSingleton.Instance.ChallengeStarted)
         {
+            enemyDeckTransform.Rotate(0, 180, 0);  //to-do: reconsider this hack
             enemyDrawCardFixedTransform.Rotate(0, 180, 0);
 
             BattleState.InstantiateWithState(
