@@ -88,7 +88,7 @@ if (matchShortCode === "CasualMatch") {
     rankedScore = response.HIGH_SCORE_LB.SCORE_ATTR;
     if (rankedScore == null) {
         // New player elo score.
-        rankedScore = 1000;
+        rankedScore = 1200;
     }
     
     // Create new matchmaking request.
