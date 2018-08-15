@@ -1084,6 +1084,21 @@ public class BattleManager : MonoBehaviour
     public void EnemyOverdrawAnim(BattleCardObject battleCardObject)
     {
         SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
+
+        Transform deckTransform;
+        if (battleCardObject.Owner.Id == BattleState.Instance().You.Id)
+        {
+            deckTransform = this.playerDeckTransform;
+        }
+        else
+        {
+            deckTransform = this.enemyDeckTransform;
+        }
+
+        battleCardObject.transform.position = deckTransform.position;
+        battleCardObject.transform.rotation = deckTransform.rotation;
+        battleCardObject.visual.Redraw();
+
         EnableIsAnimating();
         AnimateCardPlayed(battleCardObject)
             .setOnComplete(() =>
