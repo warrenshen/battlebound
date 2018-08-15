@@ -371,7 +371,7 @@ public abstract class Card
         { CARD_ABILITY_SHIELD, "Shield" },
         { CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN, "" },
         { CARD_ABILITY_BATTLE_CRY_DRAW_CARD, "Warcry: Draw a card" },
-        { CARD_ABILITY_LIFE_STEAL, "Lifesteal" },
+        { CARD_ABILITY_LIFE_STEAL, "Lifesap" },
         { CARD_ABILITY_DEATH_RATTLE_DRAW_CARD, "Deathwish: Draw a card" },
         { CARD_ABILITY_END_TURN_HEAL_TEN, "Turnover: Recover 10 health" },
         { CARD_ABILITY_END_TURN_HEAL_TWENTY, "Turnover: Recover 20 health" },
