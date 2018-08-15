@@ -40,7 +40,6 @@ GameObject:
   - component: {fileID: 223000013196625522}
   - component: {fileID: 114000012382350588}
   - component: {fileID: 114000014014181666}
-  - component: {fileID: 95063768590427680}
   - component: {fileID: 225007560352339960}
   - component: {fileID: 114000010766151846}
   m_Layer: 5
@@ -62,23 +61,6 @@ GameObject:
   - component: {fileID: 114000010884896364}
   m_Layer: 5
   m_Name: Description Text
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1099921789899092
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 224378506067482144}
-  - component: {fileID: 222435819202457000}
-  - component: {fileID: 114041222133044122}
-  m_Layer: 5
-  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,23 +163,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1428354285878642
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 224189407066272748}
-  - component: {fileID: 222033403477913958}
-  - component: {fileID: 225808279328184084}
-  m_Layer: 5
-  m_Name: Press Any Key Content
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
 --- !u!1 &1484813386170088
 GameObject:
   m_ObjectHideFlags: 1
@@ -262,22 +227,6 @@ GameObject:
   - component: {fileID: 114342643922026684}
   m_Layer: 5
   m_Name: Hint Panel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1760736506147328
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 224081639465560898}
-  - component: {fileID: 114796515700038638}
-  m_Layer: 5
-  m_Name: Helper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -437,24 +386,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &95063768590427680
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011090733362}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d2257cbe4e445dc429b8c78aff76fcef, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &95186062776243912
 Animator:
   serializedVersion: 3
@@ -491,21 +422,37 @@ MonoBehaviour:
   progressBar: {fileID: 114437728880940972}
   hintsText: {fileID: 114692541453328300}
   HintList:
-  - USE BOW FOR HUNTING
-  - USE SWORD FOR FIGHTING
-  - YOU CAN ALWAYS HEAL WITH MAGICAL POTION
-  - UPGRADE YOUR SKILLS FROM CHARACTERS PANEL
-  - YOU SUCK? NO PROBLEM. PLAY ON EASY MODE
+  - '''CONDEMNED'' CREATURES CAN NO LONGER RECEIVE BUFFS'
+  - CREATURES WITH 'PROTECTOR' MUST BE SLAIN BEFORE OTHERS CAN BE TARGETED
+  - '''PIERCING'' DEALS ANY LEFTOVER COMBAT DAMAGE TO OPPOSING CREATURE''S OWNER'
+  - LEVEL UP YOUR CARDS BY LANDING SUCCESSFUL HITS IN BATTLE
+  - CARDS CAN BE BOUGHT AND SOLD WITH ETHEREUM IN THE MARKETPLACE
+  - SYNERGY BETWEEN CARDS SHOULD BE HARNESSED FOR MAXIMUM POWER
+  - '''LIFESAP'' HEALS A CREATURE''S OWNER FOR ANY DAMAGE DEALT'
+  - WHENEVER YOU HAVE 3 CARDS OF SAME COLOR IN HAND, YOU CAN PLAY ONE AT DISCOUNT
+    COST
+  - IF 3 CARDS OF SAME COLOR ARE IN HAND, THAT COLOR IS DISCOUNTED UNTIL LESS THAN
+    3 REMAIN
+  - RANKED DUELS FOLLOW THE ELO SYSTEM, WITH BASE AT 1200
+  - TRADE CARDS WITH YOUR FRIENDS TO CRAFT SYNERGIZED DECKS
+  - YOUR CARD OWNERSHIP IS BACKED SECURELY BY THE ETHEREUM BLOCKCHAIN
+  - 2V2 DUELS ARE FORTHCOMING, FIND YOUR DUELING PARTNER
+  - RANKED REWARDS WILL BE PERIODICALLY DISTRIBUTED TO HIGHEST RANKED PLAYERS
+  - BUILD YOUR SUPERPOWER DECK IN 'MY COLLECTION'
   changeHintWithTimer: 1
   hintTimerValue: 4
   imageObject: {fileID: 114574988002483416}
   fadingAnimator: {fileID: 95186062776243912}
   ImageList:
-  - {fileID: 21300000, guid: 3c4ee70bf79264916a83c6c0003be2eb, type: 3}
+  - {fileID: 21300000, guid: d770554d0f6d4401c93293cc747a23b0, type: 3}
+  - {fileID: 21300000, guid: 7002cfd301f114a4fa6b7251a351306f, type: 3}
+  - {fileID: 21300000, guid: 9649ce05e8bec49b6bc74eeae5215de1, type: 3}
+  - {fileID: 21300000, guid: 217e43fc3b21d4e23b1a5e46db80d19f, type: 3}
+  - {fileID: 21300000, guid: 2897150f5edae41c494783cdb22edc18, type: 3}
   changeImageWithTimer: 1
   imageTimerValue: 3
   imageFadingSpeed: 1
-  objectAnimator: {fileID: 95063768590427680}
+  objectAnimator: {fileID: 0}
   virtualLoadingTimer: 5
   enableVirtualLoading: 0
   enableTitleDesc: 1
@@ -513,7 +460,7 @@ MonoBehaviour:
   enableRandomImages: 1
   enablePressAnyKey: 0
   titleText: LOADING
-  titleDescText: MATCHMAKING
+  titleDescText: '...'
   fadingAnimationSpeed: 2
 --- !u!114 &114000010884896364
 MonoBehaviour:
@@ -547,7 +494,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: MATCHMAKING
+  m_Text: '...'
 --- !u!114 &114000011320591104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -612,41 +559,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &114041222133044122
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1099921789899092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 19eef79fd68c91a4ebd3a664891da563, type: 3}
-    m_FontSize: 24
-    m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 0
-    m_MaxSize: 35
-    m_Alignment: 4
-    m_AlignByGeometry: 1
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: 'LOADING COMPLETED.
-
-    <b>PRESS ANY KEY</b> TO CONTINUE.'
 --- !u!114 &114151249706985300
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -995,7 +907,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 3c4ee70bf79264916a83c6c0003be2eb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7002cfd301f114a4fa6b7251a351306f, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1089,20 +1001,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: RANDOM HINT TEXT HERE
---- !u!114 &114796515700038638
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1760736506147328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3536731ab8d2deb42b45c0d2bbfd93af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scriptObject: {fileID: 1760736506147328}
-  animatorComponent: {fileID: 95063768590427680}
+  m_Text: IF 3 CARDS OF SAME COLOR ARE IN HAND, THAT COLOR IS DISCOUNTED UNTIL LESS
+    THAN 3 REMAIN
 --- !u!114 &114825465053487134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1143,12 +1043,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010702826346}
---- !u!222 &222033403477913958
-CanvasRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1428354285878642}
 --- !u!222 &222044154947527902
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -1197,12 +1091,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1484813386170088}
---- !u!222 &222435819202457000
-CanvasRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1099921789899092}
 --- !u!222 &222507192165033808
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -1303,7 +1191,6 @@ RectTransform:
   - {fileID: 224000013510713954}
   - {fileID: 224033431286471732}
   - {fileID: 224152376923992964}
-  - {fileID: 224189407066272748}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1408,24 +1295,6 @@ RectTransform:
   m_AnchoredPosition: {x: 50, y: 50}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!224 &224081639465560898
-RectTransform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1760736506147328}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 224189407066272748}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224152376923992964
 RectTransform:
   m_ObjectHideFlags: 1
@@ -1441,26 +1310,6 @@ RectTransform:
   - {fileID: 224068349603409360}
   m_Father: {fileID: 224000012779690920}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!224 &224189407066272748
-RectTransform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1428354285878642}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 224378506067482144}
-  - {fileID: 224081639465560898}
-  m_Father: {fileID: 224000012779690920}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1483,7 +1332,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 25}
+  m_SizeDelta: {x: 200, y: 17.67}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224217399476151950
 RectTransform:
@@ -1537,25 +1386,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 521.51, y: 25}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!224 &224378506067482144
-RectTransform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1099921789899092}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_Children: []
-  m_Father: {fileID: 224189407066272748}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1250, y: 250}
+  m_SizeDelta: {x: 679.33, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224421168744288456
 RectTransform:
@@ -1751,17 +1582,6 @@ CanvasGroup:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011090733362}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!225 &225808279328184084
-CanvasGroup:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1428354285878642}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
