@@ -97,7 +97,11 @@ public class BoardCreature : Targetable
 
     public bool CanAttackNow()
     {
-        return this.owner.HasTurn && this.isFrozen <= 0 && this.canAttack > 0;
+        return
+            this.owner.HasTurn &&
+            this.isFrozen <= 0 &&
+            this.canAttack > 0 &&
+            GetAttack() > 0;
     }
 
     public Transform GetTargetableTransform()
