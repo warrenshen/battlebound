@@ -780,7 +780,7 @@ Animation:
   m_WrapMode: 0
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_CullingType: 1
 --- !u!114 &114750042216059908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2250,7 +2250,7 @@ MonoBehaviour:
   mLocalTransform: {fileID: 4332899755704132}
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
-  updatePrefabs: 1
+  updatePrefabs: 0
 --- !u!137 &137102300696778786
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -1592,7 +1592,7 @@ Animation:
   m_WrapMode: 0
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_CullingType: 1
 --- !u!114 &114704530023946250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1862,7 +1862,7 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  animationData: {fileID: 0}
+  animationData: {fileID: 11400000, guid: 6c2c0ce9eed65f84aa551cccde1c9c3f, type: 2}
   animationDataGUID: 6c2c0ce9eed65f84aa551cccde1c9c3f
   mMaterialSource:
   - {fileID: 2100000, guid: a63eb7db262aa0048a6c4286590a22fb, type: 2}
@@ -10866,7 +10866,7 @@ MonoBehaviour:
   mLocalTransform: {fileID: 4746362038484782}
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
-  updatePrefabs: 1
+  updatePrefabs: 0
 --- !u!137 &137710019318793566
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

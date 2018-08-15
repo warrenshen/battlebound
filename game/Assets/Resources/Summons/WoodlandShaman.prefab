@@ -37,7 +37,6 @@ GameObject:
   - component: {fileID: 114953286083282114}
   - component: {fileID: 111056222528691480}
   - component: {fileID: 137217855818018684}
-  - component: {fileID: 114477090927443572}
   m_Layer: 13
   m_Name: prefab_0394
   m_TagString: Untagged
@@ -2175,19 +2174,7 @@ Animation:
   m_WrapMode: 0
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
-  m_CullingType: 0
---- !u!114 &114477090927443572
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1032034489038388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
+  m_CullingType: 1
 --- !u!114 &114953286083282114
 MonoBehaviour:
   m_ObjectHideFlags: 1

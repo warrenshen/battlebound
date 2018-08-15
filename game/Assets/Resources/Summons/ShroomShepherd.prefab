@@ -442,7 +442,6 @@ GameObject:
   - component: {fileID: 114407340676696166}
   - component: {fileID: 111006427327046518}
   - component: {fileID: 137946618984157728}
-  - component: {fileID: 114873615814446238}
   m_Layer: 13
   m_Name: prefab_0384
   m_TagString: Untagged
@@ -1303,9 +1302,9 @@ Animation:
   - {fileID: 7400000, guid: 14c2640a01cec774fbf55e5c6bc69f94, type: 2}
   - {fileID: 7400000, guid: 8737d9941bc6b044180d1c48c21afa52, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_CullingType: 1
 --- !u!114 &114407340676696166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1575,7 +1574,7 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  animationData: {fileID: 0}
+  animationData: {fileID: 11400000, guid: fcb7eb45e2f520b42999469806e1588a, type: 2}
   animationDataGUID: fcb7eb45e2f520b42999469806e1588a
   mMaterialSource:
   - {fileID: 2100000, guid: c02e6685dcb8e76498c88721f0dbc5ea, type: 2}
@@ -6486,18 +6485,6 @@ MonoBehaviour:
   mMeshColor: {r: 1, g: 1, b: 1, a: 1}
   updateColors: 1
   updatePrefabs: 0
---- !u!114 &114873615814446238
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1657740152749534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd1840064dfcd5045a7d64323737e651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  no: 
 --- !u!137 &137946618984157728
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
