@@ -187,7 +187,8 @@ public class DeckStore
 
     private void OnGetCollectionError(LogEventResponse response)
     {
-        Debug.Log("Gamesparks Request Error!");
+        Debug.LogError("Gamesparks Request Error!");
+        Debug.LogWarning(response.Errors.JSON);
     }
 
     private void InvokeAwaitingAction()

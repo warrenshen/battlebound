@@ -686,22 +686,22 @@ public class Player
         string deckName = PlayerPrefs.GetString("selectedDeck", "DeckA");
         List<Card> cards = new List<Card>();
 
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLESSED_NEWBORN, 2));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBUG_CATELYN, 2));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEMPLE_GUARDIAN, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WATERBORNE_RAZORBACK, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BOMBSHELL_BOMBADIER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBUG_CATELYN, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_MARSHWATER_SQUEALER, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TAJI_THE_FEARLESS, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WATERBORNE_RAZORBACK, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BLESSED_NEWBORN, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_YOUNG_KYO, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WAVE_CHARMER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_POSEIDONS_HANDMAIDEN, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_EMBERKITTY, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESTRIDED_TIGRESS, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEMPLE_GUARDIAN, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BOMBSHELL_BOMBADIER, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TAJI_THE_FEARLESS, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_UNKINDLED_JUNIOR, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FLAMEBELCHER, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIREBORN_MENACE, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TEA_GREENLEAF, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_WAVE_CHARMER, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_POSEIDONS_HANDMAIDEN, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_NESSA_NATURES_CHAMPION, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_BUBBLE_SQUIRTER, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SWIFT_SHELLBACK, 1));
@@ -743,7 +743,8 @@ public class Player
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_GRAVEYARD_GUARDIAN, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TERRATANK, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CULYSSA, 1));
-        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ABYSSAL_EEL, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SABRE_CRYSTALLINE_DRAGON, 1));
+        //cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_SAPLET, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FIRESMITH_APPRENTICE, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FORGEMECH, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_LIGHTHUNTER, 1));
@@ -753,6 +754,8 @@ public class Player
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_PEARL_NYMPH, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_TARA_SWAN_PRINCESS, 1));
         cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_FROSTSPORE, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_ANGELIC_EGG, 1));
+        cards.Add(new CreatureCard(GetNewCardId(), Card.CARD_NAME_CURSED_EGG, 1));
 
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_UNSTABLE_POWER, 4));
         cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_TOUCH_OF_ZEUS, 1));

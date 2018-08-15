@@ -76,6 +76,8 @@ public abstract class Card
     public const string CARD_NAME_PEARL_NYMPH = "Pearl Nymph";
     public const string CARD_NAME_TARA_SWAN_PRINCESS = "Tara, Swan Princess";
     public const string CARD_NAME_FROSTSPORE = "Frostspore";
+    public const string CARD_NAME_ANGELIC_EGG = "Angelic Egg";
+    public const string CARD_NAME_CURSED_EGG = "Cursed Egg";
 
     // Spells targeted.
     public const string CARD_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
@@ -156,7 +158,7 @@ public abstract class Card
         CARD_NAME_GRAVEYARD_GUARDIAN,
         CARD_NAME_TERRATANK,
         CARD_NAME_CULYSSA,
-        CARD_NAME_ABYSSAL_EEL,
+        CARD_NAME_SABRE_CRYSTALLINE_DRAGON,
         //CARD_NAME_SAPLET,
         CARD_NAME_FIRESMITH_APPRENTICE,
         CARD_NAME_FORGEMECH,
@@ -167,7 +169,9 @@ public abstract class Card
         CARD_NAME_PEARL_NYMPH,
         CARD_NAME_TARA_SWAN_PRINCESS,
         CARD_NAME_FROSTSPORE,
-};
+        CARD_NAME_ANGELIC_EGG,
+        CARD_NAME_CURSED_EGG,
+    };
 
     public static readonly List<string> CARD_NAMES_SPELL = new List<string>
     {
