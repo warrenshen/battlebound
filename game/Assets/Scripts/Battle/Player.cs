@@ -579,14 +579,8 @@ public class Player
         return battleCardObject;
     }
 
-    public void AddDrawnCardHandFull(Card card)
+    public void AddDrawnCardHandFull(BattleCardObject battleCardObject)
     {
-        BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
-            this,
-            card,
-            GetHandTransform()
-        );
-
         this.deckSize -= 1;
         BattleManager.Instance.AnimateDrawCard(this, battleCardObject)
             .setOnComplete(() =>
@@ -659,7 +653,7 @@ public class Player
         return cardRank;
     }
 
-    private Transform GetHandTransform()
+    public Transform GetHandTransform()
     {
         if (this.name == "Player")
         {

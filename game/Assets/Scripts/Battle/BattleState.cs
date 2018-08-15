@@ -556,7 +556,20 @@ public class BattleState
     private void ReceiveMoveDrawCardHandFull(string playerId, Card card)
     {
         Player player = GetPlayerById(playerId);
-        player.AddDrawnCardHandFull(card);
+        BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
+            player,
+            card,
+            player.GetHandTransform()
+        );
+
+        if (playerId == this.you.Id)
+        {
+            player.AddDrawnCardHandFull(battleCardObject);
+        }
+        else
+        {
+            BattleManager.Instance.EnemyOverdrawAnim(battleCardObject);
+        }
     }
 
     private void ReceiveMoveDrawCardDeckEmpty(string playerId)

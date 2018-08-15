@@ -1081,6 +1081,23 @@ public class BattleManager : MonoBehaviour
                 });
     }
 
+    public void EnemyOverdrawAnim(BattleCardObject battleCardObject)
+    {
+        SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
+        EnableIsAnimating();
+        AnimateCardPlayed(battleCardObject)
+            .setOnComplete(() =>
+            {
+                CardTween
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
+                .setOnComplete(() =>
+                 {
+                     DisableIsAnimating();
+                     battleCardObject.Burn(() => battleCardObject.Owner.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish()));
+                 });
+            });
+    }
+
     public void EnemyPlayCardToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
     {
         SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
