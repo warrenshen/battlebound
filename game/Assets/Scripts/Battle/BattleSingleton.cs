@@ -206,7 +206,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     )
     {
         int messageNonce = (int)scriptData.GetInt("nonce");
-        if (messageNonce <= this.nonce)
+        if (messageNonce < this.nonce)
         {
             Debug.LogWarning("Message nonce less than current nonce.");
             return;
