@@ -1495,6 +1495,7 @@ public class EffectManager : MonoBehaviour
     public void OnDrawCardFinish()
     {
         DecrementIsWaiting();
+        BattleState.Instance().SetIsLocked(false);
     }
 
     public void OnSummonCreatureFinish()
@@ -1522,7 +1523,7 @@ public class EffectManager : MonoBehaviour
             enemy.Mode == Player.PLAYER_STATE_MODE_MULLIGAN_WAITING
         )
         {
-            StartCoroutine("WaitForOneSecondCoroutine");
+            StartCoroutine("MulliganFinishCoroutine");
         }
         else
         {
@@ -1530,7 +1531,7 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForOneSecondCoroutine()
+    private IEnumerator MulliganFinishCoroutine()
     {
         yield return new WaitForSeconds(1);
         DecrementIsWaiting();
@@ -1675,6 +1676,7 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
+        BattleState.Instance().SetIsLocked(false);
     }
 
     public void OnCreatureAttack(
@@ -2161,8 +2163,6 @@ public class EffectManager : MonoBehaviour
     )
     {
         string playerId = challengeCard.PlayerId;
-        List<Effect> effects = new List<Effect>();
-
         switch (challengeCard.Name)
         {
             case Card.CARD_NAME_TOUCH_OF_ZEUS:
@@ -2187,6 +2187,7 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", challengeCard.Name));
                 break;
         }
+        BattleState.Instance().SetIsLocked(false);
     }
 
     private void SpellTargetedTouchOfZeus(string playerId, BoardCreature targetedCreature)
@@ -2314,6 +2315,7 @@ public class EffectManager : MonoBehaviour
         }
 
         AddToQueues(effects);
+        BattleState.Instance().SetIsLocked(false);
     }
 
     private List<Effect> SpellUntargetedRiotUp(string playerId)

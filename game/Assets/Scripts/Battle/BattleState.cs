@@ -40,6 +40,10 @@ public class BattleState
 
     private List<ChallengeMove> serverMoveQueue;
     private List<ChallengeMove> deviceMoveQueue;
+    // true = a move is still being processed, do not process new moves
+    private bool isLocked;
+    // true = a server move that expects a device move exists, coroutine to reload in a few seconds is on
+    private bool isWaitingForDeviceMove;
 
     private static BattleState instance;
 
@@ -110,6 +114,8 @@ public class BattleState
     {
         this.serverMoveQueue = new List<ChallengeMove>();
         this.deviceMoveQueue = new List<ChallengeMove>();
+        this.isLocked = false;
+        this.isWaitingForDeviceMove = false;
 
         this.serverMoveCount = 0;
         this.deviceMoveCount = 0;
@@ -156,6 +162,8 @@ public class BattleState
     {
         this.serverMoveQueue = new List<ChallengeMove>();
         this.deviceMoveQueue = new List<ChallengeMove>();
+        this.isLocked = false;
+        this.isWaitingForDeviceMove = false;
 
         this.serverMoveCount = moveCount;
         this.deviceMoveCount = moveCount;
@@ -259,15 +267,15 @@ public class BattleState
 
     public void EndMulligan(bool isResume = false)
     {
+        BattleManager.Instance.HideMulliganOverlay();
+        this.mode = BATTLE_STATE_NORMAL_MODE;
+
         if (!isResume)
         {
             this.you.FinishMulligan(this.activePlayer.Id == this.you.Id);
             this.opponent.FinishMulligan(this.activePlayer.Id == this.opponent.Id, true);
             EffectManager.Instance.OnStartTurn(this.activePlayer.Id);
         }
-
-        BattleManager.Instance.HideMulliganOverlay();
-        this.mode = BATTLE_STATE_NORMAL_MODE;
     }
 
     public Player GetPlayerById(string playerId)
@@ -302,7 +310,7 @@ public class BattleState
 
     public bool CanReceiveChallengeMove()
     {
-        return !BattleManager.Instance.IsAnimating;
+        return !this.isLocked;
     }
 
     public int GetNewSpawnRank()
@@ -479,17 +487,24 @@ public class BattleState
         return this.opponent.GeneratePlayerState();
     }
 
+    public void SetIsLocked(bool isLocked)
+    {
+        this.isLocked = isLocked;
+    }
+
     /*
      * @param List<int> deckCardIndices - indices of cards opponent chose to put back in deck
      */
     private void ReceiveMovePlayMulligan(string playerId, List<int> deckCardIndices)
     {
         EffectManager.Instance.OnPlayMulligan(playerId, deckCardIndices);
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveFinishMulligan()
     {
         EffectManager.Instance.OnFinishMulligan();
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveEndTurn(string playerId)
@@ -509,6 +524,7 @@ public class BattleState
             activePlayer.Id,
             new UnityAction(ActualNextTurn)
         );
+        SetIsLocked(false);
     }
 
     private void ActualNextTurn()
@@ -534,6 +550,7 @@ public class BattleState
     {
         Player player = GetPlayerById(playerId);
         player.AddDrawnCardMulligan(card);
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveDrawCardHandFull(string playerId, Card card)
@@ -680,6 +697,7 @@ public class BattleState
             attackingTargetable,
             defendingTargetable
         );
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveRandomTarget(
@@ -695,6 +713,7 @@ public class BattleState
             fieldId,
             targetId
         );
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveSummonCreature(
@@ -726,6 +745,7 @@ public class BattleState
         {
             Debug.LogError("Invalid card category for summon creature move.");
         }
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveSummonCreatureFieldFull(
@@ -756,6 +776,7 @@ public class BattleState
         {
             Debug.LogError("Invalid card category for summon creature field full move.");
         }
+        SetIsLocked(false);
     }
 
     private void ReceiveMoveConvertCreature(
@@ -765,6 +786,7 @@ public class BattleState
     )
     {
         EffectManager.Instance.OnCreatureConvert(playerId, fieldId, targetId);
+        SetIsLocked(false);
     }
 
     public void ReceiveMoveSurrenderByChoice(string playerId)
@@ -778,6 +800,8 @@ public class BattleState
         challengeMove.SetPlayerId(GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
         AddDeviceMove(challengeMove);
+
+        SetIsLocked(false);
     }
 
     public void ReceiveMoveSurrenderByExpire(string playerId)
@@ -791,6 +815,8 @@ public class BattleState
         challengeMove.SetPlayerId(GetOpponentIdByPlayerId(playerId));
         challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_CHALLENGE_OVER);
         AddDeviceMove(challengeMove);
+
+        SetIsLocked(false);
     }
 
     //{
@@ -818,6 +844,8 @@ public class BattleState
 
     public void ReceiveMoveChallengeOver(string winnerId)
     {
+        SetIsLocked(false);
+
         if (this.challengeEndState == null)
         {
             Debug.LogError("Function should not be called unless challenge end state is set.");
@@ -863,7 +891,7 @@ public class BattleState
      */
     public int ProcessMoveQueue()
     {
-        if (this.serverMoveQueue.Count <= 0)
+        if (this.isLocked || this.serverMoveQueue.Count <= 0)
         {
             return -1;
         }
@@ -897,6 +925,12 @@ public class BattleState
         }
         else if (this.deviceMoveQueue.Count <= 0)
         {
+            if (FlagHelper.IsServerEnabled() && !this.isWaitingForDeviceMove)
+            {
+                Debug.LogWarning(string.Format("Starting to wait on device move: {0}", serverMove.Rank));
+                this.isWaitingForDeviceMove = true;
+                BattleManager.Instance.WaitForDeviceMove(serverMove.Rank);
+            }
             return -1;
         }
         else
@@ -920,7 +954,6 @@ public class BattleState
                 {
                     ReloadBattleOnError();
                 }
-
                 return -1;
             }
 
@@ -928,6 +961,15 @@ public class BattleState
         }
 
         this.serverMoveQueue.RemoveAt(0);
+        SetIsLocked(true);
+        Debug.Log(
+            string.Format(
+                "[LOCKED] Server move queue ADD for {0} with rank {1}",
+                serverMove.PlayerId != null ? GetPlayerById(serverMove.PlayerId).Name : "_",
+                serverMove.Rank
+            )
+        );
+
         if (
             !(
                 serverMove.PlayerId == this.you.Id &&
@@ -950,6 +992,7 @@ public class BattleState
             PLAYER_SKIP_CHALLENGE_MOVES.Contains(serverMove.Category)
         )
         {
+            SetIsLocked(false);
             return -1;
         }
 
@@ -1159,6 +1202,22 @@ public class BattleState
         else
         {
             Debug.LogError("Reload battle function called when not in server mode.");
+        }
+    }
+
+    public void CheckForDeviceMove(int moveRank)
+    {
+        if (this.serverMoveQueue.Count > 0 && this.serverMoveQueue[0].Rank == moveRank)
+        {
+            Debug.LogError("Server move waiting on device move error!");
+            if (FlagHelper.IsServerEnabled())
+            {
+                ReloadBattleOnError();
+            }
+        }
+        else
+        {
+            this.isWaitingForDeviceMove = false;
         }
     }
 

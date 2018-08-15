@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -1240,5 +1241,16 @@ public class BattleManager : MonoBehaviour
         battleCardObject.transform.parent = transform;
         battleCardObject.gameObject.SetActive(true);
         return battleCardObject;
+    }
+
+    public void WaitForDeviceMove(int moveRank)
+    {
+        StartCoroutine("WaitForDeviceMoveCoroutine", moveRank);
+    }
+
+    private IEnumerator WaitForDeviceMoveCoroutine(int moveRank)
+    {
+        yield return new WaitForSeconds(3);
+        BattleState.Instance().CheckForDeviceMove(moveRank);
     }
 }

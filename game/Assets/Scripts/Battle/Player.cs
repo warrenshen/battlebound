@@ -505,7 +505,7 @@ public class Player
                     BattleCardObject battleCardObject = AddMulliganCard(
                         this.replaceMulliganCards[replaceCardIndex],
                         replaceMulliganIndex,
-                        new UnityAction(() => EffectManager.Instance.OnDrawMulliganFinish(this.id))
+                        () => EffectManager.Instance.OnDrawMulliganFinish(this.id)
                     );
                 }
                 else
