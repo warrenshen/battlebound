@@ -203,6 +203,14 @@ public class Hand
         }
     }
 
+    public void RenderCards()
+    {
+        foreach (BattleCardObject element in this.battleCardObjects)
+        {
+            RedrawOutline(element);
+        }
+    }
+
     private void RedrawOutline(BattleCardObject battleCardObject)
     {
         Player player = BattleState.Instance().GetPlayerById(battleCardObject.Owner.Id);
@@ -214,6 +222,5 @@ public class Hand
         }
 
         battleCardObject.visual.SetOutline(shouldSetOutline);
-        //battleCardObject.visual.Redraw();
     }
 }

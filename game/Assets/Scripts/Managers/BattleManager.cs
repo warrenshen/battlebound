@@ -343,7 +343,7 @@ public class BattleManager : MonoBehaviour
 
     public void SetBoardCenterText(string message)
     {
-        // TODO: Cache!
+        // TODO: Cache! change to UI element and animate in the middle
         this.boardMessageGameObject.GetComponent<TextMeshPro>().text = message;
     }
 

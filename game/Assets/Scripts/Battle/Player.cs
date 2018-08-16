@@ -195,6 +195,11 @@ public class Player
             .setEaseOutQuart();
     }
 
+    public void RenderTurnEnd()
+    {
+        Hand.RenderCards();
+    }
+
     public void RenderGameStart()
     {
         RenderMana();
