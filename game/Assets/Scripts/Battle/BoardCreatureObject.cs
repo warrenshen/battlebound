@@ -203,6 +203,11 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         FXPoolManager.Instance.PlayEffect("DeathwishVFX", this.transform.position);
     }
 
+    public void RenderWarcry()
+    {
+        FXPoolManager.Instance.PlayEffect("WarcryVFX", this.transform.position);
+    }
+
     /*
      * @return int - amount of health healed
      */

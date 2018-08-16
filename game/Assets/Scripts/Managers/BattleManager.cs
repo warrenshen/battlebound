@@ -671,23 +671,20 @@ public class BattleManager : MonoBehaviour
 
     public void HideMulliganOverlay()
     {
-        GameObject overlay = GameObject.Find("Mulligan Overlay");
+        RectTransform overlay = GameObject.Find("Mulligan Canvas").GetComponent<RectTransform>();
         EnableIsAnimating();
-        LeanTween.move(
+        LeanTween.alpha(
             overlay,
-            overlay.transform.position + overlay.transform.up * -3,
-            CardTween.TWEEN_DURATION
-        );
-        LeanTween
-            .scale(overlay, Vector3.zero, CardTween.TWEEN_DURATION)
-            .setOnComplete(() =>
-            {
-                overlay.SetActive(false);
+            0,
+            CardTween.TWEEN_DURATION * 2
+        ).setOnComplete(() =>
+        {
+            overlay.gameObject.SetActive(false);
 
-                SetBoardCenterText(string.Format("{0} Turn", BattleState.Instance().ActivePlayer.Name));
-                SetPassiveCursor();
-                DisableIsAnimating();
-            });
+            SetBoardCenterText(string.Format("{0} Turn", BattleState.Instance().ActivePlayer.Name));
+            SetPassiveCursor();
+            DisableIsAnimating();
+        });
     }
 
     public void ToggleMulliganCard(BattleCardObject battleCardObject)

@@ -176,7 +176,7 @@ public class Hand
             float pos = -((size - 1) / 2.0f) + k;
             float vertical = -0.15f * Mathf.Abs(pos) + Random.Range(-0.1f, 0.1f);
 
-            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.2f, 0.15f * pos, vertical);
+            Vector3 adjustedPos = new Vector3(pos * cardWidth * 1.1f, 0.15f * pos, vertical);
             CardTween.moveLocal(battleCardObject, adjustedPos, CardTween.TWEEN_DURATION);
 
             if (k == size - 1)

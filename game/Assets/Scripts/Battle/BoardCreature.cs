@@ -309,6 +309,11 @@ public class BoardCreature : Targetable
         this.boardCreatureObject.Redraw();
     }
 
+    public void Warcry()
+    {
+        this.boardCreatureObject.RenderWarcry();
+    }
+
     public void Deathwish()
     {
         this.boardCreatureObject.RenderDeathwish();

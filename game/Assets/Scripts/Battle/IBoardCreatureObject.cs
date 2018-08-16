@@ -14,6 +14,8 @@ public interface IBoardCreatureObject
 
     void RenderDeathwish();
 
+    void RenderWarcry();
+
     void Die();
 
     bool HasAbility(string ability);

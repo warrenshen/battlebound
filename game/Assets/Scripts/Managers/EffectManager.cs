@@ -619,6 +619,7 @@ public class EffectManager : MonoBehaviour
         string cardId = effect.CardId;
 
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
+        boardCreature.Warcry();
 
         yield return new WaitForSeconds(0.5f);
 
@@ -2360,8 +2361,10 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        GameObject vfx = FXPoolManager.Instance.PlayEffect("RazeToAshesVFX");
-        SoundManager.Instance.PlaySound("FireSpellSFX", vfx.transform.position);
+        string opponentId = BattleState.Instance().GetOpponentIdByPlayerId(playerId);
+        Vector3 position = Board.Instance().GetFieldByPlayerId(opponentId).GetBoardPlaceByIndex(2).transform.position;
+        GameObject vfx = FXPoolManager.Instance.PlayEffect("RazeToAshesVFX", position);
+        SoundManager.Instance.PlaySound("FireSpellSFX", position);
 
         foreach (BoardCreature targetedCreature in opponentAliveCreatures)
         {

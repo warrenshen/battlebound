@@ -29,6 +29,9 @@ public class BoardCreatureMock : IBoardCreatureObject
     public void RenderDeathwish()
     { }
 
+    public void RenderWarcry()
+    { }
+
     public void Die()
     { }
 

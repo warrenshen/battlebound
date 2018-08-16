@@ -176,7 +176,8 @@ public class BattleCardObject : CardObject
             if (this.visual.transform.localScale.x <= CARD_VISUAL_SIZE.x && !LeanTween.isTweening(this.visual.gameObject))
             {
                 this.visual.transform.localScale *= 1.1f;
-                //LeanTween.scale(this.visual.gameObject, this.visual.transform.localScale * 1.1f, 0.05f);
+                ActionManager.Instance.SetCursor(1);
+                SoundManager.Instance.PlaySound("HoverShimmerSFX", this.transform.position);
             }
             return;
         }
@@ -209,8 +210,6 @@ public class BattleCardObject : CardObject
         {
             BattleManager.Instance.SetPassiveCursor();
             this.visual.transform.localScale = this.visual.reset.scale;
-            //LeanTween.cancel(this.visual.gameObject);
-            //LeanTween.scale(this.visual.gameObject, CARD_VISUAL_SIZE, 0.05f);
             return;
         }
         if (ActionManager.Instance.HasDragTarget())
@@ -226,6 +225,7 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             BattleManager.Instance.ToggleMulliganCard(this);
+            SoundManager.Instance.PlaySound("MulliganAction", this.transform.position);
             return;
         }
         if (!this.owner.HasTurn)
@@ -236,7 +236,6 @@ public class BattleCardObject : CardObject
         this.SetThisResetValues();
 
         LeanTween.scale(this.visual.gameObject, this.visual.reset.scale, 0.05f);
-        //this.visual.transform.localScale = this.visual.reset.scale;
         this.visual.transform.localPosition = this.visual.reset.position;
 
         ActionManager.Instance.SetDragTarget(this);
