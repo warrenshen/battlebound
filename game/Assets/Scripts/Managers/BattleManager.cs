@@ -627,6 +627,7 @@ public class BattleManager : MonoBehaviour
         BattleCardObject battleCardObject,
         int position,
         int mulliganCount,
+        bool isReplace = false,
         UnityAction onAnimateFinish = null
     )
     {
@@ -666,7 +667,19 @@ public class BattleManager : MonoBehaviour
                 mulliganPosition, //targetPoint.transform.position + Vector3.up * 2.3F + Vector3.back * 0.2F
                 CardTween.TWEEN_DURATION
             )
-            .setEaseInQuad();
+            .setEaseInQuad()
+            .setOnComplete(() =>
+            {
+                if (isReplace)
+                {
+                    battleCardObject.noInteraction = true;
+                }
+                else
+                {
+                    battleCardObject.noInteraction = false;
+                }
+                Debug.Log(battleCardObject.noInteraction);
+            });
     }
 
     public void HideMulliganOverlay()

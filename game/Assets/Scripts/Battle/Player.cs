@@ -465,10 +465,21 @@ public class Player
         // since the ReplaceCardByMulligan call removes cards from hand by index.
         for (int i = this.mulliganCards.Count - 1; i >= 0; i -= 1)
         {
+            Card mulliganCard = this.mulliganCards[i];
+
+            if (mulliganCard.wrapper == null)
+            {
+                Debug.LogError("Mulligan card does not have wrapper.");
+            }
+            else
+            {
+                mulliganCard.wrapper.noInteraction = true;
+                Debug.Log(mulliganCard.wrapper.noInteraction);
+            }
+
             if (this.replaceMulliganIndices.Contains(i))
             {
-                Card removeCard = this.mulliganCards[i];
-                ReplaceCardByMulligan(removeCard, i);
+                ReplaceCardByMulligan(mulliganCard, i);
 
                 ChallengeMove challengeMove = new ChallengeMove();
                 challengeMove.SetPlayerId(this.id);
@@ -505,6 +516,7 @@ public class Player
                     BattleCardObject battleCardObject = AddMulliganCard(
                         this.replaceMulliganCards[replaceCardIndex],
                         replaceMulliganIndex,
+                        true,
                         () => EffectManager.Instance.OnDrawMulliganFinish(this.id)
                     );
                 }
@@ -512,7 +524,8 @@ public class Player
                 {
                     BattleCardObject battleCardObject = AddMulliganCard(
                         this.replaceMulliganCards[replaceCardIndex],
-                        replaceMulliganIndex
+                        replaceMulliganIndex,
+                        true
                     );
                 }
                 replaceCardIndex += 1;
@@ -553,7 +566,15 @@ public class Player
         }
     }
 
-    public BattleCardObject AddMulliganCard(Card card, int index, UnityAction onAnimationFinish = null)
+    /*
+     * @param bool isReplace - whether the card is a mulligan card replacing one
+     */
+    public BattleCardObject AddMulliganCard(
+        Card card,
+        int index,
+        bool isReplace = false,
+        UnityAction onAnimationFinish = null
+    )
     {
         BattleCardObject battleCardObject = BattleManager.Instance.InitializeBattleCardObject(
             this,
@@ -572,6 +593,7 @@ public class Player
             battleCardObject,
             index,
             this.mulliganCards.Count,
+            isReplace,
             onAnimationFinish
         );
 
