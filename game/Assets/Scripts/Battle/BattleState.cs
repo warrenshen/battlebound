@@ -516,7 +516,7 @@ public class BattleState
         }
 
         SoundManager.Instance.PlaySound(
-            "GongSFX",
+            "EndTurnSFX",
             BattleManager.Instance.EndTurnButton.transform.position
         );
         this.activePlayer.EndTurn();
@@ -529,12 +529,12 @@ public class BattleState
 
     private void ActualNextTurn()
     {
+        players[turnIndex % players.Count].RenderTurnEnd();
+
         turnIndex++;
         activePlayer = players[turnIndex % players.Count];
 
-        //do some turn transition render
-        //SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
-        //SetPassiveCursor();
+        BattleManager.Instance.SetBoardCenterText(string.Format("{0} Turn", activePlayer.Name));
 
         activePlayer.NewTurn();
         EffectManager.Instance.OnStartTurn(activePlayer.Id);
@@ -574,7 +574,7 @@ public class BattleState
     private void ReceiveMoveDrawCardDeckEmpty(string playerId)
     {
         Player player = GetPlayerById(playerId);
-        // TODO: animate and remove debug.
+        // TODO: animate and remove debug. apply fatigue damage
         Debug.Log("Receive move draw card deck empty");
         player.RepositionCards(() => EffectManager.Instance.OnDrawCardFinish());
     }
