@@ -19,8 +19,6 @@ contract UniformPriceAuction is Ownable {
   uint256 blockStart;
   // Uniform price winners pay.
   uint256 fulfillPrice;
-  // Count of winner fulfills - must be 0 to initialize new auction.
-  // uint256 fulfillCount;
 
   struct Bid {
     uint256 amount;
@@ -48,7 +46,6 @@ contract UniformPriceAuction is Ownable {
 
     blockStart = block.number;
     fulfillPrice = _minimumBid;
-    // fulfillCount = _N;
   }
 
   function submitBid(uint256 _index) external payable {
@@ -96,6 +93,7 @@ contract UniformPriceAuction is Ownable {
 
   function fulfillBid(uint256 _index) external onlyOwner {
     require(_index < N);
+    require(block.number > blockStart + duration);
 
     Bid storage bid = indexToBid[_index];
     uint256 amount = bid.amount;
@@ -107,6 +105,20 @@ contract UniformPriceAuction is Ownable {
 
     owner.send(fulfillPrice);
     winner.send(amount - fulfillPrice);
+  }
+
+  function refundBid(uint256 _index) external onlyOwner {
+    require(_index < N);
+    require(block.number > blockStart + duration);
+
+    Bid storage bid = indexToBid[_index];
+    uint256 amount = bid.amount;
+
+    address winner = bid.bidder;
+    bid.amount = 0;
+    bid.bidder = address(0);
+
+    winner.send(amount);
   }
 
   function bidByIndex(uint256 _index)
@@ -127,9 +139,9 @@ contract UniformPriceAuction is Ownable {
       uint256
     )
   {
-    uint256 lowestBidAmountOne = 0;
-    uint256 lowestBidAmountTwo = 0;
-    uint256 lowestBidAmountThree = 0;
+    uint256 lowestBidAmountOne = 2**256 - 1;
+    uint256 lowestBidAmountTwo = 2**256 - 1;
+    uint256 lowestBidAmountThree = 2**256 - 1;
 
     uint256 lowestBidIndexOne = 0;
     uint256 lowestBidIndexTwo = 0;
@@ -139,30 +151,37 @@ contract UniformPriceAuction is Ownable {
 
     for (uint256 i = 0; i < N; i += 1) {
       bid = indexToBid[i];
-      if (bid.amount > 0) {
-        if (lowestBidAmountOne == 0 || bid.amount < lowestBidAmountOne) {
-          lowestBidAmountOne = bid.amount;
-          lowestBidIndexOne = i;
-        }
+      if (bid.amount < lowestBidAmountOne) {
+        lowestBidAmountOne = bid.amount;
+        lowestBidIndexOne = i;
+      }
+      if (bid.amount == 0) {
+        break;
       }
     }
 
     for (uint256 j = 0; j < N; j += 1) {
       bid = indexToBid[j];
-      if (j != lowestBidIndexOne && bid.amount > 0) {
-        if (lowestBidAmountTwo == 0 || bid.amount < lowestBidAmountTwo) {
+      if (j != lowestBidIndexOne) {
+        if (bid.amount < lowestBidAmountTwo) {
           lowestBidAmountTwo = bid.amount;
           lowestBidIndexTwo = j;
+        }
+        if (bid.amount == 0) {
+          break;
         }
       }
     }
 
     for (uint256 k = 0; k < N; k += 1) {
       bid = indexToBid[k];
-      if (k != lowestBidIndexOne && k != lowestBidIndexTwo && bid.amount > 0) {
-        if (lowestBidAmountThree == 0 || bid.amount < lowestBidAmountThree) {
+      if (k != lowestBidIndexOne && k != lowestBidIndexTwo) {
+        if (bid.amount < lowestBidAmountThree) {
           lowestBidAmountThree = bid.amount;
           lowestBidIndexThree = k;
+        }
+        if (bid.amount == 0) {
+          break;
         }
       }
     }

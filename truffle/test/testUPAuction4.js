@@ -306,4 +306,158 @@ contract('UniformPriceAuction', function(accounts) {
       assert.equal(blockStart > 0, true, "block start should be greater than 0");
     });
   });
+
+  describe ("revert", function() {
+    const auctionDuration = 310;
+
+    // BEFORE NOT BEFORE EACH
+    before(async function() {
+      contract = await UniformPriceAuction.new();
+      miner = await BlockMiner.new();
+      await contract.initializeAuction(
+        "UniformPriceAuction",
+        N,
+        auctionDuration,
+        minimumBid,
+        minimumIncrease,
+        { from: minter }
+      );
+      await contract.submitBid(
+        0,
+        {
+          from: buyer,
+          value: minimumBid
+        }
+      );
+      await contract.submitBid(
+        0,
+        {
+          from: buyer,
+          value: minimumBid + minimumIncrease * 10
+        }
+      );
+      await contract.submitBid(
+        0,
+        {
+          from: buyerTwo,
+          value: minimumBid + minimumIncrease * 20
+        }
+      );
+      await contract.submitBid(
+        1,
+        {
+          from: buyerTwo,
+          value: minimumBid
+        }
+      );
+      await contract.submitBid(
+        2,
+        {
+          from: buyerTwo,
+          value: minimumBid
+        }
+      );
+      await contract.submitBid(
+        1,
+        {
+          from: buyer,
+          value: minimumBid + minimumIncrease
+        }
+      );
+
+      for (var i = 0; i < 400; i += 1) {
+        transaction = await miner.mine();
+      }
+    });
+
+    it ("should allow update fulfill price by buyer", async function() {
+      const transaction = await contract.updateFulfillPrice(
+        2,
+        { from: buyer }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+
+      const fulfillPrice = await contract.getFulfillPrice.call();
+      assert.equal(fulfillPrice, minimumBid);
+    });
+
+    it ("should allow update fulfill price but do nothing for bad price", async function() {
+      const transaction = await contract.updateFulfillPrice(
+        1,
+        { from: minter }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+
+      const fulfillPrice = await contract.getFulfillPrice.call();
+      assert.equal(fulfillPrice, minimumBid);
+    });
+
+    it ("should allow privileged address to refund bid", async function() {
+      let contractBalance;
+      contractBalance = web3.eth.getBalance(contract.address).toNumber();
+      assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 21);
+
+      const beforeOwnerBalance = web3.eth.getBalance(minter).toNumber();
+      const beforeBuyerBalance = web3.eth.getBalance(buyer).toNumber();
+      const beforeBuyerTwoBalance = web3.eth.getBalance(buyerTwo).toNumber();
+
+      const transaction = await contract.refundBid(
+        0,
+        { from: minter }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+
+      const afterOwnerBalance = web3.eth.getBalance(minter).toNumber();
+      assert.equal(beforeOwnerBalance > afterOwnerBalance, true);
+
+      const afterBuyerBalance = web3.eth.getBalance(buyer).toNumber();
+      assert.equal(beforeBuyerBalance, afterBuyerBalance);
+
+      const afterBuyerTwoBalance = web3.eth.getBalance(buyerTwo).toNumber();
+      assert.equal(afterBuyerTwoBalance, beforeBuyerTwoBalance + minimumBid + minimumIncrease * 20);
+
+      contractBalance = web3.eth.getBalance(contract.address).toNumber();
+      assert.equal(contractBalance, minimumBid * 2 + minimumIncrease);
+    });
+
+    it ("should allow privileged address to refund another bid", async function() {
+      let contractBalance;
+      contractBalance = web3.eth.getBalance(contract.address).toNumber();
+      assert.equal(contractBalance, minimumBid * 2 + minimumIncrease);
+
+      const beforeOwnerBalance = web3.eth.getBalance(minter).toNumber();
+
+      const transaction = await contract.refundBid(
+        1,
+        { from: minter }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+
+      const afterOwnerBalance = web3.eth.getBalance(minter).toNumber();
+      assert.equal(beforeOwnerBalance > afterOwnerBalance, true);
+
+      contractBalance = web3.eth.getBalance(contract.address).toNumber();
+      assert.equal(contractBalance, minimumBid);
+    });
+
+    it ("should allow privileged address to fulfill last bid", async function() {
+      let contractBalance;
+      contractBalance = web3.eth.getBalance(contract.address).toNumber();
+      assert.equal(contractBalance, minimumBid);
+
+      const beforeOwnerBalance = web3.eth.getBalance(minter).toNumber();
+
+      const transaction = await contract.refundBid(
+        2,
+        { from: minter }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+
+      const afterOwnerBalance = web3.eth.getBalance(minter).toNumber();
+      assert.equal(beforeOwnerBalance > afterOwnerBalance, true);
+
+      contractBalance = web3.eth.getBalance(contract.address).toNumber();
+      assert.equal(contractBalance, 0);
+    });
+  });
 });

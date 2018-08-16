@@ -9,7 +9,7 @@ contract('UniformPriceAuction', function(accounts) {
   const buyer = accounts[1];
   const buyerTwo = accounts[2];
 
-  const N = 100;
+  const N = 6;
   const auctionDuration = 3600;
   const minimumBid = 1e16;
   const minimumIncrease = 1e15;
@@ -110,6 +110,11 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(lowestBidIndexTwo, 1, "lowest bid index is incorrect");
         assert.equal(lowestBidIndexThree, 4, "lowest bid index is incorrect");
       });
+
+      it ("should support highest bid amount", async function() {
+        const highestBidAmount = await contract.highestBidAmount.call();
+        assert.equal(highestBidAmount, minimumBid + minimumIncrease * 20);
+      });
     });
 
     describe ("same bid amounts", function() {
@@ -192,6 +197,42 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(lowestBidIndexOne, 1, "lowest bid index is incorrect");
         assert.equal(lowestBidIndexTwo, 2, "lowest bid index is incorrect");
         assert.equal(lowestBidIndexThree, 5, "lowest bid index is incorrect");
+      });
+
+      it ("should support highest bid amount", async function() {
+        const highestBidAmount = await contract.highestBidAmount.call();
+        assert.equal(highestBidAmount, minimumBid + minimumIncrease * 5);
+      });
+    });
+
+    describe ("no bids", function() {
+      // BEFORE NOT BEFORE EACH
+      before(async function() {
+        contract = await UniformPriceAuction.new();
+        await contract.initializeAuction(
+          "UniformPriceAuction",
+          N,
+          auctionDuration,
+          minimumBid,
+          minimumIncrease,
+          { from: minter }
+        );
+      });
+
+      it ("should support indices of three lowest bids", async function() {
+        const [
+          lowestBidIndexOne,
+          lowestBidIndexTwo,
+          lowestBidIndexThree
+        ] = await contract.indicesOfThreeLowestBids.call();
+        assert.equal(lowestBidIndexOne, 0, "lowest bid index is incorrect");
+        assert.equal(lowestBidIndexTwo, 1, "lowest bid index is incorrect");
+        assert.equal(lowestBidIndexThree, 2, "lowest bid index is incorrect");
+      });
+
+      it ("should support highest bid amount", async function() {
+        const highestBidAmount = await contract.highestBidAmount.call();
+        assert.equal(highestBidAmount, 0);
       });
     });
   });
