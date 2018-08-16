@@ -1302,7 +1302,9 @@ public class EffectManager : MonoBehaviour
         List<Effect> effects = new List<Effect>();
         List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
 
-        FXPoolManager.Instance.PlayEffect("SiphonerVFX");
+        string opponentId = BattleState.Instance().GetOpponentIdByPlayerId(playerId);
+        Vector3 position = Board.Instance().GetFieldCenterByPlayerId(opponentId);
+        FXPoolManager.Instance.PlayEffectLookAt("SiphonerVFX", position);
 
         foreach (BoardCreature boardCreature in opponentCreatures)
         {
@@ -2362,7 +2364,7 @@ public class EffectManager : MonoBehaviour
         List<Effect> effects = new List<Effect>();
 
         string opponentId = BattleState.Instance().GetOpponentIdByPlayerId(playerId);
-        Vector3 position = Board.Instance().GetFieldByPlayerId(opponentId).GetBoardPlaceByIndex(2).transform.position;
+        Vector3 position = Board.Instance().GetFieldCenterByPlayerId(opponentId);
         GameObject vfx = FXPoolManager.Instance.PlayEffect("RazeToAshesVFX", position);
         SoundManager.Instance.PlaySound("FireSpellSFX", position);
 

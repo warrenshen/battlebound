@@ -101,6 +101,13 @@ public class FXPoolManager : MonoBehaviour
         return chosen.gameObject;
     }
 
+    public void PlayEffectLookAt(string effect, Vector3 point)
+    {
+        Transform chosen = GetEffect(effect);
+        chosen.LookAt(point);
+        chosen.gameObject.SetActive(true);
+    }
+
     public void PlayEffectLookAt(string effect, Transform from, Transform to)
     {
         Transform chosen = GetEffect(effect);
@@ -111,7 +118,7 @@ public class FXPoolManager : MonoBehaviour
         }
         else
         {
-            chosen.LookAt(from.position - from.up);
+            chosen.LookAt(from.position - from.up);  //look forward/up
         }
         chosen.gameObject.SetActive(true);
     }

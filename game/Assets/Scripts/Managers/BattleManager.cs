@@ -74,6 +74,8 @@ public class BattleManager : MonoBehaviour
     private GameObject battleCardObjectPrefab;
     private Stack<BattleCardObject> battleCardObjectPool;
 
+    private Collider lastHoverCollider;
+
     public static BattleManager Instance { get; private set; }
 
     private void Awake()
@@ -272,17 +274,20 @@ public class BattleManager : MonoBehaviour
                     hit.collider.gameObject.layer == battleLayer &&
                     this.mouseDownTargetableObject != null &&
                     hit.collider.gameObject != this.mouseDownTargetableObject.gameObject &&
-                    this.validTargets.Contains(hit.collider.GetComponent<TargetableObject>())
+                    this.validTargets.Contains(hit.collider.GetComponent<TargetableObject>()) &&
+                    this.lastHoverCollider != hit.collider
                 )
                 {
                     ActionManager.Instance.SetCursor(5);  //valid target!
                     this.attackCommand.SetWidth(ACTIVE_ATTACK_ARROW_WIDTH);
+                    SoundManager.Instance.PlaySound("AttackHoverSFX", hit.point);
                 }
-                else
+                else if (this.lastHoverCollider != hit.collider)
                 {
                     ActionManager.Instance.SetCursor(4);
                     this.attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
                 }
+                this.lastHoverCollider = hit.collider;
             }
         }
         else

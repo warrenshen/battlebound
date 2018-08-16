@@ -293,6 +293,13 @@ public class Board
         return -1;
     }
 
+    public Vector3 GetFieldCenterByPlayerId(string playerId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        Vector3 midpoint = (playingField.GetBoardPlaceByIndex(2).position + playingField.GetBoardPlaceByIndex(3).position) / 2.0f;
+        return midpoint;
+    }
+
     //[System.Serializable]
     public class PlayingField
     {
