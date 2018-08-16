@@ -1300,8 +1300,9 @@ public class EffectManager : MonoBehaviour
         string playerId = effect.PlayerId;
 
         List<Effect> effects = new List<Effect>();
-
         List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        FXPoolManager.Instance.PlayEffect("SiphonerVFX");
 
         foreach (BoardCreature boardCreature in opponentCreatures)
         {
@@ -2399,6 +2400,8 @@ public class EffectManager : MonoBehaviour
 
         List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
         List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
+
+        FXPoolManager.Instance.PlayEffect("SilenceOfLambsVFX");
 
         foreach (BoardCreature boardCreature in playerCreatures)
         {
