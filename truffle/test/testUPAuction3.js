@@ -38,7 +38,7 @@ contract('UniformPriceAuction', function(accounts) {
           }
         );
 
-        const duration = await contract.getDuration.call();
+        const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration);
       });
     });
@@ -101,7 +101,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-        const duration = await contract.getDuration.call();
+        const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration);
 
         for (var i = 0; i < 10; i += 1) {
@@ -119,7 +119,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-        const duration = await contract.getDuration.call();
+        const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration + 300);
       });
     });
@@ -148,7 +148,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-        const duration = await contract.getDuration.call();
+        const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration + 300);
       });
     });

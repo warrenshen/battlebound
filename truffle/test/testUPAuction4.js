@@ -196,7 +196,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-      const fulfillPrice = await contract.getFulfillPrice.call();
+      const fulfillPrice = await contract.fulfillPrice.call();
       assert.equal(fulfillPrice, minimumBid);
     });
 
@@ -207,7 +207,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-      const fulfillPrice = await contract.getFulfillPrice.call();
+      const fulfillPrice = await contract.fulfillPrice.call();
       assert.equal(fulfillPrice, minimumBid);
     });
 
@@ -296,18 +296,18 @@ contract('UniformPriceAuction', function(accounts) {
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-      const name = await contract.getName.call();
+      const name = await contract.name.call();
       assert.equal(name, "UniformPriceAuction2", "name is not correct");
 
-      const duration = await contract.getDuration.call();
+      const duration = await contract.duration.call();
       assert.equal(duration, auctionDuration * 2);
 
-      const blockStart = await contract.getBlockStart.call();
+      const blockStart = await contract.blockStart.call();
       assert.equal(blockStart > 0, true, "block start should be greater than 0");
     });
   });
 
-  describe ("revert", function() {
+  describe ("refund", function() {
     const auctionDuration = 310;
 
     // BEFORE NOT BEFORE EACH
@@ -370,28 +370,6 @@ contract('UniformPriceAuction', function(accounts) {
       }
     });
 
-    it ("should allow update fulfill price by buyer", async function() {
-      const transaction = await contract.updateFulfillPrice(
-        2,
-        { from: buyer }
-      );
-      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
-
-      const fulfillPrice = await contract.getFulfillPrice.call();
-      assert.equal(fulfillPrice, minimumBid);
-    });
-
-    it ("should allow update fulfill price but do nothing for bad price", async function() {
-      const transaction = await contract.updateFulfillPrice(
-        1,
-        { from: minter }
-      );
-      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
-
-      const fulfillPrice = await contract.getFulfillPrice.call();
-      assert.equal(fulfillPrice, minimumBid);
-    });
-
     it ("should allow privileged address to refund bid", async function() {
       let contractBalance;
       contractBalance = web3.eth.getBalance(contract.address).toNumber();
@@ -440,7 +418,7 @@ contract('UniformPriceAuction', function(accounts) {
       assert.equal(contractBalance, minimumBid);
     });
 
-    it ("should allow privileged address to fulfill last bid", async function() {
+    it ("should allow privileged address to refund last bid", async function() {
       let contractBalance;
       contractBalance = web3.eth.getBalance(contract.address).toNumber();
       assert.equal(contractBalance, minimumBid);

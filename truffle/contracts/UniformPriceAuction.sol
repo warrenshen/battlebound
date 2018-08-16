@@ -4,21 +4,20 @@ import "./Ownable.sol";
 
 contract UniformPriceAuction is Ownable {
   // Human-readable name of auction.
-  string name;
+  string public name;
   // Number of items on auction.
-  uint256 N;
+  uint256 public N;
   // Length of auction in unit of blocks, can change on valid bids.
-  uint256 duration;
+  uint256 public duration;
   // Minimum amount a bid must be to be valid.
-  uint256 minimumBid;
+  uint256 public minimumBid;
   // Minimum amount more a bid must be to beat another.
-  uint256 minimumIncrease;
-  // uint256 minimumBid = 50 finney;
+  uint256 public minimumIncrease;
 
   // Block number when auction starts.
-  uint256 blockStart;
+  uint256 public blockStart;
   // Uniform price winners pay.
-  uint256 fulfillPrice;
+  uint256 public fulfillPrice;
 
   struct Bid {
     uint256 amount;
@@ -204,19 +203,39 @@ contract UniformPriceAuction is Ownable {
     return highestBid;
   }
 
-  function getName() external view returns (string) {
-    return name;
+  function highestBid() external view returns (uint256, address) {
+    uint256 highestBidAmount = 0;
+    address highestBidBidder = address(0);
+
+    Bid storage bid;
+
+    for (uint256 i = 0; i < N; i += 1) {
+      bid = indexToBid[i];
+      if (bid.amount > highestBidAmount) {
+        highestBidAmount = bid.amount;
+        highestBidBidder = bid.bidder;
+      }
+    }
+
+    return (highestBidAmount, highestBidBidder);
   }
 
-  function getDuration() external view returns (uint256) {
-    return duration;
-  }
+  function indicesCountOfOwner(address _owner)
+    external
+    view
+    returns (uint256)
+  {
+    uint256 count = 0;
 
-  function getFulfillPrice() external view returns (uint256) {
-    return fulfillPrice;
-  }
+    Bid storage bid;
 
-  function getBlockStart() external view returns (uint256) {
-    return blockStart;
+    for (uint256 i = 0; i < N; i += 1) {
+      bid = indexToBid[i];
+      if (bid.bidder == _owner) {
+        count += 1;
+      }
+    }
+
+    return count;
   }
 }

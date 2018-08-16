@@ -145,7 +145,7 @@ contract('UniformPriceAuction', function(accounts) {
         const highestBidAmount = await contract.highestBidAmount.call();
         assert.equal(highestBidAmount, bidAmount);
 
-        const fulfillPrice = await contract.getFulfillPrice.call();
+        const fulfillPrice = await contract.fulfillPrice.call();
         assert.equal(fulfillPrice, bidAmount);
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
@@ -224,6 +224,9 @@ contract('UniformPriceAuction', function(accounts) {
 
         contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, bidAmount);
+
+        const indicesCount = await contract.indicesCountOfOwner.call(buyer);
+        assert.equal(indicesCount, 1);
       });
 
       it ("should allow bid greater than previous bid by other", async function() {
@@ -248,6 +251,13 @@ contract('UniformPriceAuction', function(accounts) {
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, bidAmount);
+
+        let indicesCount;
+        indicesCount = await contract.indicesCountOfOwner.call(buyer);
+        assert.equal(indicesCount, 0);
+
+        indicesCount = await contract.indicesCountOfOwner.call(buyerTwo);
+        assert.equal(indicesCount, 1);
       });
     });
 
@@ -312,6 +322,9 @@ contract('UniformPriceAuction', function(accounts) {
 
         contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 3);
+
+        const indicesCount = await contract.indicesCountOfOwner.call(buyer);
+        assert.equal(indicesCount, 3);
       });
 
       it ("should allow bid greater than previous bid by other", async function() {
@@ -336,6 +349,9 @@ contract('UniformPriceAuction', function(accounts) {
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 6);
+
+        const indicesCount = await contract.indicesCountOfOwner.call(buyer);
+        assert.equal(indicesCount, 3);
       });
 
       it ("should allow bid greater than previous bid but less than global highest bid", async function() {
@@ -360,6 +376,9 @@ contract('UniformPriceAuction', function(accounts) {
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 8);
+
+        const indicesCount = await contract.indicesCountOfOwner.call(buyer);
+        assert.equal(indicesCount, 3);
       });
     });
   });

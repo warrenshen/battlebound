@@ -120,13 +120,13 @@ contract('UniformPriceAuction', function(accounts) {
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
 
-      const name = await contract.getName.call();
+      const name = await contract.name.call();
       assert.equal(name, "UniformPriceAuction", "name is not correct");
 
-      const duration = await contract.getDuration.call();
+      const duration = await contract.duration.call();
       assert.equal(duration, auctionDuration);
 
-      const blockStart = await contract.getBlockStart.call();
+      const blockStart = await contract.blockStart.call();
       assert.equal(blockStart > 0, true, "block start should be greater than 0");
     });
   });
