@@ -80,25 +80,30 @@ contract CardMint is CardBase {
 
   /* DATA TYPES */
   struct Template {
-    uint128 generation;
+    uint64 generation;
     // uint64 category;
-    uint128 power;
+    uint64 power;
     string name;
+  }
+
+  struct Card {
+    uint256 templateId;
+    uint256 attributeId;
   }
 
   /* STORAGE */
   Template[] internal templates;
-  // Each uint256 in `cards` is a template ID.
-  uint256[] internal cards;
-  // Template ID is index of template in `templates`.
+  // Each uint256 in `cards` is a template ID -
+  // a template ID is simply the index of a template in `templates`.
+  Card[] internal cards;
+
   // Template ID => max number of cards that can be minted with this template ID.
   mapping (uint256 => uint256) internal templateIdToMintLimit;
   // Template ID => number of cards that have been minted with this template ID.
   mapping (uint256 => uint256) internal templateIdToMintCount;
-  // Card ID is index of card in `cards`.
-  // mapping (uint256 => uint256) internal cardIdToTemplateId;
+  // Card ID => owner of card.
   mapping (uint256 => address) internal cardIdToOwner;
-  // Owner => number of card owner owns.
+  // Owner => number of cards owner owns.
   mapping (address => uint256) internal ownerCardCount;
   // Card ID => address approved to transfer on behalf of owner.
   mapping (uint256 => address) internal cardIdToApproved;
@@ -123,8 +128,8 @@ contract CardMint is CardBase {
   /** PUBLIC FUNCTIONS **/
   function createTemplate(
     uint256 _mintLimit,
-    uint128 _generation,
-    uint128 _power,
+    uint64 _generation,
+    uint64 _power,
     string _name
   ) external onlyOwner returns (uint256) {
     require(_mintLimit > 0);
@@ -145,7 +150,13 @@ contract CardMint is CardBase {
     require(templateIdToMintCount[_templateId] < templateIdToMintLimit[_templateId]);
     // need safe math
     templateIdToMintCount[_templateId] = templateIdToMintCount[_templateId] + 1;
-    uint256 newCardId = cards.push(_templateId) - 1;
+
+    Card memory newCard = Card({
+      templateId: _templateId,
+      attributeId: 0
+    });
+
+    uint256 newCardId = cards.push(newCard) - 1;
     _transfer(0, _owner, newCardId);
 
     emit InstanceMinted(_owner, newCardId, _templateId);
@@ -231,8 +242,8 @@ contract CardTreasury is CardOwnership {
   {
     require(_cardId < cards.length);
 
-    uint256 templateId = cards[_cardId];
-    Template storage template = templates[templateId];
+    Card storage card = cards[_cardId];
+    Template storage template = templates[card.templateId];
 
     generation = template.generation;
     power = template.power;
@@ -241,7 +252,7 @@ contract CardTreasury is CardOwnership {
 
   function templateIdOf(uint256 _tokenId) external view returns (uint256) {
     require(_tokenId < cards.length);
-    return cards[_tokenId];
+    return cards[_tokenId].templateId;
   }
 
   function ownerOf(uint256 _tokenId) external view returns (address) {
