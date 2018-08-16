@@ -619,10 +619,9 @@ public class EffectManager : MonoBehaviour
         string cardId = effect.CardId;
 
         BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
-        boardCreature.Warcry();
-
         yield return new WaitForSeconds(0.5f);
 
+        boardCreature.Warcry();
         switch (effect.Name)
         {
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:

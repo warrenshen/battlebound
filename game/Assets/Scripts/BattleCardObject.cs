@@ -194,6 +194,7 @@ public class BattleCardObject : CardObject
         }
 
         //set defaults of hypercard
+        SoundManager.Instance.PlaySound("LightHoverSFX", this.transform.position);  //should move to CardObject once SoundPool is turned into Singleton
         this.SetVisualResetValues();
 
         float scaling = 1.8f;
@@ -225,7 +226,7 @@ public class BattleCardObject : CardObject
         if (this.owner.Mode == Player.PLAYER_STATE_MODE_MULLIGAN)
         {
             BattleManager.Instance.ToggleMulliganCard(this);
-            SoundManager.Instance.PlaySound("MulliganAction", this.transform.position);
+            SoundManager.Instance.PlaySound("MulliganActionSFX", this.transform.position);
             return;
         }
         if (!this.owner.HasTurn)
