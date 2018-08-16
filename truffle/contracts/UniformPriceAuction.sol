@@ -238,4 +238,8 @@ contract UniformPriceAuction is Ownable {
 
     return count;
   }
+
+  function auctionEndBlock() external view returns (uint256) {
+    return blockStart + duration;
+  }
 }

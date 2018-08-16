@@ -104,6 +104,12 @@ contract('UniformPriceAuction', function(accounts) {
         const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration);
 
+        const blockStart = await contract.blockStart.call();
+        assert.equal(blockStart > 0, true, "block start should be greater than 0");
+
+        const auctionEndBlock = await contract.auctionEndBlock.call();
+        assert.equal(auctionEndBlock.valueOf(), parseInt(blockStart.valueOf()) + parseInt(duration.valueOf()));
+
         for (var i = 0; i < 10; i += 1) {
           transaction = await miner.mine();
         }
@@ -121,6 +127,12 @@ contract('UniformPriceAuction', function(accounts) {
 
         const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration + 300);
+
+        const blockStart = await contract.blockStart.call();
+        assert.equal(blockStart > 0, true, "block start should be greater than 0");
+
+        const auctionEndBlock = await contract.auctionEndBlock.call();
+        assert.equal(auctionEndBlock.valueOf(), parseInt(blockStart.valueOf()) + parseInt(duration.valueOf()));
       });
     });
 

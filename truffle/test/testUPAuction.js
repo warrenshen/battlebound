@@ -128,6 +128,9 @@ contract('UniformPriceAuction', function(accounts) {
 
       const blockStart = await contract.blockStart.call();
       assert.equal(blockStart > 0, true, "block start should be greater than 0");
+
+      const auctionEndBlock = await contract.auctionEndBlock.call();
+      assert.equal(auctionEndBlock.valueOf(), parseInt(blockStart.valueOf()) + parseInt(duration.valueOf()));
     });
   });
 });
