@@ -170,6 +170,7 @@ public class BattleManager : MonoBehaviour
 
         //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
         ActionManager.Instance.SetCursor(4);
+        SoundManager.Instance.PlaySound("StartAttackSFX", hit.point);
     }
 
     private void ComputeOutlineColors()
