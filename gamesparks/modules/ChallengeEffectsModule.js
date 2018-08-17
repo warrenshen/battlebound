@@ -12,6 +12,7 @@ var GLOBAL_ENVIRONMENT = 0;
 const EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
 const EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
 const EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
+const EFFECT_STRUCTURE_DIE = "EFFECT_STRUCTURE_DIE";
 const EFFECT_RANDOM_TARGET = "EFFECT_RANDOM_TARGET";
 const EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_START_TURN_DRAW_CARD"; // When opponent ends their turn.
 const EFFECT_SUMMON_CREATURE = "EFFECT_SUMMON_CREATURE";
@@ -21,6 +22,7 @@ const EFFECT_H_PRIORITY_ORDER = [
     CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
     CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
     EFFECT_CARD_DIE,
+    EFFECT_STRUCTURE_DIE,
     EFFECT_SUMMON_CREATURE,
 ];
 
@@ -248,6 +250,9 @@ function processHQueue(challengeStateData, effect) {
         case EFFECT_CARD_DIE:
             newEffects = effectCardDie(challengeStateData, effect);
             break;
+        case EFFECT_STRUCTURE_DIE:
+            newEffects = effectStructureDie(challengeStateData, effect);
+            break;
         case EFFECT_SUMMON_CREATURE:
             newEffects = effectSummonCreature(challengeStateData, effect);
             break;
@@ -276,9 +281,8 @@ function effectCardDie(challengeStateData, effect) {
     const playerState = challengeStateData.current[playerId];
     const playerField = playerState.field;
     const playerIndex = playerField.findIndex(function(fieldCard) { return fieldCard.id === cardId });
-    
     const card = playerField[playerIndex];
-    card.deathRank = getNewDeathRank(challengeStateData);
+
     addChallengeDeadCard(challengeStateData, card);
     
     if (playerIndex < 0) {
@@ -286,6 +290,26 @@ function effectCardDie(challengeStateData, effect) {
     }
 
     playerField[playerIndex] = { id: "EMPTY" };
+
+    return [];
+}
+
+function effectStructureDie(challengeStateData, effect) {
+    const playerId = effect.playerId;
+    const cardId = effect.cardId;
+
+    const playerState = challengeStateData.current[playerId];
+    const playerFieldBack = playerState.fieldBack;
+    const playerIndex = playerFieldBack.findIndex(function(fieldBackCard) { return fieldBackCard.id === cardId });
+    const card = playerFieldBack[playerIndex];
+
+    addChallengeDeadCard(challengeStateData, card);
+    
+    if (playerIndex < 0) {
+        setScriptError("Cannot do die for invalid card ID: " + cardId);
+    }
+
+    playerFieldBack[playerIndex] = { id: "EMPTY" };
 
     return [];
 }
@@ -751,7 +775,7 @@ function abilityTauntAdjacentFriendly(challengeStateData, effect) {
 
     const adjacentCards = _getAdjacentCardsByPlayerIdAndCardId(challengeStateData, playerId, cardId);
     adjacentCards.forEach(function(adjacentCard) {
-        if (adjacentCard.abilities.indexOf(CARD_ABILITY_TAUNT) < 0) {
+        if (!hasCardAbilityOrBuff(adjacentCard, CARD_ABILITY_TAUNT)) {
             adjacentCard.abilities.push(CARD_ABILITY_TAUNT);
         }
     });
@@ -875,7 +899,7 @@ function abilitySilenceAllOpponentCreatures(challengeStateData, effect) {
 function _getDeadCardsByPlayerId(challengeStateData, playerId) {
     const deadCards = challengeStateData.deadCards;
     return deadCards.filter(function(deadCard) {
-        return deadCard.playerId === playerId;
+        return deadCard.playerId === playerId && deadCard.category === CARD_CATEGORY_MINION;
     });
 }
 
@@ -1451,6 +1475,42 @@ function _getEffectsOnCardDeath(challengeStateData, card) {
     return newEffects;
 }
 
+
+function _getEffectsOnStructureDamageTaken(challengeStateData, card, amount) {
+    const newEffects = [];
+
+    if (card.health <= 0) {
+        newEffects.push({
+            playerId: card.playerId,
+            cardId: card.id,
+            name: EFFECT_STRUCTURE_DIE,
+            spawnRank: card.spawnRank,
+        });
+
+        const playerState = challengeStateData.current[card.playerId];
+        const playerFieldBack = playerState.fieldBack;
+        const playerIndex = playerFieldBack.findIndex(function(fieldBackCard) { return fieldBackCard.id === card.id });
+        const fieldBackIndex = playerIndex + 6;
+        const deadCard = playerFieldBack[playerIndex];
+        
+        const fieldCards = _getFieldCardsByPlayerIdAndFieldBackIndex(
+            challengeStateData,
+            playerId,
+            fieldBackIndex
+        );
+        
+        if (deadCard.name === CARD_NAME_TAUNT_STRUCTURE) {
+            fieldCards.forEach(function(fieldCard) {
+                if (!hasCardAbilityStart(fieldCard, CARD_ABILITY_TAUNT)) {
+                    removeCardAbility(card, CARD_ABILITY_TAUNT);
+                }
+            });
+        }
+    }
+
+    return newEffects;
+}
+
 function _getEffectsOnFaceDamageTaken(challengeStateData, playerId, playerState, amount) {
     if (playerState.health <= 0) {
         return [{
@@ -1596,9 +1656,6 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
 
     // Find index of attacking card in player field.
     const attackingIndex = attackerField.findIndex(function(card) { return card.id === cardId });
-    if (attackingIndex < 0) {
-        setScriptError("Invalid cardId parameter.");
-    }
     const attackingCard = attackerField[attackingIndex];
 
     var newEffects = [];
@@ -1613,9 +1670,6 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
     } else {
         // Find index of defending card in opponent field.
         const defendingIndex = defenderField.findIndex(function(card) { return card.id === targetId });
-        if (defendingIndex < 0) {
-            setScriptError("Invalid targetId parameter - card does not exist.");
-        }
         defendingCard = defenderField[defendingIndex];
 
         if (hasCardAbilityOrBuff(attackingCard, CARD_ABILITY_LETHAL)) {
@@ -1683,6 +1737,40 @@ function processCreatureAttack(challengeStateData, playerId, cardId, fieldId, ta
                 newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, adjacentCard, attackingDamageDone));
             });
         }
+    }
+
+    const queues = addToQueues(newEffects);
+    processEffectQueues(challengeStateData, queues[0], queues[1], queues[2]);
+}
+
+function processCardAttackStructure(challengeStateData, playerId, cardId, fieldId, targetId) {
+    const attackerState = challengeStateData.current[playerId];
+    const defenderState = challengeStateData.current[fieldId];
+
+    const attackerField = attackerState.field;
+    const defenderFieldBack = defenderState.fieldBack;
+
+    // Find index of attacking card in player field.
+    const attackingIndex = attackerField.findIndex(function(card) { return card.id === cardId });
+    const attackingCard = attackerField[attackingIndex];
+
+    // Find index of defending card in opponent field.
+    const defendingIndex = defenderFieldBack.findIndex(function(card) { return card.id === targetId });
+    defendingCard = defenderFieldBack[defendingIndex];
+    
+    const attackingDamageDone = damageCard(defendingCard, attackingCard.attack);
+
+    var newEffects = [];
+    newEffects = newEffects.concat(_getEffectsOnCardDamageDealt(challengeStateData, attackingCard, attackingDamageDone));
+    newEffects = newEffects.concat(_getEffectsOnStructureDamageTaken(challengeStateData, defendingCard, attackingDamageDone));
+
+    if (
+        hasCardAbilityOrBuff(attackingCard, CARD_ABILITY_PIERCING) &&
+        defendingCard.health <= 0
+    ) {
+        const attackingDamagePierce = attackingCard.attack - attackingDamageDone;
+        const attackingDamageDoneFace = damageFace(defenderState, attackingDamagePierce);
+        newEffects = newEffects.concat(_getEffectsOnFaceDamageTaken(challengeStateData, fieldId, defenderState, attackingDamageDoneFace));
     }
 
     const queues = addToQueues(newEffects);
@@ -1950,4 +2038,26 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
 
     const queues = addToQueues(newEffects);
     processEffectQueues(challengeStateData, queues[0], queues[1], queues[2]);
+}
+
+function processPlayStructure(challengeStateData, playerId, cardId) {
+    const playerState = challengeStateData.current[playerId];
+    const playerFieldBack = playerState.fieldBack;
+    const playerIndex = playerFieldBack.findIndex(function(fieldBackCard) { return fieldBackCard.id === cardId });
+    const fieldBackIndex = playerIndex + 6;
+    const playedCard = playerFieldBack[playerIndex];
+
+    const fieldCards = _getFieldCardsByPlayerIdAndFieldBackIndex(
+        challengeStateData,
+        playerId,
+        fieldBackIndex
+    );
+    
+    if (playedCard.name === CARD_NAME_TAUNT_STRUCTURE) {
+        fieldCards.forEach(function(fieldCard) {
+            if (!hasCardAbilityOrBuff(fieldCard, CARD_ABILITY_TAUNT)) {
+                fieldCard.abilities.push(CARD_ABILITY_TAUNT);
+            }
+        });
+    }
 }

@@ -80,7 +80,10 @@ const CARD_NAME_EMILIA_AIRHEART = "Emilia Airheart";
 const CARD_NAME_PEARL_NYMPH = "Pearl Nymph";
 const CARD_NAME_TARA_SWAN_PRINCESS = "Tara, Swan Princess";
 const CARD_NAME_FROSTSPORE = "Frostspore";
-
 const CARD_NAME_ANGELIC_EGG = "Angelic Egg";
 const CARD_NAME_CURSED_EGG = "Cursed Egg";
 const CARD_NAME_FOXY_APPRENTICE = "Foxy Apprentice";
+
+const CARD_NAME_CHARGE_STRUCTURE = "Charge Structure";
+const CARD_NAME_TAUNT_STRUCTURE = "Taunt Structure";
+const CARD_NAME_COST_STRUCTURE = "Cost Structure";

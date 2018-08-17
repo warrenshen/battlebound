@@ -1,6 +1,6 @@
 // ====================================================================================================
 //
-// Cloud Code for ChallengePlaySpellUntargetedModule, write your code here to customize the GameSparks platform.
+// Cloud Code for ChallengePlayStructureModule, write your code here to customize the GameSparks platform.
 //
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
@@ -9,17 +9,26 @@ require("AttackModule");
 require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
-function handleChallengePlaySpellUntargeted(challengeStateData, playerId, cardId) {
-    const challengeState = challengeStateData.current;
+function handleChallengePlayStructure(challengeStateData, playerId, cardId, attributes) {
+    const fieldIndex = attributesJson.fieldIndex;
+    // Ensure that index to play card at is valid.
+    if (fieldIndex < 6 || fieldIndex > 9) {
+        setScriptError("Invalid fieldIndex parameter.");
+    }
+    const fieldBackIndex = fieldIndex - 6;
     
-    const playerState = challengeState[playerId];
-    if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
+    const playerState = challengeStateData.current[playerId];
+    if (playerState.mode != PLAYER_STATE_MODE_NORMAL) {
         setScriptError("Player state is not in normal mode.");
     }
     
     const playerManaCurrent = playerState.manaCurrent;
     const playerHand = playerState.hand;
-    const playerField = playerState.field;
+    const playerFieldBack = playerState.fieldBack;
+    
+    // const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+    // const opponentState = challengeStateData.current[opponentId];
+    // const opponentField = opponentState.field;
     
     // Find index of card played in hand.
     const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
@@ -28,9 +37,9 @@ function handleChallengePlaySpellUntargeted(challengeStateData, playerId, cardId
     }
     
     const playedCard = playerHand[handIndex];
-        
-    if (playedCard.category !== CARD_CATEGORY_SPELL) {
-        setScriptError("Invalid card category - must be spell category.");
+    
+    if (playedCard.category != CARD_CATEGORY_STRUCTURE) {
+        setScriptError("Invalid card category - must be structure category.");
     }
     
     if (playedCard.cost > playerManaCurrent) {
@@ -42,16 +51,27 @@ function handleChallengePlaySpellUntargeted(challengeStateData, playerId, cardId
         }
     }
     
+    if (playerFieldBack[fieldBackIndex].id !== "EMPTY") {
+        setScriptError("Invalid fieldIndex parameter - card exists at fieldIndex.");
+    }
+    
+    const spawnRank = getNewSpawnRank(challengeStateData);
+    playedCard.spawnRank = spawnRank;
+    
     // Reset `lastMoves` attribute in ChallengeState.
     challengeStateData.lastMoves = [];
     challengeStateData.moveTakenThisTurn = 1;
     
-    var move = {
+    const fieldId = attributes.fieldId;
+    const targetId = attributes.targetId;
+    
+    const move = {
         playerId: playerId,
-        category: MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
+        category: MOVE_CATEGORY_PLAY_STRUCTURE,
         attributes: {
             card: playedCard,
             cardId: cardId,
+            fieldIndex: fieldIndex,
             handIndex: handIndex,
         },
     };
@@ -60,5 +80,8 @@ function handleChallengePlaySpellUntargeted(challengeStateData, playerId, cardId
     // Remove played card from hand.
     removeCardFromHandByIndex(playerState, handIndex);
     
-    processSpellUntargetedPlay(challengeStateData, playerId, playedCard);
+    // Play card onto field.
+    playerFieldBack[fieldBackIndex] = playedCard;
+    
+    processPlayStructure(challengeStateData, playerId, cardId);
 }

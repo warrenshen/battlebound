@@ -1,13 +1,13 @@
 // ====================================================================================================
 //
-// Cloud Code for ChallengePlaySpellTargeted, write your code here to customize the GameSparks platform.
+// Cloud Code for ChallengePlayStructure, write your code here to customize the GameSparks platform.
 //
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
 require("ScriptDataModule");
 require("ChallengeEventPrefix");
-require("ChallengePlaySpellTargetedModule");
+require("ChallengePlayStructureModule");
 
 const cardId = Spark.getData().cardId;
 const attributesJson = Spark.getData().attributesJson;
@@ -15,16 +15,17 @@ const attributesString = Spark.getData().attributesString;
 
 var attributes;
 
-if (attributesJson.targetId) {
+if (attributesJson.fieldIndex != null) {
     attributes = attributesJson;
 } else {
     attributes = JSON.parse(attributesString);
-    if (!attributes.targetId) {
+    if (attributes.fieldIndex == null) {
         setScriptError("Invalid attributesJson or attributesString parameter");
     }
 }
 
-handleChallengePlaySpellTargeted(challengeStateData, playerId, cardId, attributes);
-
+handleChallengePlayStructure(challengeStateData, playerId, cardId, attributes);
+    
 require("PersistChallengeStateModule");
+
 setScriptSuccess();

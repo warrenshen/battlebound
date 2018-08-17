@@ -11,8 +11,12 @@ require("ChallengeEffectsModule");
 
 function handleChallengePlayCard(challengeStateData, playerId, cardId, attributesJson) {
     const fieldIndex = attributesJson.fieldIndex;
+    // Ensure that index to play card at is valid.
+    if (fieldIndex < 0 || fieldIndex > 5) {
+        setScriptError("Invalid fieldIndex parameter.");
+    }
     
-    const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+    // const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     
     const playerState = challengeStateData.current[playerId];
     if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
@@ -22,9 +26,10 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     const playerManaCurrent = playerState.manaCurrent;
     const playerHand = playerState.hand;
     const playerField = playerState.field;
+    const playerFieldBack = playerState.fieldBack;
     
-    const opponentState = challengeStateData.current[opponentId];
-    const opponentField = opponentState.field;
+    // const opponentState = challengeStateData.current[opponentId];
+    // const opponentField = opponentState.field;
     
     // Find index of card played in hand.
     const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
@@ -34,22 +39,32 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     
     const playedCard = playerHand[handIndex];
     
-    if (playedCard.cost > playerManaCurrent) {
-        setScriptError("Card mana cost exceeds player's current mana.");
-    } else {
-        playerState.manaCurrent -= playedCard.cost;
-        if (!Number.isInteger(playerState.manaCurrent)) {
-            setScriptError("Player mana current is no longer an int.");
-        }
-    }
-    
     if (playedCard.category !== CARD_CATEGORY_MINION) {
         setScriptError("Invalid card category - must be minion category.");
     }
     
-    // Ensure that index to play card at is valid.
-    if (fieldIndex < 0 || fieldIndex > 5) {
-        setScriptError("Invalid fieldIndex parameter.");
+    const fieldIndexBack = FIELD_INDEX_TO_FIELD_BACK_INDEX[fieldIndex];
+    
+    var adjustedCost = playedCard.cost;
+
+    const structureCard = playerFieldBack[fieldIndexBack - 6];
+    if (structureCard.id != "EMPTY") {
+        if (structureCard.name === CARD_NAME_COST_STRUCTURE) {
+            adjustedCost = Math.max(0, adjustedCost - 20);
+        } else if (structureCard.name === CARD_NAME_TAUNT_STRUCTURE) {
+            if (!hasCardAbilityOrBuff(playedCard, CARD_ABILITY_TAUNT)) {
+                playedCard.abilities.push(CARD_ABILITY_TAUNT);
+            }
+        }
+    }
+    
+    if (adjustedCost > playerManaCurrent) {
+        setScriptError("Card mana cost exceeds player's current mana.");
+    } else {
+        playerState.manaCurrent -= adjustedCost;
+        if (!Number.isInteger(playerState.manaCurrent)) {
+            setScriptError("Player mana current is no longer an int.");
+        }
     }
     
     if (playerField[fieldIndex].id !== "EMPTY") {

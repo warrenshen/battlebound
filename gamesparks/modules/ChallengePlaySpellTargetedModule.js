@@ -9,7 +9,7 @@ require("AttackModule");
 require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
-function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attributes) {
+function handleChallengePlaySpellTargeted(challengeStateData, playerId, cardId, attributes) {
     const playerState = challengeStateData.current[playerId];
     if (playerState.mode != PLAYER_STATE_MODE_NORMAL) {
         setScriptError("Player state is not in normal mode.");
@@ -30,6 +30,10 @@ function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attribute
     }
     
     const playedCard = playerHand[handIndex];
+        
+    if (playedCard.category != CARD_CATEGORY_SPELL) {
+        setScriptError("Invalid card category - must be spell category.");
+    }
     
     if (playedCard.cost > playerManaCurrent) {
         setScriptError("Card mana cost exceeds player's current mana.");
@@ -38,10 +42,6 @@ function handlePlaySpellTargeted(challengeStateData, playerId, cardId, attribute
         if (!Number.isInteger(playerState.manaCurrent)) {
             setScriptError("Player mana current is no longer an int.");
         }
-    }
-    
-    if (playedCard.category != CARD_CATEGORY_SPELL) {
-        setScriptError("Invalid card category - must be spell category.");
     }
     
     // Reset `lastMoves` attribute in ChallengeState.
