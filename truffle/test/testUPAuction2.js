@@ -105,8 +105,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, minimumBid);
+        assert.equal(highestBidBidder, buyer);
       });
     });
   });
@@ -142,8 +143,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, bidAmount);
+        assert.equal(highestBidBidder, buyer);
 
         const fulfillPrice = await contract.fulfillPrice.call();
         assert.equal(fulfillPrice, bidAmount);
@@ -169,8 +171,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, bidAmount);
+        assert.equal(highestBidBidder, buyer);
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, bidAmount);
@@ -219,8 +222,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, bidAmount);
+        assert.equal(highestBidBidder, buyer);
 
         contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, bidAmount);
@@ -246,8 +250,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyerTwo);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, bidAmount);
+        assert.equal(highestBidBidder, buyerTwo);
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, bidAmount);
@@ -317,8 +322,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, bidAmount);
+        assert.equal(highestBidBidder, buyer);
 
         contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 3);
@@ -344,8 +350,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, bidAmount);
+        assert.equal(highestBidBidder, buyer);
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 6);
@@ -371,8 +378,9 @@ contract('UniformPriceAuction', function(accounts) {
         assert.equal(amount, bidAmount);
         assert.equal(bidder, buyer);
 
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, minimumBid + minimumIncrease * 3);
+        assert.equal(highestBidBidder, buyer);
 
         const contractBalance = web3.eth.getBalance(contract.address).toNumber();
         assert.equal(contractBalance, minimumBid * 3 + minimumIncrease * 8);

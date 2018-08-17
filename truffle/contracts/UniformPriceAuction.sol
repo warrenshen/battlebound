@@ -25,6 +25,7 @@ contract UniformPriceAuction is Ownable {
   }
   mapping (uint256 => Bid) indexToBid;
 
+  // ONLY OWNER
   function initializeAuction(
     string _name,
     uint256 _N,
@@ -47,6 +48,37 @@ contract UniformPriceAuction is Ownable {
     fulfillPrice = _minimumBid;
   }
 
+  function fulfillBid(uint256 _index) external onlyOwner {
+    require(_index < N);
+    require(block.number > blockStart + duration);
+
+    Bid storage bid = indexToBid[_index];
+    uint256 amount = bid.amount;
+    require(amount >= fulfillPrice);
+
+    address winner = bid.bidder;
+    bid.amount = 0;
+    bid.bidder = address(0);
+
+    owner.send(fulfillPrice);
+    winner.send(amount - fulfillPrice);
+  }
+
+  function refundBid(uint256 _index) external onlyOwner {
+    require(_index < N);
+    require(block.number > blockStart + duration);
+
+    Bid storage bid = indexToBid[_index];
+    uint256 amount = bid.amount;
+
+    address winner = bid.bidder;
+    bid.amount = 0;
+    bid.bidder = address(0);
+
+    winner.send(amount);
+  }
+
+  // EXTERNAL
   function submitBid(uint256 _index) external payable {
     require(_index < N);
     require(block.number < blockStart + duration);
@@ -90,38 +122,10 @@ contract UniformPriceAuction is Ownable {
     }
   }
 
-  function fulfillBid(uint256 _index) external onlyOwner {
-    require(_index < N);
-    require(block.number > blockStart + duration);
-
-    Bid storage bid = indexToBid[_index];
-    uint256 amount = bid.amount;
-    require(amount >= fulfillPrice);
-
-    address winner = bid.bidder;
-    bid.amount = 0;
-    bid.bidder = address(0);
-
-    owner.send(fulfillPrice);
-    winner.send(amount - fulfillPrice);
-  }
-
-  function refundBid(uint256 _index) external onlyOwner {
-    require(_index < N);
-    require(block.number > blockStart + duration);
-
-    Bid storage bid = indexToBid[_index];
-    uint256 amount = bid.amount;
-
-    address winner = bid.bidder;
-    bid.amount = 0;
-    bid.bidder = address(0);
-
-    winner.send(amount);
-  }
-
+  // EXTERNAL VIEW
   function bidByIndex(uint256 _index)
-    external view
+    external
+    view
     returns (uint256, address)
   {
     require(_index < N);
@@ -132,11 +136,7 @@ contract UniformPriceAuction is Ownable {
   function indicesOfThreeLowestBids()
     external
     view
-    returns (
-      uint256,
-      uint256,
-      uint256
-    )
+    returns (uint256, uint256, uint256)
   {
     uint256 lowestBidAmountOne = 2**256 - 1;
     uint256 lowestBidAmountTwo = 2**256 - 1;
@@ -186,21 +186,6 @@ contract UniformPriceAuction is Ownable {
     }
 
     return (lowestBidIndexOne, lowestBidIndexTwo, lowestBidIndexThree);
-  }
-
-  function highestBidAmount() external view returns (uint256) {
-    uint256 highestBid = 0;
-
-    Bid storage bid;
-
-    for (uint256 i = 0; i < N; i += 1) {
-      bid = indexToBid[i];
-      if (bid.amount > highestBid) {
-        highestBid = bid.amount;
-      }
-    }
-
-    return highestBid;
   }
 
   function highestBid() external view returns (uint256, address) {

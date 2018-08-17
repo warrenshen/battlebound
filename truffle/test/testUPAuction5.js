@@ -112,8 +112,9 @@ contract('UniformPriceAuction', function(accounts) {
       });
 
       it ("should support highest bid amount", async function() {
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, minimumBid + minimumIncrease * 20);
+        assert.equal(highestBidBidder, buyerTwo);
       });
     });
 
@@ -200,8 +201,9 @@ contract('UniformPriceAuction', function(accounts) {
       });
 
       it ("should support highest bid amount", async function() {
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, minimumBid + minimumIncrease * 5);
+        assert.equal(highestBidBidder, buyerTwo);
       });
     });
 
@@ -231,8 +233,9 @@ contract('UniformPriceAuction', function(accounts) {
       });
 
       it ("should support highest bid amount", async function() {
-        const highestBidAmount = await contract.highestBidAmount.call();
+        const [highestBidAmount, highestBidBidder] = await contract.highestBid.call();
         assert.equal(highestBidAmount, 0);
+        assert.equal(highestBidBidder, 0);
       });
     });
   });
