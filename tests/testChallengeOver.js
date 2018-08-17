@@ -39,6 +39,17 @@ describe("challenge over", function() {
                 "id": "EMPTY"
               }
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [
               {
                 "id": "HIDDEN"
@@ -104,6 +115,17 @@ describe("challenge over", function() {
               {
                 "id": "EMPTY"
               }
+            ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
             ],
             "hand": [
               {
@@ -232,6 +254,17 @@ describe("challenge over", function() {
                 "id": "EMPTY"
               }
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 0,
             "cardCount": 6,
@@ -278,6 +311,17 @@ describe("challenge over", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -422,6 +466,17 @@ describe("challenge over", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -635,6 +690,17 @@ describe("challenge over", function() {
                 "id": "EMPTY"
               },
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 0,
             "cardCount": 8,
@@ -741,6 +807,17 @@ describe("challenge over", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [],
           "deckSize": 0,
           "cardCount": 6,
@@ -766,6 +843,17 @@ describe("challenge over", function() {
             {
               "id": "EMPTY"
             },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "fieldBack": [
             {
               "id": "EMPTY"
             },
