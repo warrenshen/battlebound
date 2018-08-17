@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: aa4b791c4e426924fb9ea2ba2f73bf91
 ModelImporter:
-  serializedVersion: 16
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: W_arrow_02
     100002: W_axe_01
@@ -143,21 +143,159 @@ ModelImporter:
     4300062: W_shield_03_mesh
     4300064: W_shield_04_mesh
     11100000: //RootNode
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_axe_01_MAT
+    second: {fileID: 2100000, guid: cf8bf04e43d887140b6d9a789f04ccfb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_axe_02_MAT
+    second: {fileID: 2100000, guid: b94ca1e1300e75342bd0b28e150c3031, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_axe_03_MAT
+    second: {fileID: 2100000, guid: 948be6cec5c53104387fb06f8d06251c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_axe_04_MAT
+    second: {fileID: 2100000, guid: c101871eb58ea0d4aab29ae3a3f1b43c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_bow_01_MAT
+    second: {fileID: 2100000, guid: 0ee569151976e0449bce3bd09672e93c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_bow_02_MAT
+    second: {fileID: 2100000, guid: 4909c34111863d944b7dcd7b648bc163, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_dblAxe_01_MAT
+    second: {fileID: 2100000, guid: c4bace87314323d4895e0ac9d1b867ba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_dblSword_01_MAT
+    second: {fileID: 2100000, guid: 25825bb32273a4b428e7909f341ad668, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_mace_01_MAT
+    second: {fileID: 2100000, guid: edb5af2625e222a4d862e5c784db95a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_mace_02_MAT
+    second: {fileID: 2100000, guid: edebe4a12436302438d21daea5349452, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_mace_03_MAT
+    second: {fileID: 2100000, guid: a80d7775bdc53f34999f7af8bf8ac60c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_mace_04_MAT
+    second: {fileID: 2100000, guid: aeb7549ae0193924ea427c7601675eb5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_scythe_01_MAT
+    second: {fileID: 2100000, guid: 94b5456a5b0827f44b444f2ee4fa1a74, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_shield_01_MAT
+    second: {fileID: 2100000, guid: 1d885e11df95f674582ffa7ec6d98934, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_shield_02_MAT
+    second: {fileID: 2100000, guid: cbe444e1293210143b3f54c418974783, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_shield_03_MAT
+    second: {fileID: 2100000, guid: 97e1c972ecbe9174793401f94d6be426, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_shield_04_MAT
+    second: {fileID: 2100000, guid: fe47812d7049bda468a9c95b21d02fb5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_spear_01_MAT
+    second: {fileID: 2100000, guid: cd6a5b5d6cbc59d4aacf889f554f2d6f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_spear_02_MAT
+    second: {fileID: 2100000, guid: 11dd76b575951184cabda59be230f126, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_staff_01_MAT
+    second: {fileID: 2100000, guid: 1d634473151d2284d9092887db2a6c3c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_staff_02_MAT
+    second: {fileID: 2100000, guid: 9711f27a21b7786418252db5e3dcb387, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_sword_01_MAT
+    second: {fileID: 2100000, guid: 084343944e402754182d683ad4805543, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_sword_02_MAT
+    second: {fileID: 2100000, guid: b0ca00535f3d31144a060aae57b6addf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_sword_03_MAT
+    second: {fileID: 2100000, guid: b1b2c1361d515004da1e02d3309bb955, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_sword_04_MAT
+    second: {fileID: 2100000, guid: 160e888dd3a75714b915a69540ba8182, type: 2}
   materials:
     importMaterials: 1
     materialName: 1
     materialSearch: 2
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
-    animationRotationError: .5
-    animationPositionError: .5
-    animationScaleError: .5
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -165,35 +303,50 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
+    keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
     normalImportMode: 0
-    tangentImportMode: 1
+    tangentImportMode: 4
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
-    armTwist: .5
-    foreArmTwist: .5
-    upperLegTwist: .5
-    legTwist: .5
-    armStretch: .0500000007
-    legStretch: .0500000007
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 
