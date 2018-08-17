@@ -38,6 +38,17 @@ describe("challenge warcry", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [],
           "deckSize": 0,
           "cardCount": 6,
@@ -134,6 +145,17 @@ describe("challenge warcry", function() {
               "isFrozen": 0,
               "isSilenced": 0,
               "spawnRank": 1
+            },
+          ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
             },
           ],
           "hand": [
@@ -568,6 +590,17 @@ describe("challenge warcry", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [],
           "deckSize": 0,
           "cardCount": 6,
@@ -593,6 +626,17 @@ describe("challenge warcry", function() {
             {
               "id": "EMPTY"
             },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "fieldBack": [
             {
               "id": "EMPTY"
             },
@@ -863,6 +907,17 @@ describe("challenge warcry", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [],
           "deckSize": 0,
           "cardCount": 6,
@@ -910,6 +965,17 @@ describe("challenge warcry", function() {
             {
               "id": "EMPTY"
             },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "fieldBack": [
             {
               "id": "EMPTY"
             },
@@ -1093,6 +1159,17 @@ describe("challenge warcry", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [],
           "deckSize": 0,
           "cardCount": 6,
@@ -1118,6 +1195,17 @@ describe("challenge warcry", function() {
             {
               "id": "EMPTY"
             },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "fieldBack": [
             {
               "id": "EMPTY"
             },

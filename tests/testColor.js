@@ -40,6 +40,17 @@ describe("challenge color synergy", function() {
                 "id": "EMPTY"
               },
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 4,
             "cardCount": 8,
@@ -67,6 +78,17 @@ describe("challenge color synergy", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -238,6 +260,17 @@ describe("challenge color synergy", function() {
                 "id": "EMPTY"
               },
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 4,
             "cardCount": 8,
@@ -265,6 +298,17 @@ describe("challenge color synergy", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -433,6 +477,17 @@ describe("challenge color synergy", function() {
                 "id": "EMPTY"
               },
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 4,
             "cardCount": 8,
@@ -460,6 +515,17 @@ describe("challenge color synergy", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -628,6 +694,17 @@ describe("challenge color synergy", function() {
                 "id": "EMPTY"
               },
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 4,
             "cardCount": 8,
@@ -655,6 +732,17 @@ describe("challenge color synergy", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -826,6 +914,17 @@ describe("challenge color synergy", function() {
                 "id": "EMPTY"
               },
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 4,
             "cardCount": 8,
@@ -853,6 +952,17 @@ describe("challenge color synergy", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -1055,6 +1165,17 @@ describe("challenge color synergy", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [
             {
               "id": "HIDDEN"
@@ -1101,6 +1222,17 @@ describe("challenge color synergy", function() {
             {
               "id": "EMPTY"
             }
+          ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
           ],
           "hand": [
             {

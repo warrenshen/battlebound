@@ -38,6 +38,17 @@ describe("challenge revive", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [],
           "deckSize": 0,
           "cardCount": 30,
@@ -63,6 +74,17 @@ describe("challenge revive", function() {
             {
               "id": "EMPTY"
             },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "fieldBack": [
             {
               "id": "EMPTY"
             },
@@ -429,6 +451,17 @@ describe("challenge revive", function() {
               "id": "EMPTY"
             }
           ],
+          "fieldBack": [
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
           "hand": [
             {
               "id": "ID_OPPONENT-10",
@@ -491,6 +524,17 @@ describe("challenge revive", function() {
             {
               "id": "EMPTY"
             },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+            {
+              "id": "EMPTY"
+            },
+          ],
+          "fieldBack": [
             {
               "id": "EMPTY"
             },
@@ -862,6 +906,17 @@ describe("challenge revive", function() {
                 "id": "EMPTY"
               }
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 0,
             "cardCount": 33,
@@ -887,6 +942,17 @@ describe("challenge revive", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },
@@ -1036,6 +1102,17 @@ describe("challenge revive", function() {
                 "id": "EMPTY"
               }
             ],
+            "fieldBack": [
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
             "hand": [],
             "deckSize": 0,
             "cardCount": 33,
@@ -1061,6 +1138,17 @@ describe("challenge revive", function() {
               {
                 "id": "EMPTY"
               },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+              {
+                "id": "EMPTY"
+              },
+            ],
+            "fieldBack": [
               {
                 "id": "EMPTY"
               },

@@ -634,11 +634,13 @@ exports.gamesparks = gamesparks;
 exports.initGS = function() {
   return new Promise((resolve) => {
     gamesparks.initPreview({
-      key: "o353744GfN7z",
-      secret: "TF0GGPC2YKf7CglgrE1M7RrmEDX86tDc",
+      // key: "o353744GfN7z",
+      // secret: "TF0GGPC2YKf7CglgrE1M7RrmEDX86tDc",
+      key: "n368079bzKM2",
+      secret: "A2gxU3kNTjFBLtJ6JVmrVBbVS1MR0Ji5",
       onNonce: null,
       onInit: function() {
-        gamesparks.authenticationRequest("password", "testuser", function(response) {
+        gamesparks.authenticationRequest("password", "test@playbattlebound.com", function(response) {
           if (response.error) {
             console.log("AuthenticationResponse: " + JSON.stringify(response));
             resolve();
