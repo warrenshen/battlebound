@@ -1,12 +1,12 @@
 // ====================================================================================================
 //
-// Cloud Code for TestChallengePlaySpellTargeted, write your code here to customize the GameSparks platform.
+// Cloud Code for TestChallengeCardAttackStructure, write your code here to customize the GameSparks platform.
 //
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("ChallengePlaySpellTargetedModule");
+require("ChallengeCardAttackStructureModule");
 
 const challengeStateString = Spark.getData().challengeStateString;
 const playerId = Spark.getData().challengePlayerId;
@@ -17,7 +17,7 @@ const attributesJson = Spark.getData().attributesJson;
 GLOBAL_ENVIRONMENT = 1;
 
 const challengeStateData = JSON.parse(challengeStateString);
-handleChallengePlaySpellTargeted(challengeStateData, playerId, cardId, attributesJson);
+handleChallengeCardAttackStructure(challengeStateData, playerId, cardId, attributesJson);
 
 Spark.setScriptData("challengeStateData", challengeStateData);
 setScriptSuccess();

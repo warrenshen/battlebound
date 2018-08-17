@@ -86,7 +86,6 @@
  *   isFrozen: int, // Number of turns stuck frozen - not set until card is played.
  *   isSilenced: bool (int), // If card is silenced - not set until card is played.
  *   spawnRank: int, // Number of cards played before this card - not set until card is played on field.
- *   deathRank: int, // Number of cards dead before this card - not set until card is dead.
  *   abilities: [int, ...], // Array of enums of abilities card possesses.
  *   abilitiesStart: [int, ...], // Array of enums of abilities card starts with.
  *   handBuffs: [int, ...], // Array of hand-related buffs.
@@ -111,7 +110,6 @@
  *   moves: [Move, ...], // An array of moves by both players in chronological order.
  *   lastMoves: [Move, ...], // An array of the move(s) in last request of player whose turn it is.
  *   spawnCount: int, // "Auto-increment" int for any creature spawn by either player.
- *   deathCount: int, // "Auto-increment" int for any creature death by either player.
  *   deadCards: [ChallengeCard, ...], // Append-only list of dead cards.
  *   isFinal: bool (int), // Whether challenge has been post-processed (grant experience, etc).
  *   current: {
@@ -125,6 +123,7 @@
  *       healthMax: int,
  *       armor: int,
  *       field: [Card, ...], // 6-element array: object of { id: "EMPTY" } = empty space.
+ *       fieldBack: [Card, ...], // 3-element array: object of { id: "EMPTY" } = empty space.
  *       hand: [Card, ...] // Object of { id: "HIDDEN" } = upside-down card.
  *       deck: [Card, ...],
  *       deckSize: int,

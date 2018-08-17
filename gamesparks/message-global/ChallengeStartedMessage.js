@@ -34,7 +34,6 @@ challengeStateData.mode = CHALLENGE_STATE_MODE_MULLIGAN;
 challengeStateData.moves = [];
 challengeStateData.deadCards = [];
 challengeStateData.spawnCount = 0;
-challengeStateData.deathCount = 0;
 challengeStateData.isFinalByPlayerId = {};
 
 const challengeState = challengeStateData.current = {};
@@ -73,6 +72,7 @@ const challengerData = {
     armor: ARMOR_START,
     // GS does not allow array of different types to be persisted, so we use id of "EMPTY" to denote lack of card.
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
+    fieldBack: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: [],
 };
 
@@ -85,6 +85,7 @@ const challengedData = {
     healthMax: HEALTH_START,
     armor: ARMOR_START,
     field: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
+    fieldBack: [{ id: "EMPTY" }, { id: "EMPTY" }, { id: "EMPTY" }],
     hand: [],
 };
 
@@ -137,4 +138,4 @@ challengeState[challengedId] = challengedData;
 
 require("PersistChallengeStateModule");
 
-// startMulliganTimeEvents(challengeId, [challengerId, challengedId]);
+startMulliganTimeEvents(challengeId, [challengerId, challengedId]);

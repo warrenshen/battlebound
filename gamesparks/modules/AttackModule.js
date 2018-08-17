@@ -6,9 +6,23 @@
 //
 // ====================================================================================================
 
-// 0 = normal, 1 = test.
+// 0 = normal, 1 = test - must be a var since it can be changed.
 var GLOBAL_ENVIRONMENT = 0;
 
+const FIELD_INDEX_TO_FIELD_BACK_INDEX = {
+    0: 6,
+    1: 6,
+    2: 7,
+    3: 7,
+    4: 8,
+    5: 8,
+};
+const FIELD_BACK_INDEX_TO_FIELD_INDICES = {
+    6: [0, 1],
+    7: [2, 3],
+    8: [4, 5],
+};
+    
 function hasCardAbilityOrBuff(card, abilityOrBuff) {
     if (card.isSilenced == 1) {
         return false;
@@ -25,15 +39,26 @@ function hasCardAbilityOrBuff(card, abilityOrBuff) {
     return false;
 }
 
+function hasCardAbilityStart(card, ability) {
+    if (card.abilitiesStart && card.abilitiesStart.indexOf(ability) >= 0) {
+        return true;
+    }
+    return false;
+}
+
+function removeCardAbility(card, ability) {
+    card.abilities = card.abilities.filter(function(a) {
+        return a != ability;
+    });
+}
+
 /**
  * @return int - damage done to card
  **/
 function damageCard(card, damage) {
     // add has card ability func
     if (hasCardAbilityOrBuff(card, CARD_ABILITY_SHIELD)) {
-        card.abilities = card.abilities.filter(function(ability) {
-            return ability != CARD_ABILITY_SHIELD;
-        });
+        removeCardAbility(card, CARD_ABILITY_SHIELD);
         return 0;
     } else {
         const initialHealth = card.health;
@@ -58,9 +83,7 @@ function damageCardMax(card) {
  **/
 function damageCardWithLethal(card, damage) {
     if (hasCardAbilityOrBuff(card, CARD_ABILITY_SHIELD)) {
-        card.abilities = card.abilities.filter(function(ability) {
-            return ability != CARD_ABILITY_SHIELD;
-        });
+        removeCardAbility(card, CARD_ABILITY_SHIELD);
         return 0;
     } else {
         return damageCardMax(card);
@@ -158,6 +181,24 @@ function _removeBuffsFromCard(card, deadCardIds) {
     });
     card.buffsField = newBuffs;
     return card;
+}
+
+function _getFieldCardsByPlayerIdAndIndices(challengeStateData, playerId, indices) {
+    const playerState = challengeStateData.current[playerId];
+    const playerField = playerState.field;
+    const fieldCards = [];
+    indices.forEach(function(index) {
+        const fieldCard = playerField[index];
+        if (fieldCard.id != "EMPTY") {
+            fieldCards.push(fieldCard);
+        }
+    });
+    return fieldCards;
+}
+
+function _getFieldCardsByPlayerIdAndFieldBackIndex(challengeStateData, playerId, fieldBackIndex) {
+    const indices = FIELD_BACK_INDEX_TO_FIELD_INDICES[fieldBackIndex];
+    return _getFieldCardsByPlayerIdAndIndices(challengeStateData, playerId, indices);
 }
 
 /**
@@ -409,12 +450,6 @@ function getNewSpawnRank(challengeStateData) {
     const spawnRank = challengeStateData.spawnCount;
     challengeStateData.spawnCount += 1;
     return spawnRank;
-}
-
-function getNewDeathRank(challengeStateData) {
-    const deathRank = challengeStateData.deathCount;
-    challengeStateData.deathCount += 1;
-    return deathRank;
 }
 
 function winChallenge(challengeStateData, winnerId) {

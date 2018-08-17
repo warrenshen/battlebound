@@ -11,7 +11,7 @@ require("ChallengePlaySpellUntargetedModule");
 
 const cardId = Spark.getData().cardId;
 
-handlePlaySpellUntargeted(challengeStateData, playerId, cardId);
+handleChallengePlaySpellUntargeted(challengeStateData, playerId, cardId);
     
 require("PersistChallengeStateModule");
 setScriptSuccess();
