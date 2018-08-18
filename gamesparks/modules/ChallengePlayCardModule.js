@@ -16,8 +16,6 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
         setScriptError("Invalid fieldIndex parameter.");
     }
     
-    // const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-    
     const playerState = challengeStateData.current[playerId];
     if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
         setScriptError("Player state is not in normal mode.");
@@ -27,9 +25,6 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     const playerHand = playerState.hand;
     const playerField = playerState.field;
     const playerFieldBack = playerState.fieldBack;
-    
-    // const opponentState = challengeStateData.current[opponentId];
-    // const opponentField = opponentState.field;
     
     // Find index of card played in hand.
     const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
