@@ -52,7 +52,15 @@ public class LanguageUtility
 
     public string GetLocalizedNames(string original, Language id)
     {
-        return cardNames[original][(int)id];
+        if (this.cardNames.ContainsKey(original))
+        {
+            return cardNames[original][(int)id];
+        }
+        else
+        {
+            Debug.LogWarning(string.Format("Missing translation for: {0}", original));
+            return original;
+        }
     }
 
     public string GetLocalizedAbilities(string original, Language id)
