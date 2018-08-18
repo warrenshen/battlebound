@@ -240,7 +240,10 @@ public class EffectManager : MonoBehaviour
         this.hQueue = new List<Effect>();
         this.mQueue = new List<Effect>();
         this.lQueue = new List<Effect>();
+    }
 
+    private void Start()
+    {
         if (BattleSingleton.Instance.IsEnvironmentTest())
         {
             this.fXManager = new FXManagerMock();
