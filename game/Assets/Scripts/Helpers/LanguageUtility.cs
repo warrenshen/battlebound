@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class LanguageUtility
 {
@@ -20,8 +21,8 @@ public class LanguageUtility
 
     public LanguageUtility()
     {
-        cardNames = LanguageUtility.LoadTranslations("Translations/names.csv");
-        cardAbilities = LanguageUtility.LoadTranslations("Translations/abilities.csv");
+        cardNames = LanguageUtility.LoadTranslations("Translations/names");
+        cardAbilities = LanguageUtility.LoadTranslations("Translations/abilities");
     }
 
     private static Dictionary<string, List<string>> LoadTranslations(string path)
@@ -29,19 +30,23 @@ public class LanguageUtility
         Dictionary<string, List<string>> translations = new Dictionary<string, List<string>>();
 
         char[] delimiters = new char[] { ',' };
-        string line;
 
-        using (StreamReader reader = new StreamReader(path))
+        TextAsset translationsText = (TextAsset)Resources.Load(path, typeof(TextAsset));
+        string translationsString = translationsText.text;
+        List<string> translationStrings = new List<string>(translationsString.Split('\n'));
+
+        foreach (string translationString in translationStrings)
         {
-            while ((line = reader.ReadLine()) != null)
-            {
-                List<string> elements = new List<string>(line.Split(delimiters));
-                string key = elements[0];
-                elements.RemoveAt(0);
+            List<string> elements = new List<string>(translationString.Split(delimiters));
+            string key = elements[0];
+            elements.RemoveAt(0);
 
+            if (!translations.ContainsKey(key))
+            {
                 translations.Add(key, elements);
             }
         }
+
         return translations;
     }
 
