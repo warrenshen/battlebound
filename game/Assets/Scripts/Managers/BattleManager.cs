@@ -9,7 +9,7 @@ using TMPro;
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
-    private const float CARD_DISPLACEMENT_THRESHOLD = 25;
+    private const float CARD_DISPLACEMENT_THRESHOLD = 100;
     private const float NORMAL_ATTACK_ARROW_WIDTH = 1.66f;
     private const float ACTIVE_ATTACK_ARROW_WIDTH = 2.50f;
 
@@ -75,6 +75,7 @@ public class BattleManager : MonoBehaviour
     private GameObject battleCardObjectPrefab;
     private Stack<BattleCardObject> battleCardObjectPool;
 
+    private bool combatMode;
     private Collider lastHoverCollider;
 
     public static BattleManager Instance { get; private set; }
@@ -171,12 +172,12 @@ public class BattleManager : MonoBehaviour
         attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
         attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
 
-        //attackCommand.lineRenderer.enabled = true; //this is being used as a validity check!!
+        this.combatMode = true;
         ActionManager.Instance.SetCursor(4);
         SoundManager.Instance.PlaySound("StartAttackSFX", hit.point);
     }
 
-    private void ComputeOutlineColors()
+    private void ComputeActivationRadius()
     {
         if (Input.GetMouseButton(0) && ActionManager.Instance.HasDragTarget())
         {
@@ -184,19 +185,50 @@ public class BattleManager : MonoBehaviour
             if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
             {
                 target.visual.SetOutlineColors(Color.yellow, Color.green);
+                if (target.Card.GetType() == typeof(SpellCard))
+                {
+                    SpellCard spell = target.Card as SpellCard;
+                    if (spell.Targeted)
+                    {
+                        ActionManager.Instance.Freeze(true);
+                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                        RaycastHit hit;
+                        if (Physics.Raycast(ray, out hit, 100f))
+                        {
+                            attackCommand.SetPointPositions(target.transform.position, hit.point);
+
+                            if (CanPlayTargetedSpell(target, hit))
+                            {
+                                //big target render
+                                attackCommand.SetWidth(ACTIVE_ATTACK_ARROW_WIDTH);
+                                ActionManager.Instance.SetCursor(7);
+                            }
+                            else
+                            {
+                                //small target render
+                                attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
+                                ActionManager.Instance.SetCursor(6);
+                            }
+                        }
+                        return;
+                    }
+                }
             }
             else
             {
                 target.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
             }
         }
+        attackCommand.SetWidth(0);
+        this.SetPassiveCursor();
+        ActionManager.Instance.Freeze(false);
     }
 
     private void WatchMouseActions()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        this.ComputeOutlineColors();
+        this.ComputeActivationRadius();
 
         //begin exclusive logic checks
         if (Input.GetMouseButtonDown(0))
@@ -258,12 +290,13 @@ public class BattleManager : MonoBehaviour
             //reset state, kills AttackStartMade
             ActionManager.Instance.SetActive(true);
             this.attackCommand.SetWidth(0);
+            this.combatMode = false;
             this.mouseDownTargetableObject = null;
             this.mouseUpTargetableObject = null;
             this.validTargets = new List<TargetableObject>();
             SetPassiveCursor();
         }
-        else if (attackCommand.lineRenderer.startWidth > 0 && Input.GetMouseButton(0))  //battle/fight arrow
+        else if (this.combatMode && Input.GetMouseButton(0))  //battle/fight arrow
         {
             RaycastHit hit;
             bool cast = Physics.Raycast(ray, out hit, 100f);
@@ -503,8 +536,8 @@ public class BattleManager : MonoBehaviour
 
     private float GetCardDisplacement(BattleCardObject target)
     {
-        Vector3 initial = target.reset.position;
-        Vector3 release = target.transform.localPosition;
+        Vector3 initial = target.transform.parent.TransformPoint(target.reset.position);
+        Vector3 release = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, target.transform.position.z));
         Vector3 delta = initial - release;
         return delta.sqrMagnitude;
     }

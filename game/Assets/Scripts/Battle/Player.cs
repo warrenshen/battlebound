@@ -328,8 +328,7 @@ public class Player
                 this.keptMulliganCards[i],
                 i
             );
-            battleCardObject.visual.SetOutline(true); //manual, needed
-            Debug.LogWarning("hello");
+            battleCardObject.visual.SetOutline(true); //to-do: doesn't seem to work even if value is set
         }
         BattleManager.Instance.SetBoardCenterText("Choose cards to mulligan..");
     }

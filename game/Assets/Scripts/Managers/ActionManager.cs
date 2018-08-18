@@ -51,7 +51,14 @@ public class ActionManager : MonoBehaviour
 
     public int stencilCount;
 
-    public bool active = true;
+    [SerializeField]
+    private bool active = true;
+    public bool Active => active;
+
+    [SerializeField]
+    private bool frozen;
+    public bool Frozen => frozen;
+
     public static ActionManager Instance { get; private set; }
 
     [SerializeField]
@@ -182,6 +189,9 @@ public class ActionManager : MonoBehaviour
 
     private void RepositionCard(CardObject cardObject)
     {
+        if (this.frozen)
+            return;
+
         //set target position by mouse position
         Vector3 endPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cardOffsetFromCamera));
         cardObject.transform.position = Vector3.Lerp(cardObject.transform.position, endPos, Time.deltaTime * L_SPEED);
@@ -189,9 +199,10 @@ public class ActionManager : MonoBehaviour
 
     private void AdjustCardTilt(CardObject cardObject)
     {
+        float multiplier = frozen ? -1 : 1;
         Vector3 mDeltaPosition = Camera.main.WorldToScreenPoint(cardObject.transform.position);
         mDeltaPosition = Input.mousePosition - mDeltaPosition;
-        var magnitude = mDeltaPosition.sqrMagnitude;
+        var magnitude = multiplier * mDeltaPosition.sqrMagnitude;
         Vector3 resetRotation = cardObject.reset.rotation.eulerAngles;
 
         mDeltaPosition.Normalize();
@@ -252,7 +263,9 @@ public class ActionManager : MonoBehaviour
 
     public void SetCursor(int cursor)
     {
-        Cursor.SetCursor(ActionManager.Instance.cursors[cursor], Vector2.zero, CursorMode.Auto);
+        Texture2D chosen = cursors[cursor];
+        Vector2 cursorHotspot = new Vector2(chosen.width / 2, chosen.height / 2);
+        Cursor.SetCursor(chosen, cursorHotspot, CursorMode.Auto);
     }
 
     public void SetActive(bool val)
@@ -263,5 +276,10 @@ public class ActionManager : MonoBehaviour
     public void LoadMainMenu()
     {
         Application.LoadLevel("Menu");
+    }
+
+    public void Freeze(bool value)
+    {
+        this.frozen = value;
     }
 }
