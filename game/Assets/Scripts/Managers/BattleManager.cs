@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 
@@ -1167,7 +1168,7 @@ public class BattleManager : MonoBehaviour
     public void ShowBattleEndFX(List<ExperienceCard> experienceCards, bool won)
     {
         endOverlay.SetActive(true);
-        TextMeshPro title = endOverlay.transform.Find("Title").GetComponent<TextMeshPro>();
+        Text title = endOverlay.transform.Find("Title").GetComponent<Text>();
         title.transform.localScale = Vector3.zero;
 
         if (won)
@@ -1183,15 +1184,6 @@ public class BattleManager : MonoBehaviour
             .scale(title.gameObject, Vector3.one, 1)
             .setOnComplete(() =>
             {
-                //if (won)
-                //{
-                //    endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
-                //}
-                //else
-                //{
-                //    endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
-                //}
-
                 LeanTween
                     .scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
                     .setDelay(CardTween.TWEEN_DURATION * 3)
@@ -1205,6 +1197,15 @@ public class BattleManager : MonoBehaviour
                            });
                     });
             });
+
+        //if (won)
+        //{
+        //    endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
+        //}
+        //else
+        //{
+        //    endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
+        //}
     }
 
     private LTDescr AnimateCardPlayed(BattleCardObject battleCardObject)

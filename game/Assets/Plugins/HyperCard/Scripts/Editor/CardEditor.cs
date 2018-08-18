@@ -80,7 +80,6 @@ namespace HyperCard
 
         public SerializedProperty _blackAndWhite;
         public SerializedProperty _enableOutline;
-        public SerializedProperty _enableBackOutline;
 
         public SerializedProperty _outlineNoiseFreq;
         public SerializedProperty _outlineNoiseSpeed;
@@ -226,7 +225,6 @@ namespace HyperCard
 
                 _blackAndWhite = serializedObject.FindProperty("BlackAndWhite");
                 _enableOutline = serializedObject.FindProperty("EnableOutline");
-                _enableBackOutline = serializedObject.FindProperty("EnableBackOutline");
 
                 _outlineNoiseFreq = serializedObject.FindProperty("OutlineNoiseFreq");
                 _outlineNoiseSpeed = serializedObject.FindProperty("OutlineNoiseSpeed");
@@ -798,11 +796,6 @@ namespace HyperCard
                     _outlineNoiseDistance.floatValue = EditorGUILayout.Slider("Noise distance", _outlineNoiseDistance.floatValue, 0, 1);
                     _outlineNoiseVerticalAjust.floatValue = EditorGUILayout.Slider("V-ajust", _outlineNoiseVerticalAjust.floatValue, 0, 5);
 
-                    GUILayout.Space(10f);
-
-                    _enableBackOutline.boolValue = DrawToggle("Display on back", _enableBackOutline.boolValue);
-
-                    GUILayout.Space(10f);
                 }
 
                 if (DrawHeader("Card - Dissolve FX"))

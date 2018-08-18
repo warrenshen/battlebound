@@ -328,8 +328,9 @@ public class Player
                 this.keptMulliganCards[i],
                 i
             );
+            battleCardObject.visual.SetOutline(true); //manual, needed
+            Debug.LogWarning("hello");
         }
-
         BattleManager.Instance.SetBoardCenterText("Choose cards to mulligan..");
     }
 

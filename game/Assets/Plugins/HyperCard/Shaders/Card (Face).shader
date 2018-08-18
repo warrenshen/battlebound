@@ -233,7 +233,7 @@ Shader "HyperCard/Card (Face)"
             } 
 
          Cull Back
-         Lighting On //changed by nick
+         Lighting Off //originally off
          Fog { Mode Off }
          Blend SrcAlpha OneMinusSrcAlpha
 

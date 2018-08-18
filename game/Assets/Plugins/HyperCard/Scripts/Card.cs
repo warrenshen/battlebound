@@ -379,7 +379,7 @@ namespace HyperCard
             var mat = Renderer.sharedMaterials;
 
             var faceMat = new Material(mat[0]);
-            var backMat = new Material(mat[1]);
+            var backMat = mat[1];
 
             ComputePeriodicalFx();
             var mask = CardMask;
@@ -500,32 +500,6 @@ namespace HyperCard
                 faceMat.SetFloat("_OutlineTrimOffset", OutlineTrimOffset);
                 faceMat.SetVector("_OutlinePosOffset", OutlinePosOffset);
                 faceMat.SetFloat("_OutlineAlphaMult", OutlineAlphaMult);
-
-                if (EnableBackOutline)
-                {
-                    backMat.SetInt("_ShowOutline", 1);
-                    backMat.SetFloat("_OutlineNoiseFreq", OutlineNoiseFreq);
-                    backMat.SetFloat("_OutlineNoiseSpeed", OutlineNoiseSpeed);
-                    backMat.SetFloat("_OutlineNoiseMult", OutlineNoiseMult);
-                    backMat.SetFloat("_OutlineNoiseDistance", OutlineNoiseDistance);
-                    backMat.SetFloat("_OutlineNoiseOffset", OutlineNoiseOffset);
-                    backMat.SetFloat("_OutlineNoiseThreshold", OutlineNoiseThreshold);
-                    backMat.SetFloat("_OutlineNoiseVerticalAjust", OutlineNoiseVerticalAjust);
-                    backMat.SetFloat("_OutlineWidth", OutlineWidth / 10);
-                    backMat.SetFloat("_OutlineHeight", OutlineHeight / 10);
-                    backMat.SetColor("_OutlineEndColor", OutlineEndColor);
-                    backMat.SetFloat("_OutlineEndColorDistance", OutlineEndColorDistance);
-                    backMat.SetColor("_OutlineColor", OutlineColor);
-                    backMat.SetFloat("_OutlineSmooth", OutlineSmooth);
-                    backMat.SetFloat("_OutlineSmoothSpeed", OutlineSmoothSpeed);
-                    backMat.SetFloat("_OutlineTrimOffset", OutlineTrimOffset);
-                    backMat.SetVector("_OutlinePosOffset", OutlinePosOffset);
-                    backMat.SetFloat("_OutlineAlphaMult", OutlineAlphaMult);
-                }
-                else
-                {
-                    backMat.SetInt("_ShowOutline", 0);
-                }
             }
             else
             {
@@ -606,7 +580,6 @@ namespace HyperCard
             backMat.SetTexture("_CardAlpha", CardBackAlpha);
 
             faceMat.name = Guid.NewGuid().ToString();
-            backMat.name = Guid.NewGuid().ToString();
 
             Renderer.materials = new[] { faceMat, backMat };
         }
@@ -818,7 +791,6 @@ namespace HyperCard
         public void SetOutline(bool value)
         {
             this.EnableOutline = value;
-            this.EnableBackOutline = value;
             this.Redraw();  //to-do: should REALLY optimize this later, imp!
         }
 
@@ -894,6 +866,22 @@ namespace HyperCard
             target.Value = value;
         }
 
+        public void ShowSprites()
+        {
+            foreach (CustomSpriteParam element in this.SpriteObjects)
+            {
+                element.Sprite.enabled = true;
+            }
+        }
+
+        public void HideSprites()
+        {
+            foreach (CustomSpriteParam element in this.SpriteObjects)
+            {
+                element.Sprite.enabled = false;
+            }
+        }
+
         public void SetFrameColor(Color color)
         {
             this.CardFaceFrameColor = color;
@@ -914,6 +902,7 @@ namespace HyperCard
             GetTextFieldWithKey("Attack").TmpObject.color = Color.white;
             GetTextFieldWithKey("Health").TmpObject.color = Color.white;
 
+            this.ShowSprites();
             this.BurningAmount = 0;
             this.BlackAndWhite = false;
             this.CardOpacity = 1;
