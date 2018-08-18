@@ -621,6 +621,40 @@ public class BattleState
         }
     }
 
+    private void ReceiveMovePlayStructure(
+        string playerId,
+        string cardId,
+        ChallengeCard challengeCard,
+        int handIndex,
+        int fieldIndex
+    )
+    {
+        if (this.activePlayer.Id != playerId)
+        {
+            Debug.LogError("Device active player does not match challenge move player.");
+            return;
+        }
+
+        if (FlagHelper.IsServerEnabled())
+        {
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByIndex(handIndex);
+            battleCardObject.Reinitialize(challengeCard);
+            opponent.PlayCard(battleCardObject);
+            BattleManager.Instance.EnemyPlayStructureToBoardAnim(battleCardObject, fieldIndex);
+        }
+        else
+        {
+            BattleCardObject battleCardObject = opponent.Hand.GetCardObjectByCardId(cardId);
+            if (battleCardObject == null)
+            {
+                Debug.LogError(string.Format("Server demanded card to play, but none of id {0} was found.", cardId));
+                return;
+            }
+            opponent.PlayCard(battleCardObject);
+            BattleManager.Instance.EnemyPlayStructureToBoardAnim(battleCardObject, fieldIndex);
+        }
+    }
+
     private void ReceiveMovePlaySpellTargeted(
         string playerId,
         string cardId,
@@ -891,9 +925,10 @@ public class BattleState
         ChallengeMove.MOVE_CATEGORY_PLAY_MULLIGAN,
         ChallengeMove.MOVE_CATEGORY_END_TURN,
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
-        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
+        ChallengeMove.MOVE_CATEGORY_PLAY_STRUCTURE,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
+        ChallengeMove.MOVE_CATEGORY_CARD_ATTACK,
         ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_CHOICE,
         ChallengeMove.MOVE_CATEGORY_SURRENDER_BY_EXPIRE,
     };
@@ -902,6 +937,7 @@ public class BattleState
     private static List<string> PLAYER_SKIP_CHALLENGE_MOVES = new List<string>
     {
         ChallengeMove.MOVE_CATEGORY_PLAY_MINION,
+        ChallengeMove.MOVE_CATEGORY_PLAY_STRUCTURE,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED,
         ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED,
     };
@@ -1069,7 +1105,6 @@ public class BattleState
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_MINION)
         {
             Card card = serverMove.Attributes.Card.GetCard();
-
             if (card.GetType() == typeof(CreatureCard))
             {
                 ReceiveMovePlayMinion(
@@ -1085,10 +1120,27 @@ public class BattleState
                 Debug.LogError("Invalid card category for play minion move");
             }
         }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_STRUCTURE)
+        {
+            Card card = serverMove.Attributes.Card.GetCard();
+            if (card.GetType() == typeof(StructureCard))
+            {
+                ReceiveMovePlayStructure(
+                    serverMove.PlayerId,
+                    serverMove.Attributes.CardId,
+                    serverMove.Attributes.Card,
+                    serverMove.Attributes.HandIndex,
+                    serverMove.Attributes.FieldIndex
+                );
+            }
+            else
+            {
+                Debug.LogError("Invalid card category for play minion move");
+            }
+        }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_UNTARGETED)
         {
             Card card = serverMove.Attributes.Card.GetCard();
-
             if (card.GetType() == typeof(SpellCard))
             {
                 ReceiveMovePlaySpellUntargeted(
@@ -1106,7 +1158,6 @@ public class BattleState
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_PLAY_SPELL_TARGETED)
         {
             Card card = serverMove.Attributes.Card.GetCard();
-
             if (card.GetType() == typeof(SpellCard))
             {
                 ReceiveMovePlaySpellTargeted(

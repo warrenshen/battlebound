@@ -76,16 +76,17 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         creatureCollider.size = COLLIDER_SIZE;
 
         this.visual = VisualizeCard();
-        SummonCreature();
+        Summon();
 
         //method calls
         Redraw();
 
         //post-collider-construction visuals
         transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
-
-        onSummonFinish.Invoke();
+        LeanTween
+            .scale(gameObject, new Vector3(1, 1, 1), ActionManager.TWEEN_DURATION)
+            .setEaseOutBack()
+            .setOnComplete(() => onSummonFinish.Invoke());
     }
 
     public override bool IsAvatar()
@@ -168,10 +169,13 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
             StartCoroutine("PlayVFXWithDelay", new object[3] { "LifestealVFX", other.transform.position, ATTACK_DELAY });
         }
 
-        if (!other.IsAvatar())
+        if (other.GetType() == typeof(BoardCreatureObject))
         {
-            if ((other as BoardCreatureObject).HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
+            BoardCreatureObject otherObject = other as BoardCreatureObject;
+            if (otherObject.HasAbility(Card.CARD_ABILITY_TAUNT))  //to-do this string should be chosen from some dict set by text file later
+            {
                 StartCoroutine("PlaySoundWithDelay", new object[3] { "HitTauntSFX", other.transform.position, ATTACK_DELAY + 0.5f });
+            }
         }
     }
 
@@ -309,11 +313,11 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         return cardVisual;
     }
 
-    private void SummonCreature()
+    private void Summon()
     {
         SoundManager.Instance.PlaySound("SummonSFX", transform.position);
 
-        GameObject prefab = ResourceSingleton.Instance.GetCreaturePrefabByName(this.boardCreature.GetCardName());
+        GameObject prefab = ResourceSingleton.Instance.GetPrefabByName(this.boardCreature.GetCardName());
 
         GameObject created = Instantiate(prefab) as GameObject;
         created.transform.parent = this.transform;

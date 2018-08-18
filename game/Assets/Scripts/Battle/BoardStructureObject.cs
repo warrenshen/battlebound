@@ -72,7 +72,7 @@ public class BoardStructureObject : TargetableObject, IBoardStructureObject
         creatureCollider.size = COLLIDER_SIZE;
 
         this.visual = VisualizeCard();
-        SummonCreature();
+        Summon();
 
         //method calls
         Redraw();
@@ -194,11 +194,11 @@ public class BoardStructureObject : TargetableObject, IBoardStructureObject
         return cardVisual;
     }
 
-    private void SummonCreature()
+    private void Summon()
     {
         SoundManager.Instance.PlaySound("SummonSFX", transform.position);
 
-        GameObject prefab = ResourceSingleton.Instance.GetCreaturePrefabByName(this.boardStructure.GetCardName());
+        GameObject prefab = ResourceSingleton.Instance.GetPrefabByName(this.boardStructure.GetCardName());
 
         GameObject created = Instantiate(prefab) as GameObject;
         created.transform.parent = this.transform;
@@ -216,31 +216,27 @@ public class BoardStructureObject : TargetableObject, IBoardStructureObject
         this.audioSources = created.GetComponents<AudioSource>();
         this.summonAnimClips = new List<string>();
 
-        this.summoned = created.transform.GetChild(0).gameObject;
-        this.summonAnimation = this.summoned.GetComponent<Animation>();
-        if (this.summonAnimation != null)
+        this.summonAnimation = created.GetComponentInChildren<Animator>();
+        this.summoned = this.summonAnimation.gameObject;
+
+        if (this.summonAnimation == null)
         {
-            foreach (AnimationState state in this.summonAnimation)
-            {
-                state.speed = 5f;
-                this.summonAnimClips.Add(state.clip.name);
-            }
+            Debug.LogError(String.Format("No animation or animator on gameobject: {0}", this.gameObject.name));
+        }
+        foreach (AnimationClip clip in this.summonAnimation.runtimeAnimatorController.animationClips)
+        {
+            this.summonAnimClips.Add(clip.name);
+        }
+        this.summonAnimation.speed = 1.33f;
+        this.summonAnimation.Play(this.summonAnimClips[0]);
+        if (this.summonAnimClips.Count > 1)
+        {
+            this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
         }
         else
         {
-            this.summonAnimation = this.summoned.GetComponent<Animator>();
-            if (this.summonAnimation == null)
-            {
-                Debug.LogError(String.Format("No animation or animator on gameobject: {0}", this.gameObject.name));
-            }
-            foreach (AnimationClip clip in this.summonAnimation.runtimeAnimatorController.animationClips)
-            {
-                this.summonAnimClips.Add(clip.name);
-            }
-            this.summonAnimation.speed = 1.33f;
+            Debug.LogWarning("Missing second summon anim clip");
         }
-        this.summonAnimation.Play(this.summonAnimClips[0]);
-        this.summonAnimation.CrossFade(this.summonAnimClips[1], 1F);
     }
 
     IEnumerator PlayVFXWithDelay(object[] args)

@@ -520,6 +520,36 @@ public class BattleSingleton : Singleton<BattleSingleton>
         OnChallengeRequestError(response, "ChallengeCardAttack");
     }
 
+    public void SendChallengeCardAttackStructureRequest(
+        string cardId,
+        CardAttackAttributes attributes
+    )
+    {
+        if (this.challengeId == null)
+        {
+            Debug.LogWarning("Cannot send ChallengeCardAttackStructure request without challengeId set.");
+            return;
+        }
+
+        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        request.SetEventKey("ChallengeCardAttackStructure");
+        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("cardId", cardId);
+        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+        request.Send(OnChallengeCardAttackStructureSuccess, OnChallengeCardAttackStructureError);
+    }
+
+    private void OnChallengeCardAttackStructureSuccess(LogChallengeEventResponse response)
+    {
+        Debug.Log("ChallengeCardAttackStructure request success.");
+    }
+
+    private void OnChallengeCardAttackStructureError(LogChallengeEventResponse response)
+    {
+        Debug.LogError("ChallengeCardAttackStructure request error.");
+        OnChallengeRequestError(response, "ChallengeCardAttackStructure");
+    }
+
     public void SendChallengeSendChatRequest(int chatId)
     {
         if (this.challengeId == null)
