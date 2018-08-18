@@ -94,6 +94,48 @@ public class Board
         }));
     }
 
+    public void CreateAndPlaceStructure(
+        ChallengeCard challengeCard,
+        int fieldIndex,
+        bool shouldWarcry,
+        bool isResume = false
+    )
+    {
+        //List<BoardStructure> aliveStructures =
+        //    GetAliveStructuresByPlayerId(challengeCard.PlayerId);
+        //foreach (BoardStructure aliveStructure in aliveStructures)
+        //{
+        //    if (aliveStructure.GetCardId() == challengeCard.Id)
+        //    {
+        //        Debug.LogError(
+        //            string.Format(
+        //                "Cannot place creature with card ID of existing structure: {0}",
+        //                challengeCard.Id
+        //            )
+        //        );
+        //        return;
+        //    }
+        //}
+
+        PlayingField playingField = this.playerIdToField[challengeCard.PlayerId];
+        BoardStructure boardStructure = new BoardStructure(
+            challengeCard,
+            fieldIndex,
+            isResume
+        );
+        playingField.Place(boardStructure, fieldIndex);
+        boardStructure.SummonWithCallback(new UnityAction(() =>
+        {
+            if (shouldWarcry)
+            {
+                EffectManager.Instance.OnStructurePlay(
+                    boardStructure.GetPlayerId(),
+                    boardStructure.GetCardId()
+                );
+            }
+        }));
+    }
+
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
     {
         BoardCreature boardCreature = GetCreatureByPlayerIdAndCardId(playerId, cardId);
@@ -358,8 +400,13 @@ public class Board
             }
         }
 
-        public bool Place(BoardCreature creature, int index)
+        public bool Place(BoardCreature boardCreature, int index)
         {
+            if (index < 0 || index > 5)
+            {
+                Debug.LogError("Invalid index for board creature.");
+                return false;
+            }
             if (this.field[index] != null)
             {
                 Debug.LogError("Attempting to place unit where one exists.");
@@ -367,7 +414,26 @@ public class Board
             }
             else
             {
-                this.field[index] = creature;
+                this.field[index] = boardCreature;
+                return true;
+            }
+        }
+
+        public bool Place(BoardStructure boardStructure, int index)
+        {
+            if (index < 6 || index > 8)
+            {
+                Debug.LogError("Invalid index for board structure.");
+                return false;
+            }
+            if (this.fieldBack[index - 6] != null)
+            {
+                Debug.LogError("Attempting to place unit where one exists.");
+                return false;
+            }
+            else
+            {
+                this.fieldBack[index - 6] = boardStructure;
                 return true;
             }
         }
