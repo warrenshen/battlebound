@@ -511,7 +511,7 @@ public class BattleManager : MonoBehaviour
                     defendingTargetableObject.GetPlayerId(),
                     defendingTargetableObject.GetCardId()
                 );
-                if (defendingTargetableObject.GetType() == typeof(BoardStructure))
+                if (defendingTargetableObject.GetType() == typeof(BoardStructureObject))
                 {
                     BattleSingleton.Instance.SendChallengeCardAttackStructureRequest(
                         attackingTargetableObject.GetCardId(),
