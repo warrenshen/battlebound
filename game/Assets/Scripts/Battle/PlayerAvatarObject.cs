@@ -26,11 +26,9 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
 
         this.audioSource = GetComponent<AudioSource>();
 
-        CreateLabelOnAvatar(ref this.nameLabel, Vector3.left * 1.05f);
-        CreateLabelOnAvatar(ref this.healthLabel, Vector3.right * 1.05f);
+        CreateLabelOnAvatar(ref this.nameLabel, Vector3.left * 1.07f);
+        CreateLabelOnAvatar(ref this.healthLabel, Vector3.right * 1.07f);
 
-        this.nameLabel.alignment = TextAlignmentOptions.Right;
-        this.healthLabel.alignment = TextAlignmentOptions.Left;
         this.nameLabel.text = this.playerAvatar.GetDisplayName();
         //already has cylinder collider in scene
         UpdateStatText();
@@ -47,9 +45,9 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
         RectTransform textContainer = assignTo.GetComponent<RectTransform>();
         textContainer.sizeDelta = new Vector2(2, 1);
         textContainer.anchoredPosition = new Vector3(0, 2.6F, -0.5F) + offset;
-        textHolder.transform.rotation = Quaternion.identity;
         textHolder.transform.SetParent(this.transform, false);
         textHolder.layer = textHolder.transform.parent.gameObject.layer;
+        textHolder.transform.rotation = Quaternion.identity;
     }
 
     public override bool IsAvatar()

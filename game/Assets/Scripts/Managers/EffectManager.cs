@@ -2383,7 +2383,17 @@ public class EffectManager : MonoBehaviour
 
     private void SpellTargetedWidespreadFrostbite(string playerId, BoardCreature targetedCreature)
     {
-        targetedCreature.Freeze(2);
+        IncrementIsWaiting();
+        this.fXManager.PlayEffectWithCallback(
+            "DeepFreezeVFX",
+            "IceCastSFX",
+            targetedCreature.GetTargetableTransform(),
+            () =>
+            {
+                targetedCreature.Freeze(2);
+                DecrementIsWaiting();
+            }
+        );
 
         List<BoardCreature> adjacentCreatures =
             Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
@@ -2393,9 +2403,18 @@ public class EffectManager : MonoBehaviour
 
         foreach (BoardCreature adjacentCreature in adjacentCreatures)
         {
-            adjacentCreature.Freeze(1);
+            IncrementIsWaiting();
+            this.fXManager.PlayEffectWithCallback(
+                "DeepFreezeVFX",
+                "IceCastSFX",
+                adjacentCreature.GetTargetableTransform(),
+                () =>
+                {
+                    adjacentCreature.Freeze(1);
+                    DecrementIsWaiting();
+                }
+            );
         }
-
         // No triggered effects on freeze for now.
     }
 

@@ -1198,14 +1198,16 @@ public class BattleManager : MonoBehaviour
     private void RenderEXPChanges(List<ExperienceCard> experienceCards)
     {
         int index = 0;
-        int rowSize = 4;
         foreach (ExperienceCard item in experienceCards)
         {
             Card card = item.GetCard();
             CardObject cardObject = CardObject.Create(card);
+            cardObject.gameObject.SetLayer(LayerMask.NameToLayer("Top"));
+            cardObject.transform.Rotate(Vector3.right * 10);
 
-            Vector3 offset = (index % rowSize) * Vector3.right * 1.8f + (index / rowSize) * Vector3.down * 3.6f;
+            Vector3 offset = Vector3.left * 5 + index * Vector3.right * 2.7f + Vector3.up * 0.5f;
             CardTween.move(cardObject, endOverlay.transform.position + offset, CardTween.TWEEN_DURATION);
+            //render xp bars upon completion of tweening into shot
             ++index;
         }
     }
@@ -1231,7 +1233,7 @@ public class BattleManager : MonoBehaviour
             {
                 LeanTween
                     .scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
-                    .setDelay(CardTween.TWEEN_DURATION * 3)
+                    .setDelay(CardTween.TWEEN_DURATION * 2)
                     .setOnComplete(() =>
                     {
                         LeanTween
