@@ -850,13 +850,14 @@ public class Player
             {
                 ChallengeCard challengeCard = new ChallengeCard();
                 challengeCard.SetId("EMPTY");
-                fieldCards.SetValue(challengeCard, i - 6);
+                fieldBackCards.SetValue(challengeCard, i - 6);
             }
             else
             {
-                fieldCards.SetValue(boardStructure.GetChallengeCard(), i - 6);
+                fieldBackCards.SetValue(boardStructure.GetChallengeCard(), i - 6);
             }
         }
+        playerState.SetFieldBack(fieldBackCards);
 
         return playerState;
     }

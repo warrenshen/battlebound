@@ -1033,13 +1033,7 @@ public class BattleState
             )
         )
         {
-            VerifyChallengeState(
-                serverMove.Rank - 1,
-                GetPlayerState(),
-                GetOpponentState(),
-                this.spawnCount,
-                this.deadCards.Count
-            );
+            VerifyChallengeState(serverMove.Rank - 1);
         }
         this.serverMoves.Add(serverMove);
 
@@ -1237,22 +1231,16 @@ public class BattleState
         return serverMove.Rank;
     }
 
-    private void VerifyChallengeState(
-        int moveRank,
-        PlayerState playerState,
-        PlayerState opponentState,
-        int spawnCount,
-        int deadCount
-    )
+    private void VerifyChallengeState(int moveRank)
     {
         if (!BattleSingleton.Instance.IsEnvironmentTest() && FlagHelper.IsServerEnabled())
         {
             bool doesMatch = BattleSingleton.Instance.CompareChallengeState(
                 moveRank,
-                playerState,
-                opponentState,
-                spawnCount,
-                deadCount
+                GetPlayerState(),
+                GetOpponentState(),
+                this.spawnCount,
+                this.deadCards.Count
             );
 
             if (!doesMatch)
