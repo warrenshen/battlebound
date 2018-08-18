@@ -430,7 +430,9 @@ public abstract class Card
 
     public static string GetDecriptionByAbilities(List<string> abilities)
     {
+        LanguageUtility languageUtility = LanguageUtility.Instance();
         string description = "";
+
         foreach (string ability in abilities)
         {
             if (ability == CARD_EMPTY_ABILITY || ability == null)
@@ -442,16 +444,17 @@ public abstract class Card
                 Debug.LogError(string.Format("Ability to description does not contain ability: {0}", ability));
                 continue;
             }
-            //to-do: localization logic here
-            //LanguageUtility.Instance().GetLocalized()
+
+            string key = ABILITY_TO_DESCRIPTION[ability];
+            string localizedDescription = languageUtility.GetLocalizedAbility(key);
 
             if (description.Length == 0)
             {
-                description += ABILITY_TO_DESCRIPTION[ability];
+                description += localizedDescription;
             }
             else
             {
-                description += string.Format("\n{0}", ABILITY_TO_DESCRIPTION[ability]);
+                description += string.Format("\n{0}", localizedDescription);
             }
         }
         return description;
@@ -493,19 +496,13 @@ public abstract class Card
             return;
         }
         //set text materials appropriately
-        int fontIndex = (int)LanguageUtility.Instance().GetLanguage();
-
         LanguageUtility languageUtility = LanguageUtility.Instance();
-        if (languageUtility.HasLocalizedName(card.GetName()))
-        {
-            cardVisual.GetTextFieldWithKey("Title").TmpObject.font = CardSingleton.Instance.FontAssets[fontIndex];
-            string localizedName = languageUtility.GetLocalizedName(card.GetName());
-            cardVisual.SetTextFieldWithKey("Title", localizedName);
-        }
-        else
-        {
-            cardVisual.SetTextFieldWithKey("Title", card.GetName());
-        }
+        int fontIndex = (int)languageUtility.GetLanguage();
+        cardVisual.GetTextFieldWithKey("Title").TmpObject.font = CardSingleton.Instance.FontAssets[fontIndex];
+        cardVisual.GetTextFieldWithKey("Description").TmpObject.font = CardSingleton.Instance.FontAssets[fontIndex];
+
+        string localizedName = languageUtility.GetLocalizedName(card.GetName());
+        cardVisual.SetTextFieldWithKey("Title", localizedName);
 
         if (card.GetType() == typeof(CreatureCard))
         {

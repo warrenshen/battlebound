@@ -51,34 +51,36 @@ public class LanguageUtility
         return translations;
     }
 
-    public bool HasLocalizedName(string name)
-    {
-        bool value = this.cardNames.ContainsKey(name);
-        if (value)
-        {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
-        }
-        return value;
-    }
-
     public string GetLocalizedName(string name)
     {
-        return cardNames[name][(int)this.selectedLanguage];
-    }
-
-    public bool HasLocalizedAbility(string ability)
-    {
-        bool value = this.cardNames.ContainsKey(ability);
-        if (value)
+        if (!this.cardNames.ContainsKey(name))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
+            Debug.LogError(string.Format("Missing translation for: {0}", name));
+            return name;
+        }
+        string value = cardNames[name][(int)this.selectedLanguage];
+        if (value.Equals(""))
+        {
+            Debug.LogError(string.Format("Missing translation for: {0}", name));
+            return name;
         }
         return value;
     }
 
     public string GetLocalizedAbility(string ability)
     {
-        return cardNames[ability][(int)this.selectedLanguage];
+        if (!this.cardAbilities.ContainsKey(ability))
+        {
+            Debug.LogError(string.Format("Missing translation for: {0}", ability));
+            return ability;
+        }
+        string value = cardAbilities[ability][(int)this.selectedLanguage];
+        if (value.Equals(""))
+        {
+            Debug.LogError(string.Format("Missing translation for: {0}", ability));
+            return ability;
+        }
+        return value;
     }
 
     public LanguageUtility.Language GetLanguage()
