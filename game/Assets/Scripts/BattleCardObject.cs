@@ -148,6 +148,11 @@ public class BattleCardObject : CardObject
         else if (this.card.GetType() == typeof(StructureCard))
         {
             challengeCard.SetCategory((int)Card.CardType.Structure);
+
+            StructureCard structureCard = this.card as StructureCard;
+            challengeCard.SetHealth(structureCard.GetHealth());
+            challengeCard.SetHealthStart(structureCard.GetHealth());
+            challengeCard.SetHealthMax(structureCard.GetHealth());
         }
         else
         {
