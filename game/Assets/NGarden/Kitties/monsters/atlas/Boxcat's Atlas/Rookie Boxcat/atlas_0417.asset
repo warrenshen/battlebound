@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 529336600, guid: 289bab7cc27a12745b5df9b71d7b06c4, type: 3}
+  m_Name: atlas_0417
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 2d77167b43f713c468ed807be61ac62e, type: 2}
+  uvs:
+  - serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0.6464844
+    height: 0.56884766
+  - serializedVersion: 2
+    x: 0.64697266
+    y: 0
+    width: 0.31884766
+    height: 0.21533203
+  - serializedVersion: 2
+    x: 0.64697266
+    y: 0.21582031
+    width: 0.123535156
+    height: 0.20410156
+  - serializedVersion: 2
+    x: 0.64697266
+    y: 0.42041016
+    width: 0.11279297
+    height: 0.123535156
+  - serializedVersion: 2
+    x: 0
+    y: 0.56933594
+    width: 0.39501953
+    height: 0.25048828
+  textureGUIDs:
+  - 17912c7731eafac49ab206ad1dfe4240
+  - 321059f43ab158041aa294e1391bed04
+  - 369599e29c2b8de4f917a2200c326fff
+  - 6b7cea3441ca1cf489164d070ec6382f
+  - 9a01ab9f68128d543b62128b4b2a7dd9
+  textureSizes:
+  - {x: 1324, y: 1165}
+  - {x: 653, y: 441}
+  - {x: 253, y: 418}
+  - {x: 231, y: 253}
+  - {x: 809, y: 513}
+  defaultPivotOffsets:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  textureNames:
+  - 0417_03_head
+  - 0417_06_tail
+  - 0417_04_lHand
+  - 0417_02_rHand
+  - 0417_05_body
+  texturePaths:
+  - Assets/0407_0422/textures/0417/0417_03_head.png
+  - Assets/0407_0422/textures/0417/0417_06_tail.png
+  - Assets/0407_0422/textures/0417/0417_04_lHand.png
+  - Assets/0407_0422/textures/0417/0417_02_rHand.png
+  - Assets/0407_0422/textures/0417/0417_05_body.png
+  lastBuildID: 20150521102335596
+  needsRebuilt: 0
+  dataVersion: 4
+  maxAtlasSize: 512
+  padding: 1
+  forceSquare: 0

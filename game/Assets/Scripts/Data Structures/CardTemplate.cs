@@ -46,11 +46,9 @@ public class CardTemplate
 
     //weapon
     public int durability;
-    //to-do: special attributes?
 
     //spell
     public bool targeted;
-    //to-do: effect id?
 
     public CardTemplate()
     {

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 529336600, guid: 289bab7cc27a12745b5df9b71d7b06c4, type: 3}
+  m_Name: atlas_0419_2
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 226a61eadfb3fd44c9ce7d4ef6d77071, type: 2}
+  uvs:
+  - serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0.8408203
+    height: 0.3857422
+  - serializedVersion: 2
+    x: 0
+    y: 0.38671875
+    width: 0.84765625
+    height: 0.32128906
+  textureGUIDs:
+  - 90f2127c9bb386e4f8e8d8dcc2e96c02
+  - f09d4cbb989ccc149b869bb3e0252784
+  textureSizes:
+  - {x: 861, y: 395}
+  - {x: 868, y: 329}
+  defaultPivotOffsets:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  textureNames:
+  - 0419_07_box2
+  - 0419_01_box1
+  texturePaths:
+  - Assets/0407_0422/textures/0419/0419_07_box2.png
+  - Assets/0407_0422/textures/0419/0419_01_box1.png
+  lastBuildID: 20150521101658232
+  needsRebuilt: 0
+  dataVersion: 4
+  maxAtlasSize: 512
+  padding: 1
+  forceSquare: 0

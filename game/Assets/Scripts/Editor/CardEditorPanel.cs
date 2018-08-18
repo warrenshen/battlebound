@@ -287,6 +287,11 @@ public class CardEditorPanel : EditorWindow
             ValidationErrorBox("Creature cards must have a summon prefab.");
             return false;
         }
+        else if (template.cardType == Card.CardType.Structure && this.summonPrefab == null)
+        {
+            ValidationErrorBox("Structure cards must have a summon prefab.");
+            return false;
+        }
         else if (this.effectPrefab == null)
         {
             ValidationErrorBox("Missing effect prefab.");
@@ -416,7 +421,18 @@ public class CardEditorPanel : EditorWindow
                 template.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.durability);
                 break;
             case Card.CardType.Structure:
-                //to-do: lots
+                EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos + lineHeight + lineMargin, 40, lineHeight), "Health");
+                template.health = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos + lineHeight + lineMargin, 50, lineHeight), template.health);
+
+                //prefab preview logic
+                EditorGUI.LabelField(new Rect(5, belowRarity, position.width / 2 - 10, lineHeight), "Creature/Summon Prefab");
+                this.summonPrefab = EditorGUI.ObjectField(new Rect(5, belowRarity + lineHeight, position.width / 2 - 10, 16), this.summonPrefab, typeof(GameObject), false) as GameObject;
+
+                float pivot = position.width - 10;
+                this.firstAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40, pivot, 20), this.firstAbility, Card.VALID_ABILITIES);
+                this.secondAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16, pivot, 20), this.secondAbility, Card.VALID_ABILITIES);
+                this.thirdAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 2, pivot, 20), this.thirdAbility, Card.VALID_ABILITIES);
+                this.fourthAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 3, pivot, 20), this.fourthAbility, Card.VALID_ABILITIES);
                 break;
             case Card.CardType.Spell:
                 template.targeted = EditorGUI.ToggleLeft(new Rect(cardSpecificXPos, cardSpecificYPos, 80, 20), "Targeted?", template.targeted);
