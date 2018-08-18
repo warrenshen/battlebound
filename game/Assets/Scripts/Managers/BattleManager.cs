@@ -900,6 +900,11 @@ public class BattleManager : MonoBehaviour
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
 
+        if (index > 5)
+        {
+            return false;
+        }
+
         Player player = battleCardObject.Owner;
         return Board.Instance().IsBoardPlaceOpen(player.Id, index);
     }
