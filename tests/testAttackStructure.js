@@ -169,7 +169,7 @@ describe("challenge attack structure", function() {
               "category": 2,
               "health": 10,
               "cost": 20,
-              "name": 'Taunt Structure',
+              "name": "Warden's Outpost",
               "baseId": 'C36',
               "costStart": 20,
               "healthStart": 30,
