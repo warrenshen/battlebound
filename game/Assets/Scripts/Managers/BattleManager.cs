@@ -1026,7 +1026,7 @@ public class BattleManager : MonoBehaviour
         if (FlagHelper.IsServerEnabled())
         {
             PlayCardAttributes attributes = new PlayCardAttributes(index);
-            BattleSingleton.Instance.SendChallengePlayCardRequest(
+            BattleSingleton.Instance.SendChallengePlayStructureRequest(
                 cardId,
                 attributes
             );

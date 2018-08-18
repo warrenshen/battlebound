@@ -434,6 +434,36 @@ public class BattleSingleton : Singleton<BattleSingleton>
         OnChallengeRequestError(response, "ChallengePlayCard");
     }
 
+    public void SendChallengePlayStructureRequest(
+    string cardId,
+    PlayCardAttributes attributes
+)
+    {
+        if (this.challengeId == null)
+        {
+            Debug.LogWarning("Cannot send ChallengePlayCard request without challengeId set.");
+            return;
+        }
+
+        LogChallengeEventRequest request = new LogChallengeEventRequest();
+        request.SetEventKey("ChallengePlayStructure");
+        request.SetEventAttribute("challengeInstanceId", this.challengeId);
+        request.SetEventAttribute("cardId", cardId);
+        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+        request.Send(OnChallengePlayStructureSuccess, OnChallengePlayStructureError);
+    }
+
+    private void OnChallengePlayStructureSuccess(LogChallengeEventResponse response)
+    {
+        Debug.Log("ChallengePlayStructure request success.");
+    }
+
+    private void OnChallengePlayStructureError(LogChallengeEventResponse response)
+    {
+        Debug.LogError("ChallengePlayStructure request error.");
+        OnChallengeRequestError(response, "ChallengePlayCard");
+    }
+
     public void SendChallengePlaySpellTargetedRequest(
         string cardId,
         PlaySpellTargetedAttributes attributes
