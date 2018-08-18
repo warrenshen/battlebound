@@ -3,15 +3,15 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-public class TestDivineShield
+public class TestAttackStructure
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",
         ""displayName"": ""Player"",
-        ""hasTurn"": 1,
+        ""hasTurn"": 0,
         ""manaCurrent"": 20,
         ""manaMax"": 20,
-        ""health"": 100,
+        ""health"": 90,
         ""healthMax"": 100,
         ""armor"": 0,
         ""cardCount"": 30,
@@ -20,7 +20,31 @@ public class TestDivineShield
         ""hand"": [],
         ""field"": [
             {
-                ""id"": ""ID_PLAYER-5"",
+                ""id"": ""ID_PLAYER-16"",
+                ""playerId"": ""ID_PLAYER"",
+                ""level"": 1,
+                ""category"": 0,
+                ""attack"": 50,
+                ""health"": 40,
+                ""cost"": 50,
+                ""name"": ""Cereboarus"",
+                ""abilities"": [
+                    5,
+                    6,
+                    1
+                ],
+                ""attackStart"": 50,
+                ""costStart"": 50,
+                ""healthStart"": 40,
+                ""healthMax"": 40,
+                ""buffsField"": [],
+                ""canAttack"": 0,
+                ""isFrozen"": 0,
+                ""isSilenced"": 0,
+                ""spawnRank"": 6
+            },
+            {
+                ""id"": ""ID_PLAYER-14"",
                 ""playerId"": ""ID_PLAYER"",
                 ""level"": 1,
                 ""category"": 0,
@@ -41,31 +65,7 @@ public class TestDivineShield
                 ""buffsField"": [],
                 ""canAttack"": 1,
                 ""isFrozen"": 0,
-                ""spawnRank"": 3
-            },
-            {
-                ""id"": ""ID_PLAYER-12"",
-                ""playerId"": ""ID_PLAYER"",
-                ""level"": 1,
-                ""category"": 0,
-                ""attack"": 40,
-                ""health"": 60,
-                ""cost"": 60,
-                ""name"": ""Adderspine Weevil"",
-                ""description"": ""Taunt; Deathwish: Deal 20 dmg to all opponent creatures"",
-                ""abilities"": [
-                  1,
-                  30
-                ],
-                ""attackStart"": 40,
-                ""costStart"": 60,
-                ""healthStart"": 60,
-                ""healthMax"": 60,
-                ""buffsField"": [],
-                ""canAttack"": 1,
-                ""isFrozen"": 0,
-                ""isSilenced"": 0,
-                ""spawnRank"": 4
+                ""spawnRank"": 5
             },
             {
                 ""id"": ""EMPTY""
@@ -82,7 +82,17 @@ public class TestDivineShield
         ],
         ""fieldBack"": [
             {
-                ""id"": ""EMPTY""
+                ""id"": ""ID_PLAYER-0"",
+                ""playerId"": ""ID_PLAYER"",
+                ""level"": 1,
+                ""category"": 2,
+                ""health"": 10,
+                ""cost"": 20,
+                ""name"": ""Warden's Tower"",
+                ""costStart"": 20,
+                ""healthStart"": 30,
+                ""healthMax"": 30,
+                ""spawnRank"": 2
             },
             {
                 ""id"": ""EMPTY""
@@ -99,7 +109,7 @@ public class TestDivineShield
         ""displayName"": ""Enemy"",
         ""hasTurn"": 0,
         ""manaCurrent"": 20,
-        ""manaMax"": 20,
+        ""manaMax"": 70,
         ""health"": 100,
         ""healthMax"": 100,
         ""armor"": 0,
@@ -115,27 +125,7 @@ public class TestDivineShield
                 ""id"": ""EMPTY""
             },
             {
-                ""id"": ""ID_ENEMY-9"",
-                ""playerId"": ""ID_ENEMY"",
-                ""level"": 1,
-                ""category"": 0,
-                ""attack"": 40,
-                ""health"": 60,
-                ""cost"": 60,
-                ""name"": ""Temple Guardian"",
-                ""description"": """",
-                ""abilities"": [
-                    1,
-                    2
-                ],
-                ""attackStart"": 40,
-                ""costStart"": 60,
-                ""healthStart"": 60,
-                ""healthMax"": 60,
-                ""buffsField"": [],
-                ""canAttack"": 0,
-                ""isFrozen"": 0,
-                ""spawnRank"": 7
+                ""id"": ""EMPTY""
             },
             {
                 ""id"": ""EMPTY""
@@ -198,44 +188,26 @@ public class TestDivineShield
     }
 
     [UnityTest]
-    public IEnumerator ShieldBlocksAttackTest()
+    public IEnumerator StructureRemoveTauntFromCreaturesTest()
     {
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-12");
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
+        Card card = Card.CreateByNameAndLevel("ID_ENEMY-0", Card.CARD_NAME_TOUCH_OF_ZEUS, 1);
+        ChallengeCard challengeCard = card.GetChallengeCard("ID_ENEMY");
 
-        EffectManager.Instance.OnCreatureAttack(
-            playerCreature,
-            enemyCreature
+        BoardStructure playerStructure = Board.Instance().GetStructureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-0");
+        EffectManager.Instance.OnSpellTargetedPlay(
+            challengeCard,
+            playerStructure
         );
 
-        yield return null;
+        yield return new WaitForSeconds(3);
 
-        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-12");
-        Assert.AreEqual(20, enemyCreature.Health);
+        playerStructure = Board.Instance().GetStructureByPlayerIdAndIndex("ID_PLAYER", 6);
+        Assert.AreEqual(null, playerStructure);
 
-        playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
-        Assert.AreEqual(false, playerCreature.HasAbility(Card.CARD_ABILITY_SHIELD));
-        Assert.AreEqual(60, playerCreature.Health);
-    }
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-16");
+        Assert.AreEqual(false, playerCreature.HasAbility(Card.CARD_ABILITY_TAUNT));
 
-    [UnityTest]
-    public IEnumerator ShieldBlocksLethalTest()
-    {
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-5");
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
-
-        EffectManager.Instance.OnCreatureAttack(
-            playerCreature,
-            enemyCreature
-        );
-
-        yield return null;
-
-        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        Assert.AreEqual(null, enemyCreature);
-
-        playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-9");
-        Assert.AreEqual(false, playerCreature.HasAbility(Card.CARD_ABILITY_SHIELD));
-        Assert.AreEqual(60, playerCreature.Health);
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-14");
+        Assert.AreEqual(true, playerCreature.HasAbility(Card.CARD_ABILITY_TAUNT));
     }
 }

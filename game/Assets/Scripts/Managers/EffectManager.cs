@@ -2861,7 +2861,7 @@ public class EffectManager : MonoBehaviour
         {
             foreach (BoardCreature boardCreature in boardCreatures)
             {
-                boardCreature.GrantTaunt();
+                boardCreature.RemoveTauntIfGranted();
             }
         }
 
