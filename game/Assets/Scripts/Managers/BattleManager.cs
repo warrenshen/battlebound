@@ -787,30 +787,35 @@ public class BattleManager : MonoBehaviour
             return false;
         }
 
-        BoardCreatureObject targetedCreatureObject = hit.collider.GetComponent<BoardCreatureObject>();
-        if (targetedCreatureObject == null)
-        {
-            return false;
-        }
-
         string playerId = battleCardObject.Owner.Id;
 
-        if (
-            SpellCard.TARGETED_SPELLS_FRIENDLY_ONLY.Contains(battleCardObject.Card.Name)
-            && playerId != targetedCreatureObject.GetPlayerId()
-        )
+        BoardCreatureObject targetedCreatureObject = hit.collider.GetComponent<BoardCreatureObject>();
+        if (targetedCreatureObject != null)
         {
-            return false;
-        }
-        else if (
-            SpellCard.TARGETED_SPELLS_OPPONENT_ONLY.Contains(battleCardObject.Card.Name)
-            && playerId == targetedCreatureObject.GetPlayerId()
-        )
-        {
-            return false;
+            if (
+                SpellCard.TARGETED_SPELLS_FRIENDLY_ONLY.Contains(battleCardObject.Card.Name) &&
+                playerId != targetedCreatureObject.GetPlayerId()
+            )
+            {
+                return false;
+            }
+            else if (
+                SpellCard.TARGETED_SPELLS_OPPONENT_ONLY.Contains(battleCardObject.Card.Name) &&
+                playerId == targetedCreatureObject.GetPlayerId()
+            )
+            {
+                return false;
+            }
+            return true;
         }
 
-        return true;
+        BoardStructureObject targetedStructureObject = hit.collider.GetComponent<BoardStructureObject>();
+        if (targetedStructureObject != null)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private bool CanPlayUntargetedSpell(BattleCardObject battleCardObject)
@@ -1003,7 +1008,24 @@ public class BattleManager : MonoBehaviour
      */
     public void PlayTargetedSpell(BattleCardObject battleCardObject, RaycastHit hit)
     {
+        TargetableObject targetedObject;
+
         BoardCreatureObject targetedCreatureObject = hit.collider.GetComponent<BoardCreatureObject>();
+        BoardStructureObject targetedStructureObject = hit.collider.GetComponent<BoardStructureObject>();
+        if (targetedCreatureObject != null)
+        {
+            targetedObject = targetedCreatureObject;
+        }
+        else if (targetedStructureObject != null)
+        {
+            targetedObject = targetedStructureObject;
+        }
+        else
+        {
+            Debug.LogError("Raycast hit is neither a creature nor a structure.");
+            return;
+        }
+
         string playerId = battleCardObject.GetPlayerId();
 
         ChallengeMove challengeMove;
@@ -1023,8 +1045,8 @@ public class BattleManager : MonoBehaviour
         ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
         moveAttributes.SetCardId(battleCardObject.GetCardId());
         moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
-        moveAttributes.SetFieldId(targetedCreatureObject.GetPlayerId());
-        moveAttributes.SetTargetId(targetedCreatureObject.GetCardId());
+        moveAttributes.SetFieldId(targetedObject.GetPlayerId());
+        moveAttributes.SetTargetId(targetedObject.GetCardId());
 
         challengeMove.SetMoveAttributes(moveAttributes);
         BattleState.Instance().AddServerMove(challengeMove);
@@ -1032,8 +1054,8 @@ public class BattleManager : MonoBehaviour
         if (FlagHelper.IsServerEnabled())
         {
             PlaySpellTargetedAttributes attributes = new PlaySpellTargetedAttributes(
-                targetedCreatureObject.GetPlayerId(),
-                targetedCreatureObject.GetCardId()
+                targetedObject.GetPlayerId(),
+                targetedObject.GetCardId()
             );
             BattleSingleton.Instance.SendChallengePlaySpellTargetedRequest(
                 battleCardObject.GetCardId(),
@@ -1046,7 +1068,7 @@ public class BattleManager : MonoBehaviour
             battleCardObject.Owner.PlayCard(battleCardObject);
             EffectManager.Instance.OnSpellTargetedPlay(
                 battleCardObject.GetChallengeCard(),
-                targetedCreatureObject.GetTargetable() as BoardCreature
+                targetedObject.GetTargetable()
             );
             UseCard(battleCardObject);
         }
@@ -1056,11 +1078,11 @@ public class BattleManager : MonoBehaviour
     /*
      * Play targeted spell card after receiving play card move from server. 
      */
-    public void PlayTargetedSpellFromServer(BattleCardObject battleCardObject, BoardCreature targetedCreature)
+    public void PlayTargetedSpellFromServer(BattleCardObject battleCardObject, Targetable targetable)
     {
         EffectManager.Instance.OnSpellTargetedPlay(
             battleCardObject.GetChallengeCard(),
-            targetedCreature
+            targetable
         );
         UseCard(battleCardObject);
     }
@@ -1272,7 +1294,7 @@ public class BattleManager : MonoBehaviour
             });
     }
 
-    public void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, BoardCreature targetedCreature)
+    public void EnemyPlaySpellTargetedAnim(BattleCardObject battleCardObject, Targetable targetable)
     {
         EnableIsAnimating();
         AnimateCardPlayed(battleCardObject)
@@ -1283,7 +1305,7 @@ public class BattleManager : MonoBehaviour
                     .setOnComplete(() =>
                     {
                         battleCardObject.noInteraction = false;
-                        PlayTargetedSpellFromServer(battleCardObject, targetedCreature);
+                        PlayTargetedSpellFromServer(battleCardObject, targetable);
                         DisableIsAnimating();
                     });
             });

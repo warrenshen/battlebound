@@ -88,12 +88,12 @@ public abstract class Card
     public const string CARD_NAME_BESTOWED_VIGOR = "Bestowed Vigor";
 
     // Spells untargeted.
-    public const string CARD_NAME_RIOT_UP = "Riot Up";
+    public const string CARD_NAME_SHIELDS_UP = "Shields Up!";
     public const string CARD_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
     public const string CARD_NAME_RAZE_TO_ASHES = "Raze to Ashes";
     public const string CARD_NAME_GREEDY_FINGERS = "Greedy Fingers";
     public const string CARD_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
-    public const string CARD_NAME_MUDSLINGING = "Mudslinging";
+    public const string CARD_NAME_RALLY_TO_THE_QUEEN = "Rally to the Queen";
     public const string CARD_NAME_BOMBS_AWAY = "Bombs Away";
     public const string CARD_NAME_GRAVE_DIGGING = "Grave-digging";
     public const string CARD_NAME_THE_SEVEN = "The Seven";
@@ -185,12 +185,12 @@ public abstract class Card
         CARD_NAME_DEATH_NOTE,
         CARD_NAME_BESTOWED_VIGOR,
 
-        CARD_NAME_RIOT_UP,
+        CARD_NAME_SHIELDS_UP,
         CARD_NAME_BRR_BRR_BLIZZARD,
         CARD_NAME_RAZE_TO_ASHES,
         CARD_NAME_GREEDY_FINGERS,
         CARD_NAME_SILENCE_OF_THE_LAMBS,
-        CARD_NAME_MUDSLINGING,
+        CARD_NAME_RALLY_TO_THE_QUEEN,
         CARD_NAME_BOMBS_AWAY,
         CARD_NAME_GRAVE_DIGGING,
         CARD_NAME_THE_SEVEN,
@@ -1014,12 +1014,12 @@ public class SpellCard : Card
 
     public static readonly List<string> UNTARGETED_CARD_NAMES = new List<string>
     {
-        CARD_NAME_RIOT_UP,
+        CARD_NAME_SHIELDS_UP,
         CARD_NAME_BRR_BRR_BLIZZARD,
         CARD_NAME_RAZE_TO_ASHES,
         CARD_NAME_GREEDY_FINGERS,
         CARD_NAME_SILENCE_OF_THE_LAMBS,
-        CARD_NAME_MUDSLINGING,
+        CARD_NAME_RALLY_TO_THE_QUEEN,
         CARD_NAME_BOMBS_AWAY,
         CARD_NAME_GRAVE_DIGGING,
         CARD_NAME_THE_SEVEN,

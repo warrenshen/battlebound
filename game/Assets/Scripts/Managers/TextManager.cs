@@ -30,9 +30,9 @@ public class TextManager : MonoBehaviour
         text_m.gameObject.SetActive(true);
 
         LeanTween.moveY(text_m.gameObject, chosen.transform.position.y + 0.2F, duration)
-          .setOnComplete(() =>
-          {
-              text_m.gameObject.SetActive(false);
-          });
+            .setOnComplete(() =>
+            {
+                text_m.gameObject.SetActive(false);
+            });
     }
 }
