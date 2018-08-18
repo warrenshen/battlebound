@@ -662,7 +662,7 @@ describe("challenge grant experience", function() {
               "attack": null,
               "health": null,
               "cost": 50,
-              "name": "Riot Up",
+              "name": "Shields Up!",
               "description": "Give all your creatures shields",
               "abilities": null,
               "baseId": "C20",

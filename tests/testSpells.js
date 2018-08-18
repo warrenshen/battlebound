@@ -195,7 +195,7 @@ describe("challenge spells", function() {
               "attack": null,
               "health": null,
               "cost": 50,
-              "name": "Riot Up",
+              "name": "Shields Up!",
               "description": "Give all your creatures shields",
               "abilities": null,
               "baseId": "C20",
@@ -324,7 +324,7 @@ describe("challenge spells", function() {
       });
     });
 
-    it("should support riot up", function() {
+    it("should support shields up", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -657,7 +657,7 @@ describe("challenge spells", function() {
               "level": 1,
               "category": 1,
               "cost": 30,
-              "name": "Mudslinging",
+              "name": "Rally to the Queen",
               "description": "Give all friendly creatures taunt",
               "baseId": "C24",
               "costStart": 30,
@@ -757,7 +757,7 @@ describe("challenge spells", function() {
       });
     });
 
-    it("should support mudslinging", function() {
+    it("should support rally to the queen", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -774,7 +774,7 @@ describe("challenge spells", function() {
             assert.equal(lastMoves.length, 1);
             assert.equal(lastMoves[0].category, "MOVE_CATEGORY_PLAY_SPELL_UNTARGETED");
             assert.equal(lastMoves[0].attributes.cardId, "ID_PLAYER-5");
-            assert.equal(lastMoves[0].attributes.card.name, "Mudslinging")
+            assert.equal(lastMoves[0].attributes.card.name, "Rally to the Queen")
 
             const playerState = challengeStateData.current["ID_PLAYER"];
             assert.equal(playerState.manaCurrent, 40);
@@ -1358,7 +1358,7 @@ describe("challenge spells", function() {
               "level": 1,
               "category": 1,
               "cost": 30,
-              "name": "Mudslinging",
+              "name": "Rally to the Queen",
               "description": "Give all friendly creatures taunt",
               "baseId": "C24",
               "costStart": 30,
