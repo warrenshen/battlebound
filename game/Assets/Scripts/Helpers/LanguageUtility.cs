@@ -45,8 +45,13 @@ public class LanguageUtility
         return translations;
     }
 
-    public string GetLocalized(string original, Language id)
+    public string GetLocalizedNames(string original, Language id)
     {
         return cardNames[original][(int)id];
+    }
+
+    public string GetLocalizedAbilities(string original, Language id)
+    {
+        return cardAbilities[original][(int)id];
     }
 }

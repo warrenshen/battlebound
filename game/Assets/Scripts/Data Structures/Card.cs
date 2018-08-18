@@ -493,7 +493,7 @@ public abstract class Card
             return;
         }
         //set sprites and set TextMeshPro labels using TmpTextObjects (?)
-        string localizedName = LanguageUtility.Instance().GetLocalized(card.GetName(), LanguageUtility.Language.CN);
+        string localizedName = LanguageUtility.Instance().GetLocalizedNames(card.GetName(), LanguageUtility.Language.CN);
         cardVisual.SetTextFieldWithKey("Title", localizedName);
 
         if (card.GetType() == typeof(CreatureCard))
