@@ -86,7 +86,7 @@ public class TestPlayStructure
                 ""category"": 2,
                 ""health"": 10,
                 ""cost"": 20,
-                ""name"": ""Warden's Tower"",
+                ""name"": ""Warden's Outpost"",
                 ""costStart"": 20,
                 ""healthStart"": 30,
                 ""healthMax"": 30,

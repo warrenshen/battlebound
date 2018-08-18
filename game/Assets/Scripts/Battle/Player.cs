@@ -788,7 +788,7 @@ public class Player
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BESTOWED_VIGOR, 1));
         //cards.Add(new SpellCard(GetNewCardId(), Card.CARD_NAME_BATTLE_ROYALE, 1));
 
-        cards.Add(new StructureCard(GetNewCardId(), Card.CARD_NAME_WARDENS_TOWER, 1));
+        cards.Add(new StructureCard(GetNewCardId(), Card.CARD_NAME_WARDENS_OUTPOST, 1));
 
         return new Deck(deckName, cards);
     }

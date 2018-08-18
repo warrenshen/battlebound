@@ -39,7 +39,7 @@ public abstract class Card
     public const string CARD_NAME_SEAHORSE_SQUIRE = "Seahorse Squire";
     public const string CARD_NAME_TRIDENT_BATTLEMAGE = "Trident Battlemage";
     public const string CARD_NAME_SNEERBLADE = "Sneerblade";
-    public const string CARD_NAME_TIMEWARP_KINGPIN = "Timewarp Kingpin";
+    public const string CARD_NAME_KRONOS_TIMEWARP_KINGPIN = "Kronos, Timewarp Kingpin";
     public const string CARD_NAME_LUX = "Lux";
     public const string CARD_NAME_THUNDEROUS_DESPERADO = "Thunderous Desperado";
     public const string CARD_NAME_CEREBOAROUS = "Cereboarus";
@@ -100,7 +100,7 @@ public abstract class Card
     public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
 
     // Structures.
-    public const string CARD_NAME_WARDENS_TOWER = "Warden's Tower";
+    public const string CARD_NAME_WARDENS_OUTPOST = "Warden's Outpost";
 
     public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
@@ -135,7 +135,7 @@ public abstract class Card
         CARD_NAME_SEAHORSE_SQUIRE,
         CARD_NAME_TRIDENT_BATTLEMAGE,
         CARD_NAME_SNEERBLADE,
-        CARD_NAME_TIMEWARP_KINGPIN,
+        CARD_NAME_KRONOS_TIMEWARP_KINGPIN,
         CARD_NAME_LUX,
         CARD_NAME_THUNDEROUS_DESPERADO,
         CARD_NAME_CEREBOAROUS,
@@ -199,7 +199,7 @@ public abstract class Card
 
     public static readonly List<string> CARD_NAMES_STRUCTURES = new List<string>
     {
-        CARD_NAME_WARDENS_TOWER,
+        CARD_NAME_WARDENS_OUTPOST,
     };
 
     public enum CardType { Creature, Spell, Structure, Weapon };

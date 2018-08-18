@@ -1684,7 +1684,7 @@ public class EffectManager : MonoBehaviour
         BoardStructure boardStructure = Board.Instance().GetStructureByCreature(boardCreature);
         if (boardStructure != null)
         {
-            if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_TOWER)
+            if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_OUTPOST)
             {
                 boardCreature.GrantTaunt();
             }
@@ -1994,7 +1994,7 @@ public class EffectManager : MonoBehaviour
             boardStructure
         );
 
-        if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_TOWER)
+        if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_OUTPOST)
         {
             foreach (BoardCreature boardCreature in boardCreatures)
             {
@@ -2857,7 +2857,7 @@ public class EffectManager : MonoBehaviour
 
         List<BoardCreature> boardCreatures = Board.Instance().GetCreaturesByStructure(boardStructure);
 
-        if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_TOWER)
+        if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_OUTPOST)
         {
             foreach (BoardCreature boardCreature in boardCreatures)
             {
