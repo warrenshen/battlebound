@@ -200,7 +200,7 @@ public class BoardStructure : Targetable
 
         challengeCard.SetId(GetCardId());
         challengeCard.SetPlayerId(GetPlayerId());
-        challengeCard.SetCategory((int)Card.CardType.Creature);
+        challengeCard.SetCategory((int)Card.CardType.Structure);
         challengeCard.SetColor(this.card.GetClassColor());
         challengeCard.SetName(this.card.Name);
         challengeCard.SetLevel(this.card.Level);
