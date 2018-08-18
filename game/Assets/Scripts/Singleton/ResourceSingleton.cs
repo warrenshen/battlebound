@@ -160,9 +160,4 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
         return this.imageNameToSprite[imageName];
     }
-
-    public List<string> GetCreatureNames()
-    {
-        return new List<string>(this.nameToPrefab.Keys);
-    }
 }

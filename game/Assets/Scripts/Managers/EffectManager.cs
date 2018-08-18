@@ -1725,222 +1725,244 @@ public class EffectManager : MonoBehaviour
             defendingTargetable.GetType() == typeof(BoardCreature)
         )
         {
-            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
-            BoardCreature defendingCreature = defendingTargetable as BoardCreature;
-
-            Player attackingPlayer = BattleState.Instance().GetPlayerById(attackingCreature.GetPlayerId());
-            Player defendingPlayer = BattleState.Instance().GetPlayerById(defendingCreature.GetPlayerId());
-
-            if (attackingCreature.CanAttack <= 0)
-            {
-                Debug.LogError("Fight called when canAttack is 0 or below!");
-                return;
-            }
-            else if (attackingCreature.IsFrozen > 0)
-            {
-                Debug.LogError("Fight called when isFrozen is greater than 0!");
-                return;
-            }
-            else
-            {
-                attackingCreature.DecrementCanAttack();
-            }
-
-            List<Effect> effects = new List<Effect>();
-
-            IncrementIsWaiting();
-            attackingCreature.FightAnimationWithCallback(
-                defendingCreature,
-                new UnityAction(() =>
-                {
-                    int damageDone;
-
-                    if (attackingCreature.HasAbility(Card.CARD_ABILITY_LETHAL))
-                    {
-                        damageDone = defendingCreature.TakeDamageWithLethal();
-                    }
-                    else
-                    {
-                        damageDone = defendingCreature.TakeDamage(attackingCreature.GetAttack());
-                    }
-
-                    effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-                    effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
-
-                    if (
-                        attackingCreature.HasAbility(Card.CARD_ABILITY_ICY) &&
-                        defendingCreature.Health > 0 &&
-                        defendingCreature.IsFrozen <= 0
-                    )
-                    {
-                        defendingCreature.Freeze(1);
-                    }
-
-                    if (
-                        attackingCreature.HasAbility(Card.CARD_ABILITY_PIERCING) &&
-                        defendingCreature.Health <= 0
-                    )
-                    {
-                        int attackingDamagePierce = attackingCreature.GetAttack() - damageDone;
-                        int attackingDamageDoneFace = defendingPlayer.TakeDamage(attackingDamagePierce);
-                        effects.AddRange(GetEffectsOnFaceDamageTaken(defendingPlayer, attackingDamageDoneFace));
-                    }
-
-                    int damageTaken;
-
-                    if (defendingCreature.HasAbility(Card.CARD_ABILITY_LETHAL))
-                    {
-                        damageTaken = attackingCreature.TakeDamageWithLethal();
-                    }
-                    else
-                    {
-                        damageTaken = attackingCreature.TakeDamage(defendingCreature.GetAttack());
-                    }
-
-                    effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
-                    effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
-
-                    if (
-                        defendingCreature.HasAbility(Card.CARD_ABILITY_ICY) &&
-                        attackingCreature.Health > 0 &&
-                        attackingCreature.IsFrozen <= 1
-                    )
-                    {
-                        attackingCreature.Freeze(2);
-                    }
-
-                    if (
-                        defendingCreature.HasAbility(Card.CARD_ABILITY_PIERCING) &&
-                        attackingCreature.Health <= 0
-                    )
-                    {
-                        int defendingDamagePierce = defendingCreature.GetAttack() - damageTaken;
-                        int defendingDamageDoneFace = attackingPlayer.TakeDamage(defendingDamagePierce);
-                        effects.AddRange(GetEffectsOnFaceDamageTaken(attackingPlayer, defendingDamageDoneFace));
-                    }
-
-                    int adjacentAttack = 0;
-                    if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN))
-                    {
-                        adjacentAttack = 10;
-                    }
-                    else if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK))
-                    {
-                        adjacentAttack = attackingCreature.GetAttack();
-                    }
-
-                    if (adjacentAttack > 0)
-                    {
-                        List<BoardCreature> adjacentCreatures = Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
-                        defendingCreature.GetPlayerId(),
-                            defendingCreature.GetCardId()
-                        );
-
-                        foreach (BoardCreature adjacentCreature in adjacentCreatures)
-                        {
-                            damageDone = adjacentCreature.TakeDamage(adjacentAttack);
-                            effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-                            effects.AddRange(GetEffectsOnCreatureDamageTaken(adjacentCreature, damageDone));
-                        }
-                    }
-
-                    AddToQueues(effects);
-                    DecrementIsWaiting();
-                }
-            ));
+            OnCreatureAttackCreature(
+                attackingTargetable as BoardCreature,
+                defendingTargetable as BoardCreature
+            );
         }
         else if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
             defendingTargetable.GetType() == typeof(PlayerAvatar)
         )
         {
-            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
-            PlayerAvatar defendingAvatar = defendingTargetable as PlayerAvatar;
-
-            if (attackingCreature.CanAttack <= 0)
-            {
-                Debug.LogError("Fight called when canAttack is 0 or below!");
-                return;
-            }
-            else if (attackingCreature.IsFrozen > 0)
-            {
-                Debug.LogError("Fight called when isFrozen is greater than 0!");
-                return;
-            }
-            else
-            {
-                attackingCreature.DecrementCanAttack();
-            }
-
-            List<Effect> effects = new List<Effect>();
-
-            //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
-
-            IncrementIsWaiting();
-            attackingCreature.FightAnimationWithCallback(
-                defendingAvatar,
-                new UnityAction(() =>
-                {
-                    int damageDone = defendingAvatar.TakeDamage(attackingCreature.GetAttack());
-                    effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-                    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar.GetPlayer(), damageDone));
-
-                    // Need to call redraw to update outline for can attack.
-                    attackingCreature.Redraw();
-
-                    AddToQueues(effects);
-                    DecrementIsWaiting();
-                }
-            ));
+            OnCreatureAttackPlayer(
+                attackingTargetable as BoardCreature,
+                defendingTargetable as PlayerAvatar
+            );
         }
         else if (
             attackingTargetable.GetType() == typeof(BoardCreature) &&
             defendingTargetable.GetType() == typeof(BoardStructure)
         )
         {
-            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
-            BoardStructure defendingStructure = defendingTargetable as BoardStructure;
-
-            if (attackingCreature.CanAttack <= 0)
-            {
-                Debug.LogError("Fight called when canAttack is 0 or below!");
-                return;
-            }
-            else if (attackingCreature.IsFrozen > 0)
-            {
-                Debug.LogError("Fight called when isFrozen is greater than 0!");
-                return;
-            }
-            else
-            {
-                attackingCreature.DecrementCanAttack();
-            }
-
-            List<Effect> effects = new List<Effect>();
-
-            //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
-
-            IncrementIsWaiting();
-            attackingCreature.FightAnimationWithCallback(
-                defendingStructure,
-                new UnityAction(() =>
-                {
-                    int damageDone = defendingStructure.TakeDamage(attackingCreature.GetAttack());
-                    effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
-                    effects.AddRange(GetEffectsOnStructureDamageTaken(defendingStructure, damageDone));
-
-                    // Need to call redraw to update outline for can attack.
-                    attackingCreature.Redraw();
-
-                    AddToQueues(effects);
-                    DecrementIsWaiting();
-                }
-            ));
+            OnCreatureAttackStructure(
+                attackingTargetable as BoardCreature,
+                defendingTargetable as BoardStructure
+            );
         }
         else
         {
             Debug.LogError("Unsupported.");
         }
+    }
+
+    private void OnCreatureAttackCreature(
+        BoardCreature attackingCreature,
+        BoardCreature defendingCreature
+    )
+    {
+        Player attackingPlayer = BattleState.Instance().GetPlayerById(attackingCreature.GetPlayerId());
+        Player defendingPlayer = BattleState.Instance().GetPlayerById(defendingCreature.GetPlayerId());
+
+        if (attackingCreature.CanAttack <= 0)
+        {
+            Debug.LogError("Fight called when canAttack is 0 or below!");
+            return;
+        }
+        else if (attackingCreature.IsFrozen > 0)
+        {
+            Debug.LogError("Fight called when isFrozen is greater than 0!");
+            return;
+        }
+        else
+        {
+            attackingCreature.DecrementCanAttack();
+        }
+
+        IncrementIsWaiting();
+        attackingCreature.FightAnimationWithCallback(
+            defendingCreature,
+            new UnityAction(() =>
+            {
+                int damageDone;
+
+                if (attackingCreature.HasAbility(Card.CARD_ABILITY_LETHAL))
+                {
+                    damageDone = defendingCreature.TakeDamageWithLethal();
+                }
+                else
+                {
+                    damageDone = defendingCreature.TakeDamage(attackingCreature.GetAttack());
+                }
+
+                List<Effect> effects = new List<Effect>();
+
+                effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                effects.AddRange(GetEffectsOnCreatureDamageTaken(defendingCreature, damageDone));
+
+                if (
+                    attackingCreature.HasAbility(Card.CARD_ABILITY_ICY) &&
+                    defendingCreature.Health > 0 &&
+                    defendingCreature.IsFrozen <= 0
+                )
+                {
+                    defendingCreature.Freeze(1);
+                }
+
+                if (
+                    attackingCreature.HasAbility(Card.CARD_ABILITY_PIERCING) &&
+                    defendingCreature.Health <= 0
+                )
+                {
+                    int attackingDamagePierce = attackingCreature.GetAttack() - damageDone;
+                    int attackingDamageDoneFace = defendingPlayer.TakeDamage(attackingDamagePierce);
+                    effects.AddRange(GetEffectsOnFaceDamageTaken(defendingPlayer, attackingDamageDoneFace));
+                }
+
+                int damageTaken;
+
+                if (defendingCreature.HasAbility(Card.CARD_ABILITY_LETHAL))
+                {
+                    damageTaken = attackingCreature.TakeDamageWithLethal();
+                }
+                else
+                {
+                    damageTaken = attackingCreature.TakeDamage(defendingCreature.GetAttack());
+                }
+
+                effects.AddRange(GetEffectsOnCreatureDamageDealt(defendingCreature, damageTaken));
+                effects.AddRange(GetEffectsOnCreatureDamageTaken(attackingCreature, damageTaken));
+
+                if (
+                    defendingCreature.HasAbility(Card.CARD_ABILITY_ICY) &&
+                    attackingCreature.Health > 0 &&
+                    attackingCreature.IsFrozen <= 1
+                )
+                {
+                    attackingCreature.Freeze(2);
+                }
+
+                if (
+                    defendingCreature.HasAbility(Card.CARD_ABILITY_PIERCING) &&
+                    attackingCreature.Health <= 0
+                )
+                {
+                    int defendingDamagePierce = defendingCreature.GetAttack() - damageTaken;
+                    int defendingDamageDoneFace = attackingPlayer.TakeDamage(defendingDamagePierce);
+                    effects.AddRange(GetEffectsOnFaceDamageTaken(attackingPlayer, defendingDamageDoneFace));
+                }
+
+                int adjacentAttack = 0;
+                if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN))
+                {
+                    adjacentAttack = 10;
+                }
+                else if (attackingCreature.HasAbility(Card.CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK))
+                {
+                    adjacentAttack = attackingCreature.GetAttack();
+                }
+
+                if (adjacentAttack > 0)
+                {
+                    List<BoardCreature> adjacentCreatures = Board.Instance().GetAdjacentCreaturesByPlayerIdAndCardId(
+                    defendingCreature.GetPlayerId(),
+                        defendingCreature.GetCardId()
+                    );
+
+                    foreach (BoardCreature adjacentCreature in adjacentCreatures)
+                    {
+                        damageDone = adjacentCreature.TakeDamage(adjacentAttack);
+                        effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                        effects.AddRange(GetEffectsOnCreatureDamageTaken(adjacentCreature, damageDone));
+                    }
+                }
+
+                AddToQueues(effects);
+                DecrementIsWaiting();
+            }
+        ));
+    }
+
+    private void OnCreatureAttackPlayer(
+        BoardCreature attackingCreature,
+        PlayerAvatar defendingAvatar
+    )
+    {
+        if (attackingCreature.CanAttack <= 0)
+        {
+            Debug.LogError("Fight called when canAttack is 0 or below!");
+            return;
+        }
+        else if (attackingCreature.IsFrozen > 0)
+        {
+            Debug.LogError("Fight called when isFrozen is greater than 0!");
+            return;
+        }
+        else
+        {
+            attackingCreature.DecrementCanAttack();
+        }
+
+        IncrementIsWaiting();
+        attackingCreature.FightAnimationWithCallback(
+            defendingAvatar,
+            new UnityAction(() =>
+            {
+                List<Effect> effects = new List<Effect>();
+
+                int damageDone = defendingAvatar.TakeDamage(attackingCreature.GetAttack());
+                effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                effects.AddRange(GetEffectsOnFaceDamageTaken(defendingAvatar.GetPlayer(), damageDone));
+
+                // Need to call redraw to update outline for can attack.
+                attackingCreature.Redraw();
+
+                AddToQueues(effects);
+                DecrementIsWaiting();
+            }
+        ));
+    }
+
+    private void OnCreatureAttackStructure(
+        BoardCreature attackingCreature,
+        BoardStructure defendingStructure
+    )
+    {
+        if (attackingCreature.CanAttack <= 0)
+        {
+            Debug.LogError("Fight called when canAttack is 0 or below!");
+            return;
+        }
+        else if (attackingCreature.IsFrozen > 0)
+        {
+            Debug.LogError("Fight called when isFrozen is greater than 0!");
+            return;
+        }
+        else
+        {
+            attackingCreature.DecrementCanAttack();
+        }
+
+        List<Effect> effects = new List<Effect>();
+
+        //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
+
+        IncrementIsWaiting();
+        attackingCreature.FightAnimationWithCallback(
+            defendingStructure,
+            new UnityAction(() =>
+            {
+                int damageDone = defendingStructure.TakeDamage(attackingCreature.GetAttack());
+                effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                effects.AddRange(GetEffectsOnStructureDamageTaken(defendingStructure, damageDone));
+
+                // Need to call redraw to update outline for can attack.
+                attackingCreature.Redraw();
+
+                AddToQueues(effects);
+                DecrementIsWaiting();
+            }
+        ));
     }
 
     public void OnStructurePlay(
