@@ -57,6 +57,17 @@ public class TestDuskDwellerBombshellBombadier
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -102,6 +113,17 @@ public class TestDuskDwellerBombshellBombadier
             {
                 ""id"": ""EMPTY""
             },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
+        ""fieldBack"": [
             {
                 ""id"": ""EMPTY""
             },
