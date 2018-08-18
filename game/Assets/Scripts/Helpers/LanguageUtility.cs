@@ -53,6 +53,11 @@ public class LanguageUtility
 
     public string GetLocalizedName(string name)
     {
+        if (name == null)
+        {
+            Debug.LogWarning("GetLocalizedName called on null.");
+            return name;
+        }
         if (!this.cardNames.ContainsKey(name))
         {
             Debug.LogError(string.Format("Missing translation for: {0}", name));
