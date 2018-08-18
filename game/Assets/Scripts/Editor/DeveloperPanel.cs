@@ -11,6 +11,7 @@ public class DeveloperPanel : EditorWindow
     private bool useServer;
     private bool logVerbose;
     private bool skipMulligan;
+    private bool showChinese;
 
     public const string FLAG_USE_SERVER = "FLAG_USE_SERVER";
     public const string FLAG_LOG_VERBOSE = "FLAG_LOG_VERBOSE";
@@ -26,6 +27,7 @@ public class DeveloperPanel : EditorWindow
         window.useServer = FlagHelper.GetFlag(FLAG_USE_SERVER);
         window.logVerbose = FlagHelper.GetFlag(FLAG_LOG_VERBOSE);
         window.skipMulligan = FlagHelper.GetFlag(FLAG_SKIP_MULLIGAN);
+        window.showChinese = FlagHelper.GetFlag("LANGUAGE");
         window.Show();
     }
 
@@ -39,6 +41,7 @@ public class DeveloperPanel : EditorWindow
             this.useServer = EditorGUILayout.Toggle("Use server", this.useServer);
             this.logVerbose = EditorGUILayout.Toggle("Log verbose", this.logVerbose);
             this.skipMulligan = EditorGUILayout.Toggle("Skip mulligan", this.skipMulligan);
+            this.showChinese = EditorGUILayout.Toggle("Show chinese", this.showChinese);
         }
 
         if (GUI.Button(new Rect(5, position.height - 35, position.width - 10, 30), "Save Settings"))
@@ -54,10 +57,12 @@ public class DeveloperPanel : EditorWindow
         int useServerValue = this.useServer ? 1 : 0;
         int logVerboseValue = this.logVerbose ? 1 : 0;
         int skipMulliganValue = this.skipMulligan ? 1 : 0;
+        int selectedLangauge = this.showChinese ? 1 : 0;
 
         PlayerPrefs.SetInt(FLAG_USE_SERVER, useServerValue);
         PlayerPrefs.SetInt(FLAG_LOG_VERBOSE, logVerboseValue);
         PlayerPrefs.SetInt(FLAG_SKIP_MULLIGAN, skipMulliganValue);
+        PlayerPrefs.SetInt("LANGUAGE", selectedLangauge);
 
         //done getting values, now save
         PlayerPrefs.Save();

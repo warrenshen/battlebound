@@ -5,13 +5,9 @@ using UnityEngine;
 public class ResourceSingleton : Singleton<ResourceSingleton>
 {
     private Dictionary<string, GameObject> nameToPrefab;
-
     private Dictionary<string, GameObject> effectNameToPrefab;
-
     private Dictionary<string, CardTemplate> cardNametoTemplate;
-
     private Dictionary<string, Texture2D> imageNameToTexture;
-
     private Dictionary<string, Sprite> imageNameToSprite;
 
     private new void Awake()
@@ -25,8 +21,6 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         TextAsset codexText = (TextAsset)Resources.Load("codex", typeof(TextAsset));
         string codexString = codexText.text;
         List<string> codexJsons = new List<string>(codexString.Split('\n'));
-
-        //LanguageUtility.Instance(); //just to begin the loading process
 
         foreach (string codexJson in codexJsons)
         {

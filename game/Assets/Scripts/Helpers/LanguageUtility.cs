@@ -7,6 +7,7 @@ public class LanguageUtility
     private static LanguageUtility instance;
     private Dictionary<string, List<string>> cardNames;
     private Dictionary<string, List<string>> cardAbilities;
+    private LanguageUtility.Language selectedLanguage;
 
     public enum Language { EN, CN, KR, JP }
 
@@ -21,8 +22,9 @@ public class LanguageUtility
 
     public LanguageUtility()
     {
-        cardNames = LanguageUtility.LoadTranslations("Translations/names");
-        cardAbilities = LanguageUtility.LoadTranslations("Translations/abilities");
+        this.cardNames = LanguageUtility.LoadTranslations("Translations/names");
+        this.cardAbilities = LanguageUtility.LoadTranslations("Translations/abilities");
+        this.selectedLanguage = (LanguageUtility.Language)PlayerPrefs.GetInt("LANGUAGE", 0);
     }
 
     private static Dictionary<string, List<string>> LoadTranslations(string path)
@@ -39,7 +41,6 @@ public class LanguageUtility
         {
             List<string> elements = new List<string>(translationString.Split(delimiters));
             string key = elements[0];
-            elements.RemoveAt(0);
 
             if (!translations.ContainsKey(key))
             {
@@ -50,21 +51,38 @@ public class LanguageUtility
         return translations;
     }
 
-    public string GetLocalizedNames(string original, Language id)
+    public bool HasLocalizedName(string name)
     {
-        if (this.cardNames.ContainsKey(original))
+        bool value = this.cardNames.ContainsKey(name);
+        if (value)
         {
-            return cardNames[original][(int)id];
+            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
         }
-        else
-        {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", original));
-            return original;
-        }
+        return value;
     }
 
-    public string GetLocalizedAbilities(string original, Language id)
+    public string GetLocalizedName(string name)
     {
-        return cardAbilities[original][(int)id];
+        return cardNames[name][(int)this.selectedLanguage];
+    }
+
+    public bool HasLocalizedAbility(string ability)
+    {
+        bool value = this.cardNames.ContainsKey(ability);
+        if (value)
+        {
+            Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
+        }
+        return value;
+    }
+
+    public string GetLocalizedAbility(string ability)
+    {
+        return cardNames[ability][(int)this.selectedLanguage];
+    }
+
+    public LanguageUtility.Language GetLanguage()
+    {
+        return selectedLanguage;
     }
 }

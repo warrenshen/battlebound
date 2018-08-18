@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+using TMPro;
+
 public class CardSingleton : Singleton<CardSingleton>
 {
     private GameObject cardPrefab;
@@ -15,6 +17,11 @@ public class CardSingleton : Singleton<CardSingleton>
     private Texture2D[] gems;
     public Texture2D[] Gems => gems;
 
+    [SerializeField]
+    private TMP_FontAsset[] fontAssets;
+    public TMP_FontAsset[] FontAssets => fontAssets;
+
+
     private new void Awake()
     {
         base.Awake();
@@ -26,6 +33,8 @@ public class CardSingleton : Singleton<CardSingleton>
 
         Transform cardPoolRoot = new GameObject("Card Pool").transform;
         cardPoolRoot.transform.parent = this.transform;
+
+        LanguageUtility.Instance(); //just to begin the loading process
 
         for (int i = 0; i < CARD_POOL_SIZE; i++)
         {

@@ -492,9 +492,20 @@ public abstract class Card
             Debug.LogError("cardVisual for SetHyperCardArtwork is null.");
             return;
         }
-        //set sprites and set TextMeshPro labels using TmpTextObjects (?)
-        string localizedName = LanguageUtility.Instance().GetLocalizedNames(card.GetName(), LanguageUtility.Language.CN);
-        cardVisual.SetTextFieldWithKey("Title", localizedName);
+        //set text materials appropriately
+        int fontIndex = (int)LanguageUtility.Instance().GetLanguage();
+
+        LanguageUtility languageUtility = LanguageUtility.Instance();
+        if (languageUtility.HasLocalizedName(card.GetName()))
+        {
+            cardVisual.GetTextFieldWithKey("Title").TmpObject.font = CardSingleton.Instance.FontAssets[fontIndex];
+            string localizedName = languageUtility.GetLocalizedName(card.GetName());
+            cardVisual.SetTextFieldWithKey("Title", localizedName);
+        }
+        else
+        {
+            cardVisual.SetTextFieldWithKey("Title", card.GetName());
+        }
 
         if (card.GetType() == typeof(CreatureCard))
         {
