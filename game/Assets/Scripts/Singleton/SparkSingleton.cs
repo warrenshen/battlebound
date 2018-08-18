@@ -369,4 +369,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
     {
         return this.displayName != null && this.displayName.Length > 0;
     }
+
+    public void SetPlayerAddress(string address)
+    {
+        this.address = address;
+    }
 }

@@ -56,8 +56,10 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             endingPrice,
             duration
         );
+#if UNITY_EDITOR
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
+#endif
 
         string publicAddress = GetPublicAddress();
         return (string)await SubmitCreateAuctionTransaction(
@@ -132,8 +134,10 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             tokenId,
             bidPrice
         );
+#if UNITY_EDITOR
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
+#endif
 
         string publicAddress = GetPublicAddress();
         return (string)await SubmitBidAuctionTransaction(
@@ -201,8 +205,10 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             nonce,
             tokenId
         );
+#if UNITY_EDITOR
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
+#endif
 
         string publicAddress = GetPublicAddress();
         return txHash = (string)await SubmitCancelAuctionTransaction(
@@ -246,7 +252,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
     private void OnSubmitCancelAuctionTransactionError(LogEventResponse response)
     {
-        Debug.Log("SubmitCancelAuctionTransaction request failure.");
+        Debug.LogError("SubmitCancelAuctionTransaction request failure.");
         this.txHash = "0x";
     }
 
@@ -332,6 +338,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
     private void OnUpdatePlayerAddressSuccess(LogEventResponse response)
     {
         string address = response.ScriptData.GetString("address");
+        SparkSingleton.Instance.SetPlayerAddress(address);
 
         if (this.updateAddressCallback != null)
         {
@@ -355,8 +362,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         {
             Debug.LogError("Callback does not exist.");
         }
-
-        Debug.LogError("UpdatePlayerAddress request failure.");
     }
 
     /*
@@ -383,7 +388,7 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
         PlayerPrefs.SetString(PLAYER_PREFS_ENCRYPTED_KEY_STORE, keyStoreJson);
         PlayerPrefs.SetString(PLAYER_PREFS_PUBLIC_ADDRESS, publicAddress);
 
-        Debug.Log("Set player prefs public address to: " + publicAddress);
+        //Debug.Log("Set player prefs public address to: " + publicAddress);
 
         return mnemonicString;
     }
@@ -472,7 +477,6 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
 
     private void OnGetTransactionNonceError(LogEventResponse response)
     {
-        StopCoroutine("CreateAuctionHelper");
         GSData errors = response.Errors;
         Debug.LogError(errors);
     }
