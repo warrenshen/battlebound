@@ -1499,7 +1499,7 @@ function _getEffectsOnStructureDamageTaken(challengeStateData, card, amount) {
             fieldBackIndex
         );
         
-        if (deadCard.name === CARD_NAME_TAUNT_STRUCTURE) {
+        if (deadCard.name === CARD_NAME_WARDENS_OUTPOST) {
             fieldCards.forEach(function(fieldCard) {
                 if (!hasCardAbilityStart(fieldCard, CARD_ABILITY_TAUNT)) {
                     removeCardAbility(card, CARD_ABILITY_TAUNT);
@@ -1803,11 +1803,11 @@ const TARGETED_SPELLS_BOTH = [
 
 // Untargeted spells.
 const SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
-const SPELL_NAME_RIOT_UP = "Riot Up";
+const SPELL_NAME_SHIELDS_UP = "Shields Up!";
 const SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
 const SPELL_NAME_GREEDY_FINGERS = "Greedy Fingers";
 const SPELL_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
-const SPELL_NAME_MUDSLINGING = "Mudslinging";
+const SPELL_NAME_RALLY_TO_THE_QUEEN = "Rally to the Queen";
 const SPELL_NAME_BOMBS_AWAY = "Bombs Away";
 const SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
 const SPELL_NAME_THE_SEVEN = "The Seven";
@@ -1871,7 +1871,7 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
     } else if (playedCard.name === SPELL_NAME_CONDEMN) {
         silenceCard(opponentCard);
     } else {
-        setScriptError("Unrecognized spell card name.");
+        setScriptError("Unrecognized spell card name: " + playedCard.name);
     }
 
     const queues = addToQueues(newEffects);
@@ -1903,7 +1903,7 @@ function _processSpellTargetedPlayFriendly(challengeStateData, playerId, playedC
         card.healthMax += 10;
         card.buffsField.push(BUFF_CATEGORY_BESTOWED_VIGOR);
     } else {
-        setScriptError("Unrecognized spell card name.");
+        setScriptError("Unrecognized spell card name: " + playedCard.name);
     }
 }
 
@@ -1930,7 +1930,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
             }
             freezeCard(fieldCard, 1);
         });
-    } else if (playedCard.name === SPELL_NAME_RIOT_UP) {
+    } else if (playedCard.name === SPELL_NAME_SHIELDS_UP) {
         playerField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
@@ -1969,7 +1969,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
 
             silenceCard(fieldCard);
         });
-    } else if (playedCard.name === SPELL_NAME_MUDSLINGING) {
+    } else if (playedCard.name === SPELL_NAME_RALLY_TO_THE_QUEEN) {
         playerField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
@@ -2033,7 +2033,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
             });
         }
     } else {
-        setScriptError("Unrecognized spell card name.");
+        setScriptError("Unrecognized spell card name: " + playedCard.name);
     }
 
     const queues = addToQueues(newEffects);
@@ -2053,7 +2053,7 @@ function processPlayStructure(challengeStateData, playerId, cardId) {
         fieldBackIndex
     );
     
-    if (playedCard.name === CARD_NAME_TAUNT_STRUCTURE) {
+    if (playedCard.name === CARD_NAME_WARDENS_OUTPOST) {
         fieldCards.forEach(function(fieldCard) {
             if (!hasCardAbilityOrBuff(fieldCard, CARD_ABILITY_TAUNT)) {
                 fieldCard.abilities.push(CARD_ABILITY_TAUNT);

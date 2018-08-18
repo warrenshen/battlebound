@@ -10,11 +10,12 @@ require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
 function handleChallengePlayStructure(challengeStateData, playerId, cardId, attributes) {
-    const fieldIndex = attributesJson.fieldIndex;
+    const fieldIndex = attributes.fieldIndex;
     // Ensure that index to play card at is valid.
-    if (fieldIndex < 6 || fieldIndex > 9) {
+    if (fieldIndex == null || fieldIndex < 6 || fieldIndex > 8) {
         setScriptError("Invalid fieldIndex parameter.");
     }
+
     const fieldBackIndex = fieldIndex - 6;
     
     const playerState = challengeStateData.current[playerId];
@@ -25,10 +26,6 @@ function handleChallengePlayStructure(challengeStateData, playerId, cardId, attr
     const playerManaCurrent = playerState.manaCurrent;
     const playerHand = playerState.hand;
     const playerFieldBack = playerState.fieldBack;
-    
-    // const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-    // const opponentState = challengeStateData.current[opponentId];
-    // const opponentField = opponentState.field;
     
     // Find index of card played in hand.
     const handIndex = playerHand.findIndex(function(card) { return card.id === cardId });
@@ -51,7 +48,7 @@ function handleChallengePlayStructure(challengeStateData, playerId, cardId, attr
         }
     }
     
-    if (playerFieldBack[fieldBackIndex].id !== "EMPTY") {
+    if (playerFieldBack[fieldBackIndex].id != "EMPTY") {
         setScriptError("Invalid fieldIndex parameter - card exists at fieldIndex.");
     }
     

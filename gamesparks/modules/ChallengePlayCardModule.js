@@ -9,8 +9,8 @@ require("AttackModule");
 require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
-function handleChallengePlayCard(challengeStateData, playerId, cardId, attributesJson) {
-    const fieldIndex = attributesJson.fieldIndex;
+function handleChallengePlayCard(challengeStateData, playerId, cardId, attributes) {
+    const fieldIndex = attributes.fieldIndex;
     // Ensure that index to play card at is valid.
     if (fieldIndex < 0 || fieldIndex > 5) {
         setScriptError("Invalid fieldIndex parameter.");
@@ -46,7 +46,7 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     if (structureCard.id != "EMPTY") {
         if (structureCard.name === CARD_NAME_COST_STRUCTURE) {
             adjustedCost = Math.max(0, adjustedCost - 20);
-        } else if (structureCard.name === CARD_NAME_TAUNT_STRUCTURE) {
+        } else if (structureCard.name === CARD_NAME_WARDENS_OUTPOST) {
             if (!hasCardAbilityOrBuff(playedCard, CARD_ABILITY_TAUNT)) {
                 playedCard.abilities.push(CARD_ABILITY_TAUNT);
             }

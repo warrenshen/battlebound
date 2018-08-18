@@ -55,6 +55,7 @@ function getChallengeStateForPlayerNoSet(playerId, challengeStateData) {
         "healthMax",
         "armor",
         "field",
+        "fieldBack",
         "hand",
         "deckSize",
         "cardCount",

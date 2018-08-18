@@ -85,5 +85,5 @@ const CARD_NAME_CURSED_EGG = "Cursed Egg";
 const CARD_NAME_FOXY_APPRENTICE = "Foxy Apprentice";
 
 const CARD_NAME_CHARGE_STRUCTURE = "Charge Structure";
-const CARD_NAME_TAUNT_STRUCTURE = "Taunt Structure";
+const CARD_NAME_WARDENS_OUTPOST = "Warden's Outpost";
 const CARD_NAME_COST_STRUCTURE = "Cost Structure";
