@@ -1208,7 +1208,7 @@ public class BattleManager : MonoBehaviour
             Card card = item.GetCard();
             CardObject cardObject = CardObject.Create(card);
             cardObject.gameObject.SetLayer(LayerMask.NameToLayer("Top"));
-            cardObject.transform.Rotate(Vector3.right * 10);
+            cardObject.transform.Rotate(Vector3.right * -10);
 
             Vector3 offset = Vector3.left * 5 + index * Vector3.right * 2.7f + Vector3.up * 0.5f;
             CardTween.move(cardObject, endOverlay.transform.position + offset, CardTween.TWEEN_DURATION);
