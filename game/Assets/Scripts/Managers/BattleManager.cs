@@ -502,13 +502,13 @@ public class BattleManager : MonoBehaviour
         if (target.GetCost() > target.Owner.Mana)
         {
             //can't play card due to mana
-            this.ResetCardToHand();
+            ResetCardToHand();
             return false;
         }
-        else if (GetCardDisplacement(target) < CARD_DISPLACEMENT_THRESHOLD)   //to-do: review this
+        else if (GetCardDisplacement(target) < CARD_DISPLACEMENT_THRESHOLD)
         {
             //didn't displace card enough to activate
-            this.ResetCardToHand();
+            ResetCardToHand();
             return false;
         }
         else if (target.Card.GetType() == typeof(SpellCard))
@@ -525,13 +525,13 @@ public class BattleManager : MonoBehaviour
                     }
                     else
                     {
-                        this.ResetCardToHand();
+                        ResetCardToHand();
                         return false;
                     }
                 }
                 else
                 {
-                    this.ResetCardToHand();
+                    ResetCardToHand();
                     return false;
                 }
             }
@@ -553,6 +553,19 @@ public class BattleManager : MonoBehaviour
             UseCard(target);    //to-do: change to own weapon func
             return true;
         }
+        else if (target.Card.GetType() == typeof(StructureCard))
+        {
+            if (CanPlayStructureToBoard(target, hit))
+            {
+                PlayStructureToBoard(target, hit);
+                return true;
+            }
+            else
+            {
+                ResetCardToHand();
+                return false;
+            }
+        }
         else if (
             Physics.Raycast(ray, out hit, 100f, boardOrBattleLayer) &&
             hit.collider.gameObject.layer == LayerMask.NameToLayer("Board") &&
@@ -560,21 +573,21 @@ public class BattleManager : MonoBehaviour
         )
         {
             //place card
-            if (CanPlayCardToBoard(target, hit))
+            if (CanPlayCreatureToBoard(target, hit))
             {
-                PlayCardToBoard(target, hit);
+                PlayCreatureToBoard(target, hit);
                 return true;
             }
             else
             {
-                this.ResetCardToHand();
+                ResetCardToHand();
                 return false;
             }
         }
         else
         {
             //no good activation events, return to hand or original pos/rot in collection
-            this.ResetCardToHand();
+            ResetCardToHand();
             return false;
         }
     }
@@ -809,21 +822,20 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private bool CanPlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
+    private bool CanPlayCreatureToBoard(BattleCardObject battleCardObject, RaycastHit hit)
     {
         Transform targetPosition = hit.collider.transform;
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
 
         Player player = battleCardObject.Owner;
-
         return Board.Instance().IsBoardPlaceOpen(player.Id, index);
     }
 
     /*
      * Play card to board after user on-device drags card from hand to field. 
      */
-    public void PlayCardToBoard(BattleCardObject battleCardObject, RaycastHit hit)
+    public void PlayCreatureToBoard(BattleCardObject battleCardObject, RaycastHit hit)
     {
         //only called for creature or structure
         Transform targetPosition = hit.collider.transform;
@@ -865,20 +877,12 @@ public class BattleManager : MonoBehaviour
 
         if (playerId == BattleState.Instance().You.Id)
         {
-            SpawnCardToBoard(battleCardObject, index);
+            SpawnCreatureToBoard(battleCardObject, index);
             battleCardObject.Owner.PlayCard(battleCardObject);
         }
     }
 
-    /*
-     * Play card to board after receiving play card move from server. 
-     */
-    public void PlayCardToBoard(BattleCardObject battleCardObject, int index)
-    {
-        SpawnCardToBoard(battleCardObject, index);
-    }
-
-    private void SpawnCardToBoard(BattleCardObject battleCardObject, int fieldIndex)
+    private void SpawnCreatureToBoard(BattleCardObject battleCardObject, int fieldIndex)
     {
         int spawnRank = BattleState.Instance().GetNewSpawnRank();
         ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
@@ -889,6 +893,81 @@ public class BattleManager : MonoBehaviour
         Board.Instance().CreateAndPlaceCreature(
             challengeCard,
             fieldIndex,
+            true
+        );
+    }
+
+    private bool CanPlayStructureToBoard(BattleCardObject battleCardObject, RaycastHit hit)
+    {
+        Transform targetPosition = hit.collider.transform;
+        string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
+        int index = Int32.Parse(lastChar);
+
+        Player player = battleCardObject.Owner;
+        return Board.Instance().IsBoardPlaceOpen(player.Id, index);
+    }
+
+    /*
+     * Play card to board after user on-device drags card from hand to field. 
+     */
+    public void PlayStructureToBoard(BattleCardObject battleCardObject, RaycastHit hit)
+    {
+        //only called for creature or structure
+        Transform targetPosition = hit.collider.transform;
+        string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
+        int index = Int32.Parse(lastChar);
+        string playerId = battleCardObject.GetPlayerId();
+        string cardId = battleCardObject.GetCardId();
+
+        ChallengeMove challengeMove;
+
+        if (playerId == BattleState.Instance().You.Id)
+        {
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_STRUCTURE);
+            BattleState.Instance().AddDeviceMove(challengeMove);
+        }
+
+        challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_PLAY_STRUCTURE);
+
+        ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+        moveAttributes.SetCardId(cardId);
+        moveAttributes.SetCard(battleCardObject.Card.GetChallengeCard(playerId));
+        moveAttributes.SetFieldIndex(index);
+
+        challengeMove.SetMoveAttributes(moveAttributes);
+        BattleState.Instance().AddServerMove(challengeMove);
+
+        if (FlagHelper.IsServerEnabled())
+        {
+            PlayCardAttributes attributes = new PlayCardAttributes(index);
+            BattleSingleton.Instance.SendChallengePlayCardRequest(
+                cardId,
+                attributes
+            );
+        }
+
+        if (playerId == BattleState.Instance().You.Id)
+        {
+            SpawnStructureToBoard(battleCardObject, index);
+            battleCardObject.Owner.PlayCard(battleCardObject);
+        }
+    }
+
+    private void SpawnStructureToBoard(BattleCardObject battleCardObject, int fieldBackIndex)
+    {
+        int spawnRank = BattleState.Instance().GetNewSpawnRank();
+        ChallengeCard challengeCard = battleCardObject.GetChallengeCard();
+        challengeCard.SetSpawnRank(spawnRank);
+
+        UseCard(battleCardObject);
+
+        Board.Instance().CreateAndPlaceStructure(
+            challengeCard,
+            fieldBackIndex,
             true
         );
     }
@@ -1143,7 +1222,7 @@ public class BattleManager : MonoBehaviour
                 .setOnComplete(() =>
                 {
                     battleCardObject.noInteraction = false;
-                    PlayCardToBoard(battleCardObject, fieldIndex);
+                    SpawnCreatureToBoard(battleCardObject, fieldIndex);
                     DisableIsAnimating();
                 });
             });
