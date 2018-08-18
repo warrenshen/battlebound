@@ -21,9 +21,26 @@ public class CurvedLineRenderer : MonoBehaviour
 
     public LineRenderer lineRenderer;
 
+    public Gradient activeGradient;
+    public Gradient passiveGradient;
+
     private void Start()
     {
         lineRenderer = this.GetComponent<LineRenderer>();
+
+        this.activeGradient = new Gradient();
+        this.activeGradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(Color.red, 0.0f), new GradientColorKey(Color.red, 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(1, 0.0f), new GradientAlphaKey(1, 1.0f) }
+            );
+
+        this.passiveGradient = new Gradient();
+        this.passiveGradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(new Color(0.90f, 0.10f, 0.066f), 0.0f), new GradientColorKey(Color.red, 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(1, 0.0f), new GradientAlphaKey(1, 1.0f) }
+            );
+
+        lineRenderer.colorGradient = this.passiveGradient;
     }
 
     // Update is called once per frame
@@ -59,7 +76,14 @@ public class CurvedLineRenderer : MonoBehaviour
     public void SetWidth(float width)
     {
         this.lineWidth = width;
-
+        if (width <= 0.01f)
+        {
+            this.lineRenderer.enabled = false;
+        }
+        else
+        {
+            this.lineRenderer.enabled = true;
+        }
     }
 
     private void UseWidth()

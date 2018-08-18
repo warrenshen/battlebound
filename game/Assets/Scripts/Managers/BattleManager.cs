@@ -11,7 +11,7 @@ public class BattleManager : MonoBehaviour
 {
     private const float CARD_DISPLACEMENT_THRESHOLD = 100;
     private const float NORMAL_ATTACK_ARROW_WIDTH = 1.66f;
-    private const float ACTIVE_ATTACK_ARROW_WIDTH = 2.50f;
+    private const float ACTIVE_ATTACK_ARROW_WIDTH = 2.22f;
 
     private bool isAnimating;
     public bool IsAnimating => isAnimating;
@@ -170,54 +170,64 @@ public class BattleManager : MonoBehaviour
 
         //to-do: don't show attack arrow unless mouse no longer in bounds of board creature? raise object of interest?
         attackCommand.SetPointPositions(this.mouseDownTargetableObject.transform.position, hit.point);
-        attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
-
+        this.RenderNormalAttackLine();
         this.combatMode = true;
+
         ActionManager.Instance.SetCursor(4);
         SoundManager.Instance.PlaySound("StartAttackSFX", hit.point);
     }
 
+    private void RenderActiveAttackLine()
+    {
+        attackCommand.SetWidth(ACTIVE_ATTACK_ARROW_WIDTH);
+        attackCommand.lineRenderer.colorGradient = attackCommand.activeGradient;
+    }
+
+    private void RenderNormalAttackLine()
+    {
+        attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
+        attackCommand.lineRenderer.colorGradient = attackCommand.passiveGradient;
+    }
+
     private void ComputeActivationRadius()
     {
-        if (Input.GetMouseButton(0) && ActionManager.Instance.HasDragTarget())
+        BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
+        if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
         {
-            BattleCardObject target = ActionManager.Instance.GetDragTarget() as BattleCardObject;
-            if (target != null && GetCardDisplacement(target) > CARD_DISPLACEMENT_THRESHOLD)
+            target.visual.SetOutlineColors(Color.yellow, Color.green);
+            if (target.Card.GetType() == typeof(SpellCard))
             {
-                target.visual.SetOutlineColors(Color.yellow, Color.green);
-                if (target.Card.GetType() == typeof(SpellCard))
+                SpellCard spell = target.Card as SpellCard;
+                if (spell.Targeted)
                 {
-                    SpellCard spell = target.Card as SpellCard;
-                    if (spell.Targeted)
+                    ActionManager.Instance.Freeze(true);
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    if (Physics.Raycast(ray, out hit, 100f))
                     {
-                        ActionManager.Instance.Freeze(true);
-                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                        RaycastHit hit;
-                        if (Physics.Raycast(ray, out hit, 100f))
-                        {
-                            attackCommand.SetPointPositions(target.transform.position, hit.point);
+                        attackCommand.SetPointPositions(target.transform.position, hit.point);
 
-                            if (CanPlayTargetedSpell(target, hit))
-                            {
-                                //big target render
-                                attackCommand.SetWidth(ACTIVE_ATTACK_ARROW_WIDTH);
-                                ActionManager.Instance.SetCursor(7);
-                            }
-                            else
-                            {
-                                //small target render
-                                attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
-                                ActionManager.Instance.SetCursor(6);
-                            }
+                        if (CanPlayTargetedSpell(target, hit))
+                        {
+                            //big target render
+                            this.RenderActiveAttackLine();
+                            ActionManager.Instance.SetCursor(7);
                         }
-                        return;
+                        else
+                        {
+                            //small target render
+                            this.RenderNormalAttackLine();
+                            ActionManager.Instance.SetCursor(6);
+                        }
+                        //to-do play some continuous casting sound
                     }
+                    return;
                 }
             }
-            else
-            {
-                target.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
-            }
+        }
+        else
+        {
+            target.visual.SetOutlineColors(HyperCard.Card.DEFAULT_OUTLINE_START_COLOR, HyperCard.Card.DEFAULT_OUTLINE_END_COLOR);
         }
         attackCommand.SetWidth(0);
         this.SetPassiveCursor();
@@ -227,8 +237,6 @@ public class BattleManager : MonoBehaviour
     private void WatchMouseActions()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        this.ComputeActivationRadius();
 
         //begin exclusive logic checks
         if (Input.GetMouseButtonDown(0))
@@ -313,16 +321,20 @@ public class BattleManager : MonoBehaviour
                 )
                 {
                     ActionManager.Instance.SetCursor(5);  //valid target!
-                    this.attackCommand.SetWidth(ACTIVE_ATTACK_ARROW_WIDTH);
+                    this.RenderActiveAttackLine();
                     SoundManager.Instance.PlaySound("AttackHoverSFX", hit.point);
                 }
                 else if (this.lastHoverCollider != hit.collider)
                 {
                     ActionManager.Instance.SetCursor(4);
-                    this.attackCommand.SetWidth(NORMAL_ATTACK_ARROW_WIDTH);
+                    this.RenderNormalAttackLine();
                 }
                 this.lastHoverCollider = hit.collider;
             }
+        }
+        else if (ActionManager.Instance.HasDragTarget() && Input.GetMouseButton(0))
+        {
+            this.ComputeActivationRadius();
         }
         else
         {
