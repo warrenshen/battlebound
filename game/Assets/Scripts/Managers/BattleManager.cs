@@ -465,10 +465,20 @@ public class BattleManager : MonoBehaviour
                     defendingTargetableObject.GetPlayerId(),
                     defendingTargetableObject.GetCardId()
                 );
-                BattleSingleton.Instance.SendChallengeCardAttackRequest(
-                    attackingTargetableObject.GetCardId(),
-                    attributes
-                );
+                if (defendingTargetableObject.GetType() == typeof(BoardStructure))
+                {
+                    BattleSingleton.Instance.SendChallengeCardAttackStructureRequest(
+                        attackingTargetableObject.GetCardId(),
+                        attributes
+                    );
+                }
+                else
+                {
+                    BattleSingleton.Instance.SendChallengeCardAttackRequest(
+                        attackingTargetableObject.GetCardId(),
+                        attributes
+                    );
+                }
             }
 
             return true;
@@ -561,35 +571,38 @@ public class BattleManager : MonoBehaviour
             UseCard(target);    //to-do: change to own weapon func
             return true;
         }
-        else if (target.Card.GetType() == typeof(StructureCard))
-        {
-            if (CanPlayStructureToBoard(target, hit))
-            {
-                PlayStructureToBoard(target, hit);
-                return true;
-            }
-            else
-            {
-                ResetCardToHand();
-                return false;
-            }
-        }
         else if (
             Physics.Raycast(ray, out hit, 100f, boardOrBattleLayer) &&
             hit.collider.gameObject.layer == LayerMask.NameToLayer("Board") &&
             hit.collider.name.Contains(target.Owner.Name)
         )
         {
-            //place card
-            if (CanPlayCreatureToBoard(target, hit))
+            if (target.Card.GetType() == typeof(StructureCard))
             {
-                PlayCreatureToBoard(target, hit);
-                return true;
+                if (CanPlayStructureToBoard(target, hit))
+                {
+                    PlayStructureToBoard(target, hit);
+                    return true;
+                }
+                else
+                {
+                    ResetCardToHand();
+                    return false;
+                }
             }
             else
             {
-                ResetCardToHand();
-                return false;
+                //place card
+                if (CanPlayCreatureToBoard(target, hit))
+                {
+                    PlayCreatureToBoard(target, hit);
+                    return true;
+                }
+                else
+                {
+                    ResetCardToHand();
+                    return false;
+                }
             }
         }
         else
@@ -911,6 +924,11 @@ public class BattleManager : MonoBehaviour
         string lastChar = hit.collider.name.Substring(hit.collider.name.Length - 1);
         int index = Int32.Parse(lastChar);
 
+        if (index < 6)
+        {
+            return false;
+        }
+
         Player player = battleCardObject.Owner;
         return Board.Instance().IsBoardPlaceOpen(player.Id, index);
     }
@@ -1231,6 +1249,24 @@ public class BattleManager : MonoBehaviour
                 {
                     battleCardObject.noInteraction = false;
                     SpawnCreatureToBoard(battleCardObject, fieldIndex);
+                    DisableIsAnimating();
+                });
+            });
+    }
+
+    public void EnemyPlayStructureToBoardAnim(BattleCardObject battleCardObject, int fieldIndex)
+    {
+        SoundManager.Instance.PlaySound("PlayCardSFX", battleCardObject.transform.position);
+        EnableIsAnimating();
+        AnimateCardPlayed(battleCardObject)
+            .setOnComplete(() =>
+            {
+                CardTween
+                .move(battleCardObject, this.enemyPlayCardFixedTransform.position, CardTween.TWEEN_DURATION * 2F)
+                .setOnComplete(() =>
+                {
+                    battleCardObject.noInteraction = false;
+                    SpawnStructureToBoard(battleCardObject, fieldIndex);
                     DisableIsAnimating();
                 });
             });

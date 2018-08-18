@@ -465,13 +465,26 @@ public class ChallengeCard
 
             return creatureCard;
         }
-        else
+        else if (this.category == (int)Card.CardType.Spell)
         {
             return new SpellCard(
                 this.id,
                 this.name,
                 this.level
             );
+        }
+        else if (this.category == (int)Card.CardType.Structure)
+        {
+            return new StructureCard(
+                this.id,
+                this.name,
+                this.level
+            );
+        }
+        else
+        {
+            Debug.Log("Unsupported GetCard category.");
+            return null;
         }
     }
 }

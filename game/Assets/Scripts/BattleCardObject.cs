@@ -145,6 +145,10 @@ public class BattleCardObject : CardObject
         {
             challengeCard.SetCategory((int)Card.CardType.Spell);
         }
+        else if (this.card.GetType() == typeof(StructureCard))
+        {
+            challengeCard.SetCategory((int)Card.CardType.Structure);
+        }
         else
         {
             Debug.LogError("Unsupported!");

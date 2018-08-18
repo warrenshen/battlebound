@@ -153,7 +153,7 @@ public class Board
         }));
     }
 
-    public List<BoardCreature> GetBoardCreaturesByBoardStructure(BoardStructure boardStructure)
+    public List<BoardCreature> GetCreaturesByStructure(BoardStructure boardStructure)
     {
         string playerId = boardStructure.GetPlayerId();
         int fieldBackIndex = boardStructure.FieldIndex;
@@ -164,22 +164,34 @@ public class Board
 
         foreach (int fieldIndex in fieldIndices)
         {
-            boardCreatures.Add(GetCreatureByPlayerIdAndIndex(playerId, fieldIndex);
+            BoardCreature boardCreature = GetCreatureByPlayerIdAndIndex(playerId, fieldIndex);
+            if (boardCreature != null)
+            {
+                boardCreatures.Add(boardCreature);
+            }
         }
 
         return boardCreatures;
     }
 
-    public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
+    public BoardStructure GetStructureByCreature(BoardCreature boardCreature)
     {
-        BoardCreature boardCreature = GetCreatureByPlayerIdAndCardId(playerId, cardId);
-        RemoveCreature(boardCreature);
+        int fieldIndex = boardCreature.FieldIndex;
+        int fieldBackIndex = FIELD_INDEX_TO_FIELD_BACK_INDEX[fieldIndex];
+        PlayingField playingField = GetFieldByPlayerId(boardCreature.GetPlayerId());
+        return playingField.GetStructureByIndex(fieldBackIndex);
     }
 
-    private void RemoveCreature(BoardCreature creature)
+    public void RemoveCreature(BoardCreature boardCreature)
     {
-        PlayingField selected = this.playerIdToField[creature.GetPlayerId()];
-        selected.Remove(creature);
+        PlayingField playingField = this.playerIdToField[boardCreature.GetPlayerId()];
+        playingField.Remove(boardCreature);
+    }
+
+    public void RemoveStructure(BoardStructure boardStructure)
+    {
+        PlayingField playingField = this.playerIdToField[boardStructure.GetPlayerId()];
+        playingField.Remove(boardStructure);
     }
 
     public PlayingField GetFieldByPlayerId(string playerId)
@@ -212,7 +224,11 @@ public class Board
         foreach (int fieldBackIndex in new List<int> { 6, 7, 8 })
         {
             BoardStructure boardStructure = playingField.GetStructureByIndex(fieldBackIndex);
-            List<BoardCreature> boardCreatures = GetBoardCreaturesByBoardStructure(boardStructure);
+            if (boardStructure == null)
+            {
+                continue;
+            }
+            List<BoardCreature> boardCreatures = GetCreaturesByStructure(boardStructure);
             if (boardCreatures.Count <= 0)
             {
                 boardStructures.Add(boardStructure);
@@ -260,6 +276,12 @@ public class Board
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
         return playingField.GetStructureByCardId(cardId);
+    }
+
+    public BoardStructure GetStructureByPlayerIdAndIndex(string playerId, int fieldBackIndex)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetStructureByIndex(fieldBackIndex);
     }
 
     public int GetInFrontIndexByPlayerIdAndCardId(string playerId, string cardId)
@@ -349,7 +371,15 @@ public class Board
         else
         {
             PlayingField field = GetFieldByPlayerId(playerId);
-            return field.GetCreatureByCardId(cardId);
+            Targetable targetable = field.GetCreatureByCardId(cardId);
+            if (targetable != null)
+            {
+                return targetable;
+            }
+            else
+            {
+                return field.GetStructureByCardId(cardId);
+            }
         }
     }
 
@@ -423,7 +453,7 @@ public class Board
         {
             if (!BattleSingleton.Instance.IsEnvironmentTest())
             {
-                for (int i = 0; i < 6; i += 1)
+                for (int i = 0; i < 9; i += 1)
                 {
                     Transform boardPlace = GameObject.Find(
                         String.Format("{0} {1}", player.Name, i)
@@ -459,7 +489,7 @@ public class Board
                     continue;
                 }
 
-                //Board.Instance().CreateAndPlaceCreature(challengeCard, i, false, true);
+                Board.Instance().CreateAndPlaceStructure(challengeCard, i + 6, false, true);
             }
         }
 
@@ -508,7 +538,14 @@ public class Board
 
         public bool IsPlaceEmpty(int index)
         {
-            return this.field[index] == null;
+            if (index < 6)
+            {
+                return this.field[index] == null;
+            }
+            else
+            {
+                return this.fieldBack[index - 6] == null;
+            }
         }
 
         public BoardCreature GetCreatureByIndex(int index)
@@ -525,25 +562,51 @@ public class Board
 
         public BoardStructure GetStructureByIndex(int fieldBackIndex)
         {
-            if (index < 6 || index > 8)
+            if (fieldBackIndex < 6 || fieldBackIndex > 8)
             {
+                Debug.Log(string.Format("Invalid field back index: {0}", fieldBackIndex));
                 return null;
             }
             else
             {
-                return this.fieldBack[index];
+                return this.fieldBack[fieldBackIndex - 6];
             }
         }
 
-        public void Remove(BoardCreature creature)
+        public void Remove(BoardCreature boardCreature)
         {
-            for (int i = 0; i < this.field.Length; i++)
+            string cardId = boardCreature.GetCardId();
+
+            int removeIndex = Array.FindIndex(
+                this.field,
+                element => element != null && element.GetCardId() == cardId
+            );
+
+            if (removeIndex < 0)
             {
-                if (this.field[i] == creature)
-                {
-                    this.field[i] = null;
-                }
+                Debug.LogError(string.Format("Failed to remove card from hand with card ID: {0}", cardId));
+                return;
             }
+
+            this.field[removeIndex] = null;
+        }
+
+        public void Remove(BoardStructure boardStructure)
+        {
+            string cardId = boardStructure.GetCardId();
+
+            int removeIndex = Array.FindIndex(
+                this.fieldBack,
+                element => element != null && element.GetCardId() == cardId
+            );
+
+            if (removeIndex < 0)
+            {
+                Debug.LogError(string.Format("Failed to remove card from hand with card ID: {0}", cardId));
+                return;
+            }
+
+            this.fieldBack[removeIndex] = null;
         }
 
         public BoardCreature[] GetCreatures()

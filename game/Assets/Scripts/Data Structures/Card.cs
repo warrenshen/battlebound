@@ -100,7 +100,7 @@ public abstract class Card
     public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
 
     // Structures.
-    public const string CARD_NAME_OLD_TOWER = "Old Tower";
+    public const string CARD_NAME_WARDENS_TOWER = "Warden's Tower";
 
     public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
@@ -199,10 +199,10 @@ public abstract class Card
 
     public static readonly List<string> CARD_NAMES_STRUCTURES = new List<string>
     {
-        CARD_NAME_OLD_TOWER,
+        CARD_NAME_WARDENS_TOWER,
     };
 
-    public enum CardType { Creature, Spell, Weapon, Structure };
+    public enum CardType { Creature, Spell, Structure, Weapon };
     public enum RarityType { Common, Uncommon, Rare, Epic, Legendary, Cosmic };
 
     public const string CARD_EMPTY_ABILITY = "EMPTY";
@@ -963,6 +963,17 @@ public class StructureCard : Card
             return this.cardTemplate.health;
         }
     }
+
+    public string GetSummonPrefab()
+    {
+        return this.cardTemplate.summonPrefab;
+    }
+
+    //public string GetEffectPrefab()
+    //{
+    //    string trimmed = this.cardTemplate.effectPrefab.Substring(this.cardTemplate.effectPrefab.IndexOf('/') + 1);
+    //    return trimmed;
+    //}
 
     public override ChallengeCard GetChallengeCard(string playerId)
     {

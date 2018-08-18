@@ -45,7 +45,7 @@ public class CardSingleton : Singleton<CardSingleton>
         foreach (string creaturePrefabName in ResourceSingleton.Instance.GetCreatureNames())
         {
             GameObject summon = GameObject.Instantiate(
-                ResourceSingleton.Instance.GetCreaturePrefabByName(creaturePrefabName),
+                ResourceSingleton.Instance.GetPrefabByName(creaturePrefabName),
                 summonPoolRoot
             );
             summon.transform.parent = summonPoolRoot;

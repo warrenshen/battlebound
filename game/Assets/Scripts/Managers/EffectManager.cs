@@ -25,6 +25,7 @@ public class EffectManager : MonoBehaviour
 
     public const string EFFECT_CARD_DIE = "EFFECT_CARD_DIE";
     public const string EFFECT_CARD_DIE_AFTER_DEATH_RATTLE = "EFFECT_CARD_DIE_AFTER_DEATH_RATTLE";
+    public const string EFFECT_STRUCTURE_DIE = "EFFECT_STRUCTURE_DIE";
     public const string EFFECT_PLAYER_AVATAR_DIE = "EFFECT_PLAYER_AVATAR_DIE";
     public const string EFFECT_RANDOM_TARGET = "EFFECT_RANDOM_TARGET";
     public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
@@ -37,6 +38,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
         Card.CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
         EFFECT_CARD_DIE,
+        EFFECT_STRUCTURE_DIE,
         EFFECT_SUMMON_CREATURE,
     };
 
@@ -390,6 +392,9 @@ public class EffectManager : MonoBehaviour
             case EFFECT_CARD_DIE:
                 EffectCardDie(effect);
                 break;
+            case EFFECT_STRUCTURE_DIE:
+                EffectStructureDie(effect);
+                break;
             case EFFECT_SUMMON_CREATURE:
                 EffectSummonCreature(effect);
                 break;
@@ -406,11 +411,19 @@ public class EffectManager : MonoBehaviour
             effect.CardId
         );
         BattleState.Instance().AddDeadCard(boardCreature.GetChallengeCard());
-        Board.Instance().RemoveCreatureByPlayerIdAndCardId(
+        Board.Instance().RemoveCreature(boardCreature);
+        boardCreature.Die();
+    }
+
+    private void EffectStructureDie(Effect effect)
+    {
+        BoardStructure boardStructure = Board.Instance().GetStructureByPlayerIdAndCardId(
             effect.PlayerId,
             effect.CardId
         );
-        boardCreature.Die();
+        BattleState.Instance().AddDeadCard(boardStructure.GetChallengeCard());
+        Board.Instance().RemoveStructure(boardStructure);
+        boardStructure.Die();
     }
 
     private void AbilityLifeSteal(Effect effect)
@@ -1668,6 +1681,19 @@ public class EffectManager : MonoBehaviour
             return;
         }
 
+        BoardStructure boardStructure = Board.Instance().GetStructureByCreature(boardCreature);
+        if (boardStructure != null)
+        {
+            if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_TOWER)
+            {
+                boardCreature.GrantTaunt();
+            }
+            else
+            {
+                Debug.LogError("Unsupported board structure on creature play.");
+            }
+        }
+
         List<Effect> effects = new List<Effect>();
 
         foreach (string effectName in EFFECTS_BATTLE_CRY)
@@ -1867,6 +1893,50 @@ public class EffectManager : MonoBehaviour
                 }
             ));
         }
+        else if (
+            attackingTargetable.GetType() == typeof(BoardCreature) &&
+            defendingTargetable.GetType() == typeof(BoardStructure)
+        )
+        {
+            BoardCreature attackingCreature = attackingTargetable as BoardCreature;
+            BoardStructure defendingStructure = defendingTargetable as BoardStructure;
+
+            if (attackingCreature.CanAttack <= 0)
+            {
+                Debug.LogError("Fight called when canAttack is 0 or below!");
+                return;
+            }
+            else if (attackingCreature.IsFrozen > 0)
+            {
+                Debug.LogError("Fight called when isFrozen is greater than 0!");
+                return;
+            }
+            else
+            {
+                attackingCreature.DecrementCanAttack();
+            }
+
+            List<Effect> effects = new List<Effect>();
+
+            //int damageDone = attackingCreature.Fight(defendingAvatar);  //TakeDamage inside, int damageDone = defendingAvatar.TakeDamage(attackingCreature.Attack);
+
+            IncrementIsWaiting();
+            attackingCreature.FightAnimationWithCallback(
+                defendingStructure,
+                new UnityAction(() =>
+                {
+                    int damageDone = defendingStructure.TakeDamage(attackingCreature.GetAttack());
+                    effects.AddRange(GetEffectsOnCreatureDamageDealt(attackingCreature, damageDone));
+                    effects.AddRange(GetEffectsOnStructureDamageTaken(defendingStructure, damageDone));
+
+                    // Need to call redraw to update outline for can attack.
+                    attackingCreature.Redraw();
+
+                    AddToQueues(effects);
+                    DecrementIsWaiting();
+                }
+            ));
+        }
         else
         {
             Debug.LogError("Unsupported.");
@@ -1891,18 +1961,15 @@ public class EffectManager : MonoBehaviour
 
         List<Effect> effects = new List<Effect>();
 
-        List<BoardCreature> boardCreatures = Board.Instance().GetBoardCreaturesByBoardStructure(
+        List<BoardCreature> boardCreatures = Board.Instance().GetCreaturesByStructure(
             boardStructure
         );
 
-        if (boardStructure.GetCardName() == Card.CARD_NAME_OLD_TOWER)
+        if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_TOWER)
         {
             foreach (BoardCreature boardCreature in boardCreatures)
             {
-                if (!boardCreature.HasAbility(Card.CARD_ABILITY_TAUNT))
-                {
-                    boardCreature.GrantTaunt();
-                }
+                boardCreature.GrantTaunt();
             }
         }
 
@@ -2151,10 +2218,7 @@ public class EffectManager : MonoBehaviour
             fieldId,
             targetId
         );
-        Board.Instance().RemoveCreatureByPlayerIdAndCardId(
-            fieldId,
-            targetId
-        );
+        Board.Instance().RemoveCreature(boardCreature);
         boardCreature.Die();
 
         List<BoardCreature> playerAliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
@@ -2707,6 +2771,28 @@ public class EffectManager : MonoBehaviour
                     playerId,
                     EFFECT_PLAYER_AVATAR_DIE,
                     player.GetCardId(),
+                    0
+                )
+            );
+        }
+
+        return effects;
+    }
+
+    private List<Effect> GetEffectsOnStructureDamageTaken(
+        BoardStructure boardStructure,
+        int amount
+    )
+    {
+        List<Effect> effects = new List<Effect>();
+
+        if (boardStructure.Health <= 0)
+        {
+            effects.Add(
+                new Effect(
+                    boardStructure.GetPlayerId(),
+                    EFFECT_STRUCTURE_DIE,
+                    boardStructure.GetCardId(),
                     0
                 )
             );

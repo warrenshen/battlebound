@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ResourceSingleton : Singleton<ResourceSingleton>
 {
-    private Dictionary<string, GameObject> creatureNameToPrefab;
+    private Dictionary<string, GameObject> nameToPrefab;
 
     private Dictionary<string, GameObject> effectNameToPrefab;
 
@@ -18,7 +18,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
     {
         base.Awake();
 
-        this.creatureNameToPrefab = new Dictionary<string, GameObject>();
+        this.nameToPrefab = new Dictionary<string, GameObject>();
         this.effectNameToPrefab = new Dictionary<string, GameObject>();
         this.cardNametoTemplate = new Dictionary<string, CardTemplate>();
 
@@ -79,24 +79,32 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             }
         }
 
+
         foreach (string creatureName in Card.CARD_NAMES_CREATURE)
         {
             CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
             string summonPrefabPath = creatureCard.GetSummonPrefab();
             GameObject prefab = Resources.Load(summonPrefabPath) as GameObject;
-            this.creatureNameToPrefab[creatureName] = prefab;
+            this.nameToPrefab[creatureName] = prefab;
+        }
+
+        foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
+        {
+            StructureCard structureCard = new StructureCard("", structureName, 0);
+            string summonPrefabPath = structureCard.GetSummonPrefab();
+            GameObject prefab = Resources.Load(summonPrefabPath) as GameObject;
+            this.nameToPrefab[structureName] = prefab;
         }
     }
 
-    public GameObject GetCreaturePrefabByName(string creatureName)
+    public GameObject GetPrefabByName(string creatureName)
     {
-        if (!this.creatureNameToPrefab.ContainsKey(creatureName))
+        if (!this.nameToPrefab.ContainsKey(creatureName))
         {
             Debug.LogError(string.Format("Creature name {0} does not exist in resource cache.", creatureName));
             return null;
         }
-
-        return this.creatureNameToPrefab[creatureName];
+        return this.nameToPrefab[creatureName];
     }
 
     public GameObject GetEffectPrefabByName(string effectName)
@@ -106,7 +114,6 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             Debug.LogError(string.Format("Effect name {0} does not exist in resource cache.", effectName));
             return null;
         }
-
         return this.effectNameToPrefab[effectName];
     }
 
@@ -117,7 +124,6 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             Debug.LogError(string.Format("Card name {0} does not exist in resource cache.", cardName));
             return null;
         }
-
         return this.cardNametoTemplate[cardName];
     }
 
@@ -155,6 +161,6 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
     public List<string> GetCreatureNames()
     {
-        return new List<string>(creatureNameToPrefab.Keys);
+        return new List<string>(this.nameToPrefab.Keys);
     }
 }

@@ -420,7 +420,9 @@ public class BoardCreature : Targetable
         if (!HasAbility(Card.CARD_ABILITY_TAUNT))
         {
             this.abilities.Add(Card.CARD_ABILITY_TAUNT);
+            Debug.Log(this.abilities.Count);
             this.boardCreatureObject.Redraw();
+            Debug.Log(string.Join(",", this.abilities));
         }
     }
 
