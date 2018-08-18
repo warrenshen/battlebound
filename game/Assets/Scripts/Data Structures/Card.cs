@@ -99,6 +99,9 @@ public abstract class Card
     public const string CARD_NAME_THE_SEVEN = "The Seven";
     public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
 
+    // Structures.
+    public const string CARD_NAME_OLD_TOWER = "Old Tower";
+
     public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
         CARD_NAME_FIREBUG_CATELYN,
@@ -192,6 +195,11 @@ public abstract class Card
         CARD_NAME_GRAVE_DIGGING,
         CARD_NAME_THE_SEVEN,
         CARD_NAME_BATTLE_ROYALE,
+    };
+
+    public static readonly List<string> CARD_NAMES_STRUCTURES = new List<string>
+    {
+        CARD_NAME_OLD_TOWER,
     };
 
     public enum CardType { Creature, Spell, Weapon, Structure };

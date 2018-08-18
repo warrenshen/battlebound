@@ -386,6 +386,7 @@ public class BattleManager : MonoBehaviour
             }
 
             List<BoardCreature> aliveCreatures = Board.Instance().GetAliveCreaturesByPlayerId(player.Id);
+
             foreach (BoardCreature aliveCreature in aliveCreatures)
             {
                 if (aliveCreature.HasAbility(Card.CARD_ABILITY_TAUNT))
@@ -393,6 +394,13 @@ public class BattleManager : MonoBehaviour
                     priorityTargetableObjects.Add(aliveCreature.GetTargetableObject());
                 }
                 targetableObjects.Add(aliveCreature.GetTargetableObject());
+            }
+
+            List<BoardStructure> aliveStructures = Board.Instance().GetExposedStructuresByPlayerId(player.Id);
+
+            foreach (BoardStructure aliveStructure in aliveStructures)
+            {
+                targetableObjects.Add(aliveStructure.GetTargetableObject());
             }
 
             targetableObjects.Add(player.Avatar.GetTargetableObject());
