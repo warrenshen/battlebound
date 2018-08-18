@@ -3,7 +3,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-public class TestBasicAttack
+public class TestPlayStructure
 {
     private const string PLAYER_STATE = @"{
         ""id"": ""ID_PLAYER"",
@@ -11,7 +11,7 @@ public class TestBasicAttack
         ""hasTurn"": 1,
         ""manaCurrent"": 20,
         ""manaMax"": 20,
-        ""health"": 100,
+        ""health"": 90,
         ""healthMax"": 100,
         ""armor"": 0,
         ""cardCount"": 30,
@@ -20,29 +20,50 @@ public class TestBasicAttack
         ""hand"": [],
         ""field"": [
             {
-                ""id"": ""ID_PLAYER-4"",
+                ""id"": ""ID_PLAYER-16"",
+                ""playerId"": ""ID_PLAYER"",
+                ""level"": 1,
+                ""category"": 0,
+                ""attack"": 50,
+                ""health"": 40,
+                ""cost"": 50,
+                ""name"": ""Cereboarus"",
+                ""abilities"": [
+                    5,
+                    6
+                ],
+                ""attackStart"": 50,
+                ""costStart"": 50,
+                ""healthStart"": 40,
+                ""healthMax"": 40,
+                ""buffsField"": [],
+                ""canAttack"": 0,
+                ""isFrozen"": 0,
+                ""isSilenced"": 0,
+                ""spawnRank"": 6
+            },
+            {
+                ""id"": ""ID_PLAYER-14"",
                 ""playerId"": ""ID_PLAYER"",
                 ""level"": 1,
                 ""category"": 0,
                 ""attack"": 20,
-                ""health"": 20,
-                ""cost"": 20,
-                ""name"": ""Young Kyo"",
-                ""description"": """",
+                ""health"": 10,
+                ""cost"": 30,
+                ""name"": ""Lux"",
                 ""abilities"": [
-                    15
+                    28,
+                    1
                 ],
                 ""attackStart"": 20,
-                ""costStart"": 20,
-                ""healthStart"": 20,
-                ""healthMax"": 20,
-                ""buffs"": [],
+                ""costStart"": 30,
+                ""healthStart"": 30,
+                ""healthMax"": 30,
+                ""buffsField"": [],
                 ""canAttack"": 1,
                 ""isFrozen"": 0,
-                ""spawnRank"": 0
-            },
-            {
-                ""id"": ""EMPTY""
+                ""isSilenced"": 0,
+                ""spawnRank"": 5
             },
             {
                 ""id"": ""EMPTY""
@@ -59,7 +80,17 @@ public class TestBasicAttack
         ],
         ""fieldBack"": [
             {
-                ""id"": ""EMPTY""
+                ""id"": ""ID_PLAYER-0"",
+                ""playerId"": ""ID_PLAYER"",
+                ""level"": 1,
+                ""category"": 2,
+                ""health"": 10,
+                ""cost"": 20,
+                ""name"": ""Warden's Tower"",
+                ""costStart"": 20,
+                ""healthStart"": 30,
+                ""healthMax"": 30,
+                ""spawnRank"": 2
             },
             {
                 ""id"": ""EMPTY""
@@ -76,7 +107,7 @@ public class TestBasicAttack
         ""displayName"": ""Enemy"",
         ""hasTurn"": 0,
         ""manaCurrent"": 20,
-        ""manaMax"": 20,
+        ""manaMax"": 70,
         ""health"": 100,
         ""healthMax"": 100,
         ""armor"": 0,
@@ -86,26 +117,7 @@ public class TestBasicAttack
         ""hand"": [],
         ""field"": [
             {
-                ""id"": ""ID_ENEMY-3"",
-                ""playerId"": ""ID_ENEMY"",
-                ""level"": 1,
-                ""category"": 0,
-                ""attack"": 20,
-                ""health"": 20,
-                ""cost"": 20,
-                ""name"": ""Young Kyo"",
-                ""description"": """",
-                ""abilities"": [
-                    15
-                ],
-                ""attackStart"": 20,
-                ""costStart"": 20,
-                ""healthStart"": 20,
-                ""healthMax"": 20,
-                ""buffs"": [],
-                ""canAttack"": 0,
-                ""isFrozen"": 0,
-                ""spawnRank"": 1
+                ""id"": ""EMPTY""
             },
             {
                 ""id"": ""EMPTY""
@@ -173,45 +185,17 @@ public class TestBasicAttack
         GameObject.Destroy(this.effectManager.gameObject);
     }
 
-    [Test]
-    public void BattleStateTest()
-    {
-        Assert.AreEqual("ID_PLAYER", BattleState.Instance().You.Id);
-        Assert.AreEqual("ID_ENEMY", BattleState.Instance().Opponent.Id);
-        Assert.AreEqual(0, BattleState.Instance().SpawnCount);
-    }
-
-    [Test]
-    public void CreaturesExistTest()
-    {
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        Assert.AreEqual("ID_PLAYER-4", playerCreature.GetCardId());
-
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-        Assert.AreEqual("ID_ENEMY-3", enemyCreature.GetCardId());
-    }
-
     [UnityTest]
-    public IEnumerator CreatureAttackCreatureTest()
+    public IEnumerator StructureGrantTauntToCreatureTest()
     {
-        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-4");
-        BoardCreature enemyCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_ENEMY", "ID_ENEMY-3");
-
-        EffectManager.Instance.OnCreatureAttack(
-            playerCreature,
-            enemyCreature
+        EffectManager.Instance.OnCreaturePlay(
+            "ID_PLAYER",
+            "ID_PLAYER-16"
         );
 
-        yield return new WaitForSeconds(3);
+        yield return null;
 
-        playerCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_PLAYER", 0);
-        Assert.AreEqual(null, playerCreature);
-
-        enemyCreature = Board.Instance().GetCreatureByPlayerIdAndIndex("ID_ENEMY", 0);
-        Assert.AreEqual(null, enemyCreature);
-
-        Assert.AreEqual(2, BattleState.Instance().GetDeadCards().Count);
-        Assert.AreEqual("ID_PLAYER-4", BattleState.Instance().GetDeadCards()[0].Id);
-        Assert.AreEqual("ID_ENEMY-3", BattleState.Instance().GetDeadCards()[1].Id);
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-16");
+        Assert.AreEqual(playerCreature.HasAbility(Card.CARD_ABILITY_TAUNT), true);
     }
 }

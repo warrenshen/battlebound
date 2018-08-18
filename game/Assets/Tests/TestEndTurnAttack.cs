@@ -76,6 +76,17 @@ public class TestEndTurnAttack
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -129,6 +140,17 @@ public class TestEndTurnAttack
                 ""canAttack"": 0,
                 ""isFrozen"": 0,
                 ""spawnRank"": 1
+            }
+        ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
             }
         ],
         ""mulliganCards"": []

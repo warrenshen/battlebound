@@ -38,6 +38,17 @@ public class TestDuskDweller
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -126,6 +137,17 @@ public class TestDuskDweller
                 ""canAttack"": 1,
                 ""isFrozen"": 0,
                 ""spawnRank"": 2
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
             },
             {
                 ""id"": ""EMPTY""

@@ -79,6 +79,17 @@ public class TestDeathwish
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -162,6 +173,17 @@ public class TestDeathwish
                 ""isFrozen"": 0,
                 ""spawnRank"": 2
             },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
+        ""fieldBack"": [
             {
                 ""id"": ""EMPTY""
             },

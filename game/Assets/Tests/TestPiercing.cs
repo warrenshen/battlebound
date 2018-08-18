@@ -79,6 +79,17 @@ public class TestPiercing
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -146,6 +157,17 @@ public class TestPiercing
             {
                 ""id"": ""EMPTY""
             },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
+        ""fieldBack"": [
             {
                 ""id"": ""EMPTY""
             },

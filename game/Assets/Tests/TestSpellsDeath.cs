@@ -98,6 +98,17 @@ public class TestSpellsDeath
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -164,6 +175,17 @@ public class TestSpellsDeath
             {
                 ""id"": ""EMPTY""
             },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
+        ""fieldBack"": [
             {
                 ""id"": ""EMPTY""
             },

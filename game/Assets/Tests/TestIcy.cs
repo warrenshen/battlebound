@@ -58,6 +58,17 @@ public class TestIcy
                 ""id"": ""EMPTY""
             }
         ],
+        ""fieldBack"": [
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
         ""mulliganCards"": []
     }";
 
@@ -122,6 +133,17 @@ public class TestIcy
             {
                 ""id"": ""EMPTY""
             },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            },
+            {
+                ""id"": ""EMPTY""
+            }
+        ],
+        ""fieldBack"": [
             {
                 ""id"": ""EMPTY""
             },
