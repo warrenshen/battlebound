@@ -62,6 +62,10 @@ public class PlayerState
     public ChallengeCard[] Field => field;
 
     [SerializeField]
+    private ChallengeCard[] fieldBack;
+    public ChallengeCard[] FieldBack => fieldBack;
+
+    [SerializeField]
     private List<ChallengeCard> mulliganCards;
     public List<ChallengeCard> MulliganCards => mulliganCards;
 
@@ -128,6 +132,11 @@ public class PlayerState
     public void SetField(ChallengeCard[] field)
     {
         this.field = field;
+    }
+
+    public void SetFieldBack(ChallengeCard[] fieldBack)
+    {
+        this.fieldBack = fieldBack;
     }
 
     public void SetMode(int mode)
@@ -211,7 +220,7 @@ public class PlayerState
             }
         }
 
-        if (this.field.Length != other.field.Length)
+        if (this.field.Length != other.Field.Length)
         {
             return string.Format("Field length: {0} vs {1}", this.field.Length, other.Field.Length);
         }
@@ -220,6 +229,22 @@ public class PlayerState
             for (int i = 0; i < this.field.Length; i += 1)
             {
                 string firstDiff = this.field.ElementAt(i).FirstDiff(other.Field.ElementAt(i));
+                if (firstDiff != null)
+                {
+                    return firstDiff;
+                }
+            }
+        }
+
+        if (this.fieldBack.Length != other.FieldBack.Length)
+        {
+            return string.Format("FieldBack length: {0} vs {1}", this.fieldBack.Length, other.FieldBack.Length);
+        }
+        else
+        {
+            for (int i = 0; i < this.fieldBack.Length; i += 1)
+            {
+                string firstDiff = this.fieldBack.ElementAt(i).FirstDiff(other.FieldBack.ElementAt(i));
                 if (firstDiff != null)
                 {
                     return firstDiff;

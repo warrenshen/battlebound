@@ -197,8 +197,16 @@ public class BattleState
         this.you.Initialize(playerState);
         this.opponent.Initialize(opponentState);
 
-        Board.Instance().RegisterPlayer(this.you, playerState.Field);
-        Board.Instance().RegisterPlayer(this.opponent, opponentState.Field);
+        Board.Instance().RegisterPlayer(
+            this.you,
+            playerState.Field,
+            playerState.FieldBack
+        );
+        Board.Instance().RegisterPlayer(
+            this.opponent,
+            opponentState.Field,
+            opponentState.FieldBack
+        );
     }
 
     public void GameStart()

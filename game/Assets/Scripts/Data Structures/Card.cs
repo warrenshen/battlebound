@@ -366,9 +366,9 @@ public abstract class Card
 
     public static readonly Dictionary<string, string> ABILITY_TO_DESCRIPTION = new Dictionary<string, string>
     {
-        { CARD_ABILITY_CHARGE, "Charge" },
-        { CARD_ABILITY_TAUNT, "Defend" },
-        { CARD_ABILITY_SHIELD, "Shield" },
+        { CARD_ABILITY_CHARGE, "Swift" },
+        { CARD_ABILITY_TAUNT, "Protector" },
+        { CARD_ABILITY_SHIELD, "Shielded" },
         { CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN, "" },
         { CARD_ABILITY_BATTLE_CRY_DRAW_CARD, "Warcry: Draw a card" },
         { CARD_ABILITY_LIFE_STEAL, "Lifesap" },
@@ -864,7 +864,6 @@ public class CreatureCard : Card
         challengeCard.SetAttackStart(GetAttack());
         challengeCard.SetAbilities(GetAbilities());
         challengeCard.SetAbilitiesStart(GetAbilities());
-
         return challengeCard;
     }
 
@@ -916,9 +915,6 @@ public class WeaponCard : Card
         challengeCard.SetHealth(this.durability);
         challengeCard.SetHealthStart(this.durability);
         challengeCard.SetHealthMax(this.durability);
-        challengeCard.SetAttack(this.attack);
-        challengeCard.SetAttackStart(this.attack);
-
         return challengeCard;
     }
 
@@ -933,13 +929,12 @@ public class WeaponCard : Card
 [System.Serializable]
 public class StructureCard : Card
 {
+    private int health;
+
     public StructureCard(
         string id,
         string name,
-        int level,
-        int cost,
-        int attack,
-        int durability
+        int level
     )
     {
         this.id = id;
@@ -947,6 +942,18 @@ public class StructureCard : Card
         this.level = level;
 
         LoadTemplateFromCodex();
+    }
+
+    public int GetHealth()
+    {
+        if (this.health > 0)
+        {
+            return this.health;
+        }
+        else
+        {
+            return this.cardTemplate.health;
+        }
     }
 
     public override ChallengeCard GetChallengeCard(string playerId)
@@ -959,7 +966,6 @@ public class StructureCard : Card
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(this.GetCost());
         challengeCard.SetCostStart(this.GetCost());
-
         return challengeCard;
     }
 
@@ -1057,7 +1063,6 @@ public class SpellCard : Card
         challengeCard.SetLevel(this.level);
         challengeCard.SetCost(this.GetCost());
         challengeCard.SetCostStart(this.GetCost());
-
         return challengeCard;
     }
 

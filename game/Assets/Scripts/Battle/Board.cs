@@ -34,12 +34,16 @@ public class Board
         this.playerIdToAvatar[player.Id] = player.Avatar;
     }
 
-    public void RegisterPlayer(Player player, ChallengeCard[] fieldCards)
+    public void RegisterPlayer(
+        Player player,
+        ChallengeCard[] fieldCards,
+        ChallengeCard[] fieldBackCards
+    )
     {
         PlayingField playingField = new PlayingField(player);
         this.playerIdToField[player.Id] = playingField;
         this.playerIdToAvatar[player.Id] = player.Avatar;
-        playingField.SpawnCardsFromChallengeState(fieldCards);
+        playingField.SpawnCardsFromChallengeState(fieldCards, fieldBackCards);
     }
 
     public bool IsBoardPlaceOpen(string playerId, int index)
@@ -279,18 +283,7 @@ public class Board
     public int GetAvailableFieldIndexByPlayerId(string playerId)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
-        BoardCreature[] boardCreatures = playingField.GetCreatures();
-
-        for (int i = 0; i < boardCreatures.Length; i += 1)
-        {
-            BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
-            if (boardCreature == null)
-            {
-                return i;
-            }
-        }
-
-        return -1;
+        return playingField.GetAvailableFieldIndex();
     }
 
     public Vector3 GetFieldCenterByPlayerId(string playerId)
@@ -304,14 +297,18 @@ public class Board
     public class PlayingField
     {
         [SerializeField]
-        private BoardCreature[] creatures;
+        private BoardCreature[] field;
+
+        [SerializeField]
+        private BoardStructure[] fieldBack;
 
         [SerializeField]
         private Dictionary<int, Transform> indexToBoardPlace;
 
         public PlayingField(Player player)
         {
-            this.creatures = new BoardCreature[6];
+            this.field = new BoardCreature[6];
+            this.fieldBack = new BoardStructure[3];
             this.indexToBoardPlace = new Dictionary<int, Transform>();
 
             CacheBoardPlaces(player);
@@ -331,7 +328,10 @@ public class Board
             }
         }
 
-        public void SpawnCardsFromChallengeState(ChallengeCard[] fieldCards)
+        public void SpawnCardsFromChallengeState(
+            ChallengeCard[] fieldCards,
+            ChallengeCard[] fieldBackCards
+        )
         {
             for (int i = 0; i < 6; i += 1)
             {
@@ -344,18 +344,30 @@ public class Board
 
                 Board.Instance().CreateAndPlaceCreature(challengeCard, i, false, true);
             }
+
+            for (int i = 0; i < 3; i += 1)
+            {
+                ChallengeCard challengeCard = fieldBackCards[i];
+
+                if (challengeCard.Id == "EMPTY")
+                {
+                    continue;
+                }
+
+                //Board.Instance().CreateAndPlaceCreature(challengeCard, i, false, true);
+            }
         }
 
         public bool Place(BoardCreature creature, int index)
         {
-            if (creatures[index] != null)
+            if (this.field[index] != null)
             {
                 Debug.LogError("Attempting to place unit where one exists.");
                 return false;
             }
             else
             {
-                creatures[index] = creature;
+                this.field[index] = creature;
                 return true;
             }
         }
@@ -367,7 +379,7 @@ public class Board
 
         public bool IsPlaceEmpty(int index)
         {
-            return this.creatures[index] == null;
+            return this.field[index] == null;
         }
 
         public BoardCreature GetCreatureByIndex(int index)
@@ -378,24 +390,38 @@ public class Board
             }
             else
             {
-                return this.creatures[index];
+                return this.field[index];
             }
         }
 
         public void Remove(BoardCreature creature)
         {
-            for (int i = 0; i < creatures.Length; i++)
+            for (int i = 0; i < this.field.Length; i++)
             {
-                if (creatures[i] == creature)
+                if (this.field[i] == creature)
                 {
-                    creatures[i] = null;
+                    this.field[i] = null;
                 }
             }
         }
 
         public BoardCreature[] GetCreatures()
         {
-            return creatures;
+            return this.field;
+        }
+
+        public int GetAvailableFieldIndex()
+        {
+            for (int i = 0; i < this.field.Length; i += 1)
+            {
+                BoardCreature boardCreature = GetCreatureByIndex(i);
+                if (boardCreature == null)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         /*
@@ -404,7 +430,7 @@ public class Board
         public List<BoardCreature> GetAliveCreatures()
         {
             return new List<BoardCreature>(
-                this.creatures.Where(
+                this.field.Where(
                     boardCreature => boardCreature != null &&
                     boardCreature.Health > 0
                 )
@@ -414,7 +440,7 @@ public class Board
         public int GetIndexByCardId(string cardId)
         {
             return Array.FindIndex(
-                this.creatures,
+                this.field,
                 creature => creature != null && creature.GetCardId() == cardId
             );
         }
@@ -422,7 +448,7 @@ public class Board
         public BoardCreature GetCreatureByCardId(string cardId)
         {
             return Array.Find(
-                this.creatures,
+                this.field,
                 creature => creature != null && creature.GetCardId() == cardId
             );
         }
