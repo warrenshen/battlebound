@@ -538,14 +538,27 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
         ).gameObject;
 
         this.statusVFX[FROZEN_STATUS].transform.Rotate(Vector3.up * UnityEngine.Random.Range(-180, 180));
-        LeanTween
-            .scale(this.statusVFX[FROZEN_STATUS], Vector3.one * 2 * UnityEngine.Random.Range(0.9f, 1.1f), ActionManager.TWEEN_DURATION)
-            .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
-            .setEaseOutCubic()
-            .setOnStart(() =>
-            {
-                SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
-            });
+        if (this.boardCreature.IsFrozen > 1)
+        {
+            LeanTween
+                .scale(this.statusVFX[FROZEN_STATUS], Vector3.one * 2 * UnityEngine.Random.Range(0.9f, 1.1f), ActionManager.TWEEN_DURATION)
+                .setEaseOutCubic()
+                .setOnStart(() =>
+                {
+                    SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
+                });
+        }
+        else
+        {
+            LeanTween
+                .scale(this.statusVFX[FROZEN_STATUS], Vector3.one * 2 * UnityEngine.Random.Range(0.9f, 1.1f), ActionManager.TWEEN_DURATION)
+                .setDelay(UnityEngine.Random.Range(0, MAX_RANDOM_DELAY))
+                .setEaseOutCubic()
+                .setOnStart(() =>
+                {
+                    SoundManager.Instance.PlaySound("FreezeSFX", this.transform.position, pitchVariance: 0.3F, pitchBias: 0.5F);
+                });
+        }
     }
 
     private void Unfreeze()

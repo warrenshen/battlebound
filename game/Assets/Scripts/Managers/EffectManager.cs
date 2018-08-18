@@ -2270,7 +2270,7 @@ public class EffectManager : MonoBehaviour
 
     public void OnSpellTargetedPlay(
         ChallengeCard challengeCard,
-        BoardCreature targetedCreature
+        Targetable targetedCreature
     )
     {
         string playerId = challengeCard.PlayerId;
@@ -2280,19 +2280,19 @@ public class EffectManager : MonoBehaviour
                 SpellTargetedTouchOfZeus(playerId, targetedCreature);
                 break;
             case Card.CARD_NAME_UNSTABLE_POWER:
-                SpellTargetedUnstablePower(playerId, targetedCreature);
+                SpellTargetedUnstablePower(playerId, targetedCreature as BoardCreature);
                 break;
             case Card.CARD_NAME_DEEP_FREEZE:
-                SpellTargetedDeepFreeze(playerId, targetedCreature);
+                SpellTargetedDeepFreeze(playerId, targetedCreature as BoardCreature);
                 break;
             case Card.CARD_NAME_WIDESPREAD_FROSTBITE:
-                SpellTargetedWidespreadFrostbite(playerId, targetedCreature);
+                SpellTargetedWidespreadFrostbite(playerId, targetedCreature as BoardCreature);
                 break;
             case Card.CARD_NAME_DEATH_NOTE:
-                SpellTargetedDeathNote(playerId, targetedCreature);
+                SpellTargetedDeathNote(playerId, targetedCreature as BoardCreature);
                 break;
             case Card.CARD_NAME_BESTOWED_VIGOR:
-                SpellTargetedBestowedVigor(playerId, targetedCreature);
+                SpellTargetedBestowedVigor(playerId, targetedCreature as BoardCreature);
                 break;
             default:
                 Debug.LogError(string.Format("Invalid targeted spell with name: {0}.", challengeCard.Name));
@@ -2301,18 +2301,34 @@ public class EffectManager : MonoBehaviour
         BattleState.Instance().SetIsLocked(false);
     }
 
-    private void SpellTargetedTouchOfZeus(string playerId, BoardCreature targetedCreature)
+    private void SpellTargetedTouchOfZeus(string playerId, Targetable targetable)
     {
         IncrementIsWaiting();
         this.fXManager.PlayEffectWithCallback(
             "LightningShotVFX",
             "ShockSFX",
-            targetedCreature.GetTargetableTransform(),
+            targetable.GetTargetableTransform(),
             () =>
             {
-                int damageTaken = targetedCreature.TakeDamage(30);
-                AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
-                DecrementIsWaiting();
+                if (targetable.GetType() == typeof(BoardCreature))
+                {
+                    BoardCreature targetedCreature = targetable as BoardCreature;
+                    int damageTaken = targetedCreature.TakeDamage(30);
+                    AddToQueues(GetEffectsOnCreatureDamageTaken(targetedCreature, damageTaken));
+                    DecrementIsWaiting();
+                }
+                else if (targetable.GetType() == typeof(BoardStructure))
+                {
+                    BoardStructure targetedStructure = targetable as BoardStructure;
+                    int damageTaken = targetedStructure.TakeDamage(30);
+                    AddToQueues(GetEffectsOnStructureDamageTaken(targetedStructure, damageTaken));
+                    DecrementIsWaiting();
+                }
+                else
+                {
+                    Debug.LogError("Unsupported.");
+                    DecrementIsWaiting();
+                }
             }
         );
     }
@@ -2390,7 +2406,7 @@ public class EffectManager : MonoBehaviour
 
         switch (challengeCard.Name)
         {
-            case Card.CARD_NAME_RIOT_UP:
+            case Card.CARD_NAME_SHIELDS_UP:
                 effects = SpellUntargetedRiotUp(playerId);
                 break;
             case Card.CARD_NAME_BRR_BRR_BLIZZARD:
@@ -2405,7 +2421,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_NAME_SILENCE_OF_THE_LAMBS:
                 effects = SpellUntargetedSilenceOfTheLambs(playerId);
                 break;
-            case Card.CARD_NAME_MUDSLINGING:
+            case Card.CARD_NAME_RALLY_TO_THE_QUEEN:
                 effects = SpellUntargetedMudslinging(playerId);
                 break;
             case Card.CARD_NAME_BOMBS_AWAY:

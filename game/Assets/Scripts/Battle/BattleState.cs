@@ -670,7 +670,7 @@ public class BattleState
             return;
         }
 
-        BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
+        Targetable targetable = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
         if (FlagHelper.IsServerEnabled())
         {
@@ -679,7 +679,7 @@ public class BattleState
             battleCardObject.Reinitialize(challengeCard);
 
             opponent.PlayCard(battleCardObject);
-            BattleManager.Instance.EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
+            BattleManager.Instance.EnemyPlaySpellTargetedAnim(battleCardObject, targetable);
         }
         else
         {
@@ -691,7 +691,7 @@ public class BattleState
             }
 
             opponent.PlayCard(battleCardObject);
-            BattleManager.Instance.EnemyPlaySpellTargetedAnim(battleCardObject, targetedCreature);
+            BattleManager.Instance.EnemyPlaySpellTargetedAnim(battleCardObject, targetable);
         }
     }
 
