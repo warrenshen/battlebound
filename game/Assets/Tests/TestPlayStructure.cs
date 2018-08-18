@@ -186,7 +186,24 @@ public class TestPlayStructure
     }
 
     [UnityTest]
-    public IEnumerator StructureGrantTauntToCreatureTest()
+    public IEnumerator StructureGrantTauntToCreaturesTest()
+    {
+        EffectManager.Instance.OnStructurePlay(
+            "ID_PLAYER",
+            "ID_PLAYER-0"
+        );
+
+        yield return null;
+
+        BoardCreature playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-16");
+        Assert.AreEqual(playerCreature.HasAbility(Card.CARD_ABILITY_TAUNT), true);
+
+        playerCreature = Board.Instance().GetCreatureByPlayerIdAndCardId("ID_PLAYER", "ID_PLAYER-14");
+        Assert.AreEqual(playerCreature.HasAbility(Card.CARD_ABILITY_TAUNT), true);
+    }
+
+    [UnityTest]
+    public IEnumerator CreatureGetTauntFromStructureTest()
     {
         EffectManager.Instance.OnCreaturePlay(
             "ID_PLAYER",
