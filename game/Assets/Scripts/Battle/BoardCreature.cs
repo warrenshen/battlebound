@@ -424,6 +424,21 @@ public class BoardCreature : Targetable
         }
     }
 
+    public void RemoveTauntIfGranted()
+    {
+        if (!HasAbility(Card.CARD_ABILITY_TAUNT))
+        {
+            Debug.LogError("Remove taunt called on creature without taunt.");
+            return;
+        }
+
+        if (!HasAbilityStart(Card.CARD_ABILITY_TAUNT))
+        {
+            this.abilities.Remove(Card.CARD_ABILITY_TAUNT);
+            this.boardCreatureObject.Redraw();
+        }
+    }
+
     public void Freeze(int amount)
     {
         this.isFrozen = Math.Max(this.IsFrozen, amount);
@@ -445,6 +460,11 @@ public class BoardCreature : Targetable
         }
 
         return this.abilities.Contains(ability);
+    }
+
+    private bool HasAbilityStart(string ability)
+    {
+        return this.card.GetAbilities().Contains(ability);
     }
 
     public void AddBuff(string buff)

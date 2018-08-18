@@ -1928,6 +1928,13 @@ public class EffectManager : MonoBehaviour
         BoardStructure defendingStructure
     )
     {
+        List<BoardCreature> boardCreatures = Board.Instance().GetCreaturesByStructure(defendingStructure);
+        if (boardCreatures.Count > 0)
+        {
+            Debug.LogError("Creature cannot attack structure with creatures in front of it!");
+            return;
+        }
+
         if (attackingCreature.CanAttack <= 0)
         {
             Debug.LogError("Fight called when canAttack is 0 or below!");
@@ -2843,17 +2850,29 @@ public class EffectManager : MonoBehaviour
     {
         List<Effect> effects = new List<Effect>();
 
-        if (boardStructure.Health <= 0)
+        if (boardStructure.Health > 0)
         {
-            effects.Add(
-                new Effect(
-                    boardStructure.GetPlayerId(),
-                    EFFECT_STRUCTURE_DIE,
-                    boardStructure.GetCardId(),
-                    0
-                )
-            );
+            return effects;
         }
+
+        List<BoardCreature> boardCreatures = Board.Instance().GetCreaturesByStructure(boardStructure);
+
+        if (boardStructure.GetCardName() == Card.CARD_NAME_WARDENS_TOWER)
+        {
+            foreach (BoardCreature boardCreature in boardCreatures)
+            {
+                boardCreature.GrantTaunt();
+            }
+        }
+
+        effects.Add(
+            new Effect(
+                boardStructure.GetPlayerId(),
+                EFFECT_STRUCTURE_DIE,
+                boardStructure.GetCardId(),
+                0
+            )
+        );
 
         return effects;
     }
