@@ -553,15 +553,15 @@ public class BattleManager : MonoBehaviour
             UseCard(target);    //to-do: change to own weapon func
             return true;
         }
-        else if (Physics.Raycast(ray, out hit, 100f, boardOrBattleLayer) &&
-                 hit.collider.gameObject.layer == LayerMask.NameToLayer("Board") &&
-                 hit.collider.name.Contains(target.Owner.Name))
+        else if (
+            Physics.Raycast(ray, out hit, 100f, boardOrBattleLayer) &&
+            hit.collider.gameObject.layer == LayerMask.NameToLayer("Board") &&
+            hit.collider.name.Contains(target.Owner.Name)
+        )
         {
             //place card
             if (CanPlayCardToBoard(target, hit))
             {
-                // We'll enter this condition if card is actually played,
-                // otherwise the "playing" will be handled elsewhere.
                 PlayCardToBoard(target, hit);
                 return true;
             }
@@ -684,7 +684,6 @@ public class BattleManager : MonoBehaviour
                 {
                     battleCardObject.noInteraction = false;
                 }
-                Debug.Log(battleCardObject.noInteraction);
             });
     }
 

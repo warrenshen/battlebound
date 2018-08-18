@@ -1873,6 +1873,14 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    public void OnStructurePlay(
+        string playerId,
+        string cardId
+    )
+    {
+
+    }
+
     public void OnRandomTarget(
         string playerId,
         ChallengeCard card,

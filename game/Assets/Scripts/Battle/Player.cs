@@ -46,9 +46,6 @@ public class Player
 
     private int turnCount;
 
-    private Board.PlayingField field;
-    public Board.PlayingField Field => Field;
-
     private PlayerAvatar avatar;
     public PlayerAvatar Avatar => avatar;
 
@@ -844,6 +841,24 @@ public class Player
             }
         }
         playerState.SetField(fieldCards);
+
+        ChallengeCard[] fieldBackCards = new ChallengeCard[3];
+        for (int i = 0; i < 3; i += 1)
+        {
+            //Board.PlayingField playingField = Board.Instance().GetFieldByPlayerId(this.id);
+            //BoardCreature boardCreature = playingField.GetCreatureByIndex(i);
+
+            //if (boardCreature == null)
+            //{
+            //    ChallengeCard challengeCard = new ChallengeCard();
+            //    challengeCard.SetId("EMPTY");
+            //    fieldCards.SetValue(challengeCard, i);
+            //}
+            //else
+            //{
+            //    fieldCards.SetValue(boardCreature.GetChallengeCard(), i);
+            //}
+        }
 
         return playerState;
     }
