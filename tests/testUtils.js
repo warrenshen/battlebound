@@ -632,15 +632,22 @@ const gamesparks = new GameSparks();
 exports.gamesparks = gamesparks;
 
 exports.initGS = function() {
+  const password = "password";
+  // STG
+  // const key = "o353744GfN7z";
+  // const secret = "TF0GGPC2YKf7CglgrE1M7RrmEDX86tDc";
+  // const email = "testuser";
+  // DEV
+  const key = "n368079bzKM2";
+  const secret = "A2gxU3kNTjFBLtJ6JVmrVBbVS1MR0Ji5";
+  const email = "test@playbattlebound.com";
   return new Promise((resolve) => {
     gamesparks.initPreview({
-      // key: "o353744GfN7z",
-      // secret: "TF0GGPC2YKf7CglgrE1M7RrmEDX86tDc",
-      key: "n368079bzKM2",
-      secret: "A2gxU3kNTjFBLtJ6JVmrVBbVS1MR0Ji5",
+      key: key,
+      secret: secret,
       onNonce: null,
       onInit: function() {
-        gamesparks.authenticationRequest("password", "test@playbattlebound.com", function(response) {
+        gamesparks.authenticationRequest(password, email, function(response) {
           if (response.error) {
             console.log("AuthenticationResponse: " + JSON.stringify(response));
             resolve();
