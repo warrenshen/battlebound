@@ -442,6 +442,8 @@ public abstract class Card
                 Debug.LogError(string.Format("Ability to description does not contain ability: {0}", ability));
                 continue;
             }
+            //to-do: localization logic here
+            //LanguageUtility.Instance().GetLocalized()
 
             if (description.Length == 0)
             {
@@ -449,7 +451,7 @@ public abstract class Card
             }
             else
             {
-                description += string.Format("; {0}", ABILITY_TO_DESCRIPTION[ability]);
+                description += string.Format("\n{0}", ABILITY_TO_DESCRIPTION[ability]);
             }
         }
         return description;
@@ -491,7 +493,8 @@ public abstract class Card
             return;
         }
         //set sprites and set TextMeshPro labels using TmpTextObjects (?)
-        cardVisual.SetTextFieldWithKey("Title", card.GetName());
+        string localizedName = LanguageUtility.Instance().GetLocalized(card.GetName(), LanguageUtility.Language.CN);
+        cardVisual.SetTextFieldWithKey("Title", localizedName);
 
         if (card.GetType() == typeof(CreatureCard))
         {

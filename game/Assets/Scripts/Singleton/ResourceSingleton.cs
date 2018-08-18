@@ -26,6 +26,8 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         string codexString = codexText.text;
         List<string> codexJsons = new List<string>(codexString.Split('\n'));
 
+        //LanguageUtility.Instance(); //just to begin the loading process
+
         foreach (string codexJson in codexJsons)
         {
             if (codexJson.Length > 0)
