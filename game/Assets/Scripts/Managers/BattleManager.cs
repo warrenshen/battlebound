@@ -1183,14 +1183,14 @@ public class BattleManager : MonoBehaviour
             .scale(title.gameObject, Vector3.one, 1)
             .setOnComplete(() =>
             {
-                if (won)
-                {
-                    endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
-                }
-                else
-                {
-                    endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
-                }
+                //if (won)
+                //{
+                //    endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
+                //}
+                //else
+                //{
+                //    endOverlay.transform.Find("LoseFX").gameObject.SetActive(true);
+                //}
 
                 LeanTween
                     .scale(title.gameObject, title.transform.localScale / 1.25f, CardTween.TWEEN_DURATION)
