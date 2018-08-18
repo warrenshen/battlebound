@@ -6,6 +6,23 @@ using UnityEngine.Events;
 
 public class Board
 {
+    public static readonly Dictionary<int, int> FIELD_INDEX_TO_FIELD_BACK_INDEX = new Dictionary<int, int>
+    {
+        { 0, 6 },
+        { 1, 6 },
+        { 2, 7 },
+        { 3, 7 },
+        { 4, 8 },
+        { 5, 8 },
+    };
+
+    public static readonly Dictionary<int, List<int>> FIELD_BACK_INDEX_TO_FIELD_INDICES = new Dictionary<int, List<int>>
+    {
+        { 6, new List<int>{ 0, 1 } },
+        { 7, new List<int>{ 2, 3 } },
+        { 8, new List<int>{ 4, 5 } },
+    };
+
     private Dictionary<string, PlayingField> playerIdToField;
 
     private Dictionary<string, PlayerAvatar> playerIdToAvatar;
@@ -101,21 +118,21 @@ public class Board
         bool isResume = false
     )
     {
-        //List<BoardStructure> aliveStructures =
-        //    GetAliveStructuresByPlayerId(challengeCard.PlayerId);
-        //foreach (BoardStructure aliveStructure in aliveStructures)
-        //{
-        //    if (aliveStructure.GetCardId() == challengeCard.Id)
-        //    {
-        //        Debug.LogError(
-        //            string.Format(
-        //                "Cannot place creature with card ID of existing structure: {0}",
-        //                challengeCard.Id
-        //            )
-        //        );
-        //        return;
-        //    }
-        //}
+        List<BoardStructure> aliveStructures =
+            GetAliveStructuresByPlayerId(challengeCard.PlayerId);
+        foreach (BoardStructure aliveStructure in aliveStructures)
+        {
+            if (aliveStructure.GetCardId() == challengeCard.Id)
+            {
+                Debug.LogError(
+                    string.Format(
+                        "Cannot place creature with card ID of existing structure: {0}",
+                        challengeCard.Id
+                    )
+                );
+                return;
+            }
+        }
 
         PlayingField playingField = this.playerIdToField[challengeCard.PlayerId];
         BoardStructure boardStructure = new BoardStructure(
@@ -134,6 +151,23 @@ public class Board
                 );
             }
         }));
+    }
+
+    public List<BoardCreature> GetBoardCreaturesByBoardStructure(BoardStructure boardStructure)
+    {
+        string playerId = boardStructure.GetPlayerId();
+        int fieldBackIndex = boardStructure.FieldIndex;
+
+        List<int> fieldIndices = FIELD_BACK_INDEX_TO_FIELD_INDICES[fieldBackIndex];
+
+        List<BoardCreature> boardCreatures = new List<BoardCreature>();
+
+        foreach (int fieldIndex in fieldIndices)
+        {
+            boardCreatures.Add(GetCreatureByPlayerIdAndIndex(playerId, fieldIndex);
+        }
+
+        return boardCreatures;
     }
 
     public void RemoveCreatureByPlayerIdAndCardId(string playerId, string cardId)
@@ -162,6 +196,29 @@ public class Board
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
         return playingField.GetAliveCreatures();
+    }
+
+    public List<BoardStructure> GetAliveStructuresByPlayerId(string playerId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetAliveStructures();
+    }
+
+    public List<BoardStructure> GetExposedStructuresByPlayerId(string playerId)
+    {
+        List<BoardStructure> boardStructures = new List<BoardStructure>();
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+
+        foreach (int fieldBackIndex in new List<int> { 6, 7, 8 })
+        {
+            BoardStructure boardStructure = playingField.GetStructureByIndex(fieldBackIndex);
+            List<BoardCreature> boardCreatures = GetBoardCreaturesByBoardStructure(boardStructure);
+            if (boardCreatures.Count <= 0)
+            {
+                boardStructures.Add(boardStructure);
+            }
+        }
+        return boardStructures;
     }
 
     public List<BoardCreature> GetAliveCreaturesByPlayerIdExceptCardId(string playerId, string cardId)
@@ -197,6 +254,12 @@ public class Board
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
         return playingField.GetCreatureByIndex(index);
+    }
+
+    public BoardStructure GetStructureByPlayerIdAndCardId(string playerId, string cardId)
+    {
+        PlayingField playingField = GetFieldByPlayerId(playerId);
+        return playingField.GetStructureByCardId(cardId);
     }
 
     public int GetInFrontIndexByPlayerIdAndCardId(string playerId, string cardId)
@@ -460,6 +523,18 @@ public class Board
             }
         }
 
+        public BoardStructure GetStructureByIndex(int fieldBackIndex)
+        {
+            if (index < 6 || index > 8)
+            {
+                return null;
+            }
+            else
+            {
+                return this.fieldBack[index];
+            }
+        }
+
         public void Remove(BoardCreature creature)
         {
             for (int i = 0; i < this.field.Length; i++)
@@ -503,6 +578,16 @@ public class Board
             );
         }
 
+        public List<BoardStructure> GetAliveStructures()
+        {
+            return new List<BoardStructure>(
+                this.fieldBack.Where(
+                    BoardStructure => BoardStructure != null &&
+                    BoardStructure.Health > 0
+                )
+            );
+        }
+
         public int GetIndexByCardId(string cardId)
         {
             return Array.FindIndex(
@@ -515,7 +600,15 @@ public class Board
         {
             return Array.Find(
                 this.field,
-                creature => creature != null && creature.GetCardId() == cardId
+                boardCreature => boardCreature != null && boardCreature.GetCardId() == cardId
+            );
+        }
+
+        public BoardStructure GetStructureByCardId(string cardId)
+        {
+            return Array.Find(
+                this.fieldBack,
+                boardStructure => boardStructure != null && boardStructure.GetCardId() == cardId
             );
         }
     }

@@ -1878,7 +1878,36 @@ public class EffectManager : MonoBehaviour
         string cardId
     )
     {
+        BoardStructure boardStructure = Board.Instance().GetStructureByPlayerIdAndCardId(
+            playerId,
+            cardId
+        );
 
+        if (boardStructure == null)
+        {
+            Debug.LogError("On play called on board creature that does not exist.");
+            return;
+        }
+
+        List<Effect> effects = new List<Effect>();
+
+        List<BoardCreature> boardCreatures = Board.Instance().GetBoardCreaturesByBoardStructure(
+            boardStructure
+        );
+
+        if (boardStructure.GetCardName() == Card.CARD_NAME_OLD_TOWER)
+        {
+            foreach (BoardCreature boardCreature in boardCreatures)
+            {
+                if (!boardCreature.HasAbility(Card.CARD_ABILITY_TAUNT))
+                {
+                    boardCreature.GrantTaunt();
+                }
+            }
+        }
+
+        AddToQueues(effects);
+        BattleState.Instance().SetIsLocked(false);
     }
 
     public void OnRandomTarget(
