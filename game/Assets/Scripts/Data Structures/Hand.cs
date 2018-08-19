@@ -151,6 +151,12 @@ public class Hand
             if (battleCardObject.GetCardId() != "HIDDEN" && cardIdSet.Contains(battleCardObject.GetCardId()))
             {
                 Debug.LogError("Duplicate card IDs in hand!");
+                Debug.LogError(
+                    string.Join(
+                        ",",
+                        this.battleCardObjects.Select(b => b.GetCardId())
+                    )
+                );
             }
             else
             {
