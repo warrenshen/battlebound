@@ -547,17 +547,19 @@ public abstract class Card
         }
         cardVisual.UpdateCustomSprites();
 
-        bool isCreature = card.GetType() == typeof(CreatureCard);
-        if (isCreature)
+        switch (card.GetCardType())
         {
-            CreatureCard creatureCard = card as CreatureCard;
-            cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
-            cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
-        }
-        else
-        {
-            cardVisual.SetTextFieldWithKey("Attack", "--");
-            cardVisual.SetTextFieldWithKey("Health", "--");
+            case CardType.Creature:
+                CreatureCard creatureCard = card as CreatureCard;
+                cardVisual.SetTextFieldWithKey("Attack", creatureCard.GetAttack().ToString());
+                cardVisual.SetTextFieldWithKey("Health", creatureCard.GetHealth().ToString());
+                break;
+            case CardType.Structure:
+                StructureCard structureCard = card as StructureCard;
+                cardVisual.SetTextFieldWithKey("Health", structureCard.GetHealth().ToString());
+                break;
+            default:
+                break;
         }
         cardVisual.Redraw();
     }
