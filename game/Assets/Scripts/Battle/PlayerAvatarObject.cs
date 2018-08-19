@@ -12,7 +12,10 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
     private BoardWeapon weapon;
     public BoardWeapon Weapon => weapon;
 
+    [SerializeField]
     TextMeshPro healthLabel;
+    [SerializeField]
+    public OrbFill orbFill;
     TextMeshPro nameLabel;
 
     [SerializeField]
@@ -26,9 +29,7 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
 
         this.audioSource = GetComponent<AudioSource>();
 
-        CreateLabelOnAvatar(ref this.nameLabel, Vector3.left * 1.07f);
-        CreateLabelOnAvatar(ref this.healthLabel, Vector3.right * 1.07f);
-
+        CreateLabelOnAvatar(ref this.nameLabel, Vector3.zero);
         this.nameLabel.text = this.playerAvatar.GetDisplayName();
         //already has cylinder collider in scene
         UpdateStatText();
@@ -153,7 +154,9 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
         LeanTween
             .scale(this.healthLabel.gameObject, new Vector3(scaleFactor, scaleFactor, scaleFactor), 1)
             .setEasePunch();
-        this.healthLabel.text = String.Format("{0}/{1}", this.playerAvatar.Health, this.playerAvatar.MaxHealth);
+        this.healthLabel.text = String.Format("{0}", this.playerAvatar.Health);
+        this.orbFill.Fill = (float)this.playerAvatar.Health / (float)this.playerAvatar.MaxHealth;
+        //this.healthLabel.text = String.Format("{0}/{1}", this.playerAvatar.Health, this.playerAvatar.MaxHealth);
     }
 
     public override void MouseDown()
