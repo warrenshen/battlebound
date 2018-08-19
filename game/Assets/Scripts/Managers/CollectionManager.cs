@@ -253,6 +253,7 @@ public class CollectionManager : MonoBehaviour
 
         Transform grayed = new GameObject("Grayed").transform as Transform;
         grayed.parent = this.collectionObject.transform;
+
         List<CollectionCardObject> createdCardObjects = new List<CollectionCardObject>();
 
         foreach (Card card in cards)
@@ -261,9 +262,8 @@ public class CollectionManager : MonoBehaviour
             collectionCardObject.transform.parent = collectionObject.transform;
             collectionCardObject.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
             collectionCardObject.SetBothResetValues();
-
-            CreateGrayed(collectionCardObject.transform, card).parent = grayed;
             collectionCardObject.visual.Redraw();
+            CreateGrayed(collectionCardObject.transform, card).parent = grayed;
 
             createdCardObjects.Add(collectionCardObject);
             index++;
@@ -273,22 +273,19 @@ public class CollectionManager : MonoBehaviour
 
     private Transform CreateGrayed(Transform source, Card card)
     {
-        GameObject created = new GameObject("_gray_" + card.Id);
-        created.transform.position = source.position;
-
-        //do visual stuff
-        CollectionCardObject grayed = created.AddComponent<CollectionCardObject>();
-        grayed.InitializeHollow(card);
-        grayed.visual.Stencil = -100;
-        foreach (HyperCard.Card.CustomSpriteParam spriteParam in grayed.visual.SpriteObjects)
+        CollectionCardObject grayedCardObject = InitializeCollectionCardObject(card, true);
+        grayedCardObject.visual.Stencil = -100;
+        grayedCardObject.noInteraction = true;
+        foreach (HyperCard.Card.CustomSpriteParam spriteParam in grayedCardObject.visual.SpriteObjects)
         {
             spriteParam.IsAffectedByFilters = true;
         }
-        grayed.visual.SetGrayscale(true);
-        grayed.visual.SetOpacity(0.7f);
-        grayed.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
+        grayedCardObject.visual.SetGrayscale(true);
+        grayedCardObject.visual.SetOpacity(0.7f);
+        grayedCardObject.gameObject.transform.position = source.position;
+        grayedCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
 
-        return created.transform;
+        return grayedCardObject.gameObject.transform;
     }
 
     public void IncludeCard(CollectionCardObject cardObject)
@@ -505,7 +502,7 @@ public class CollectionManager : MonoBehaviour
         this.collectionCardObjectPools[collectionCardObject.GetCardType()].Push(collectionCardObject);
     }
 
-    public CollectionCardObject InitializeCollectionCardObject(Card card)
+    public CollectionCardObject InitializeCollectionCardObject(Card card, bool isHollow = false)
     {
         CollectionCardObject collectionCardObject;
         Card.CardType cardType = card.GetCardType();
@@ -536,7 +533,14 @@ public class CollectionManager : MonoBehaviour
             collectionCardObject = this.collectionCardObjectPools[cardType].Pop();
         }
 
-        collectionCardObject.Initialize(card);
+        if (isHollow)
+        {
+            collectionCardObject.InitializeHollow(card);
+        }
+        else
+        {
+            collectionCardObject.Initialize(card);
+        }
         collectionCardObject.gameObject.SetActive(true);
         return collectionCardObject;
     }

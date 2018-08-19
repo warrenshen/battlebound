@@ -13,7 +13,6 @@ public class CollectionCardObject : CardObject
     {
         //does the visual stuff using templateData
         base.Initialize(card);
-
         this.visual.BurnColor = Color.cyan;
         this.visual.BurnEndColor = Color.white;
     }
@@ -21,12 +20,13 @@ public class CollectionCardObject : CardObject
     public void InitializeHollow(Card card) //no cutout, no wrapper assignment, no collider
     {
         this.card = card;
+        LoadCardArtwork();
 
-        //make render changes according to card class here
-        this.visual = VisualizeCard();
-        this.LoadCardArtwork();
-        this.SetThisResetValues();
-        this.SetVisualResetValues();
+        Card.SetHyperCardFromData(ref this.visual, this.card);
+        Card.SetHyperCardArtwork(ref this.visual, this.card);
+
+        SetThisResetValues();
+        SetVisualResetValues();
     }
 
     public Card.CardType GetCardType()
