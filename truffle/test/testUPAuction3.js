@@ -32,6 +32,7 @@ contract('UniformPriceAuction', function(accounts) {
       it ("should not increase duration", async function() {
         const transaction = await contract.submitBid(
           0,
+          0,
           {
             from: buyer,
             value: minimumBid
@@ -94,12 +95,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         transaction = await contract.submitBid(
           0,
+          0,
           {
             from: buyer,
             value: minimumBid
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration);
@@ -118,12 +122,15 @@ contract('UniformPriceAuction', function(accounts) {
       it ("should increase duration", async function() {
         const transaction = await contract.submitBid(
           1,
+          0,
           {
             from: buyer,
             value: minimumBid
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration + 300);
@@ -153,12 +160,15 @@ contract('UniformPriceAuction', function(accounts) {
       it ("should increase duration", async function() {
         const transaction = await contract.submitBid(
           0,
+          0,
           {
             from: buyer,
             value: minimumBid
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const duration = await contract.duration.call();
         assert.equal(duration, auctionDuration + 300);

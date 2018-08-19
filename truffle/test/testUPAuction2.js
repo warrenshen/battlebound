@@ -33,6 +33,7 @@ contract('UniformPriceAuction', function(accounts) {
         try {
           transaction = await contract.submitBid(
             0,
+            0,
             {
               from: buyer,
               value: 1e16
@@ -50,6 +51,7 @@ contract('UniformPriceAuction', function(accounts) {
         try {
           transaction = await contract.submitBid(
             N + 1,
+            0,
             {
               from: buyer,
               value: minimumBid
@@ -75,6 +77,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         await contract.submitBid(
           0,
+          0,
           {
             from: buyer,
             value: minimumBid,
@@ -90,6 +93,7 @@ contract('UniformPriceAuction', function(accounts) {
 
         try {
           transaction = await contract.submitBid(
+            0,
             0,
             {
               from: buyerTwo,
@@ -132,12 +136,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           bidIndex,
+          0,
           {
             from: buyer,
             value: bidAmount,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);
@@ -160,12 +167,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           bidIndex,
+          0,
           {
             from: buyer,
             value: minimumBid + 1e16,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);
@@ -193,6 +203,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         await contract.submitBid(
           0,
+          0,
           {
             from: buyer,
             value: minimumBid
@@ -211,12 +222,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           bidIndex,
+          0,
           {
             from: buyer,
             value: bidAmount,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);
@@ -239,12 +253,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           0,
+          0,
           {
             from: buyerTwo,
             value: minimumBid + minimumIncrease,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyerTwo);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);
@@ -280,6 +297,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         await contract.submitBid(
           0,
+          0,
           {
             from: buyer,
             value: minimumBid
@@ -287,6 +305,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         await contract.submitBid(
           1,
+          0,
           {
             from: buyer,
             value: minimumBid
@@ -294,6 +313,7 @@ contract('UniformPriceAuction', function(accounts) {
         );
         await contract.submitBid(
           2,
+          0,
           {
             from: buyer,
             value: minimumBid
@@ -311,12 +331,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           bidIndex,
+          0,
           {
             from: buyer,
             value: bidAmount,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);
@@ -339,12 +362,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           bidIndex,
+          0,
           {
             from: buyer,
             value: bidAmount,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);
@@ -367,12 +393,15 @@ contract('UniformPriceAuction', function(accounts) {
 
         const transaction = await contract.submitBid(
           2,
+          0,
           {
             from: buyer,
             value: bidAmount,
           }
         );
         assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+        assert.equal(transaction.logs[0].event, "BidCreated", "expected a BidCreated event");
+        assert.equal(transaction.logs[0].args.bidder, buyer);
 
         const [amount, bidder] = await contract.bidByIndex.call(bidIndex);
         assert.equal(amount, bidAmount);

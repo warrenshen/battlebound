@@ -31,12 +31,14 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         0,
+        0,
         {
           from: buyer,
           value: minimumBid
         }
       );
       await contract.submitBid(
+        0,
         0,
         {
           from: buyer,
@@ -45,6 +47,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         0,
+        0,
         {
           from: buyerTwo,
           value: minimumBid + minimumIncrease * 20
@@ -52,6 +55,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         1,
+        0,
         {
           from: buyerTwo,
           value: minimumBid
@@ -59,6 +63,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         2,
+        0,
         {
           from: buyerTwo,
           value: minimumBid
@@ -66,6 +71,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         1,
+        0,
         {
           from: buyer,
           value: minimumBid + minimumIncrease
@@ -86,6 +92,7 @@ contract('UniformPriceAuction', function(accounts) {
       try {
         transaction = await contract.submitBid(
           1,
+          0,
           {
             from: buyer,
             value: minimumBid + minimumIncrease * 3
@@ -143,12 +150,14 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         0,
+        0,
         {
           from: buyer,
           value: minimumBid
         }
       );
       await contract.submitBid(
+        0,
         0,
         {
           from: buyer,
@@ -157,6 +166,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         0,
+        0,
         {
           from: buyerTwo,
           value: minimumBid + minimumIncrease * 20
@@ -164,6 +174,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         1,
+        0,
         {
           from: buyerTwo,
           value: minimumBid
@@ -171,6 +182,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         2,
+        0,
         {
           from: buyerTwo,
           value: minimumBid
@@ -178,6 +190,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         1,
+        0,
         {
           from: buyer,
           value: minimumBid + minimumIncrease
@@ -324,12 +337,14 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         0,
+        0,
         {
           from: buyer,
           value: minimumBid
         }
       );
       await contract.submitBid(
+        0,
         0,
         {
           from: buyer,
@@ -338,6 +353,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         0,
+        0,
         {
           from: buyerTwo,
           value: minimumBid + minimumIncrease * 20
@@ -345,6 +361,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         1,
+        0,
         {
           from: buyerTwo,
           value: minimumBid
@@ -352,6 +369,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         2,
+        0,
         {
           from: buyerTwo,
           value: minimumBid
@@ -359,6 +377,7 @@ contract('UniformPriceAuction', function(accounts) {
       );
       await contract.submitBid(
         1,
+        0,
         {
           from: buyer,
           value: minimumBid + minimumIncrease

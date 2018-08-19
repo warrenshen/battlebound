@@ -3,6 +3,14 @@ pragma solidity ^0.4.23;
 import "./Ownable.sol";
 
 contract UniformPriceAuction is Ownable {
+
+  // EVENTS
+  event BidCreated(
+    uint256 indexed amount,
+    address indexed bidder,
+    address indexed referrer
+  );
+
   // Human-readable name of auction.
   string public name;
   // Number of items on auction.
@@ -79,10 +87,11 @@ contract UniformPriceAuction is Ownable {
   }
 
   // EXTERNAL
-  function submitBid(uint256 _index) external payable {
+  function submitBid(uint256 _index, address _referrer) external payable {
     require(_index < N);
     require(block.number < blockStart + duration);
     require(msg.value >= minimumBid);
+    require(msg.sender != _referrer);
 
     Bid storage bid = indexToBid[_index];
 
@@ -107,6 +116,8 @@ contract UniformPriceAuction is Ownable {
     if (previousBid > 0 && previousBidder != address(0)) {
       previousBidder.send(previousBid);
     }
+
+    emit BidCreated(msg.value, msg.sender, _referrer);
   }
 
   function updateFulfillPrice(uint256 _index) external {
