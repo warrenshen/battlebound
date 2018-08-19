@@ -687,6 +687,8 @@ public abstract class Card
         return ResourceSingleton.Instance.GetImageTextureByName(GetBackImage());
     }
 
+    public abstract Card.CardType GetCardType();
+
     protected void LoadTemplateFromCodex()
     {
         if (this.name == null)
@@ -886,6 +888,11 @@ public class CreatureCard : Card
         return challengeCard;
     }
 
+    public override Card.CardType GetCardType()
+    {
+        return CardType.Creature;
+    }
+
     public static CreatureCard GetFromJson(string json)
     {
         CreatureCard creatureCard = JsonUtility.FromJson<CreatureCard>(json);
@@ -935,6 +942,11 @@ public class WeaponCard : Card
         challengeCard.SetHealthStart(this.durability);
         challengeCard.SetHealthMax(this.durability);
         return challengeCard;
+    }
+
+    public override Card.CardType GetCardType()
+    {
+        return CardType.Weapon;
     }
 
     public static WeaponCard GetFromJson(string json)
@@ -997,6 +1009,11 @@ public class StructureCard : Card
         challengeCard.SetCost(this.GetCost());
         challengeCard.SetCostStart(this.GetCost());
         return challengeCard;
+    }
+
+    public override Card.CardType GetCardType()
+    {
+        return CardType.Structure;
     }
 
     public static StructureCard GetFromJson(string json)
@@ -1094,6 +1111,11 @@ public class SpellCard : Card
         challengeCard.SetCost(this.GetCost());
         challengeCard.SetCostStart(this.GetCost());
         return challengeCard;
+    }
+
+    public override Card.CardType GetCardType()
+    {
+        return CardType.Spell;
     }
 
     public static SpellCard GetFromJson(string json)

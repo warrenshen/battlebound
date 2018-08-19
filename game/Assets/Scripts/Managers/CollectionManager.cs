@@ -49,14 +49,22 @@ public class CollectionManager : MonoBehaviour
     private EventSystem m_EventSystem;
     private PointerEventData m_PointerEventData;
 
-    private GameObject collectionCardObjectPrefab;
-    private Stack<CollectionCardObject> collectionCardObjectPool;
+    [SerializeField]
+    private GameObject creatureCardObjectPrefab;
+    [SerializeField]
+    private GameObject spellCardObjectPrefab;
+    [SerializeField]
+    private GameObject structureCardObjectPrefab;
+    [SerializeField]
+    private GameObject weaponCardObjectPrefab;
+
+    private Dictionary<Card.CardType, Stack<CollectionCardObject>> collectionCardObjectPools;
+
     private Stack<CardCutout> cardCutoutPool;
+    private List<CardCutout> sortedCardCutouts;
 
     [SerializeField]
     private GameObject cardCutoutPrefab;
-    [SerializeField]
-    private List<CardCutout> sortedCardCutouts;
 
     public static CollectionManager Instance { get; private set; }
 
@@ -65,9 +73,9 @@ public class CollectionManager : MonoBehaviour
         Instance = this;
         this.collection = new List<CollectionCardObject>();
         this.includedCards = new List<Card>();
-
         this.sortedCardCutouts = new List<CardCutout>();
-        InitializeCollectionCardObjectPool();
+
+        InitializeCollectionCardObjectPools();
     }
 
     private void Start()
@@ -283,7 +291,6 @@ public class CollectionManager : MonoBehaviour
         return created.transform;
     }
 
-
     public void IncludeCard(CollectionCardObject cardObject)
     {
         if (includedCards.Count >= REQUIRED_DECK_SIZE)
@@ -407,21 +414,17 @@ public class CollectionManager : MonoBehaviour
         deckSize.text = String.Format("{0}/{1}", includedCards.Count, REQUIRED_DECK_SIZE);
     }
 
-    private void InitializeCollectionCardObjectPool()
+    private void InitializeCollectionCardObjectPools()
     {
-        this.collectionCardObjectPrefab = Resources.Load("Prefabs/CollectionCardObject") as GameObject;
-        this.collectionCardObjectPool = new Stack<CollectionCardObject>();
+        this.collectionCardObjectPools = new Dictionary<Card.CardType, Stack<CollectionCardObject>>();
+        this.collectionCardObjectPools[Card.CardType.Creature] = new Stack<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Spell] = new Stack<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Structure] = new Stack<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Weapon] = new Stack<CollectionCardObject>();
+
         for (int i = 0; i < REQUIRED_DECK_SIZE * 2; i++)
         {
-            GameObject collectionCardGameObject = Instantiate(
-                this.collectionCardObjectPrefab,
-                transform.position,
-                Quaternion.identity
-            );
-            collectionCardGameObject.transform.parent = this.transform;
-            collectionCardGameObject.SetActive(false);
-            CollectionCardObject collectionCardObject = collectionCardGameObject.GetComponent<CollectionCardObject>();
-            this.collectionCardObjectPool.Push(collectionCardObject);
+            InstantiateCreatureCardGameObject();
         }
 
         this.cardCutoutPool = new Stack<CardCutout>();
@@ -439,29 +442,98 @@ public class CollectionManager : MonoBehaviour
         }
     }
 
+    private CollectionCardObject InstantiateCreatureCardGameObject()
+    {
+        GameObject creatureCardGameObject = Instantiate(
+            this.creatureCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        creatureCardGameObject.transform.parent = this.transform;
+        creatureCardGameObject.SetActive(false);
+        CollectionCardObject collectionCardObject = creatureCardGameObject.GetComponent<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Creature].Push(collectionCardObject);
+        return collectionCardObject;
+    }
+
+    private CollectionCardObject InstantiateSpellCardGameObject()
+    {
+        GameObject spellCardGameObject = Instantiate(
+            this.spellCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        spellCardGameObject.transform.parent = this.transform;
+        spellCardGameObject.SetActive(false);
+        CollectionCardObject collectionCardObject = spellCardGameObject.GetComponent<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Spell].Push(collectionCardObject);
+        return collectionCardObject;
+    }
+
+    private CollectionCardObject InstantiateStructureCardGameObject()
+    {
+        GameObject structureCardGameObject = Instantiate(
+            this.structureCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        structureCardGameObject.transform.parent = this.transform;
+        structureCardGameObject.SetActive(false);
+        CollectionCardObject collectionCardObject = structureCardGameObject.GetComponent<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Structure].Push(collectionCardObject);
+        return collectionCardObject;
+    }
+
+    private CollectionCardObject InstantiateWeaponCardGameObject()
+    {
+        GameObject weaponCardGameObject = Instantiate(
+            this.weaponCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        weaponCardGameObject.transform.parent = this.transform;
+        weaponCardGameObject.SetActive(false);
+        CollectionCardObject collectionCardObject = weaponCardGameObject.GetComponent<CollectionCardObject>();
+        this.collectionCardObjectPools[Card.CardType.Structure].Push(collectionCardObject);
+        return collectionCardObject;
+    }
+
     private void RecycleCollectionCardObject(CollectionCardObject collectionCardObject)
     {
         collectionCardObject.gameObject.SetActive(false);
         collectionCardObject.transform.parent = this.transform;
-        this.collectionCardObjectPool.Push(collectionCardObject);
+        this.collectionCardObjectPools[collectionCardObject.GetCardType()].Push(collectionCardObject);
     }
 
     public CollectionCardObject InitializeCollectionCardObject(Card card)
     {
         CollectionCardObject collectionCardObject;
+        Card.CardType cardType = card.GetCardType();
 
-        if (this.collectionCardObjectPool.Count <= 0)
+        if (this.collectionCardObjectPools[cardType].Count <= 0)
         {
-            GameObject collectionCardGameObject = Instantiate(
-                this.collectionCardObjectPrefab,
-                transform.position,
-                Quaternion.identity
-            );
-            collectionCardObject = collectionCardGameObject.GetComponent<CollectionCardObject>();
+            switch (cardType)
+            {
+                case Card.CardType.Creature:
+                    collectionCardObject = InstantiateCreatureCardGameObject();
+                    break;
+                case Card.CardType.Spell:
+                    collectionCardObject = InstantiateSpellCardGameObject();
+                    break;
+                case Card.CardType.Structure:
+                    collectionCardObject = InstantiateStructureCardGameObject();
+                    break;
+                case Card.CardType.Weapon:
+                    collectionCardObject = InstantiateWeaponCardGameObject();
+                    break;
+                default:
+                    Debug.LogError("Unsupported card type.");
+                    return null;
+            }
         }
         else
         {
-            collectionCardObject = this.collectionCardObjectPool.Pop();
+            collectionCardObject = this.collectionCardObjectPools[cardType].Pop();
         }
 
         collectionCardObject.Initialize(card);

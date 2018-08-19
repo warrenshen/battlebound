@@ -29,7 +29,7 @@ public class CardSingleton : Singleton<CardSingleton>
         this.summonPool = new Dictionary<string, GameObject>();
         this.cardVisualPool = new Stack<HyperCard.Card>();
 
-        this.cardPrefab = Resources.Load("Prefabs/Card") as GameObject;
+        this.cardPrefab = Resources.Load("Prefabs/Creature Card") as GameObject;
 
         Transform cardPoolRoot = new GameObject("Card Pool").transform;
         cardPoolRoot.transform.parent = this.transform;

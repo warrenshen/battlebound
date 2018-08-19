@@ -61,6 +61,11 @@ public class BattleCardObject : CardObject
         return this.Owner.Id;
     }
 
+    public Card.CardType GetCardType()
+    {
+        return this.card.GetCardType();
+    }
+
     public int GetCost()
     {
         // If cost is from server - since device cannot
