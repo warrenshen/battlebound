@@ -15,8 +15,6 @@ public class Deck
     {
         this.name = name;
         this.cards = cards;
-
-        //todo: SHUFFLE
     }
 
     public void SetCards(List<Card> cards)
