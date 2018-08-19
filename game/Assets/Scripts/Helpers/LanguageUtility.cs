@@ -60,13 +60,13 @@ public class LanguageUtility
         }
         if (!this.cardNames.ContainsKey(name))
         {
-            Debug.LogError(string.Format("Missing translation for: {0}", name));
+            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
             return name;
         }
         string value = cardNames[name][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogError(string.Format("Missing translation for: {0}", name));
+            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
             return name;
         }
         return value;
@@ -76,13 +76,13 @@ public class LanguageUtility
     {
         if (!this.cardAbilities.ContainsKey(ability))
         {
-            Debug.LogError(string.Format("Missing translation for: {0}", ability));
+            Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
             return ability;
         }
         string value = cardAbilities[ability][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogError(string.Format("Missing translation for: {0}", ability));
+            Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
             return ability;
         }
         return value;

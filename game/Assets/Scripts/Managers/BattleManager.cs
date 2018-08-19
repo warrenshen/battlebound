@@ -72,8 +72,13 @@ public class BattleManager : MonoBehaviour
     public Sprite[] EmoteSprites => emoteSprites;
 
     [SerializeField]
-    private GameObject battleCardObjectPrefab;
-    private Stack<BattleCardObject> battleCardObjectPool;
+    private GameObject creatureCardObjectPrefab;
+    [SerializeField]
+    private GameObject spellCardObjectPrefab;
+    [SerializeField]
+    private GameObject structureCardObjectPrefab;
+
+    private Dictionary<Card.CardType, Stack<BattleCardObject>> battleCardObjectPools;
 
     private bool combatMode;
     private Collider lastHoverCollider;
@@ -90,7 +95,7 @@ public class BattleManager : MonoBehaviour
         this.validTargets = new List<TargetableObject>();
         ChooseRandomSetting();
 
-        InitializeBattleCardObjectPool();
+        InitializeBattleCardObjectPools();
     }
 
     private void Start()
@@ -1438,29 +1443,72 @@ public class BattleManager : MonoBehaviour
         this.isAnimating = false;
     }
 
-    private void InitializeBattleCardObjectPool()
+    private void InitializeBattleCardObjectPools()
     {
-        this.battleCardObjectPool = new Stack<BattleCardObject>();
+        this.battleCardObjectPools = new Dictionary<Card.CardType, Stack<BattleCardObject>>();
+        this.battleCardObjectPools[Card.CardType.Creature] = new Stack<BattleCardObject>();
+        this.battleCardObjectPools[Card.CardType.Spell] = new Stack<BattleCardObject>();
+        this.battleCardObjectPools[Card.CardType.Structure] = new Stack<BattleCardObject>();
 
-        for (int i = 0; i < 40; i++)
+        for (int i = 0; i < 10; i++)
         {
-            GameObject battleCardGameObject = Instantiate(
-                this.battleCardObjectPrefab,
-                transform.position,
-                Quaternion.identity
-            );
-            battleCardGameObject.transform.parent = this.transform;
-            battleCardGameObject.SetActive(false);
-            BattleCardObject battleCardObject = battleCardGameObject.GetComponent<BattleCardObject>();
-            this.battleCardObjectPool.Push(battleCardObject);
+            InstantiateCreatureCardGameObject();
         }
+
+        for (int i = 0; i < 5; i++)
+        {
+            InstantiateSpellCardGameObject();
+            InstantiateStructureCardGameObject();
+        }
+    }
+
+    private BattleCardObject InstantiateCreatureCardGameObject()
+    {
+        GameObject creatureCardGameObject = Instantiate(
+            this.creatureCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        creatureCardGameObject.transform.parent = this.transform;
+        creatureCardGameObject.SetActive(false);
+        BattleCardObject battleCardObject = creatureCardGameObject.GetComponent<BattleCardObject>();
+        this.battleCardObjectPools[Card.CardType.Creature].Push(battleCardObject);
+        return battleCardObject;
+    }
+
+    private BattleCardObject InstantiateSpellCardGameObject()
+    {
+        GameObject spellCardGameObject = Instantiate(
+            this.spellCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        spellCardGameObject.transform.parent = this.transform;
+        spellCardGameObject.SetActive(false);
+        BattleCardObject battleCardObject = spellCardGameObject.GetComponent<BattleCardObject>();
+        this.battleCardObjectPools[Card.CardType.Spell].Push(battleCardObject);
+        return battleCardObject;
+    }
+
+    private BattleCardObject InstantiateStructureCardGameObject()
+    {
+        GameObject structureCardGameObject = Instantiate(
+            this.structureCardObjectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        structureCardGameObject.transform.parent = this.transform;
+        structureCardGameObject.SetActive(false);
+        BattleCardObject battleCardObject = structureCardGameObject.GetComponent<BattleCardObject>();
+        this.battleCardObjectPools[Card.CardType.Structure].Push(battleCardObject);
+        return battleCardObject;
     }
 
     private void RecycleBattleCardObject(BattleCardObject battleCardObject)
     {
         battleCardObject.gameObject.SetActive(false);
         battleCardObject.transform.parent = this.transform;
-        this.battleCardObjectPool.Push(battleCardObject);
+        this.battleCardObjectPools[battleCardObject.GetCardType()].Push(battleCardObject);
     }
 
     public BattleCardObject InitializeBattleCardObject(
@@ -1469,19 +1517,29 @@ public class BattleManager : MonoBehaviour
     )
     {
         BattleCardObject battleCardObject;
+        Card.CardType cardType = card.GetCardType();
 
-        if (this.battleCardObjectPool.Count <= 0)
+        if (this.battleCardObjectPools[cardType].Count <= 0)
         {
-            GameObject battleCardGameObject = Instantiate(
-                this.battleCardObjectPrefab,
-                transform.position,
-                Quaternion.identity
-            );
-            battleCardObject = battleCardGameObject.GetComponent<BattleCardObject>();
+            switch (cardType)
+            {
+                case Card.CardType.Creature:
+                    battleCardObject = InstantiateCreatureCardGameObject();
+                    break;
+                case Card.CardType.Spell:
+                    battleCardObject = InstantiateSpellCardGameObject();
+                    break;
+                case Card.CardType.Structure:
+                    battleCardObject = InstantiateStructureCardGameObject();
+                    break;
+                default:
+                    Debug.LogError("Unsupported card type.");
+                    return null;
+            }
         }
         else
         {
-            battleCardObject = this.battleCardObjectPool.Pop();
+            battleCardObject = this.battleCardObjectPools[cardType].Pop();
         }
 
         battleCardObject.Initialize(player, card);

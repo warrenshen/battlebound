@@ -9,14 +9,6 @@ public class CollectionCardObject : CardObject
 
     private bool grabbed = false;
 
-    public new static CollectionCardObject Create(Card card)
-    {
-        GameObject created = new GameObject(card.Name);
-        CollectionCardObject cardObject = created.AddComponent<CollectionCardObject>();
-        cardObject.Initialize(card);
-        return cardObject;
-    }
-
     public override void Initialize(Card card)
     {
         //does the visual stuff using templateData
@@ -35,6 +27,11 @@ public class CollectionCardObject : CardObject
         this.LoadCardArtwork();
         this.SetThisResetValues();
         this.SetVisualResetValues();
+    }
+
+    public Card.CardType GetCardType()
+    {
+        return this.card.GetCardType();
     }
 
     public override void EnterHover()
