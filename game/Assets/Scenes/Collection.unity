@@ -3682,7 +3682,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collection: []
-  decks: []
   deckButtons:
   - {fileID: 831296101}
   - {fileID: 126569556}
@@ -3698,6 +3697,14 @@ MonoBehaviour:
   editMode: 0
   m_Raycaster: {fileID: 314461587}
   m_EventSystem: {fileID: 461342698}
+  creatureCardObjectPrefab: {fileID: 1961027936410838, guid: d1670a272dbbd4ae7866c428bf141a81,
+    type: 2}
+  spellCardObjectPrefab: {fileID: 1150412470891946, guid: ec5a7380db114483e9b6f605111d975f,
+    type: 2}
+  structureCardObjectPrefab: {fileID: 1404270236886992, guid: 798235ad3714041429af90cd5759df2d,
+    type: 2}
+  weaponCardObjectPrefab: {fileID: 1905093539674208, guid: ed1dfad9a4c744b7ebd8f2b269603411,
+    type: 2}
   cardCutoutPrefab: {fileID: 1895682311612426, guid: 50efe77099ad749e2874fb2cfbd1f5a6,
     type: 2}
 --- !u!114 &1751847081
@@ -3722,6 +3729,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 390549b93bfb14ae09322699dbccc292, type: 3}
   stencilCount: 0
   active: 1
+  frozen: 0
   target: {fileID: 0}
   lastHitWatchable: {fileID: 0}
 --- !u!1 &1765023559
