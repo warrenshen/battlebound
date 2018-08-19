@@ -301,7 +301,6 @@ namespace HyperCard
         public Texture2D CardBack;
         public Texture2D CardBackAlpha;
 
-
         public void Copy(HyperCard.Card copyFrom)
         {
             this.CardFaceArtwork = copyFrom.CardFaceArtwork;
@@ -825,7 +824,9 @@ namespace HyperCard
             foreach (TextMeshProParam element in this.TmpTextObjects)
             {
                 if (element.Key != key)
+                {
                     continue;
+                }
 
                 return element;
             }
@@ -899,8 +900,15 @@ namespace HyperCard
         public void ResetParams()
         {
             GetTextFieldWithKey("Cost").TmpObject.color = Color.white;
-            GetTextFieldWithKey("Attack").TmpObject.color = Color.white;
-            GetTextFieldWithKey("Health").TmpObject.color = Color.white;
+
+            if (GetTextFieldWithKey("Attack") != null)
+            {
+                GetTextFieldWithKey("Attack").TmpObject.color = Color.white;
+            }
+            if (GetTextFieldWithKey("Health") != null)
+            {
+                GetTextFieldWithKey("Health").TmpObject.color = Color.white;
+            }
 
             this.ShowSprites();
             this.BurningAmount = 0;
@@ -910,7 +918,8 @@ namespace HyperCard
             this.OutlineColor = DEFAULT_OUTLINE_START_COLOR;
             this.OutlineEndColor = DEFAULT_OUTLINE_END_COLOR;
             this.EnableBackOutline = true; //to-do call methods once redraw is taken out of them
-            this.Redraw();
+
+            Redraw();
         }
     }
 }
