@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -15,6 +15,25 @@ public class Deck
     {
         this.name = name;
         this.cards = cards;
+
+        HashSet<string> cardIdSet = new HashSet<string>();
+        foreach (Card card in cards)
+        {
+            if (card.Id != "HIDDEN" && cardIdSet.Contains(card.Id))
+            {
+                Debug.LogError("Duplicate card IDs in hand!");
+                Debug.LogError(
+                    string.Join(
+                        ",",
+                        cards.Select(b => b.Id)
+                    )
+                );
+            }
+            else
+            {
+                cardIdSet.Add(card.Id);
+            }
+        }
     }
 
     public void SetCards(List<Card> cards)

@@ -87,7 +87,7 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY,
 
         // Deathrattle.
-        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TEN,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
@@ -143,7 +143,7 @@ public class EffectManager : MonoBehaviour
 
     private static readonly List<string> EFFECTS_DEATH_RATTLE = new List<string>
     {
-        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY,
+        Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TEN,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN,
         Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY,
         Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY,
@@ -599,7 +599,7 @@ public class EffectManager : MonoBehaviour
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN:
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
-            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TEN:
             case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY:
             case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY:
             case Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD:
@@ -721,7 +721,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY:
                 AbilityDeathRattleAttackFace(effect, 20);
                 break;
-            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TWENTY:
+            case Card.CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TEN:
                 AbilityDeathRattleAttackRandomThree(effect);
                 break;
             case Card.CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY:

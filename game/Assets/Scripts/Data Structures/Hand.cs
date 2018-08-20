@@ -146,7 +146,9 @@ public class Hand
         {
             //set to card layer if needed
             if (battleCardObject.gameObject.layer != cardLayer)
+            {
                 battleCardObject.gameObject.SetLayer(cardLayer);
+            }
 
             if (battleCardObject.GetCardId() != "HIDDEN" && cardIdSet.Contains(battleCardObject.GetCardId()))
             {
