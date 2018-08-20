@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class LanguageUtility
@@ -8,6 +8,16 @@ public class LanguageUtility
     private Dictionary<string, List<string>> cardNames;
     private Dictionary<string, List<string>> cardAbilities;
     private LanguageUtility.Language selectedLanguage;
+
+    private static List<Regex> GlobalPatterns = new List<Regex>() {
+        new Regex(@"\+.*\/+.*", RegexOptions.Compiled | RegexOptions.IgnoreCase)  //stats
+    };
+
+    private static List<Regex> EnglishPatterns = new List<Regex>() {
+        new Regex(@"((Warcry)|(Deathwish)|(Doublestrike)|(Piercing)|(Lethal)|(Haste)|(Shielded)|(Protector)|(Lifesap)|(Turnover)):", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        new Regex(@"(Resurrect)|(Convert)|(Destroy)|(Condemn)|(Draw)|(Freeze)|(Restore)|(Recover)|(Heal)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        new Regex(@"(Creature)|(Spell)|(Weapon)|(Structure)", RegexOptions.Compiled | RegexOptions.IgnoreCase)
+    };
 
     public enum Language { EN, CN, KR, JP }
 
@@ -86,6 +96,20 @@ public class LanguageUtility
             return ability;
         }
         return value;
+    }
+
+    //make string into rich text e.g. bolding, commas, new lines
+    private string Prettify(string input)
+    {
+        string output = input.Replace(";", "\n");
+        output = output.Replace("~", ", ");
+
+        foreach (Regex token in RegexPatterns)
+        {
+
+        }
+
+        return output;
     }
 
     public LanguageUtility.Language GetLanguage()
