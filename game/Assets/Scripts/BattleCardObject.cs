@@ -114,7 +114,11 @@ public class BattleCardObject : CardObject
 
     private void StartFlippedIfNeeded()
     {
-        if (FlagHelper.IsServerEnabled() && this.owner.Id == BattleState.Instance().Opponent.Id)
+        if (
+            FlagHelper.IsServerEnabled() &&
+            this.owner != null &&
+            this.owner.Id == BattleState.Instance().Opponent.Id
+        )
         {
             this.visual.transform.Rotate(0, 180, 0, Space.Self);
         }
