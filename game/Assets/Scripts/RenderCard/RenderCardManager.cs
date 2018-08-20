@@ -39,17 +39,17 @@ public class RenderCardManager : MonoBehaviour
             cards.Add(creatureCard);
         }
 
-        //foreach (string spellName in Card.CARD_NAMES_SPELL)
-        //{
-        //    SpellCard spellCard = new SpellCard("", spellName, 0);
-        //    cards.Add(spellCard);
-        //}
+        foreach (string spellName in Card.CARD_NAMES_SPELL)
+        {
+            SpellCard spellCard = new SpellCard("", spellName, 0);
+            cards.Add(spellCard);
+        }
 
-        //foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
-        //{
-        //    StructureCard structureCard = new StructureCard("", structureName, 0);
-        //    cards.Add(structureCard);
-        //}
+        foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
+        {
+            StructureCard structureCard = new StructureCard("", structureName, 0);
+            cards.Add(structureCard);
+        }
 
         StartCoroutine(RenderCards());
     }

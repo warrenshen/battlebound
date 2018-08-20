@@ -292,7 +292,7 @@ public class CardEditorPanel : EditorWindow
             ValidationErrorBox("Structure cards must have a summon prefab.");
             return false;
         }
-        else if (this.effectPrefab == null)
+        else if (template.cardType == Card.CardType.Creature && this.effectPrefab == null)
         {
             ValidationErrorBox("Missing effect prefab.");
             return false;
