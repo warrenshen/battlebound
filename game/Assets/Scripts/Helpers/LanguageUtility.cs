@@ -14,8 +14,8 @@ public class LanguageUtility
     };
 
     private static List<Regex> EnglishPatterns = new List<Regex>() {
-        new Regex(@"((Warcry)|(Deathwish)|(Doublestrike)|(Piercing)|(Lethal)|(Haste)|(Shielded)|(Protector)|(Lifesap)|(Turnover)):", RegexOptions.Compiled | RegexOptions.IgnoreCase),
-        new Regex(@"(Resurrect)|(Convert)|(Destroy)|(Condemn)|(Draw)|(Freeze)|(Restore)|(Recover)|(Heal)", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        new Regex(@"((Warcry)|(Deathwish)|(Doublestrike)|(Piercing)|(Lethal)|(Haste)|(Shielded)|(Protector)|(Lifesap)|(Turnover))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        new Regex(@"((Summon)|(Resurrect)|(Convert)|(Destroy)|(Condemn)|(Draw)|(Freeze)|(Restore)|(Recover)|(Heal))(?: )", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new Regex(@"(Creature)|(Spell)|(Weapon)|(Structure)", RegexOptions.Compiled | RegexOptions.IgnoreCase)
     };
 
@@ -87,15 +87,15 @@ public class LanguageUtility
         if (!this.cardAbilities.ContainsKey(ability))
         {
             Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
-            return ability;
+            return Prettify(ability);
         }
         string value = cardAbilities[ability][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
             Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
-            return ability;
+            return Prettify(ability);
         }
-        return value;
+        return Prettify(value);
     }
 
     //make string into rich text e.g. bolding, commas, new lines
@@ -104,10 +104,25 @@ public class LanguageUtility
         string output = input.Replace(";", "\n");
         output = output.Replace("~", ", ");
 
-        foreach (Regex token in RegexPatterns)
+        foreach (Regex token in GlobalPatterns)
         {
-
+            foreach (Match match in token.Matches(output))
+            {
+                output = token.Replace(output, "<b>$0</b>");
+            }
         }
+
+        //if ((int)this.selectedLanguage == 0) //english
+        //{
+        foreach (Regex token in EnglishPatterns)
+        {
+            foreach (Match match in token.Matches(output))
+            {
+                Debug.LogWarning("Found match!");
+                output = token.Replace(output, "<b>$0</b>");
+            }
+        }
+        //}
 
         return output;
     }
