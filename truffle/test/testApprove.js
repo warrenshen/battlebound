@@ -7,6 +7,7 @@ contract('CardTreasury', function(accounts) {
   describe ("should nots", function() {
     beforeEach(async function() {
       contract = await CardTreasury.new();
+      await contract.createTemplate(1, 0, 8, "T1", { from: accounts[0] });
       await contract.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
       await contract.mintCard(0, accounts[1], { from: accounts[0] });
     });
