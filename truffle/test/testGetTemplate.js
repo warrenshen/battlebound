@@ -4,6 +4,8 @@ contract('CardTreasury', function(accounts) {
 
   let contract;
 
+  const minter = accounts[0];
+
   describe ("should nots", function() {
     before(async function() {
       contract = await CardTreasury.new();
@@ -13,7 +15,7 @@ contract('CardTreasury', function(accounts) {
       let response = null;
 
       try {
-        await contract.getTemplate.call(0, { from: accounts[0] });
+        await contract.getTemplate.call(0, { from: minter });
       } catch (error) {
         err = error
       }
@@ -31,10 +33,10 @@ contract('CardTreasury', function(accounts) {
   describe ("shoulds", function() {
     before(async function() {
       contract = await CardTreasury.new();
-      await contract.createTemplate(1, 0, 8, "T1", { from: accounts[0] });
-      await contract.createTemplate(2, 1, 9, "T2", { from: accounts[0] });
+      await contract.mintTemplate(1, 0, 0, 8, "Lux", { from: minter });
+      await contract.mintTemplate(2, 0, 0, 8, "Talusreaver", { from: minter });
       // Create a card for the sake of testing function when cards exist.
-      await contract.mintCard(0, accounts[0], { from: accounts[0] });
+      await contract.mintCard(0, 0, minter, { from: minter });
     });
 
     it ("should return correct template information", async function() {
@@ -43,18 +45,19 @@ contract('CardTreasury', function(accounts) {
       let power;
       let name;
 
-      response = await contract.getTemplate.call(0, { from: accounts[0] });
-      [generation, power, name] = response;
+      response = await contract.getTemplate.call(0, { from: minter });
+      [generation, category, power, name] = response;
       assert.equal(generation, 0, "response generation is incorrect");
-      assert.equal(power, 8, "response generation is incorrect");
-      assert.equal(name, "T1", "response name is incorrect");
+      assert.equal(category, 0, "response category is incorrect");
+      assert.equal(power, 8, "response power is incorrect");
+      assert.equal(name, "Lux", "response name is incorrect");
 
-      response = await contract.getTemplate.call(1, { from: accounts[0] });
-      [category, name] = response;
-      [generation, power, name] = response;
-      assert.equal(generation, 1, "response generation is incorrect");
-      assert.equal(power, 9, "response generation is incorrect");
-      assert.equal(name, "T2", "response name is incorrect");
+      response = await contract.getTemplate.call(1, { from: minter });
+      [generation, category, power, name] = response;
+      assert.equal(generation, 0, "response generation is incorrect");
+      assert.equal(category, 0, "response category is incorrect");
+      assert.equal(power, 8, "response power is incorrect");
+      assert.equal(name, "Talusreaver", "response name is incorrect");
     });
   });
 });
