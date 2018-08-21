@@ -7,8 +7,8 @@ contract('CardTreasury', function(accounts) {
   describe ("should nots", function() {
     beforeEach(async function() {
       contract = await CardTreasury.new();
-      await contract.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
-      await contract.mintCard(0, accounts[0]);
+      await contract.mintTemplate(1, 0, 0, 9, "T1", { from: accounts[0] });
+      await contract.mintCard(0, 0, accounts[0]);
     });
 
     it ("should not allow transfer of non-existing card", async function() {
@@ -97,10 +97,10 @@ contract('CardTreasury', function(accounts) {
   describe ("a -> b, a -> c", function() {
     before(async function() {
       contract = await CardTreasury.new();
-      await contract.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
-      await contract.createTemplate(1, 0, 9, "T2", { from: accounts[0] });
-      await contract.mintCard(0, accounts[0]);
-      await contract.mintCard(1, accounts[0]);
+      await contract.mintTemplate(1, 0, 0, 9, "T1", { from: accounts[0] });
+      await contract.mintTemplate(1, 0, 0, 9, "T2", { from: accounts[0] });
+      await contract.mintCard(0, 0, accounts[0]);
+      await contract.mintCard(1, 0, accounts[0]);
     });
 
     it ("should allow owner to transfer card to other", async function() {
@@ -139,8 +139,8 @@ contract('CardTreasury', function(accounts) {
   describe ("a -> b -> a", function() {
     before(async function() {
       contract = await CardTreasury.new();
-      await contract.createTemplate(1, 0, 9, "T1", { from: accounts[0] });
-      await contract.mintCard(0, accounts[0]);
+      await contract.mintTemplate(1, 0, 0, 9, "T1", { from: accounts[0] });
+      await contract.mintCard(0, 0, accounts[0]);
     });
 
     it ("should allow two addresses to transfer back and forth", async function() {
