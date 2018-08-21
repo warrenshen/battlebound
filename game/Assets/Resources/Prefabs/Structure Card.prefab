@@ -233,6 +233,43 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1756673848665150
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4564226118080482}
+  - component: {fileID: 23050806614959656}
+  - component: {fileID: 33416043302625814}
+  - component: {fileID: 114971557237634852}
+  m_Layer: 12
+  m_Name: TMP SubMesh [Neuton-Regular SDF Material + LiberationSans SDF Atlas]
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1900437187964460
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4602656907181274}
+  - component: {fileID: 23611001111667398}
+  - component: {fileID: 33547444196123724}
+  - component: {fileID: 114944232020717688}
+  m_Layer: 12
+  m_Name: TMP SubMesh [Neuton-Regular SDF Less Dilate Material + LiberationSans SDF
+    Atlas]
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4042664454688130
 Transform:
   m_ObjectHideFlags: 1
@@ -279,7 +316,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1431648917352134}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 1.54, y: -12.95, z: -3.0500002}
+  m_LocalPosition: {x: -0.01, y: 0.91, z: -6.49}
   m_LocalScale: {x: 3.85, y: 3.1999998, z: 1}
   m_Children:
   - {fileID: 224161108898802170}
@@ -310,6 +347,32 @@ Transform:
   m_Father: {fileID: 4496343779711306}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!4 &4564226118080482
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1756673848665150}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 224960350668793206}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4602656907181274
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1900437187964460}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 224161108898802170}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4603297360526544
 Transform:
   m_ObjectHideFlags: 1
@@ -362,6 +425,41 @@ Transform:
   m_Father: {fileID: 4496343779711306}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!23 &23050806614959656
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1756673848665150}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
 --- !u!23 &23167996537918734
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -377,7 +475,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: bf714b1d796304d55a562cb4853326f3, type: 2}
+  - {fileID: 21963753905705880, guid: 81da7dcfa7c154fa38e7238ca05cc2e6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -467,6 +565,41 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
+--- !u!23 &23611001111667398
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1900437187964460}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 10
 --- !u!23 &23803728299737062
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -483,7 +616,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 4d32e97d1ed3b5849885489e80ee80ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -518,7 +651,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 21971374780233956, guid: 69962864fdc314c3188a649a60c2e1c9, type: 2}
+  - {fileID: 21963753905705880, guid: 81da7dcfa7c154fa38e7238ca05cc2e6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -559,6 +692,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1431648917352134}
   m_Mesh: {fileID: 4300002, guid: 4f8df0bb25c2c3645ac90684a93bb47e, type: 3}
+--- !u!33 &33416043302625814
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1756673848665150}
+  m_Mesh: {fileID: 0}
+--- !u!33 &33547444196123724
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1900437187964460}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33717411133798640
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -592,10 +739,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Damned Obelisk
+  m_text: "\u91D1\u8C37\u77FF"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69962864fdc314c3188a649a60c2e1c9, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: bf714b1d796304d55a562cb4853326f3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 81da7dcfa7c154fa38e7238ca05cc2e6, type: 2}
+  m_sharedMaterial: {fileID: 21963753905705880, guid: 81da7dcfa7c154fa38e7238ca05cc2e6,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -619,7 +767,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 2.45
+  m_fontSize: 2.1
   m_fontSizeBase: 2.3
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -660,10 +808,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114331211926056676}
-    characterCount: 14
+    characterCount: 3
     spriteCount: 0
-    spaceCount: 1
-    wordCount: 2
+    spaceCount: 0
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -673,12 +821,12 @@ MonoBehaviour:
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
   m_isInputParsingRequired: 0
-  m_inputSource: 3
+  m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 23167996537918734}
   m_subTextObjects:
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 114944232020717688}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -787,7 +935,7 @@ MonoBehaviour:
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
   m_isInputParsingRequired: 0
-  m_inputSource: 3
+  m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 23570585962308954}
   m_subTextObjects:
@@ -823,7 +971,7 @@ MonoBehaviour:
   TmpTextObjects:
   - Key: Title
     TmpObject: {fileID: 114331211926056676}
-    Value: Damned Obelisk
+    Value: "\u91D1\u8C37\u77FF"
     DisplayMode: 0
   - Key: Cost
     TmpObject: {fileID: 114572495551372418}
@@ -835,7 +983,8 @@ MonoBehaviour:
     DisplayMode: 0
   - Key: Description
     TmpObject: {fileID: 114743748473086762}
-    Value: <b>Nullify</b> all damage dealt to your hero
+    Value: "<b>\u56DE\u5408:</b> \u968F\u673A\u6388\u4E881\u4E2A\u6211\u5175<b>+10/+10</b>
+      \u52304\u6B21"
     DisplayMode: 0
   SpriteObjects:
   - Key: Sprite0
@@ -926,11 +1075,11 @@ MonoBehaviour:
   DebugBlend: 0
   CardAlpha: {fileID: 2800000, guid: 6b6924c112ecc4e7d9bb57501db8e9a2, type: 3}
   CardMask: {fileID: 2800000, guid: 95af959c896f240d7956a4816853a3c6, type: 3}
-  CardFaceFrame: {fileID: 2800000, guid: ad6ae2336337d401da0c19b75a73d175, type: 3}
-  CardFaceFrameColor: {r: 0.227451, g: 0.09019608, b: 0.3921569, a: 1}
-  CardFaceArtwork: {fileID: 2800000, guid: e6e583448c678ad42b1eb5baa50b570e, type: 3}
-  CardFaceArtworkOffset: {x: -0.05, y: -0.05}
-  CardFaceArtworkScale: {x: 1.15, y: 1}
+  CardFaceFrame: {fileID: 2800000, guid: 6d0b4ec26dd0d4359b4fd003f4080aef, type: 3}
+  CardFaceFrameColor: {r: 1, g: 0.853, b: 0.28773582, a: 1}
+  CardFaceArtwork: {fileID: 2800000, guid: a5a5ef198d503454383fb5140f22d84c, type: 3}
+  CardFaceArtworkOffset: {x: -0.08, y: -0.08}
+  CardFaceArtworkScale: {x: 1.15, y: 1.1}
   CardFaceBackgroundArtwork: {fileID: 2800000, guid: 6fd4ced54f4104b74ab16267fb4befec,
     type: 3}
   CardFaceBackgroundArtworkOffset: {x: 0, y: 0}
@@ -1141,7 +1290,7 @@ MonoBehaviour:
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
   m_isInputParsingRequired: 0
-  m_inputSource: 3
+  m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 23384781111510586}
   m_subTextObjects:
@@ -1181,10 +1330,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: <b>Nullify</b> all damage dealt to your hero
+  m_text: "<b>\u56DE\u5408:</b> \u968F\u673A\u6388\u4E881\u4E2A\u6211\u5175<b>+10/+10</b>
+    \u52304\u6B21"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69962864fdc314c3188a649a60c2e1c9, type: 2}
-  m_sharedMaterial: {fileID: 21971374780233956, guid: 69962864fdc314c3188a649a60c2e1c9,
+  m_fontAsset: {fileID: 11400000, guid: 81da7dcfa7c154fa38e7238ca05cc2e6, type: 2}
+  m_sharedMaterial: {fileID: 21963753905705880, guid: 81da7dcfa7c154fa38e7238ca05cc2e6,
     type: 2}
   m_fontSharedMaterials:
   - {fileID: 0}
@@ -1210,7 +1360,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 6
+  m_fontSize: 5.7
   m_fontSizeBase: 6
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1251,10 +1401,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0.00086558214, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114743748473086762}
-    characterCount: 37
+    characterCount: 23
     spriteCount: 0
-    spaceCount: 6
-    wordCount: 7
+    spaceCount: 2
+    wordCount: 5
     linkCount: 0
     lineCount: 2
     pageCount: 1
@@ -1269,7 +1419,7 @@ MonoBehaviour:
   m_renderer: {fileID: 23812282365373582}
   m_subTextObjects:
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 114971557237634852}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -1285,6 +1435,48 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_maskType: 0
+--- !u!114 &114944232020717688
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1900437187964460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1330537494, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
+  m_spriteAsset: {fileID: 0}
+  m_material: {fileID: 0}
+  m_sharedMaterial: {fileID: 0}
+  m_isDefaultMaterial: 0
+  m_padding: 7.8125
+  m_renderer: {fileID: 23611001111667398}
+  m_meshFilter: {fileID: 33547444196123724}
+  m_boxCollider: {fileID: 0}
+  m_TextComponent: {fileID: 114331211926056676}
+--- !u!114 &114971557237634852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1756673848665150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1330537494, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
+  m_spriteAsset: {fileID: 0}
+  m_material: {fileID: 0}
+  m_sharedMaterial: {fileID: 0}
+  m_isDefaultMaterial: 0
+  m_padding: 10.5
+  m_renderer: {fileID: 23050806614959656}
+  m_meshFilter: {fileID: 33416043302625814}
+  m_boxCollider: {fileID: 0}
+  m_TextComponent: {fileID: 114743748473086762}
 --- !u!212 &212079756936579380
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -1678,7 +1870,8 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0.005}
   m_LocalScale: {x: 0.334913, y: 0.43681344, z: 0.93313277}
-  m_Children: []
+  m_Children:
+  - {fileID: 4602656907181274}
   m_Father: {fileID: 4496343779711306}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -1732,12 +1925,13 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0.0143}
   m_LocalScale: {x: 0.1, y: 0.11944274, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4564226118080482}
   m_Father: {fileID: 4496343779711306}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0006, y: -0.3502}
-  m_SizeDelta: {x: 5.2355, y: 2.4172}
+  m_AnchoredPosition: {x: -0.0005, y: -0.3502}
+  m_SizeDelta: {x: 4.998, y: 2.4172}
   m_Pivot: {x: 0.5, y: 0.5}
