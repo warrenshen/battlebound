@@ -78,6 +78,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private GameObject structureCardObjectPrefab;
 
+    [SerializeField]
+    private Transform cardObjectPool;
     private Dictionary<Card.CardType, Stack<BattleCardObject>> battleCardObjectPools;
 
     private bool combatMode;
@@ -1469,8 +1471,9 @@ public class BattleManager : MonoBehaviour
             transform.position,
             Quaternion.identity
         );
-        creatureCardGameObject.transform.parent = this.transform;
+        creatureCardGameObject.transform.parent = this.cardObjectPool;
         creatureCardGameObject.SetActive(false);
+
         BattleCardObject battleCardObject = creatureCardGameObject.GetComponent<BattleCardObject>();
         this.battleCardObjectPools[Card.CardType.Creature].Push(battleCardObject);
         return battleCardObject;
@@ -1545,6 +1548,7 @@ public class BattleManager : MonoBehaviour
         battleCardObject.Initialize(player, card);
         battleCardObject.transform.parent = player.GetHandTransform();
         battleCardObject.gameObject.SetActive(true);
+        battleCardObject.visual.gameObject.SetActive(true);
         return battleCardObject;
     }
 

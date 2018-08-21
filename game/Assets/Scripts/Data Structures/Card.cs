@@ -86,6 +86,21 @@ public abstract class Card
     public const string CARD_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
     public const string CARD_NAME_DEATH_NOTE = "Death Note";
     public const string CARD_NAME_BESTOWED_VIGOR = "Bestowed Vigor";
+    public const string CARD_NAME_HOLD_THE_GATES = "Hold the Gates";
+    public const string CARD_NAME_BLESSING_OF_FORTUNE = "Blessing of Fortune";
+    public const string CARD_NAME_HOLY_INCUBATION = "Holy Incubation";
+    public const string CARD_NAME_NOURISHING_HONEY = "Nourishing Honey";
+    public const string CARD_NAME_HEALING_POTION = "Healing Potion";
+    public const string CARD_NAME_CRACKLING_FIREBALL = "Crackling Fireball";
+    public const string CARD_NAME_UNSETTLING_SEAFOOD = "Unsettling Seafood";
+    public const string CARD_NAME_SWIFT_DECAPITATION = "Swift Decapitation";
+    public const string CARD_NAME_SHIPFAIRING_WISDOM = "Shipfairing Wisdom";
+    public const string CARD_NAME_CELESTIAL_PALETTE = "Celestial Palette";
+    public const string CARD_NAME_MUTANT_REPLICATION = "Mutant Replication";
+    public const string CARD_NAME_ACCURSED_FIRESTAR = "Accursed Firestar";
+    public const string CARD_NAME_IGNITE = "Ignite";
+    public const string CARD_NAME_IMBUE_FLIGHT = "Imbue Flight";
+
 
     // Spells untargeted.
     public const string CARD_NAME_SHIELDS_UP = "Shields Up!";
@@ -98,9 +113,41 @@ public abstract class Card
     public const string CARD_NAME_GRAVE_DIGGING = "Grave-digging";
     public const string CARD_NAME_THE_SEVEN = "The Seven";
     public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
+    public const string CARD_NAME_NATURES_RESURGENCE = "Nature’s Resurgence";
+    public const string CARD_NAME_PULLED_TO_THE_DEPTHS = "Pulled to the Depths";
+    public const string CARD_NAME_NECROMANCERS_BOND = "Necromancer’s Bond";
+    public const string CARD_NAME_DIVINE_CATACLYSM = "Divine Cataclysm";
+    public const string CARD_NAME_DARK_PACT = "Dark Pact";
+    public const string CARD_NAME_REFRESHMENTS = "Refreshments!";
+    public const string CARD_NAME_MOONLIGHT_THEFT = "Moonlight Theft";
+    public const string CARD_NAME_BREAKNECK_EVOLUTION = "Breakneck Evolution";
+    public const string CARD_NAME_MANA_STORM = "Mana Storm";
+
 
     // Structures.
     public const string CARD_NAME_WARDENS_OUTPOST = "Warden's Outpost";
+    public const string CARD_NAME_IMP_STOMPING_GROUND = "Imp Stomping Ground";
+    public const string CARD_NAME_INFERNAL_STORMBEACON = "Infernal Stormbeacon";
+    public const string CARD_NAME_ROYAL_BARRACKS = "Royal Barracks";
+    public const string CARD_NAME_TRAINING_YARD = "Training Yard";
+    public const string CARD_NAME_GOLDENVALLEY_MINE = "Goldenvalley Mine";
+    public const string CARD_NAME_GOBLIN_SENTRY_TOWER = "Goblin Sentry Tower";
+    public const string CARD_NAME_HIGHLAND_STABLES = "Highland Stables";
+    public const string CARD_NAME_FORESTRY_MOUND = "Forestry Mound";
+    public const string CARD_NAME_RELENTLESS_WINDMILL = "Relentless Windmill";
+    public const string CARD_NAME_DWARVEN_FORGE = "Dwarven Forge";
+    public const string CARD_NAME_DAMNED_OBELISK = "Damned Obelisk";
+    public const string CARD_NAME_FROSTLAND_TOMBSTONE = "Frostland Tombstone";
+    public const string CARD_NAME_HOBGOBLIN_HOSTEL = "Hobgoblin Hostel";
+    public const string CARD_NAME_CLIFFSIDE_VISTA = "Cliffside Vista";
+    public const string CARD_NAME_TIMEBANK_TOWER = "Timebank Tower";
+    public const string CARD_NAME_RESTORATION_WELL = "Restoration Well";
+
+    // Weapons
+    public const string CARD_NAME_FROSTBEARDS_DIRK = "Frostbeard's Dirk";
+    public const string CARD_NAME_NECROMANCERS_TECPATL = "Necromancer's Tecpatl";
+    public const string CARD_NAME_PIERCING_LIGHTSPEAR = "Piercing Lightspear";
+    //public const string CARD_NAME_SEAWORTHY_CUTLASS = 
 
     public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
@@ -195,11 +242,58 @@ public abstract class Card
         CARD_NAME_GRAVE_DIGGING,
         CARD_NAME_THE_SEVEN,
         CARD_NAME_BATTLE_ROYALE,
+        CARD_NAME_BREAKNECK_EVOLUTION,
+        CARD_NAME_MANA_STORM,
+        CARD_NAME_NATURES_RESURGENCE,
+        CARD_NAME_PULLED_TO_THE_DEPTHS,
+        CARD_NAME_NECROMANCERS_BOND,
+        CARD_NAME_DIVINE_CATACLYSM,
+        CARD_NAME_DARK_PACT,
+        CARD_NAME_REFRESHMENTS,
+        CARD_NAME_MOONLIGHT_THEFT,
+
+        CARD_NAME_HOLY_INCUBATION,
+        CARD_NAME_NOURISHING_HONEY,
+        CARD_NAME_HEALING_POTION,
+        CARD_NAME_CRACKLING_FIREBALL,
+        CARD_NAME_UNSETTLING_SEAFOOD,
+        CARD_NAME_SWIFT_DECAPITATION,
+        CARD_NAME_SHIPFAIRING_WISDOM,
+        CARD_NAME_CELESTIAL_PALETTE,
+        CARD_NAME_MUTANT_REPLICATION,
+        CARD_NAME_ACCURSED_FIRESTAR,
+        CARD_NAME_IGNITE,
+        CARD_NAME_IMBUE_FLIGHT
     };
+
 
     public static readonly List<string> CARD_NAMES_STRUCTURES = new List<string>
     {
         CARD_NAME_WARDENS_OUTPOST,
+        CARD_NAME_IMP_STOMPING_GROUND,
+        CARD_NAME_INFERNAL_STORMBEACON,
+        CARD_NAME_ROYAL_BARRACKS,
+        CARD_NAME_TRAINING_YARD,
+        CARD_NAME_GOLDENVALLEY_MINE,
+        CARD_NAME_GOBLIN_SENTRY_TOWER,
+        CARD_NAME_HIGHLAND_STABLES,
+        CARD_NAME_FORESTRY_MOUND,
+        CARD_NAME_RELENTLESS_WINDMILL,
+        CARD_NAME_DWARVEN_FORGE,
+        CARD_NAME_DAMNED_OBELISK,
+        CARD_NAME_FROSTLAND_TOMBSTONE,
+        CARD_NAME_HOBGOBLIN_HOSTEL,
+        CARD_NAME_CLIFFSIDE_VISTA,
+        CARD_NAME_TIMEBANK_TOWER,
+        CARD_NAME_RESTORATION_WELL,
+        CARD_NAME_IMBUE_FLIGHT
+    };
+
+    public static readonly List<string> CARD_NAMES_WEAPONS = new List<string>
+    {
+        CARD_NAME_NECROMANCERS_TECPATL,
+        CARD_NAME_PIERCING_LIGHTSPEAR,
+        CARD_NAME_FROSTBEARDS_DIRK
     };
 
     public enum CardType { Creature, Spell, Structure, Weapon };
@@ -259,6 +353,7 @@ public abstract class Card
     public const string CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE = "CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE";
     public const string CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY = "CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY";
     public const string CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY = "CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY";
+    //public const string
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,

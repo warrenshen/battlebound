@@ -55,7 +55,7 @@ public class CardObject : MouseWatchable
         {
             this.visual.ResetParams();
             Card.SetHyperCardFromData(ref this.visual, this.card);
-            Card.SetHyperCardArtwork(ref this.visual, this.card);
+            Card.SetHyperCardArtwork(ref this.visual, this.card);  //need to set active true?
         }
 
         SetThisResetValues();
@@ -73,7 +73,7 @@ public class CardObject : MouseWatchable
 
     protected HyperCard.Card VisualizeCard()
     {
-        HyperCard.Card cardVisual = CardSingleton.Instance.TakeCardFromPool();
+        HyperCard.Card cardVisual = CardSingleton.Instance.TakeCardFromPool(); //sets active true
 
         cardVisual.transform.parent = this.transform;
         cardVisual.transform.localPosition = Vector3.zero;
