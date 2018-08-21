@@ -124,13 +124,13 @@ contract CardMint is CardBase {
     emit Transfer(_from, _to, _tokenId);
   }
 
-  function _mintCard(uint256 _templateId, uint256 variation, address _owner) internal returns (uint256) {
+  function _mintCard(uint256 _templateId, uint256 _variation, address _owner) internal returns (uint256) {
     require(templateIdToMintCount[_templateId] < templateIdToMintLimit[_templateId]);
     templateIdToMintCount[_templateId] = templateIdToMintCount[_templateId] + 1;
 
     Card memory newCard = Card({
       templateId: _templateId,
-      variation: 0
+      variation: _variation
     });
 
     uint256 newCardId = cards.push(newCard) - 1;
