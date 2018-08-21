@@ -1540,10 +1540,8 @@ public class BattleManager : MonoBehaviour
                     return null;
             }
         }
-        else
-        {
-            battleCardObject = this.battleCardObjectPools[cardType].Pop();
-        }
+
+        battleCardObject = this.battleCardObjectPools[cardType].Pop();
 
         battleCardObject.Initialize(player, card);
         battleCardObject.transform.parent = player.GetHandTransform();
