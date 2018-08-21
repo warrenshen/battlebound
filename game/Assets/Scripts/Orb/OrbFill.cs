@@ -12,8 +12,7 @@ public class OrbFill : MonoBehaviour
 
     void Awake()
     {
-        material = GetComponent<MeshRenderer>().sharedMaterial;
-
+        material = GetComponent<MeshRenderer>().material;
         startFill = material.GetFloat(OrbVariable.FILL);
     }
 

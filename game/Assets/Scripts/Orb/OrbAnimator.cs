@@ -22,7 +22,7 @@ public class OrbAnimator : MonoBehaviour
 
     void Awake()
     {
-        material = GetComponent<MeshRenderer>().sharedMaterial;
+        material = GetComponent<MeshRenderer>().material;
 
         smoke1Offset = Random.Range(0.0f, 1.0f) * Vector2.one;
         smoke2Offset = Random.Range(0.0f, 1.0f) * Vector2.one;
