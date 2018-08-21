@@ -107,6 +107,7 @@ public class RenderCardManager : MonoBehaviour
 
             yield return StartCoroutine(Capture(card.Name));
 
+            battleCardObject.visual.gameObject.SetActive(false);
             cardGameObject.SetActive(false);
         }
 
