@@ -30,6 +30,9 @@ contract('CardTreasury', function(accounts) {
         err = error;
       }
       assert.equal(transaction, null, "transaction should not exist");
+
+      const approved = await contract.getApproved(0);
+      assert.equal(approved, 0);
     });
 
     it ("should not allow non-owner of card to approve contract address", async function() {
@@ -45,6 +48,9 @@ contract('CardTreasury', function(accounts) {
         err = error;
       }
       assert.equal(transaction, null, "transaction should not exist");
+
+      const approved = await contract.getApproved(0);
+      assert.equal(approved, 0);
     });
   });
 
@@ -67,6 +73,9 @@ contract('CardTreasury', function(accounts) {
       assert.equal(log.args._owner, buyer, "Approval event owner is incorrect");
       assert.equal(log.args._approved, buyerTwo, "Approval event approved is incorrect");
       assert.equal(log.args._tokenId, 0, "Approval event token id is incorrect");
+
+      const approved = await contract.getApproved(0);
+      assert.equal(approved, buyerTwo);
     });
 
     it ("should allow owner of card to approve contract address", async function() {
@@ -80,6 +89,9 @@ contract('CardTreasury', function(accounts) {
       assert.equal(log.args._owner, buyer, "Approval event owner is incorrect");
       assert.equal(log.args._approved, contract.address, "Approval event approved is incorrect");
       assert.equal(log.args._tokenId, 0, "Approval event token id is incorrect");
+
+      const approved = await contract.getApproved(0);
+      assert.equal(approved, contract.address);
     });
   });
 });

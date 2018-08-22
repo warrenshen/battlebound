@@ -294,20 +294,20 @@ contract CardOwnership is CardMint {
    * @param _owner owner of the token
    * @param _tokenId uint256 ID of the token to be transferred
    */
-  function clearApproval(address _owner, uint256 _tokenId) internal {
+  function _clearApproval(address _owner, uint256 _tokenId) internal {
     require(ownerOf(_tokenId) == _owner);
     if (cardIdToApproved[_tokenId] != address(0)) {
       cardIdToApproved[_tokenId] = address(0);
     }
   }
 
-  function removeTokenFrom(address _from, uint256 _tokenId) internal {
+  function _removeTokenFrom(address _from, uint256 _tokenId) internal {
     require(ownerOf(_tokenId) == _from);
     ownerToCardCount[_from] = ownerToCardCount[_from].sub(1);
     cardIdToOwner[_tokenId] = address(0);
   }
 
-  function addTokenTo(address _to, uint256 _tokenId) internal {
+  function _addTokenTo(address _to, uint256 _tokenId) internal {
     require(cardIdToOwner[_tokenId] == address(0));
     cardIdToOwner[_tokenId] = _to;
     ownerToCardCount[_to] = ownerToCardCount[_to].add(1);
@@ -329,9 +329,9 @@ contract CardOwnership is CardMint {
     require(_to != address(0));
     require(_to != address(this));
 
-    clearApproval(_from, _tokenId);
-    removeTokenFrom(_from, _tokenId);
-    addTokenTo(_to, _tokenId);
+    _clearApproval(_from, _tokenId);
+    _removeTokenFrom(_from, _tokenId);
+    _addTokenTo(_to, _tokenId);
 
     emit Transfer(_from, _to, _tokenId);
   }

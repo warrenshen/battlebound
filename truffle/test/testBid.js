@@ -124,13 +124,15 @@ contract('ClockAuction', function(accounts) {
       const startingBalance = web3.eth.getBalance(buyer).toNumber();
       const transaction = await auction.bid(
         tokenId,
-        { from: buyer, gasPrice: 1, value: 1e+5 }
+        { from: buyer, value: 2e+4 }
       );
+      const tx = await web3.eth.getTransaction(transaction.receipt.transactionHash);
+      const gasPrice = tx.gasPrice;
       const gasUsed = transaction.receipt.gasUsed;
       const endingBalance = web3.eth.getBalance(buyer).toNumber();
 
       assert.equal(
-        startingBalance - 1e+5 - (1e+5 * ownerCut / 10000) - gasUsed,
+        startingBalance - startingPrice - gasUsed * gasPrice,
         endingBalance,
         "ending balance is incorrect"
       );
