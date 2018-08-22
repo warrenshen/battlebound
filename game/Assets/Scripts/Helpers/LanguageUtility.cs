@@ -63,13 +63,14 @@ public class LanguageUtility
 
     public string GetLocalizedName(string name)
     {
-        name = name.Replace("~", ",").Replace("～", ",");
-
         if (name == null)
         {
             Debug.LogError("GetLocalizedName called on null.");
             return name;
         }
+
+        name = name.Replace("~", ",").Replace("～", ",");
+
         if (!this.cardNames.ContainsKey(name))
         {
             Debug.LogError(string.Format("Missing translation for: {0}", name));
