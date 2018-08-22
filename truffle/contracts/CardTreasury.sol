@@ -317,10 +317,7 @@ contract CardOwnership is CardMint {
     address _from,
     address _to,
     uint256 _tokenId
-  )
-    public
-  {
-    // solium-disable-next-line arg-overflow
+  ) public {
     safeTransferFrom(_from, _to, _tokenId, "");
   }
 
@@ -341,11 +338,8 @@ contract CardOwnership is CardMint {
     address _to,
     uint256 _tokenId,
     bytes _data
-  )
-    public
-  {
+  ) public {
     transferFrom(_from, _to, _tokenId);
-    // solium-disable-next-line arg-overflow
     require(checkAndCallSafeTransfer(_from, _to, _tokenId, _data));
   }
 
@@ -354,10 +348,7 @@ contract CardOwnership is CardMint {
     address _to,
     uint256 _tokenId,
     bytes _data
-  )
-    internal
-    returns (bool)
-  {
+  ) internal returns (bool) {
     if (!_to.isContract()) {
       return true;
     }
@@ -376,11 +367,7 @@ contract CardOwnership is CardMint {
   function isApprovedOrOwner(
     address _spender,
     uint256 _tokenId
-  )
-    internal
-    view
-    returns (bool)
-  {
+  ) internal view returns (bool) {
     address owner = ownerOf(_tokenId);
     return (
       _spender == owner ||
@@ -513,9 +500,9 @@ contract CardTreasury is CardAuction {
     variation = card.variation;
   }
 
-  function templateIdOf(uint256 _tokenId) external view returns (uint256) {
-    require(_tokenId < cards.length);
-    return cards[_tokenId].templateId;
+  function templateIdOf(uint256 _cardId) external view returns (uint256) {
+    require(_cardId < cards.length);
+    return cards[_cardId].templateId;
   }
 
   function balanceOf(address _owner) public view returns (uint256) {
@@ -532,6 +519,7 @@ contract CardTreasury is CardAuction {
   }
 
   function instanceLimit(uint256 _templateId) external view returns(uint256) {
+    require(_templateId < templates.length);
     return templateIdToMintLimit[_templateId];
   }
 
@@ -552,9 +540,7 @@ contract CardTreasury is CardAuction {
       uint256[] memory result = new uint256[](tokenCount);
       uint256 resultIndex = 0;
 
-      uint256 cardId;
-
-      for (cardId = 0; cardId < cards.length; ++cardId) {
+      for (uint256 cardId = 0; cardId < cards.length; ++cardId) {
         if (cardIdToOwner[cardId] == _owner) {
           result[resultIndex] = cardId;
           ++resultIndex;
@@ -564,8 +550,4 @@ contract CardTreasury is CardAuction {
       return result;
     }
   }
-
-  // function tokenURI(uint256 _tokenId) external pure returns (string) {
-  //   return
-  // }
 }
