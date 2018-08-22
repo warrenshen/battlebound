@@ -63,7 +63,7 @@ public class LanguageUtility
 
     public string GetLocalizedName(string name)
     {
-        name = name.Replace("~", ", ");
+        name = name.Replace("~", ",").Replace("～", ",");
 
         if (name == null)
         {
@@ -103,7 +103,7 @@ public class LanguageUtility
     //make string into rich text e.g. bolding, commas, new lines
     private string Prettify(string input)
     {
-        string output = input.Replace(";", "\n").Replace("~", ", ");
+        string output = input.Replace(";", "\n").Replace("~", ",").Replace("～", ",");
 
         foreach (Regex token in GlobalPatterns)
         {
