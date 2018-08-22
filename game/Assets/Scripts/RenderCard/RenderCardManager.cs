@@ -31,13 +31,14 @@ public class RenderCardManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Screen.SetResolution(1600, 1600, true);
         cards = new List<Card>();
 
-        //foreach (string creatureName in Card.CARD_NAMES_CREATURE)
-        //{
-        //    CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
-        //    cards.Add(creatureCard);
-        //}
+        foreach (string creatureName in Card.CARD_NAMES_CREATURE)
+        {
+            CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
+            cards.Add(creatureCard);
+        }
 
         foreach (string spellName in Card.CARD_NAMES_SPELL)
         {

@@ -107,15 +107,15 @@ public abstract class Card
     public const string CARD_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
     public const string CARD_NAME_RAZE_TO_ASHES = "Raze to Ashes";
     public const string CARD_NAME_GREEDY_FINGERS = "Greedy Fingers";
-    public const string CARD_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
+    public const string CARD_NAME_SILENCE_OF_THE_LAMBS = "Silence the Meek";
     public const string CARD_NAME_RALLY_TO_THE_QUEEN = "Rally to the Queen";
     public const string CARD_NAME_BOMBS_AWAY = "Bombs Away";
     public const string CARD_NAME_GRAVE_DIGGING = "Grave-digging";
     public const string CARD_NAME_THE_SEVEN = "The Seven";
     public const string CARD_NAME_BATTLE_ROYALE = "Battle Royale";
-    public const string CARD_NAME_NATURES_RESURGENCE = "Nature’s Resurgence";
+    public const string CARD_NAME_NATURES_RESURGENCE = "Nature's Resurgence";
     public const string CARD_NAME_PULLED_TO_THE_DEPTHS = "Pulled to the Depths";
-    public const string CARD_NAME_NECROMANCERS_BOND = "Necromancer’s Bond";
+    public const string CARD_NAME_NECROMANCERS_BOND = "Necromancer's Bond";
     public const string CARD_NAME_DIVINE_CATACLYSM = "Divine Cataclysm";
     public const string CARD_NAME_DARK_PACT = "Dark Pact";
     public const string CARD_NAME_REFRESHMENTS = "Refreshments!";
@@ -445,7 +445,7 @@ public abstract class Card
         CARD_ABILITY_DEATH_RATTLE_GRANT_RANDOM_FRIENDLY_TEN_THIRTY,
         CARD_ABILITY_DEATH_RATTLE_SUMMON_YETI,
         CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY,
-        CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES
+        CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES,
         CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY,
         CARD_ABILITY_ICY,
         CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN,
@@ -595,7 +595,7 @@ public abstract class Card
         { FLAVOR_GUPPEA, "“Poor thing~ being born into this harsh world.”" },
 
         { CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY, "Whenever this creature takes damage~ deal 20 damage to opponent hero" },
-        { CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES, "Whenever this creature takes damage~ summon two Meadow Sprites" }
+        { CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES, "Whenever this creature takes damage~ summon two Meadow Sprites" },
         { CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY, "Whenever this creature takes damage~ deal 30 damage to its owner" },
 
         { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN, "When attacking~ also deal 10 damage to any creatures adjacent to the target" },
@@ -607,7 +607,7 @@ public abstract class Card
         { CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX, "Deathwish: Heal all friendly creatures to max health" },
         { CARD_ABILITY_PLAY_SPELL_DRAW_CARD, "Whenever you play a spell, draw a card" },
         { CARD_ABILITY_EACH_KILL_DRAW_CARD, "" },
-        { CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY, "Warcry: Restore 40 health to all creatures" },
+        { CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY, "Warcry: Restore 40 health to all creatures" }
     };
 
     public static string GetDecriptionByAbilities(List<string> abilities)
