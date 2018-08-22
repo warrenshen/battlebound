@@ -114,8 +114,8 @@ contract CardMint is CardBase {
   using AddressUtils for address;
 
   /* EVENTS */
-  event TemplateMinted(uint256 _templateId);
-  event CardMinted(address _owner, uint256 _cardId);
+  event TemplateMinted(uint256 indexed _templateId);
+  event CardMinted(address indexed _owner, uint256 indexed _cardId);
   event Transfer(
     address indexed _from,
     address indexed _to,
