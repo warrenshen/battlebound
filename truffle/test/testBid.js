@@ -1,7 +1,7 @@
 const CardTreasury = artifacts.require("./CardTreasury.sol");
-const CardAuction = artifacts.require("./ClockAuction.sol");
+const ClockAuction = artifacts.require("./ClockAuction.sol");
 
-contract('CardAuction', function(accounts) {
+contract('ClockAuction', function(accounts) {
 
   let treasury;
   let auction;
@@ -20,12 +20,13 @@ contract('CardAuction', function(accounts) {
   describe ("should nots", function() {
     beforeEach(async function() {
       treasury = await CardTreasury.new();
-      auction = await CardAuction.new(treasury.address, ownerCut);
+      auction = await ClockAuction.new(treasury.address, ownerCut);
 
       await treasury.setSaleAuction(auction.address, { from: minter });
+      await treasury.setMinter(minter, { from: minter });
 
-      await treasury.createTemplate(1, 0, 9, "T1", { from: minter });
-      await treasury.mintCard(tokenId, seller, { from: minter });
+      await treasury.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
+      await treasury.mintCard(tokenId, 0, seller, { from: minter });
 
       await treasury.createSaleAuction(
         tokenId,
@@ -62,12 +63,13 @@ contract('CardAuction', function(accounts) {
   describe ("shoulds", function() {
     beforeEach(async function() {
       treasury = await CardTreasury.new();
-      auction = await CardAuction.new(treasury.address, ownerCut);
+      auction = await ClockAuction.new(treasury.address, ownerCut);
 
       await treasury.setSaleAuction(auction.address, { from: minter });
+      await treasury.setMinter(minter, { from: minter });
 
-      await treasury.createTemplate(1, 0, 9, "T1", { from: minter });
-      await treasury.mintCard(tokenId, seller, { from: minter });
+      await treasury.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
+      await treasury.mintCard(tokenId, 0, seller, { from: minter });
 
       await treasury.createSaleAuction(
         tokenId,
@@ -128,7 +130,7 @@ contract('CardAuction', function(accounts) {
       const endingBalance = web3.eth.getBalance(buyer).toNumber();
 
       assert.equal(
-        startingBalance - 1e+4 - (1e+4 * ownerCut / 10000) - gasUsed,
+        startingBalance - 1e+5 - (1e+5 * ownerCut / 10000) - gasUsed,
         endingBalance,
         "ending balance is incorrect"
       );

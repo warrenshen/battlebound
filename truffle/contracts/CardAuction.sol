@@ -1,19 +1,20 @@
 pragma solidity ^0.4.23;
 
 import "./Pausable.sol";
+import "./ClockAuctionBase.sol";
 
 contract ERC {
   function balanceOf(address _owner) public view returns (uint256);
-  function ownerOf(uint256 _tokenId) external view returns (address);
+  function ownerOf(uint256 _tokenId) public view returns (address);
   function approve(address _to, uint256 _tokenId) external;
-  function transfer(address _to, uint256 _tokenId) external;
-  function transferFrom(address _from, address _to, uint256 _tokenId) external;
+  function transferFrom(address _from, address _to, uint256 _tokenId) public;
+  function supportsInterface(bytes4 _interfaceId) external view returns (bool);
 }
 
 /// @title Auction Core
 /// @dev Contains models, variables, and internal methods for the auction.
 /// @notice We omit a fallback function to prevent accidental sends to this contract.
-contract ClockAuctionBase {
+contract ClockAuction is Pausable {
 
   // Represents an auction on an NFT
   struct Auction {
@@ -66,7 +67,7 @@ contract ClockAuctionBase {
   /// @param _tokenId - ID of token to transfer.
   function _transfer(address _receiver, uint256 _tokenId) internal {
     // it will throw if transfer fails
-    nonFungibleContract.transfer(_receiver, _tokenId);
+    nonFungibleContract.transferFrom(this, _receiver, _tokenId);
   }
 
   /// @dev Adds an auction to the list of open auctions. Also fires the
@@ -247,18 +248,11 @@ contract ClockAuctionBase {
     //  function is always guaranteed to be <= _price.
     return _price * ownerCut / 10000;
   }
-}
-
-/// @title Clock auction for non-fungible tokens.
-/// @notice We omit a fallback function to prevent accidental sends to this contract.
-contract ClockAuction is Pausable, ClockAuctionBase {
 
   bool public isSaleAuction = true;
 
-  // /// @dev The ERC-165 interface signature for ERC-721.
-  // ///  Ref: https://github.com/ethereum/EIPs/issues/165
-  // ///  Ref: https://github.com/ethereum/EIPs/issues/721
-  // bytes4 constant InterfaceSignature_ERC721 = bytes4(0x9a20483d);
+  /// @dev The ERC-165 interface signature for ERC-721.
+  bytes4 constant InterfaceSignature_ERC721 = bytes4(0x80ac58cd);
 
   /// @dev Constructor creates a reference to the NFT ownership contract
   ///  and verifies the owner cut is in the valid range.
@@ -271,7 +265,7 @@ contract ClockAuction is Pausable, ClockAuctionBase {
     ownerCut = _cut;
 
     ERC candidateContract = ERC(_nftAddress);
-    // require(candidateContract.supportsInterface(InterfaceSignature_ERC721));
+    require(candidateContract.supportsInterface(InterfaceSignature_ERC721));
     nonFungibleContract = candidateContract;
   }
 
@@ -281,13 +275,13 @@ contract ClockAuction is Pausable, ClockAuctionBase {
     owner.transfer(address(this).balance);
   }
 
-  /// @dev Creates and begins a new auction.
-  /// @param _tokenId - ID of token to auction, sender must be owner.
-  /// @param _startingPrice - Price of item (in wei) at beginning of auction.
-  /// @param _endingPrice - Price of item (in wei) at end of auction.
-  /// @param _duration - Length of time to move between starting
-  ///  price and ending price (in seconds).
-  /// @param _seller - Seller, if not the message sender
+  // /// @dev Creates and begins a new auction.
+  // /// @param _tokenId - ID of token to auction, sender must be owner.
+  // /// @param _startingPrice - Price of item (in wei) at beginning of auction.
+  // /// @param _endingPrice - Price of item (in wei) at end of auction.
+  // /// @param _duration - Length of time to move between starting
+  // ///  price and ending price (in seconds).
+  // /// @param _seller - Seller, if not the message sender
   function createAuction(
     uint256 _tokenId,
     uint256 _startingPrice,

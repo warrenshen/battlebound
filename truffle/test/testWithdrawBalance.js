@@ -24,8 +24,9 @@ contract('CardAuction', function(accounts) {
 
       await treasury.setSaleAuction(auction.address, { from: minter });
 
-      await treasury.createTemplate(1, 0, 9, "T1", { from: minter });
-      await treasury.mintCard(0, seller, { from: minter });
+      await treasury.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
+      await treasury.setMinter(minter, { from: minter });
+      await treasury.mintCard(0, 0, seller, { from: minter });
 
       await treasury.createSaleAuction(
         tokenId,
@@ -108,8 +109,9 @@ contract('CardAuction', function(accounts) {
 
       await treasury.setSaleAuction(auction.address, { from: minter });
 
-      await treasury.createTemplate(1, 0, 9, "T1", { from: minter });
-      await treasury.mintCard(0, seller, { from: minter });
+      await treasury.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
+      await treasury.setMinter(minter, { from: minter });
+      await treasury.mintCard(0, 0, seller, { from: minter });
 
       await treasury.createSaleAuction(
         tokenId,

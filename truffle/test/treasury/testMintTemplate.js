@@ -14,7 +14,7 @@ contract('CardTreasury', function(accounts) {
   it ("should allow privileged address to mint a template", async function() {
     const transaction = await contract.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
     assert.equal(transaction.logs[0].event, "TemplateMinted");
-    assert.equal(transaction.logs[0].args.templateId, 0);
+    assert.equal(transaction.logs[0].args._templateId, 0);
 
     const supply = await contract.templateSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of templates is not 1");
@@ -40,14 +40,14 @@ contract('CardTreasury', function(accounts) {
 
     transaction = await contract.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
     assert.equal(transaction.logs[0].event, "TemplateMinted");
-    assert.equal(transaction.logs[0].args.templateId, 0);
+    assert.equal(transaction.logs[0].args._templateId, 0);
 
     supply = await contract.templateSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of templates is not 1");
 
     transaction = await contract.mintTemplate(1, 0, 0, 9, "Talusreaver", { from: minter });
     assert.equal(transaction.logs[0].event, "TemplateMinted");
-    assert.equal(transaction.logs[0].args.templateId, 1);
+    assert.equal(transaction.logs[0].args._templateId, 1);
 
     supply = await contract.templateSupply.call();
     assert.equal(supply.valueOf(), 2, "supply of templates is not 2");
@@ -73,14 +73,14 @@ contract('CardTreasury', function(accounts) {
 
     transaction = await contract.mintTemplate(3, 0, 0, 9, "Lux", { from: minter });
     assert.equal(transaction.logs[0].event, "TemplateMinted");
-    assert.equal(transaction.logs[0].args.templateId, 0);
+    assert.equal(transaction.logs[0].args._templateId, 0);
 
     limit = await contract.instanceLimit.call(0);
     assert.equal(limit.toNumber(), 3, "instance limit is not 3");
 
     transaction = await contract.mintTemplate(8, 0, 0, 9, "Talusreaver", { from: minter });
     assert.equal(transaction.logs[0].event, "TemplateMinted");
-    assert.equal(transaction.logs[0].args.templateId, 1);
+    assert.equal(transaction.logs[0].args._templateId, 1);
 
     limit = await contract.instanceLimit.call(1);
     assert.equal(limit.toNumber(), 8, "instance limit is not 8");

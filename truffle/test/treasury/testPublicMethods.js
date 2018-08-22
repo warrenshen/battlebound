@@ -22,6 +22,22 @@ contract('CardTreasury', function(accounts) {
       const supply = await contract.totalSupply.call();
       assert.equal(supply.toNumber(), 0, "supply of instances is not 0");
     });
+
+    it ("should support erc interfaces", async function() {
+      let isSupported;
+
+      isSupported = await contract.supportsInterface.call("0x01ffc9a7");
+      assert.equal(isSupported, true);
+
+      isSupported = await contract.supportsInterface.call("0x80ac58cd");
+      assert.equal(isSupported, true);
+
+      isSupported = await contract.supportsInterface.call("0x4f558e79");
+      assert.equal(isSupported, true);
+
+      isSupported = await contract.supportsInterface.call("0x80ac58ce");
+      assert.equal(isSupported, false);
+    });
   });
 
   describe ("contract with multiple instance owners", function() {
@@ -29,6 +45,7 @@ contract('CardTreasury', function(accounts) {
       contract = await CardTreasury.new();
       await contract.mintTemplate(2, 0, 0, 9, "Lux", { from: minter });
       await contract.mintTemplate(3, 0, 0, 9, "Talusreaver", { from: minter });
+      await contract.setMinter(minter, { from: minter });
       await contract.mintCard(0, 0, buyerTwo, { from: minter });
       await contract.mintCard(1, 1, buyer, { from: minter });
       await contract.mintCard(0, 1, buyer, { from: minter });
@@ -95,6 +112,19 @@ contract('CardTreasury', function(accounts) {
       tokens = await contract.tokensOfOwner.call(buyerTwo);
       assert.equal(tokens.length, 1, "number of tokens is incorrect");
       assert.equal(tokens[0], 0, "token is incorrect");
+    });
+
+    it ("should support erc interfaces", async function() {
+      let isSupported;
+
+      isSupported = await contract.supportsInterface.call("0x01ffc9a7");
+      assert.equal(isSupported, true);
+
+      isSupported = await contract.supportsInterface.call("0x80ac58cd");
+      assert.equal(isSupported, true);
+
+      isSupported = await contract.supportsInterface.call("0x80ac58ce");
+      assert.equal(isSupported, false);
     });
   });
 });

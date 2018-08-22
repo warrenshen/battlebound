@@ -13,6 +13,7 @@ contract('CardTreasury', function(accounts) {
       contract = await CardTreasury.new();
       await contract.mintTemplate(1, 0, 0, 8, "T1", { from: minter });
       await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
+      await contract.setMinter(minter, { from: minter });
       await contract.mintCard(0, 0, buyer, { from: minter });
     });
 
@@ -51,6 +52,7 @@ contract('CardTreasury', function(accounts) {
     beforeEach(async function() {
       contract = await CardTreasury.new();
       await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
+      await contract.setMinter(minter, { from: minter });
       await contract.mintCard(0, 0, buyer, { from: minter });
     });
 
@@ -62,9 +64,9 @@ contract('CardTreasury', function(accounts) {
       );
       const log = transaction.logs[0];
       assert.equal(log.event, "Approval", "expected an Approval event");
-      assert.equal(log.args.owner, buyer, "Approval event owner is incorrect");
-      assert.equal(log.args.approved, buyerTwo, "Approval event approved is incorrect");
-      assert.equal(log.args.tokenId, 0, "Approval event token id is incorrect");
+      assert.equal(log.args._owner, buyer, "Approval event owner is incorrect");
+      assert.equal(log.args._approved, buyerTwo, "Approval event approved is incorrect");
+      assert.equal(log.args._tokenId, 0, "Approval event token id is incorrect");
     });
 
     it ("should allow owner of card to approve contract address", async function() {
@@ -75,9 +77,9 @@ contract('CardTreasury', function(accounts) {
       );
       const log = transaction.logs[0];
       assert.equal(log.event, "Approval", "expected an Approval event");
-      assert.equal(log.args.owner, buyer, "Approval event owner is incorrect");
-      assert.equal(log.args.approved, contract.address, "Approval event approved is incorrect");
-      assert.equal(log.args.tokenId, 0, "Approval event token id is incorrect");
+      assert.equal(log.args._owner, buyer, "Approval event owner is incorrect");
+      assert.equal(log.args._approved, contract.address, "Approval event approved is incorrect");
+      assert.equal(log.args._tokenId, 0, "Approval event token id is incorrect");
     });
   });
 });

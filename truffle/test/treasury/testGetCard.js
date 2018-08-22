@@ -35,6 +35,7 @@ contract('CardTreasury', function(accounts) {
       contract = await CardTreasury.new();
       await contract.mintTemplate(2, 0, 0, 8, "Lux", { from: minter });
       await contract.mintTemplate(1, 1, 1, 9, "Talusreaver", { from: minter });
+      await contract.setMinter(minter, { from: minter });
       await contract.mintCards([0, 1], [0, 1], minter, { from: minter });
       await contract.mintCard(0, 1, minter, { from: minter });
     });
