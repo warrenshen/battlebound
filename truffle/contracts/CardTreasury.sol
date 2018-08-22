@@ -166,8 +166,6 @@ contract CardMint is CardBase {
   // Operator => from address to operated or not.
   mapping (address => mapping (address => bool)) internal operatorToApprovals;
 
-  ClockAuctionBase public saleAuction;
-
   /* MODIFIERS */
   modifier onlyMinter() {
     require(minter != address(0));
@@ -177,6 +175,12 @@ contract CardMint is CardBase {
 
   /* FUNCTIONS */
   /** PRIVATE FUNCTIONS **/
+  function _addTokenTo(address _to, uint256 _tokenId) internal {
+    require(cardIdToOwner[_tokenId] == address(0));
+    ownerToCardCount[_to] = ownerToCardCount[_to].add(1);
+    cardIdToOwner[_tokenId] = _to;
+  }
+
   function _mintCard(
     uint256 _templateId,
     uint256 _variation,
@@ -191,9 +195,7 @@ contract CardMint is CardBase {
     });
 
     uint256 newCardId = cards.push(newCard).sub(1);
-
-    ownerToCardCount[_owner] = ownerToCardCount[_owner].add(1);
-    cardIdToOwner[newCardId] = _owner;
+    _addTokenTo(_owner, newCardId);
 
     emit Transfer(0, _owner, newCardId);
     emit CardMinted(_owner, newCardId);
@@ -257,12 +259,6 @@ contract CardMint is CardBase {
 
 contract CardOwnership is CardMint {
 
-  /* MODIFIERS */
-  modifier onlyTokenOwner(uint256 _tokenId) {
-    require(msg.sender == cardIdToOwner[_tokenId]);
-    _;
-  }
-
   /* FUNCTIONS */
   /** PRIVATE FUNCTIONS **/
   function _approve(address _owner, address _approved, uint256 _tokenId) internal {
@@ -270,12 +266,6 @@ contract CardOwnership is CardMint {
     emit Approval(_owner, _approved, _tokenId);
   }
 
-  /**
-   * @dev Internal function to clear current approval of a given token ID
-   * Reverts if the given address is not indeed the owner of the token
-   * @param _owner owner of the token
-   * @param _tokenId uint256 ID of the token to be transferred
-   */
   function _clearApproval(address _owner, uint256 _tokenId) internal {
     require(ownerOf(_tokenId) == _owner);
     if (cardIdToApproved[_tokenId] != address(0)) {
@@ -289,20 +279,13 @@ contract CardOwnership is CardMint {
     cardIdToOwner[_tokenId] = address(0);
   }
 
-  function _addTokenTo(address _to, uint256 _tokenId) internal {
-    require(cardIdToOwner[_tokenId] == address(0));
-    cardIdToOwner[_tokenId] = _to;
-    ownerToCardCount[_to] = ownerToCardCount[_to].add(1);
-  }
-
   /** PUBLIC FUNCTIONS **/
   function approve(address _to, uint256 _tokenId) external {
     address owner = ownerOf(_tokenId);
     require(_to != owner);
     require(msg.sender == owner || isApprovedForAll(owner, msg.sender));
 
-    cardIdToApproved[_tokenId] = _to;
-    emit Approval(owner, _to, _tokenId);
+    _approve(owner, _to, _tokenId);
   }
 
   function transferFrom(address _from, address _to, uint256 _tokenId) public {
@@ -414,6 +397,7 @@ contract CardOwnership is CardMint {
    */
   function setApprovalForAll(address _to, bool _approved) public {
     require(_to != msg.sender);
+    require(_to != address(0));
     operatorToApprovals[msg.sender][_to] = _approved;
     emit ApprovalForAll(msg.sender, _to, _approved);
   }
@@ -436,38 +420,8 @@ contract CardOwnership is CardMint {
   function isApprovedForAll(
     address _owner,
     address _operator
-  )
-    public
-    view
-    returns (bool)
-  {
+  ) public view returns (bool) {
     return operatorToApprovals[_owner][_operator];
-  }
-
-  function setSaleAuction(address _address) external onlyOwner {
-    ClockAuctionBase candidateContract = ClockAuctionBase(_address);
-    require(candidateContract.isSaleAuction());
-    saleAuction = candidateContract;
-  }
-
-  function createSaleAuction(
-    uint256 _tokenId,
-    uint256 _startingPrice,
-    uint256 _endingPrice,
-    uint256 _duration
-  )
-    external
-    onlyTokenOwner(_tokenId)
-  {
-    require(saleAuction != address(0));
-    _approve(msg.sender, saleAuction, _tokenId);
-    saleAuction.createAuction(
-        _tokenId,
-        _startingPrice,
-        _endingPrice,
-        _duration,
-        msg.sender
-    );
   }
 
   function ownerOf(uint256 _tokenId) public view returns (address) {
@@ -482,7 +436,37 @@ contract CardOwnership is CardMint {
   }
 }
 
-contract CardTreasury is CardOwnership {
+contract CardAuction is CardOwnership {
+
+  ClockAuctionBase public saleAuction;
+
+  function setSaleAuction(address _address) external onlyOwner {
+    ClockAuctionBase candidateContract = ClockAuctionBase(_address);
+    require(candidateContract.isSaleAuction());
+    saleAuction = candidateContract;
+  }
+
+  function createSaleAuction(
+    uint256 _tokenId,
+    uint256 _startingPrice,
+    uint256 _endingPrice,
+    uint256 _duration
+  ) external {
+    require(saleAuction != address(0));
+    require(msg.sender == cardIdToOwner[_tokenId]);
+
+    _approve(msg.sender, saleAuction, _tokenId);
+    saleAuction.createAuction(
+        _tokenId,
+        _startingPrice,
+        _endingPrice,
+        _duration,
+        msg.sender
+    );
+  }
+}
+
+contract CardTreasury is CardAuction {
 
   /* FUNCTIONS */
   /** PUBLIC FUNCTIONS **/

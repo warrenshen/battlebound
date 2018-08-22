@@ -1,6 +1,6 @@
 const AddressVerification = artifacts.require("./AddressVerification.sol");
 
-contract('CardTreasury', function(accounts) {
+contract('AddressVerification', function(accounts) {
 
   let contract;
   const h = '0x4622181004442308388000833281088716594456860636412994598425273769';

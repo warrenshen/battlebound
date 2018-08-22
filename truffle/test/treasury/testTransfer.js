@@ -130,8 +130,8 @@ contract('CardTreasury', function(accounts) {
       await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
       await contract.mintTemplate(1, 0, 0, 9, "T2", { from: minter });
       await contract.setMinter(minter, { from: minter });
-      await contract.mintCard(0, 0, minter);
-      await contract.mintCard(1, 0, minter);
+      await contract.mintCard(0, 0, minter, { from: minter });
+      await contract.mintCard(1, 0, minter, { from: minter });
     });
 
     it ("should allow owner to transfer card to other", async function() {
@@ -157,6 +157,9 @@ contract('CardTreasury', function(accounts) {
 
       owner = await contract.ownerOf.call(cardId);
       assert.equal(owner, recipient, "owner is not correct");
+
+      const balance = await contract.balanceOf.call(sender);
+      assert.equal(balance, 1, "balance is not correct");
     });
 
     it ("should allow owner to transfer card to another other", async function() {
@@ -182,6 +185,9 @@ contract('CardTreasury', function(accounts) {
 
       owner = await contract.ownerOf.call(cardId);
       assert.equal(owner, recipient, "owner is not correct");
+
+      const balance = await contract.balanceOf.call(sender);
+      assert.equal(balance, 0, "balance is not correct");
     });
   });
 
