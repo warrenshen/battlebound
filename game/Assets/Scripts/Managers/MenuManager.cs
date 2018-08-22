@@ -45,6 +45,7 @@ public class MenuManager : MonoBehaviour
         SetGalleryCreature();
 
         InvokeRepeating("RotateGalleryCreature", 2.0f, 4f);
+        this.galleryCard.gameObject.SetActive(true);
     }
 
     private void SetGalleryCreature()

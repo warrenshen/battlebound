@@ -178,6 +178,9 @@ public class Player
             targetPosition = BattleManager.Instance.EnemyHandTransform.position;
         }
 
+        if (BattleManager.Instance.LightObject == null)
+            return;
+
         LeanTween.cancel(BattleManager.Instance.LightObject);
         LeanTween
             .move(

@@ -10,6 +10,8 @@ public class HideAtStart : MonoBehaviour
     void Awake()
     {
         if (hide)
+        {
             gameObject.SetActive(false);
+        }
     }
 }

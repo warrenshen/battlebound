@@ -59,6 +59,9 @@ public class BattleManager : MonoBehaviour
     private GameObject endOverlay;
 
     [SerializeField]
+    private GameObject mulliganOverlay;
+
+    [SerializeField]
     private List<CardObject> xpCardObjects;
 
     [SerializeField]
@@ -103,6 +106,7 @@ public class BattleManager : MonoBehaviour
         this.lightObject = GameObject.Find("Point Light");
         this.battleLayer = LayerMask.NameToLayer("Battle");
         this.boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
+        this.mulliganOverlay.SetActive(true);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -774,7 +778,7 @@ public class BattleManager : MonoBehaviour
 
     public void HideMulliganOverlay()
     {
-        RectTransform overlay = GameObject.Find("Mulligan Canvas").GetComponent<RectTransform>();
+        RectTransform overlay = this.mulliganOverlay.GetComponent<RectTransform>();
         EnableIsAnimating();
         LeanTween.alpha(
             overlay,
