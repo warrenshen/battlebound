@@ -45,6 +45,9 @@ public class MarketplaceManager : MonoBehaviour
     private List<Card> sellableCards;
     private List<CardAuction> cancelableCards;
 
+    [SerializeField]
+    private Dictionary<string, GameObject> summonPool;
+
     //Pooling
     private Stack<BuyableCardListItem> buyableListItemPool;
     private Stack<SellableCardListItem> sellableListItemPool;
@@ -52,6 +55,8 @@ public class MarketplaceManager : MonoBehaviour
     //End Pooling
     private const int LIST_ITEM_POOL_SIZE = 30;
     private object listItemObject;
+
+    public GameObject marketplacePreviewSummon;
 
     public static MarketplaceManager Instance { get; private set; }
 
@@ -66,6 +71,8 @@ public class MarketplaceManager : MonoBehaviour
         this.buyableCards = new List<CardAuction>();
         this.sellableCards = new List<Card>();
         this.cancelableCards = new List<CardAuction>();
+
+        this.summonPool = new Dictionary<string, GameObject>();
     }
 
     private void Start()
@@ -99,6 +106,32 @@ public class MarketplaceManager : MonoBehaviour
         }
 
         ShowBuyMode();
+
+        Transform summonPoolRoot = new GameObject("Summon Pool").transform;
+        summonPoolRoot.transform.parent = this.transform;
+
+        foreach (string creaturePrefabName in Card.CARD_NAMES_CREATURE)
+        {
+            if (ResourceSingleton.Instance.GetPrefabByName(creaturePrefabName) == null)
+            {
+                Debug.LogError(string.Format("No prefab for creature: ", creaturePrefabName));
+                continue;
+            }
+
+            GameObject summon = GameObject.Instantiate(
+                ResourceSingleton.Instance.GetPrefabByName(creaturePrefabName),
+                summonPoolRoot
+            );
+            summon.transform.parent = summonPoolRoot;
+            AnimateIdle animateIdle = summon.AddComponent<AnimateIdle>();
+            summon.SetActive(false);
+            this.summonPool.Add(creaturePrefabName, summon);
+        }
+    }
+
+    private GameObject GetSummonFromPool(string name)
+    {
+        return this.summonPool[name];
     }
 
     private void GetMarketplaceData()
@@ -307,5 +340,35 @@ public class MarketplaceManager : MonoBehaviour
         cancelableListItem.transform.SetParent(this.transform, false);
         cancelableListItemPool.Push(cancelableListItem);
         cancelableListItem.gameObject.SetActive(false);
+    }
+
+    public void HoverEnterEffect(GameObject target)
+    {
+        //LeanTween.scale(target, Vector3.one * 1.1f, TWEEN_DURATION).setEaseInQuad();
+        target.transform.localScale = Vector3.one * 1.10f;
+    }
+
+    public void HoverExitEffect(GameObject target)
+    {
+        //LeanTween.scale(target, Vector3.one, TWEEN_DURATION).setEaseInQuad();
+        target.transform.localScale = Vector3.one;
+    }
+
+    public void SetMarketplacePreview(Card card)
+    {
+        if (card == null)
+        {
+            Debug.LogError("Received null for card in SetMarketplacePreview()");
+            return;
+        }
+
+        this.marketplacePreviewSummon.SetActive(false);  //assumes that initial value is set via inspector
+        Vector3 position = this.marketplacePreviewSummon.transform.position;
+
+        this.marketplacePreviewSummon = GetSummonFromPool(card.GetName());
+        this.marketplacePreviewSummon.transform.position = position;
+        this.marketplacePreviewSummon.transform.localScale = new Vector3(4, 5, 1);
+        this.marketplacePreviewSummon.transform.LookAt(Camera.main.transform);
+        this.marketplacePreviewSummon.SetActive(true);
     }
 }

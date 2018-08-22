@@ -11,7 +11,6 @@ public class MenuManager : MonoBehaviour
     private int galleryIndex;
 
     public Transform marketplacePreview;
-    public GameObject marketplacePreviewSummon;
 
     [SerializeField]
     private string currentView;
@@ -128,18 +127,6 @@ public class MenuManager : MonoBehaviour
         LO_LoadingScreen.LoadScene("Wallet");
     }
 
-    public void HoverEnterEffect(GameObject target)
-    {
-        //LeanTween.scale(target, Vector3.one * 1.1f, TWEEN_DURATION).setEaseInQuad();
-        target.transform.localScale = Vector3.one * 1.10f;
-    }
-
-    public void HoverExitEffect(GameObject target)
-    {
-        //LeanTween.scale(target, Vector3.one, TWEEN_DURATION).setEaseInQuad();
-        target.transform.localScale = Vector3.one;
-    }
-
     public void ViewMarketplace()
     {
         UMP.ChangeWindow(5);
@@ -163,23 +150,5 @@ public class MenuManager : MonoBehaviour
         }
         galleryCard.gameObject.SetActive(true);
         gallery.gameObject.SetActive(true);
-    }
-
-    public void SetMarketplacePreview(Card card)
-    {
-        if (card == null)
-        {
-            Debug.LogError("Received null for card in SetMarketplacePreview()");
-            return;
-        }
-
-        this.marketplacePreviewSummon.SetActive(false);  //assumes that initial value is set via inspector
-        Vector3 position = this.marketplacePreviewSummon.transform.position;
-
-        this.marketplacePreviewSummon = CardSingleton.Instance.GetSummonFromPool(card.GetName());
-        this.marketplacePreviewSummon.transform.position = position;
-        this.marketplacePreviewSummon.transform.localScale = new Vector3(4, 5, 1);
-        this.marketplacePreviewSummon.transform.LookAt(Camera.main.transform);
-        this.marketplacePreviewSummon.SetActive(true);
     }
 }

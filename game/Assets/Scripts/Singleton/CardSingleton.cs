@@ -8,7 +8,7 @@ public class CardSingleton : Singleton<CardSingleton>
     private GameObject cardPrefab;
 
     private Stack<HyperCard.Card> cardVisualPool;
-    private static int CARD_POOL_SIZE = 30;
+    private static int CARD_POOL_SIZE = 10;
 
     [SerializeField]
     private GameObject creatureCardObjectPrefab;
@@ -24,9 +24,6 @@ public class CardSingleton : Singleton<CardSingleton>
     public GameObject WeaponCardObjectPrefab => structureCardObjectPrefab;
 
     [SerializeField]
-    private Dictionary<string, GameObject> summonPool;
-
-    [SerializeField]
     private Texture2D[] gems;
     public Texture2D[] Gems => gems;
 
@@ -39,9 +36,7 @@ public class CardSingleton : Singleton<CardSingleton>
     {
         base.Awake();
 
-        this.summonPool = new Dictionary<string, GameObject>();
         this.cardVisualPool = new Stack<HyperCard.Card>();
-
         this.cardPrefab = Resources.Load("Prefabs/Creature Card") as GameObject;
 
         Transform cardPoolRoot = new GameObject("Card Pool").transform;
@@ -56,24 +51,6 @@ public class CardSingleton : Singleton<CardSingleton>
             created.SetActive(false);
             HyperCard.Card cardVisual = created.GetComponent<HyperCard.Card>();
             cardVisualPool.Push(cardVisual);
-        }
-    }
-
-    public void Start()
-    {
-        Transform summonPoolRoot = new GameObject("Summon Pool").transform;
-        summonPoolRoot.transform.parent = this.transform;
-
-        foreach (string creaturePrefabName in Card.CARD_NAMES_CREATURE)
-        {
-            GameObject summon = GameObject.Instantiate(
-                ResourceSingleton.Instance.GetPrefabByName(creaturePrefabName),
-                summonPoolRoot
-            );
-            summon.transform.parent = summonPoolRoot;
-            AnimateIdle animateIdle = summon.AddComponent<AnimateIdle>();
-            summon.SetActive(false);
-            summonPool.Add(creaturePrefabName, summon);
         }
     }
 
@@ -96,11 +73,6 @@ public class CardSingleton : Singleton<CardSingleton>
         cardVisual.transform.parent = this.transform;
         cardVisualPool.Push(cardVisual);
         cardVisual.gameObject.SetActive(false);
-    }
-
-    public GameObject GetSummonFromPool(string name)
-    {
-        return summonPool[name];
     }
 
     public GameObject GetCardPrefab()
