@@ -91,17 +91,8 @@ library AddressUtils {
 }
 
 contract CardBase is Ownable {
-  bytes4 constant InterfaceSignature_ERC165 = bytes4(keccak256("supportsInterface(bytes4)"));
-  bytes4 constant InterfaceSignature_ERC721 =
-    bytes4(keccak256('balanceOf(address)')) ^
-    bytes4(keccak256('ownerOf(uint256)')) ^
-    bytes4(keccak256('approve(address,uint256)')) ^
-    bytes4(keccak256('getApproved(uint256)')) ^
-    bytes4(keccak256('setApprovalForAll(address,bool)')) ^
-    bytes4(keccak256('isApprovedForAll(address,address)')) ^
-    bytes4(keccak256('transferFrom(address,address,uint256)')) ^
-    bytes4(keccak256('safeTransferFrom(address,address,uint256)')) ^
-    bytes4(keccak256('safeTransferFrom(address,address,uint256,bytes)'));
+  bytes4 constant InterfaceSignature_ERC165 = 0x01ffc9a7;
+  bytes4 constant InterfaceSignature_ERC721 = 0x80ac58cd;
   bytes4 internal constant InterfaceId_ERC721Exists = 0x4f558e79;
 
   /// @notice Introspection interface as per ERC-165 (https://github.com/ethereum/EIPs/issues/165).
@@ -109,12 +100,6 @@ contract CardBase is Ownable {
   ///  ERC-165 (obviously!) and ERC-721.
   function supportsInterface(bytes4 _interfaceID) external view returns (bool)
   {
-    // DEBUG ONLY
-    // require(
-    //   (InterfaceSignature_ERC165 == 0x01ffc9a7) &&
-    //   (InterfaceSignature_ERC721 == 0x80ac58cd)
-    // );
-
     return (
       (_interfaceID == InterfaceSignature_ERC165) ||
       (_interfaceID == InterfaceSignature_ERC721) ||
@@ -128,12 +113,9 @@ contract CardMint is CardBase {
   using SafeMath for uint256;
   using AddressUtils for address;
 
-  bytes4 internal constant ERC721_RECEIVED = 0x150b7a02;
-
   /* EVENTS */
   event TemplateMinted(uint256 _templateId);
   event CardMinted(address _owner, uint256 _cardId);
-
   event Transfer(
     address indexed _from,
     address indexed _to,
@@ -158,6 +140,7 @@ contract CardMint is CardBase {
     string name;
   }
 
+  // Each Card is a template ID (index of a template in `templates`) and a variation.
   struct Card {
     uint256 templateId;
     uint256 variation;
@@ -168,7 +151,6 @@ contract CardMint is CardBase {
   address public minter;
 
   Template[] internal templates;
-  // Each Card is a template ID (index of a template in `templates`) and a variation.
   Card[] internal cards;
 
   // Template ID => max number of cards that can be minted with this template ID.
@@ -208,7 +190,7 @@ contract CardMint is CardBase {
       variation: _variation
     });
 
-    uint256 newCardId = cards.push(newCard) - 1;
+    uint256 newCardId = cards.push(newCard).sub(1);
 
     ownerToCardCount[_owner] = ownerToCardCount[_owner].add(1);
     cardIdToOwner[newCardId] = _owner;
@@ -238,7 +220,7 @@ contract CardMint is CardBase {
       power: _power,
       name: _name
     });
-    uint256 newTemplateId = templates.push(newTemplate) - 1;
+    uint256 newTemplateId = templates.push(newTemplate).sub(1);
     templateIdToMintLimit[newTemplateId] = _mintLimit;
 
     emit TemplateMinted(newTemplateId);
@@ -398,7 +380,7 @@ contract CardOwnership is CardMint {
     }
     bytes4 retval = ERC721Receiver(_to).onERC721Received(
       msg.sender, _from, _tokenId, _data);
-    return (retval == ERC721_RECEIVED);
+    return (retval == 0x150b7a02);
   }
 
   /**
