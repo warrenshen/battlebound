@@ -78,8 +78,6 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private GameObject structureCardObjectPrefab;
 
-    [SerializeField]
-    private Transform cardObjectPool;
     private Dictionary<Card.CardType, Stack<BattleCardObject>> battleCardObjectPools;
 
     private bool combatMode;
@@ -1471,7 +1469,7 @@ public class BattleManager : MonoBehaviour
             transform.position,
             Quaternion.identity
         );
-        creatureCardGameObject.transform.parent = this.cardObjectPool;
+        creatureCardGameObject.transform.parent = this.transform;
         creatureCardGameObject.SetActive(false);
 
         BattleCardObject battleCardObject = creatureCardGameObject.GetComponent<BattleCardObject>();

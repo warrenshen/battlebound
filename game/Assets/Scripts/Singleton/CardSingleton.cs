@@ -56,15 +56,22 @@ public class CardSingleton : Singleton<CardSingleton>
 
     public HyperCard.Card TakeCardFromPool()
     {
+        HyperCard.Card chosen;
+
         if (cardVisualPool.Count <= 0)
         {
             GameObject created = Instantiate(this.GetCardPrefab(), transform.position, Quaternion.identity);
-            return created.GetComponent<HyperCard.Card>();
+            chosen = created.GetComponent<HyperCard.Card>();
         }
-        HyperCard.Card chosen = cardVisualPool.Pop();
+        else
+        {
+            chosen = cardVisualPool.Pop();
+        }
+
         chosen.transform.localScale = BattleCardObject.CARD_VISUAL_SIZE;
         chosen.ResetParams();
         chosen.gameObject.SetActive(true);
+
         return chosen;
     }
 
