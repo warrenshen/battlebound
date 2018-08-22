@@ -24,7 +24,7 @@ public abstract class Card
     public const string CARD_NAME_FLAMEBELCHER = "Flamebelcher";
     public const string CARD_NAME_FIREBORN_MENACE = "Fireborn Menace";
     public const string CARD_NAME_TEA_GREENLEAF = "Te'a Greenleaf";
-    public const string CARD_NAME_NESSA_NATURES_CHAMPION = "Nessa, Nature's Champion";
+    public const string CARD_NAME_NESSA_NATURES_CHAMPION = "Nessa~ Nature's Champion";
     public const string CARD_NAME_BUBBLE_SQUIRTER = "Bubble Squirter";
     public const string CARD_NAME_SWIFT_SHELLBACK = "Swift Shellback";
     public const string CARD_NAME_SENTIENT_SEAKING = "Sentient Seaking";
@@ -39,7 +39,7 @@ public abstract class Card
     public const string CARD_NAME_SEAHORSE_SQUIRE = "Seahorse Squire";
     public const string CARD_NAME_TRIDENT_BATTLEMAGE = "Trident Battlemage";
     public const string CARD_NAME_SNEERBLADE = "Sneerblade";
-    public const string CARD_NAME_KRONOS_TIMEWARP_KINGPIN = "Kronos, Timewarp Kingpin";
+    public const string CARD_NAME_KRONOS_TIMEWARP_KINGPIN = "Kronos~ Timewarp Kingpin";
     public const string CARD_NAME_LUX = "Lux";
     public const string CARD_NAME_THUNDEROUS_DESPERADO = "Thunderous Desperado";
     public const string CARD_NAME_CEREBOAROUS = "Cereboarus";
@@ -55,7 +55,7 @@ public abstract class Card
     public const string CARD_NAME_MEGAPUNK = "MegaPUNK";
     public const string CARD_NAME_DUSK_DWELLER = "Dusk Dweller";
     public const string CARD_NAME_TALUSREAVER = "Talusreaver";
-    public const string CARD_NAME_KRUL_PHANTOM_SKULLCRUSHER = "Krul, Phantom Skullcrusher";
+    public const string CARD_NAME_KRUL_PHANTOM_SKULLCRUSHER = "Krul~ Phantom Skullcrusher";
     public const string CARD_NAME_BLUE_GIPSY_V3 = "Blue Gipsy V3";
     public const string CARD_NAME_FROSTLAND_THRASHER_8 = "Frostland THRASHER-8";
     public const string CARD_NAME_CYBER_SENTINEL = "Cyber Sentinel";
@@ -65,7 +65,7 @@ public abstract class Card
     public const string CARD_NAME_GRAVEYARD_GUARDIAN = "Graveyard Guardian";
     public const string CARD_NAME_TERRATANK = "Terratank";
     public const string CARD_NAME_CULYSSA = "Culyssa";
-    public const string CARD_NAME_SABRE_CRYSTALLINE_DRAGON = "Sabre, Crystalline Dragon";
+    public const string CARD_NAME_SABRE_CRYSTALLINE_DRAGON = "Sabre~ Crystalline Dragon";
     public const string CARD_NAME_SAPLET = "Saplet";
     public const string CARD_NAME_FIRESMITH_APPRENTICE = "Firesmith Apprentice";
     public const string CARD_NAME_FORGEMECH = "Forgemech";
@@ -74,10 +74,11 @@ public abstract class Card
     public const string CARD_NAME_ABYSSAL_EEL = "Abyssal Eel";
     public const string CARD_NAME_EMILIA_AIRHEART = "Emilia Airheart";
     public const string CARD_NAME_PEARL_NYMPH = "Pearl Nymph";
-    public const string CARD_NAME_TARA_SWAN_PRINCESS = "Tara, Swan Princess";
+    public const string CARD_NAME_TARA_SWAN_PRINCESS = "Tara~ Swan Princess";
     public const string CARD_NAME_FROSTSPORE = "Frostspore";
     public const string CARD_NAME_ANGELIC_EGG = "Angelic Egg";
     public const string CARD_NAME_CURSED_EGG = "Cursed Egg";
+    public const string CARD_NAME_FOXY_APPRENTICE = "Foxy Apprentice";
 
     // Spells targeted.
     public const string CARD_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
@@ -221,6 +222,7 @@ public abstract class Card
         CARD_NAME_FROSTSPORE,
         CARD_NAME_ANGELIC_EGG,
         CARD_NAME_CURSED_EGG,
+        CARD_NAME_FOXY_APPRENTICE,
     };
 
     public static readonly List<string> CARD_NAMES_SPELL = new List<string>
@@ -337,6 +339,7 @@ public abstract class Card
     public const string CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY = "CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY";
     public const string CARD_ABILITY_BATTLE_CRY_HEAL_FACE_THIRTY = "CARD_ABILITY_BATTLE_CRY_HEAL_FACE_THIRTY";
     public const string CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX = "CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX";
+    public const string CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY = "CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY";
     public const string CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT = "CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT";
     public const string CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES = "CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES";
     public const string CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY = "CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY";
@@ -384,8 +387,6 @@ public abstract class Card
     public const string CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX = "CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX";
     public const string CARD_ABILITY_PLAY_SPELL_DRAW_CARD = "CARD_ABILITY_PLAY_SPELL_DRAW_CARD";
     public const string CARD_ABILITY_EACH_KILL_DRAW_CARD = "CARD_ABILITY_EACH_KILL_DRAW_CARD";
-    public const string CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY = "CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY";
-
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
@@ -534,15 +535,15 @@ public abstract class Card
         { CARD_ABILITY_LIFE_STEAL, "Lifesap" },
         { CARD_ABILITY_RANGED, "Ranged" },
 
-        { CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY, "Turnover: Heal 30 health to your hero" },
+        { CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY, "Turnover: Restore 30 health to your hero" },
         { CARD_ABILITY_END_TURN_HEAL_TEN, "Turnover: Recover 10 health" },
         { CARD_ABILITY_END_TURN_HEAL_TWENTY, "Turnover: Recover 20 health" },
         { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN, "Turnover: Deal 10 damage to a creature directly in front of this one" },
         { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY, "Turnover: Deal 20 damage to a creature directly in front of this one" },
         { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_THIRTY, "Turnover: Deal 30 damage to a creature directly in front of this one" },
         { CARD_ABILITY_END_TURN_DRAW_CARD, "Turnover: Draw a card" },
-        { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN, "Turnover: Buff a random friendly +10/+10" },
-        { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY, "Turnover: Buff a random friendly +0/+20" },
+        { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN, "Turnover: Grant a random friendly creature +10/+10" },
+        { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY, "Turnover: Grant a random friendly creature +0/+20" },
         { CARD_ABILITY_END_TURN_SUMMON_SAPLET, "Turnover: Summon a Saplet" },
         { CARD_ABILITY_END_TURN_SUMMON_IMP, "Turnover: Summon a Charming Imp on each empty tile in this domain" },
         { CARD_ABILITY_END_TURN_DAMAGE_ALL_TEN, "Turnover: Deal 10 damage to all opponent creatures" },
@@ -561,6 +562,7 @@ public abstract class Card
         { CARD_ABILITY_BATTLE_CRY_HEAL_FACE_TWENTY, "Warcry: Restore 20 health to your hero" },
         { CARD_ABILITY_BATTLE_CRY_HEAL_FACE_THIRTY, "Warcry: Restore 30 health to your hero" },
         { CARD_ABILITY_BATTLE_CRY_HEAL_FRIENDLY_MAX, "Warcry: Restore max health to all friendly creatures" },
+        { CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY, "Warcry: Restore 40 health to all creatures" },
         { CARD_ABILITY_BATTLE_CRY_SILENCE_IN_FRONT, "Warcry: Condemn a creature directly in front of this one" },
         { CARD_ABILITY_BATTLE_CRY_SILENCE_ALL_OPPONENT_CREATURES, "Warcry: Condemn all opponent creatures" },
         { CARD_ABILITY_BATTLE_CRY_TAUNT_ADJACENT_FRIENDLY, "Warcry: Grant Protector to adjacent creatures" },
@@ -596,7 +598,7 @@ public abstract class Card
 
         { CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY, "Whenever this creature takes damage~ deal 20 damage to opponent hero" },
         { CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES, "Whenever this creature takes damage~ summon two Meadow Sprites" },
-        { CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY, "Whenever this creature takes damage~ deal 30 damage to its owner" },
+        { CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY, "Whenever this creature takes damage~ deal 30 damage to its hero" },
 
         { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN, "When attacking~ also deal 10 damage to any creatures adjacent to the target" },
         { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK, "When attacking~ also deal full damage to any creatures adjacent to the target" },
@@ -607,14 +609,11 @@ public abstract class Card
         { CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX, "Deathwish: Heal all friendly creatures to max health" },
         { CARD_ABILITY_PLAY_SPELL_DRAW_CARD, "Whenever you play a spell, draw a card" },
         { CARD_ABILITY_EACH_KILL_DRAW_CARD, "" },
-        { CARD_ABILITY_BATTLE_CRY_HEAL_ALL_CREATURES_BY_FOURTY, "Warcry: Restore 40 health to all creatures" }
     };
 
     public static string GetDecriptionByAbilities(List<string> abilities)
     {
-        LanguageUtility languageUtility = LanguageUtility.Instance();
         string description = "";
-
         foreach (string ability in abilities)
         {
             if (ability == CARD_EMPTY_ABILITY || ability == null)
@@ -628,7 +627,7 @@ public abstract class Card
             }
 
             string key = ABILITY_TO_DESCRIPTION[ability];
-            string localizedDescription = languageUtility.GetLocalizedAbility(key);
+            string localizedDescription = LanguageUtility.Instance().GetLocalizedDescription(key);
 
             if (description.Length == 0)
             {
@@ -814,7 +813,8 @@ public abstract class Card
 
     public string GetDescription()
     {
-        return this.cardTemplate.description;
+        string localizedDescription = LanguageUtility.Instance().GetLocalizedDescription(this.cardTemplate.description);
+        return localizedDescription;
     }
 
     public int GetCost()
@@ -909,6 +909,14 @@ public abstract class Card
         else if (CARD_NAMES_SPELL.Contains(name))
         {
             card = new SpellCard(id, name, level);
+        }
+        else if (CARD_NAMES_STRUCTURES.Contains(name))
+        {
+            card = new StructureCard(id, name, level);
+        }
+        else if (CARD_NAMES_WEAPONS.Contains(name))
+        {
+            card = new WeaponCard(id, name, level);
         }
         else
         {
@@ -1099,10 +1107,7 @@ public class WeaponCard : Card
     public WeaponCard(
         string id,
         string name,
-        int level,
-        int cost,
-        int attack,
-        int durability
+        int level
     )
     {
         this.id = id;

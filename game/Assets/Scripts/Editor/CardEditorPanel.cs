@@ -417,8 +417,11 @@ public class CardEditorPanel : EditorWindow
                 this.fourthAbility = EditorGUI.Popup(new Rect(5, belowRarity + 40 + 16 * 3, qtr, 20), this.fourthAbility, Card.VALID_ABILITIES);
                 break;
             case Card.CardType.Weapon:
-                EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 50, lineHeight), "Durability");
-                template.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.durability);
+                EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos, 40, lineHeight), "Attack");
+                template.attack = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos, 50, lineHeight), template.attack);
+
+                EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos + lineHeight + lineMargin, 50, lineHeight), "Durability");
+                template.durability = EditorGUI.IntField(new Rect(cardSpecificXPos + 50, cardSpecificYPos + lineHeight + lineMargin, 50, lineHeight), template.durability);
                 break;
             case Card.CardType.Structure:
                 EditorGUI.LabelField(new Rect(cardSpecificXPos, cardSpecificYPos + lineHeight + lineMargin, 40, lineHeight), "Health");

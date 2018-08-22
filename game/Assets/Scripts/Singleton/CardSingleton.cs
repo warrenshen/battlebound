@@ -11,6 +11,19 @@ public class CardSingleton : Singleton<CardSingleton>
     private static int CARD_POOL_SIZE = 30;
 
     [SerializeField]
+    private GameObject creatureCardObjectPrefab;
+    public GameObject CreatureCardObjectPrefab => creatureCardObjectPrefab;
+    [SerializeField]
+    private GameObject spellCardObjectPrefab;
+    public GameObject SpellCardObjectPrefab => spellCardObjectPrefab;
+    [SerializeField]
+    private GameObject structureCardObjectPrefab;
+    public GameObject StructureCardObjectPrefab => structureCardObjectPrefab;
+    [SerializeField]
+    private GameObject weaponCardObjectPrefab;
+    public GameObject WeaponCardObjectPrefab => structureCardObjectPrefab;
+
+    [SerializeField]
     private Dictionary<string, GameObject> summonPool;
 
     [SerializeField]

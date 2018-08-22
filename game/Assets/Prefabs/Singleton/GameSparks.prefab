@@ -37,8 +37,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1976645980449316}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.188808, y: 20, z: -1.6}
+  m_LocalRotation: {x: -0, y: 0.6639114, z: -0, w: 0.74781126}
+  m_LocalPosition: {x: 15.610182, y: 1.2567215, z: -11.694188}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -88,6 +88,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a871f4573f9d04d23b1a946df7af34f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  creatureCardObjectPrefab: {fileID: 1120667588981084, guid: 8d00dcf802dec466da193f12fb246e42,
+    type: 2}
+  spellCardObjectPrefab: {fileID: 1821903685635540, guid: 8aaf3c111c4bd431d97c531468904c53,
+    type: 2}
+  structureCardObjectPrefab: {fileID: 1909821432828176, guid: 4b5394dcdbaf3497a83c6dba967884e7,
+    type: 2}
+  weaponCardObjectPrefab: {fileID: 1646283810910624, guid: dfe7081bd2ada4c4a94dd53f17e13e76,
+    type: 2}
   gems:
   - {fileID: 2800000, guid: 1708ed0be65734bcd8f041fdbfd0b0ed, type: 3}
   - {fileID: 2800000, guid: 62b66eaee4184485aa92046f2235c100, type: 3}

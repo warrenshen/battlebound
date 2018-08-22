@@ -6,7 +6,7 @@ public class LanguageUtility
 {
     private static LanguageUtility instance;
     private Dictionary<string, List<string>> cardNames;
-    private Dictionary<string, List<string>> cardAbilities;
+    private Dictionary<string, List<string>> cardDescriptions;
     private LanguageUtility.Language selectedLanguage;
 
     private static List<Regex> GlobalPatterns = new List<Regex>() {
@@ -16,7 +16,7 @@ public class LanguageUtility
     private static List<Regex> EnglishPatterns = new List<Regex>() {
         new Regex(@"((Warcry)|(Deathwish)|(Doublestrike)|(Piercing)|(Lethal)|(Haste)|(Shielded)|(Protector)|(Lifesap)|(Turnover))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new Regex(@"((Summon)|(Resurrect)|(Convert)|(Destroy)|(Condemn)|(Draw)|(Freeze)|(Restore)|(Recover))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
-        new Regex(@"(Creature)|(Spell)|(Weapon)|(Structure)", RegexOptions.Compiled | RegexOptions.IgnoreCase)
+        new Regex(@"((Creature)|(Spell)|(Weapon)|(Structure))", RegexOptions.Compiled)
     };
 
     public enum Language { EN, CN, KR, JP }
@@ -33,7 +33,7 @@ public class LanguageUtility
     public LanguageUtility()
     {
         this.cardNames = LanguageUtility.LoadTranslations("Translations/names");
-        this.cardAbilities = LanguageUtility.LoadTranslations("Translations/abilities");
+        this.cardDescriptions = LanguageUtility.LoadTranslations("Translations/descriptions");
         this.selectedLanguage = (LanguageUtility.Language)PlayerPrefs.GetInt("LANGUAGE", 0);
     }
 
@@ -63,37 +63,39 @@ public class LanguageUtility
 
     public string GetLocalizedName(string name)
     {
+        name = name.Replace("~", ", ");
+
         if (name == null)
         {
-            Debug.LogWarning("GetLocalizedName called on null.");
+            Debug.LogError("GetLocalizedName called on null.");
             return name;
         }
         if (!this.cardNames.ContainsKey(name))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
+            Debug.LogError(string.Format("Missing translation for: {0}", name));
             return name;
         }
         string value = cardNames[name][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
+            Debug.LogError(string.Format("Missing translation for: {0}", name));
             return name;
         }
         return value;
     }
 
-    public string GetLocalizedAbility(string ability)
+    public string GetLocalizedDescription(string description)
     {
-        if (!this.cardAbilities.ContainsKey(ability))
+        if (!this.cardDescriptions.ContainsKey(description))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
-            return Prettify(ability);
+            Debug.LogError(string.Format("Missing translation for: {0}", description));
+            return Prettify(description);
         }
-        string value = cardAbilities[ability][(int)this.selectedLanguage];
+        string value = this.cardDescriptions[description][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", ability));
-            return Prettify(ability);
+            Debug.LogError(string.Format("Missing translation for: {0}", description));
+            return Prettify(description);
         }
         return Prettify(value);
     }
@@ -101,8 +103,7 @@ public class LanguageUtility
     //make string into rich text e.g. bolding, commas, new lines
     private string Prettify(string input)
     {
-        string output = input.Replace(";", "\n");
-        output = output.Replace("~", ", ");
+        string output = input.Replace(";", "\n").Replace("~", ", ");
 
         foreach (Regex token in GlobalPatterns)
         {
@@ -112,8 +113,6 @@ public class LanguageUtility
             }
         }
 
-        //if ((int)this.selectedLanguage == 0) //english
-        //{
         foreach (Regex token in EnglishPatterns)
         {
             foreach (Match match in token.Matches(output))
@@ -122,8 +121,6 @@ public class LanguageUtility
                 output = token.Replace(output, "<b>$0</b>");
             }
         }
-        //}
-
         return output;
     }
 
