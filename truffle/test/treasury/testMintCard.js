@@ -26,6 +26,9 @@ contract('CardTreasury', function(accounts) {
 
       const supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 0, "supply of instances is not 0");
+
+      const exists = await contract.exists.call(0);
+      assert.equal(exists, false, "exists is not correct");
     });
 
     it ("should not allow a card with invalid template to be minted", async function() {
@@ -43,11 +46,15 @@ contract('CardTreasury', function(accounts) {
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 0, "supply of templates is not 0");
+
+      const exists = await contract.exists.call(0);
+      assert.equal(exists, false, "exists is not correct");
     });
 
     it ("should not allow more cards than mint limit to be minted", async function() {
       let transaction;
       let supply;
+      let exists;
 
       await contract.mintCard(0, 0, minter, { from: minter });
       await contract.mintCard(0, 0, minter, { from: minter });
@@ -63,6 +70,15 @@ contract('CardTreasury', function(accounts) {
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 2, "supply of templates is not 2");
+
+      exists = await contract.exists.call(0);
+      assert.equal(exists, true, "exists is not correct");
+
+      exists = await contract.exists.call(1);
+      assert.equal(exists, true, "exists is not correct");
+
+      exists = await contract.exists.call(2);
+      assert.equal(exists, false, "exists is not correct");
     });
   });
 
@@ -88,6 +104,9 @@ contract('CardTreasury', function(accounts) {
 
       const owner = await contract.ownerOf.call(0);
       assert.equal(owner, recipient, "owner is not correct");
+
+      const exists = await contract.exists.call(0);
+      assert.equal(exists, true, "exists is not correct");
     });
 
     it ("should allow privileged address to mint a card for other", async function() {
@@ -104,6 +123,9 @@ contract('CardTreasury', function(accounts) {
 
       const owner = await contract.ownerOf.call(0);
       assert.equal(owner, recipient, "owner is not correct");
+
+      const exists = await contract.exists.call(0);
+      assert.equal(exists, true, "exists is not correct");
     });
 
     it ("should allow privileged address to mint multiple cards", async function() {
@@ -111,6 +133,7 @@ contract('CardTreasury', function(accounts) {
       let owner;
       let transaction;
       let supply;
+      let exists;
 
       transaction = await contract.mintCard(0, 0, recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
@@ -121,6 +144,9 @@ contract('CardTreasury', function(accounts) {
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
 
+      exists = await contract.exists.call(0);
+      assert.equal(exists, true, "exists is not correct");
+
       transaction = await contract.mintCard(0, 0, recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
       assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
@@ -129,6 +155,9 @@ contract('CardTreasury', function(accounts) {
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 2, "supply of instances is not 2");
+
+      exists = await contract.exists.call(1);
+      assert.equal(exists, true, "exists is not correct");
 
       owner = await contract.ownerOf.call(0);
       assert.equal(owner, recipient, "owner is not correct");
@@ -149,12 +178,16 @@ contract('CardTreasury', function(accounts) {
 
       owner = await contract.ownerOf.call(2);
       assert.equal(owner, recipient, "owner is not correct");
+
+      exists = await contract.exists.call(2);
+      assert.equal(exists, true, "exists is not correct");
     });
 
     it ("should allow privileged address to mint multiple cards with multiple templates", async function() {
       let owner;
       let transaction;
       let supply;
+      let exists;
 
       transaction = await contract.mintCard(0, 0, minter, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
@@ -163,12 +196,18 @@ contract('CardTreasury', function(accounts) {
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
 
+      exists = await contract.exists.call(0);
+      assert.equal(exists, true, "exists is not correct");
+
       transaction = await contract.mintCard(1, 0, buyer, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
       assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 2, "supply of instances is not 2");
+
+      exists = await contract.exists.call(1);
+      assert.equal(exists, true, "exists is not correct");
 
       transaction = await contract.mintCard(0, 0, minter, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
@@ -177,12 +216,18 @@ contract('CardTreasury', function(accounts) {
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 3, "supply of instances is not 3");
 
+      exists = await contract.exists.call(2);
+      assert.equal(exists, true, "exists is not correct");
+
       transaction = await contract.mintCard(1, 0, minter, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
       assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 4, "supply of instances is not 4");
+
+      exists = await contract.exists.call(3);
+      assert.equal(exists, true, "exists is not correct");
 
       owner = await contract.ownerOf.call(0);
       assert.equal(owner, minter, "owner is not correct");

@@ -151,6 +151,7 @@ contract('CardTreasury', function(accounts) {
       let owner;
       let transaction;
       let supply;
+      let exists;
 
       transaction = await contract.mintCards([0, 0, 0], [0, 0, 0], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
@@ -165,6 +166,15 @@ contract('CardTreasury', function(accounts) {
       assert.equal(transaction.logs[5].event, "CardMinted", "expected an CardMinted event");
       assert.equal(transaction.logs[5].args._owner, recipient);
       assert.equal(transaction.logs[5].args._cardId, 2);
+
+      exists = await contract.exists.call(0);
+      assert.equal(exists, true, "exists is not correct");
+
+      exists = await contract.exists.call(1);
+      assert.equal(exists, true, "exists is not correct");
+
+      exists = await contract.exists.call(2);
+      assert.equal(exists, true, "exists is not correct");
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 3, "supply of instances is not 1");
@@ -197,6 +207,15 @@ contract('CardTreasury', function(accounts) {
       assert.equal(transaction.logs[7].event, "CardMinted", "expected an CardMinted event");
       assert.equal(transaction.logs[7].args._owner, recipient);
       assert.equal(transaction.logs[7].args._cardId, 6);
+
+      exists = await contract.exists.call(3);
+      assert.equal(exists, true, "exists is not correct");
+
+      exists = await contract.exists.call(4);
+      assert.equal(exists, true, "exists is not correct");
+
+      exists = await contract.exists.call(5);
+      assert.equal(exists, true, "exists is not correct");
     });
   });
 });
