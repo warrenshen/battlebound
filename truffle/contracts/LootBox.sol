@@ -15,6 +15,8 @@ contract LootBox is Pausable {
   uint256 public blockStart;
   // Total number of boxes bought so far.
   uint256 public boughtCount = 0;
+  // Number of blocks per day.
+  uint256 public blocksPerDay = 600;
 
   constructor() public {
     blockStart = block.number;
@@ -33,7 +35,7 @@ contract LootBox is Pausable {
     uint256 _quantity
   ) external payable whenNotPaused {
     require(_owner != address(0));
-    require(_quantity > 0);
+    require(_quantity > 0 && _quantity <= 20);
     require(msg.sender != _referrer);
 
     uint256 price = calculatePrice(priceByCategory(_category), _quantity);
@@ -45,9 +47,9 @@ contract LootBox is Pausable {
 
   function calculatePrice(uint256 basePrice, uint256 boxCount) public view returns (uint) {
     uint256 blocksPassed = block.number - blockStart;
-    uint256 daysPassed = blocksPassed / 7200;
+    uint256 daysPassed = blocksPassed / blocksPerDay;
     if (28 > daysPassed) {
-      return (basePrice - (((28 - daysPassed) * basePrice) / 100)) * boxCount;
+      return (basePrice - (((21 - daysPassed) * basePrice) / 100)) * boxCount;
     }
     return basePrice * boxCount;
   }

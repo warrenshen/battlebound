@@ -89,6 +89,26 @@ contract('LootBox', function(accounts) {
       }
       assert.equal(transaction, null, "response should not exist");
     });
+
+    it ("should not allow buy more than 20 boxes", async function() {
+      let transaction = null;
+
+      try {
+        transaction = await contract.buyBoxes(
+          buyer,
+          buyer,
+          0,
+          21,
+          {
+            from: buyer,
+            value: 12e+15,
+          }
+        );
+      } catch (error) {
+        err = error
+      }
+      assert.equal(transaction, null, "response should not exist");
+    });
   });
 
   describe ("shoulds", function() {
@@ -178,7 +198,7 @@ contract('LootBox', function(accounts) {
       const transaction = await contract.buyBoxes(
         buyer,
         buyerTwo,
-        0,
+        2,
         1,
         {
           from: buyer,
@@ -189,11 +209,86 @@ contract('LootBox', function(accounts) {
       assert.equal(transaction.logs[0].event, "BoxesBought", "expected a BoxesBought event");
       assert.equal(transaction.logs[0].args._owner, buyer);
       assert.equal(transaction.logs[0].args._referrer, buyerTwo);
-      assert.equal(transaction.logs[0].args._category, 0);
+      assert.equal(transaction.logs[0].args._category, 2);
       assert.equal(transaction.logs[0].args._quantity, 1);
 
       const boughtCount = await contract.boughtCount.call();
       assert.equal(boughtCount, 1);
+
+      const balance = await contract.getBalance.call();
+      assert.equal(balance > 0, true);
+    });
+
+    it ("should allow buy 18 category 2 boxes with referrer", async function() {
+      const transaction = await contract.buyBoxes(
+        buyerTwo,
+        buyer,
+        2,
+        18,
+        {
+          from: buyerTwo,
+          value: 48e+15 * 18,
+        }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+      assert.equal(transaction.logs[0].event, "BoxesBought", "expected a BoxesBought event");
+      assert.equal(transaction.logs[0].args._owner, buyerTwo);
+      assert.equal(transaction.logs[0].args._referrer, buyer);
+      assert.equal(transaction.logs[0].args._category, 2);
+      assert.equal(transaction.logs[0].args._quantity, 18);
+
+      const boughtCount = await contract.boughtCount.call();
+      assert.equal(boughtCount, 18);
+
+      const balance = await contract.getBalance.call();
+      assert.equal(balance > 0, true);
+    });
+
+    it ("should allow buy one category 1 box for someone else", async function() {
+      const transaction = await contract.buyBoxes(
+        buyerTwo,
+        0,
+        1,
+        1,
+        {
+          from: buyer,
+          value: 48e+15,
+        }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+      assert.equal(transaction.logs[0].event, "BoxesBought", "expected a BoxesBought event");
+      assert.equal(transaction.logs[0].args._owner, buyerTwo);
+      assert.equal(transaction.logs[0].args._referrer, 0);
+      assert.equal(transaction.logs[0].args._category, 1);
+      assert.equal(transaction.logs[0].args._quantity, 1);
+
+      const boughtCount = await contract.boughtCount.call();
+      assert.equal(boughtCount, 1);
+
+      const balance = await contract.getBalance.call();
+      assert.equal(balance > 0, true);
+    });
+
+    it ("should allow buy 20 category 1 boxes for someone else", async function() {
+      const transaction = await contract.buyBoxes(
+        buyerTwo,
+        0,
+        1,
+        20,
+        {
+          from: buyer,
+          value: 48e+15 * 20,
+        }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+      assert.equal(transaction.logs[0].event, "BoxesBought", "expected a BoxesBought event");
+      assert.equal(transaction.logs[0].args._owner, buyerTwo);
+      assert.equal(transaction.logs[0].args._referrer, 0);
+      assert.equal(transaction.logs[0].args._category, 1);
+      assert.equal(transaction.logs[0].args._quantity, 20);
+
+      const boughtCount = await contract.boughtCount.call();
+      assert.equal(boughtCount, 20);
 
       const balance = await contract.getBalance.call();
       assert.equal(balance > 0, true);
