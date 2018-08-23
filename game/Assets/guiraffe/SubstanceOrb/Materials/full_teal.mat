@@ -19,7 +19,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Gradient:
-        m_Texture: {fileID: 2800000, guid: 9679932fe6465a643acea7fc06f1a728, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2c112ca1b64c3fb4191a092db14df565, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -27,11 +27,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Overlay:
-        m_Texture: {fileID: 2800000, guid: 4bd2e5b6a69aeac449fc727474c5f789, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2c112ca1b64c3fb4191a092db14df565, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Particles:
-        m_Texture: {fileID: 2800000, guid: 6118e48faaf6f73458e0248cb1fc2712, type: 3}
+        m_Texture: {fileID: 2800000, guid: 87444e9be164040f596d68a208530e48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SAlphaTex:
@@ -39,11 +39,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Shadow:
-        m_Texture: {fileID: 2800000, guid: 069c16b942bf6de4589838dc53dd9aa2, type: 3}
+        m_Texture: {fileID: 2800000, guid: 72f9b7075d92c4d44b21052394011fef, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Smoke:
-        m_Texture: {fileID: 2800000, guid: 6f56e0bedf62f2d48b4dd713116cea30, type: 3}
+        m_Texture: {fileID: 2800000, guid: 87444e9be164040f596d68a208530e48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SurfaceTexture:
@@ -51,27 +51,27 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _uva:
-        m_Texture: {fileID: 2800000, guid: 67ee320e154f4d14cbe00af717b42883, type: 3}
+        m_Texture: {fileID: 2800000, guid: 449ba3f9a70814f50bad6e11aa90f8f8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Fill: 1
-    - _P1Mul: 0.35
-    - _P2Mul: 0.75
+    - _P1Mul: 0.172
+    - _P2Mul: 0.291
     - _Particles1OffsetX: 0
     - _Particles1OffsetY: 0
-    - _Particles1Tiling: 1
+    - _Particles1Tiling: 20
     - _Particles2OffsetX: 0
     - _Particles2OffsetY: 0
-    - _Particles2Tiling: 0.5
+    - _Particles2Tiling: 2
     - _Smoke1OffsetX: 0
     - _Smoke1OffsetY: 0
     - _Smoke1Tiling: 0.8
     - _Smoke2OffsetX: 0
     - _Smoke2OffsetY: 0
-    - _Smoke2Tiling: 0.75
+    - _Smoke2Tiling: 0.8
     - _SurfaceOffsetX: 0
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.48235294, b: 0.8901961, a: 1}
-    - _Color: {r: 1, g: 0.9372549, b: 0.44705883, a: 1}
-    - _SurfaceColor: {r: 0.5294118, g: 1, b: 0.8039216, a: 0.9098039}
+    - _BaseColor: {r: 0.30196083, g: 0.5856511, b: 0.8980392, a: 1}
+    - _Color: {r: 0.56181026, g: 0.7835226, b: 0.9528302, a: 1}
+    - _SurfaceColor: {r: 0, g: 0.6669488, b: 1, a: 0.8666667}

@@ -60,6 +60,8 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     private GameObject mulliganOverlay;
+    [SerializeField]
+    private GameObject generalOverlay;
 
     [SerializeField]
     private List<CardObject> xpCardObjects;
@@ -107,6 +109,7 @@ public class BattleManager : MonoBehaviour
         this.battleLayer = LayerMask.NameToLayer("Battle");
         this.boardOrBattleLayer = LayerMask.GetMask(new string[2] { "Board", "Battle" });
         this.mulliganOverlay.SetActive(true);
+        this.generalOverlay.SetActive(true);
 
         if (!FlagHelper.IsServerEnabled())
         {
@@ -164,12 +167,15 @@ public class BattleManager : MonoBehaviour
 
     private void ChooseRandomSetting()
     {
-        Transform pool = GameObject.Find("Setting Pool").transform as Transform;
-        foreach (Transform child in pool)
+        GameObject pool = GameObject.Find("Setting Pool") as GameObject;
+        if (pool == null)
+            return;
+
+        foreach (Transform child in pool.transform)
         {
             child.gameObject.SetActive(false);
         }
-        pool.GetChild(UnityEngine.Random.Range(0, pool.childCount)).gameObject.SetActive(true);
+        pool.transform.GetChild(UnityEngine.Random.Range(0, pool.transform.childCount)).gameObject.SetActive(true);
     }
 
     private void AttackStartMade(RaycastHit hit)
