@@ -11,13 +11,19 @@ contract('LootBox', function(accounts) {
   const buyer = accounts[1];
   const buyerTwo = accounts[2];
 
-  const categoryOnePrice = 12e+15;
-  const categoryTwoPrice = 24e+15;
-  const categoryThreePrice = 48e+15;
+  let categoryZeroPrice;
+  let categoryOnePrice;
+  let categoryTwoPrice;
+  let categoryThreePrice;
 
   describe ("should nots", function() {
     beforeEach(async function() {
       contract = await LootBox.new();
+      blocksPerDay = await contract.blocksPerDay.call();
+      categoryZeroPrice = await contract.priceByCategory.call(0);
+      categoryOnePrice = await contract.priceByCategory.call(1);
+      categoryTwoPrice = await contract.priceByCategory.call(2);
+      categoryThreePrice = await contract.priceByCategory.call(3);
     });
 
     it ("should not allow buy box with insufficent payment", async function() {
@@ -46,7 +52,6 @@ contract('LootBox', function(accounts) {
     before(async function() {
       contract = await LootBox.new();
       miner = await BlockMiner.new();
-      blocksPerDay = await contract.blocksPerDay.call();
     });
 
     it ("should have full discount for one box on first day", async function() {

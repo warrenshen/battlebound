@@ -16,7 +16,7 @@ contract LootBox is Pausable {
   // Total number of boxes bought so far.
   uint256 public boughtCount = 0;
   // Number of blocks per day.
-  uint256 public blocksPerDay = 600;
+  uint256 public blocksPerDay = 6000;
 
   constructor() public {
     blockStart = block.number;
@@ -54,15 +54,15 @@ contract LootBox is Pausable {
     return basePrice * boxCount;
   }
 
-  function priceByCategory(uint256 _category) public view returns (uint) {
+  function priceByCategory(uint256 _category) public pure returns (uint) {
     if (_category == 0) {
-      return 12 finney;
+      return 50 finney;
     } else if (_category == 1) {
-      return 24 finney;
+      return 100 finney;
     } else if (_category == 2) {
-      return 48 finney;
+      return 300 finney;
     } else {
-      return 48 finney;
+      return 5000 finney;
     }
   }
 

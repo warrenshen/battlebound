@@ -3,6 +3,10 @@ const LootBox = artifacts.require("./LootBox.sol");
 contract('LootBox', function(accounts) {
 
   let contract;
+  let categoryZeroPrice;
+  let categoryOnePrice;
+  let categoryTwoPrice;
+  let categoryThreePrice;
 
   const minter = accounts[0];
   const buyer = accounts[1];
@@ -11,6 +15,10 @@ contract('LootBox', function(accounts) {
   describe ("should nots", function() {
     beforeEach(async function() {
       contract = await LootBox.new();
+      categoryZeroPrice = await contract.priceByCategory.call(0);
+      categoryOnePrice = await contract.priceByCategory.call(1);
+      categoryTwoPrice = await contract.priceByCategory.call(2);
+      categoryThreePrice = await contract.priceByCategory.call(3);
     });
 
     it ("should not allow buy boxes with no owner", async function() {
@@ -24,7 +32,7 @@ contract('LootBox', function(accounts) {
           1,
           {
             from: buyer,
-            value: 12e+15,
+            value: categoryZeroPrice,
           }
         );
       } catch (error) {
@@ -44,7 +52,7 @@ contract('LootBox', function(accounts) {
           0,
           {
             from: buyer,
-            value: 12e+15,
+            value: categoryZeroPrice,
           }
         );
       } catch (error) {
@@ -81,7 +89,7 @@ contract('LootBox', function(accounts) {
           1,
           {
             from: buyer,
-            value: 12e+15,
+            value: categoryZeroPrice,
           }
         );
       } catch (error) {
@@ -101,7 +109,7 @@ contract('LootBox', function(accounts) {
           21,
           {
             from: buyer,
-            value: 12e+15,
+            value: categoryZeroPrice * 21,
           }
         );
       } catch (error) {
@@ -124,7 +132,7 @@ contract('LootBox', function(accounts) {
         1,
         {
           from: buyer,
-          value: 12e+15,
+          value: categoryZeroPrice,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -152,7 +160,7 @@ contract('LootBox', function(accounts) {
         6,
         {
           from: buyer,
-          value: 12e+15 * 6,
+          value: categoryZeroPrice * 6,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -177,7 +185,7 @@ contract('LootBox', function(accounts) {
         1,
         {
           from: buyer,
-          value: 48e+15,
+          value: categoryZeroPrice,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -202,7 +210,7 @@ contract('LootBox', function(accounts) {
         1,
         {
           from: buyer,
-          value: 48e+15,
+          value: categoryTwoPrice,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -227,7 +235,7 @@ contract('LootBox', function(accounts) {
         18,
         {
           from: buyerTwo,
-          value: 48e+15 * 18,
+          value: categoryTwoPrice * 18,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -252,7 +260,7 @@ contract('LootBox', function(accounts) {
         1,
         {
           from: buyer,
-          value: 48e+15,
+          value: categoryOnePrice,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -277,7 +285,7 @@ contract('LootBox', function(accounts) {
         20,
         {
           from: buyer,
-          value: 48e+15 * 20,
+          value: categoryOnePrice * 20,
         }
       );
       assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
@@ -289,6 +297,31 @@ contract('LootBox', function(accounts) {
 
       const boughtCount = await contract.boughtCount.call();
       assert.equal(boughtCount, 20);
+
+      const balance = await contract.getBalance.call();
+      assert.equal(balance > 0, true);
+    });
+
+    it ("should allow buy 1 category 3 box with referrer", async function() {
+      const transaction = await contract.buyBoxes(
+        buyer,
+        buyerTwo,
+        3,
+        1,
+        {
+          from: buyer,
+          value: categoryThreePrice,
+        }
+      );
+      assert.equal(transaction.receipt.status, '0x01', "transaction should exist");
+      assert.equal(transaction.logs[0].event, "BoxesBought", "expected a BoxesBought event");
+      assert.equal(transaction.logs[0].args._owner, buyer);
+      assert.equal(transaction.logs[0].args._referrer, buyerTwo);
+      assert.equal(transaction.logs[0].args._category, 3);
+      assert.equal(transaction.logs[0].args._quantity, 1);
+
+      const boughtCount = await contract.boughtCount.call();
+      assert.equal(boughtCount, 1);
 
       const balance = await contract.getBalance.call();
       assert.equal(balance > 0, true);
