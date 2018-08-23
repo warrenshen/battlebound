@@ -1,33 +1,57 @@
-exports.handler = async (event, callback) => {
-  const nonce = event.nonce;
-  const gasPriceInGWei = event.gasPrice;
-  const gasLimit = event.gasLimit;
-  const chainId = event.chainId;
+exports.handler = async (event, context, callback) => {
+  const nonce = parseInt(event.nonce);
+  const gasPriceInGWei = parseInt(event.gasPrice);
+  const gasLimit = parseInt(event.gasLimit);
+  const chainId = parseInt(event.chainId);
   const contractAddress = event.contractAddress;
   const privateKey = event.privateKey;
 
-  if (!nonce || !gasPriceInGWei || !gasLimit) {
-    return "ERROR: invalid nonce, gasPrice, or gasLimit param";
+  let error = null;
+
+  if (!nonce) {
+    error = "ERROR: invalid nonce param: " + nonce;
+  } else if (!gasPriceInGWei || !gasLimit) {
+    error = "ERROR: gasPrice or gasLimit param";
   } else if (gasPriceInGWei > 10) {
-    return "ERROR: gasPrice param should not be greater than 10";
+    error = "ERROR: gasPrice param should not be greater than 10";
   } else if (!chainId ||chainId != 4 && chainId != 1) {
-    return "ERROR: invalid chainId param";
+    error = "ERROR: invalid chainId param";
   } else if (!contractAddress || contractAddress.indexOf("0x") != 0 || contractAddress.length != 42) {
-    return "ERROR: invalid contractAddress param";
+    error = "ERROR: invalid contractAddress param";
   } else if (!privateKey || privateKey.indexOf("0x") != 0 || privateKey.length != 66) {
-    return "ERROR: invalid privateKey param";
+    error = "ERROR: invalid privateKey param";
   }
 
-  const templateIds = event.templateIds;
-  const variations = event.variations;
+  if (error) {
+    var response = {
+      "statusCode": 400,
+      "body": { "error": error },
+      "isBase64Encoded": false
+    };
+
+    callback(null, response);
+  }
+
+  const templateIds = JSON.parse(event.templateIds);
+  const variations = JSON.parse(event.variations);
   const recipientAddress = event.recipientAddress;
 
   if (!Array.isArray(templateIds) || !Array.isArray(variations)) {
-    return "ERROR: invalid templateIds or variations param";
+    error = "ERROR: invalid templateIds or variations param";
   } else if (templateIds.length != variations.length) {
-    return "ERROR: params templateIds and variations must have same length";
+    error = "ERROR: params templateIds and variations must have same length";
   } else if (!recipientAddress || recipientAddress.indexOf("0x") != 0 || recipientAddress.length != 42) {
-    return "ERROR: invalid recipientAddress param";
+    error = "ERROR: invalid recipientAddress param";
+  }
+
+  if (error) {
+    var response = {
+      "statusCode": 400,
+      "body": { "error": error },
+      "isBase64Encoded": false
+    };
+
+    callback(null, response);
   }
 
   const Web3 = require("web3-js").Web3;
@@ -56,5 +80,16 @@ exports.handler = async (event, callback) => {
 
   const account = web3.eth.accounts.privateKeyToAccount(privateKey);
   const signedTx = await account.signTransaction(txParams)
-  return signedTx.rawTransaction;
+
+  const responseBody = {
+    "rawTransaction": signedTx.rawTransaction,
+  };
+
+  var response = {
+    "statusCode": 200,
+    "body": JSON.stringify(responseBody),
+    "isBase64Encoded": false
+  };
+
+  callback(null, response);
 };
