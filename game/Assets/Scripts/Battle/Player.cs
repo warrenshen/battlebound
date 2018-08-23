@@ -67,8 +67,8 @@ public class Player
         this.deck = GetDeck();
         this.deckSize = this.deck.Size();
 
-        this.mana = 20;
-        this.maxMana = 20;
+        this.mana = 10;
+        this.maxMana = 10;
 
         this.cardCount = this.deckSize;
         this.mode = PLAYER_STATE_MODE_NORMAL;
