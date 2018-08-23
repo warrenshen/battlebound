@@ -25,11 +25,12 @@ exports.handler = async (event, context, callback) => {
   if (error) {
     var response = {
       "statusCode": 400,
-      "body": { "error": error },
+      "body": JSON.stringify({ "error": error }),
       "isBase64Encoded": false
     };
 
     callback(null, response);
+    return;
   }
 
   const templateIds = JSON.parse(event.templateIds);
@@ -47,11 +48,12 @@ exports.handler = async (event, context, callback) => {
   if (error) {
     var response = {
       "statusCode": 400,
-      "body": { "error": error },
+      "body": JSON.stringify({ "error": error }),
       "isBase64Encoded": false
     };
 
     callback(null, response);
+    return;
   }
 
   const Web3 = require("web3-js").Web3;
@@ -92,4 +94,5 @@ exports.handler = async (event, context, callback) => {
   };
 
   callback(null, response);
+  return;
 };
