@@ -1,0 +1,1405 @@
+fileFormatVersion: 2
+guid: 892a708cca2c9064187b8edb33db23b9
+labels:
+- Water
+- Terrain
+- Vegetation
+- Ground
+timeCreated: 1467493805
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: hexMountainsSnow00
+    21300002: cold_terrain_sheet_hex0_1
+    21300004: cold_terrain_sheet_hex0_2
+    21300006: hexMountainsSnow03
+    21300008: hexDirtCold00
+    21300010: hexDirtCold01
+    21300012: hexDirtCold02
+    21300014: hexDirtCold03
+    21300016: hexPlainsColdSnowCovered00
+    21300018: hexPlainsColdSnowCovered01
+    21300020: hexPlainsColdSnowCovered02
+    21300022: hexPlainsColdSnowCovered03
+    21300024: hexPlainsColdSnowTransition00
+    21300026: hexPlainsColdSnowTransition01
+    21300028: hexPlainsColdSnowTransition02
+    21300030: hexPlainsColdSnowTransition03
+    21300032: hexForestPineSnowCovered00
+    21300034: hexForestPineSnowCovered01
+    21300036: hexForestPineSnowCovered02
+    21300038: hexForestPineSnowCovered03
+    21300040: hexForestPineSnowTransition00
+    21300042: hexForestPineSnowTransition01
+    21300044: hexForestPineSnowTransition02
+    21300046: hexForestPineSnowTransition03
+    21300048: hexHillsColdSnowCovered00
+    21300050: hexHillsColdSnowCovered01
+    21300052: hexHillsColdSnowCovered02
+    21300054: hexHillsColdSnowCovered03
+    21300056: hexHillsColdSnowTransition00
+    21300058: hexHillsColdSnowTransition01
+    21300060: hexHillsColdSnowTransition02
+    21300062: hexHillsColdSnowTransition03
+    21300064: hexOceanIceBergs00
+    21300066: hexOceanIceBergs01
+    21300068: hexOceanIceBergs02
+    21300070: hexOceanIceBergs03
+    21300072: hexSnowField00
+    21300074: hexSnowField01
+    21300076: hexSnowField02
+    21300078: hexSnowField03
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: hexMountainsSnow00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 118, y: 218}
+        - {x: 107, y: 227}
+        - {x: 98, y: 253}
+        - {x: 80, y: 285}
+        - {x: 69, y: 292}
+        - {x: 55, y: 295}
+        - {x: 50, y: 317}
+        - {x: 29, y: 338}
+        - {x: 18, y: 335}
+        - {x: 4, y: 353}
+        - {x: -2, y: 353}
+        - {x: -7, y: 352}
+        - {x: -18, y: 342}
+        - {x: -50, y: 311}
+        - {x: -65, y: 292}
+        - {x: -95, y: 259}
+        - {x: -110, y: 244}
+        - {x: -120, y: 223}
+        - {x: -127, y: 205}
+        - {x: -128, y: 202}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 201}
+        - {x: 124, y: 210}
+      - - {x: 93, y: 270}
+        - {x: 96, y: 271}
+        - {x: 96, y: 274}
+        - {x: 93, y: 275}
+        - {x: 91, y: 273}
+    - name: cold_terrain_sheet_hex0_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 109, y: 241}
+        - {x: 99, y: 280}
+        - {x: 92, y: 293}
+        - {x: 64, y: 315}
+        - {x: 61, y: 316}
+        - {x: 56, y: 316}
+        - {x: 30, y: 290}
+        - {x: 3, y: 284}
+        - {x: -24, y: 293}
+        - {x: -42, y: 298}
+        - {x: -53, y: 298}
+        - {x: -72, y: 282}
+        - {x: -75, y: 274}
+        - {x: -77, y: 266}
+        - {x: -97, y: 250}
+        - {x: -109, y: 222}
+        - {x: -128, y: 198}
+        - {x: -128, y: 61}
+        - {x: -100, y: 46}
+        - {x: -87, y: 40}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 201}
+        - {x: 118, y: 227}
+    - name: cold_terrain_sheet_hex0_2
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 100, y: 251}
+        - {x: 87, y: 269}
+        - {x: 77, y: 277}
+        - {x: 52, y: 288}
+        - {x: 32, y: 288}
+        - {x: 18, y: 281}
+        - {x: 5, y: 277}
+        - {x: -14, y: 275}
+        - {x: -32, y: 257}
+        - {x: -42, y: 243}
+        - {x: -60, y: 267}
+        - {x: -66, y: 269}
+        - {x: -76, y: 270}
+        - {x: -97, y: 265}
+        - {x: -111, y: 252}
+        - {x: -128, y: 204}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 199}
+        - {x: 107, y: 231}
+      - - {x: -125, y: 216}
+        - {x: -125, y: 219}
+        - {x: -128, y: 220}
+        - {x: -128, y: 215}
+    - name: hexMountainsSnow03
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 119, y: 226}
+        - {x: 115, y: 244}
+        - {x: 77, y: 282}
+        - {x: 73, y: 282}
+        - {x: 55, y: 274}
+        - {x: 31, y: 284}
+        - {x: 18, y: 302}
+        - {x: -12, y: 345}
+        - {x: -23, y: 357}
+        - {x: -35, y: 357}
+        - {x: -64, y: 325}
+        - {x: -69, y: 326}
+        - {x: -91, y: 304}
+        - {x: -99, y: 287}
+        - {x: -111, y: 262}
+        - {x: -112, y: 243}
+        - {x: -122, y: 218}
+        - {x: -128, y: 200}
+        - {x: -128, y: 61}
+        - {x: -116, y: 54}
+        - {x: -89, y: 41}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 199}
+        - {x: 124, y: 214}
+    - name: hexDirtCold00
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -2, y: 258}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 7, y: 258}
+    - name: hexDirtCold01
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -2, y: 258}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 7, y: 258}
+    - name: hexDirtCold02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -2, y: 258}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 7, y: 258}
+    - name: hexDirtCold03
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1664
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -2, y: 258}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 7, y: 258}
+    - name: hexPlainsColdSnowCovered00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 93, y: 217}
+        - {x: 64, y: 232}
+        - {x: 22, y: 254}
+        - {x: 18, y: 255}
+        - {x: 5, y: 260}
+        - {x: -5, y: 260}
+        - {x: -21, y: 252}
+        - {x: -57, y: 235}
+        - {x: -74, y: 226}
+        - {x: -81, y: 225}
+        - {x: -85, y: 221}
+        - {x: -112, y: 210}
+        - {x: -124, y: 202}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 120, y: 204}
+    - name: hexPlainsColdSnowCovered01
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 128, y: 196}
+        - {x: 114, y: 207}
+        - {x: 82, y: 223}
+        - {x: 55, y: 235}
+        - {x: 32, y: 248}
+        - {x: 5, y: 261}
+        - {x: -2, y: 261}
+        - {x: -34, y: 248}
+        - {x: -51, y: 239}
+        - {x: -92, y: 219}
+        - {x: -118, y: 206}
+        - {x: -128, y: 196}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 31, y: 11}
+        - {x: 38, y: 16}
+        - {x: 128, y: 61}
+    - name: hexPlainsColdSnowCovered02
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 128, y: 61}
+        - {x: 128, y: 199}
+        - {x: 104, y: 212}
+        - {x: 69, y: 229}
+        - {x: 25, y: 251}
+        - {x: 4, y: 261}
+        - {x: -6, y: 261}
+        - {x: -27, y: 251}
+        - {x: -64, y: 232}
+        - {x: -101, y: 212}
+        - {x: -118, y: 205}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 8, y: 0}
+        - {x: 44, y: 17}
+        - {x: 99, y: 47}
+        - {x: 102, y: 47}
+    - name: hexPlainsColdSnowCovered03
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 112, y: 209}
+        - {x: 40, y: 243}
+        - {x: 23, y: 250}
+        - {x: 13, y: 257}
+        - {x: 0, y: 262}
+        - {x: -13, y: 258}
+        - {x: -36, y: 246}
+        - {x: -54, y: 237}
+        - {x: -77, y: 226}
+        - {x: -91, y: 216}
+        - {x: -106, y: 212}
+        - {x: -121, y: 202}
+        - {x: -128, y: 195}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 196}
+        - {x: 125, y: 201}
+    - name: hexPlainsColdSnowTransition00
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 117, y: 204}
+        - {x: 101, y: 213}
+        - {x: 76, y: 227}
+        - {x: 51, y: 237}
+        - {x: 35, y: 245}
+        - {x: 6, y: 262}
+        - {x: -3, y: 262}
+        - {x: -11, y: 259}
+        - {x: -44, y: 242}
+        - {x: -66, y: 237}
+        - {x: -73, y: 234}
+        - {x: -90, y: 218}
+        - {x: -107, y: 211}
+        - {x: -122, y: 202}
+        - {x: -128, y: 198}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 123, y: 200}
+    - name: hexPlainsColdSnowTransition01
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 92, y: 218}
+        - {x: 61, y: 231}
+        - {x: 58, y: 231}
+        - {x: 34, y: 242}
+        - {x: 26, y: 249}
+        - {x: 18, y: 254}
+        - {x: 4, y: 260}
+        - {x: 1, y: 261}
+        - {x: -3, y: 261}
+        - {x: -19, y: 253}
+        - {x: -52, y: 237}
+        - {x: -75, y: 223}
+        - {x: -85, y: 222}
+        - {x: -122, y: 203}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 196}
+        - {x: 125, y: 200}
+    - name: hexPlainsColdSnowTransition02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 94, y: 215}
+        - {x: 77, y: 226}
+        - {x: 61, y: 231}
+        - {x: 36, y: 246}
+        - {x: 24, y: 250}
+        - {x: 16, y: 257}
+        - {x: -1, y: 261}
+        - {x: -6, y: 261}
+        - {x: -24, y: 252}
+        - {x: -47, y: 240}
+        - {x: -60, y: 233}
+        - {x: -98, y: 216}
+        - {x: -122, y: 202}
+        - {x: -128, y: 196}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 116, y: 205}
+    - name: hexPlainsColdSnowTransition03
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1280
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 99, y: 214}
+        - {x: 70, y: 228}
+        - {x: 58, y: 233}
+        - {x: 32, y: 246}
+        - {x: 25, y: 252}
+        - {x: 8, y: 261}
+        - {x: -5, y: 261}
+        - {x: -19, y: 253}
+        - {x: -53, y: 238}
+        - {x: -66, y: 231}
+        - {x: -72, y: 226}
+        - {x: -101, y: 213}
+        - {x: -126, y: 201}
+        - {x: -128, y: 198}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 119, y: 203}
+    - name: hexForestPineSnowCovered00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 112, y: 206}
+        - {x: 106, y: 213}
+        - {x: 87, y: 276}
+        - {x: 65, y: 269}
+        - {x: 45, y: 301}
+        - {x: 28, y: 317}
+        - {x: 12, y: 317}
+        - {x: -1, y: 298}
+        - {x: -24, y: 307}
+        - {x: -31, y: 301}
+        - {x: -50, y: 299}
+        - {x: -84, y: 272}
+        - {x: -114, y: 215}
+        - {x: -128, y: 201}
+        - {x: -128, y: 61}
+        - {x: -60, y: 25}
+        - {x: -46, y: 18}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 119, y: 206}
+      - - {x: -84, y: 284}
+        - {x: -81, y: 285}
+        - {x: -81, y: 288}
+        - {x: -84, y: 289}
+        - {x: -86, y: 287}
+      - - {x: 55, y: 295}
+        - {x: 58, y: 296}
+        - {x: 58, y: 299}
+        - {x: 55, y: 300}
+        - {x: 53, y: 298}
+    - name: hexForestPineSnowCovered01
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 91, y: 224}
+        - {x: 67, y: 264}
+        - {x: 35, y: 275}
+        - {x: -1, y: 312}
+        - {x: -16, y: 312}
+        - {x: -37, y: 256}
+        - {x: -39, y: 266}
+        - {x: -51, y: 294}
+        - {x: -57, y: 301}
+        - {x: -85, y: 249}
+        - {x: -77, y: 243}
+        - {x: -75, y: 243}
+        - {x: -77, y: 243}
+        - {x: -81, y: 241}
+        - {x: -128, y: 200}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 201}
+        - {x: 124, y: 208}
+    - name: hexForestPineSnowCovered02
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 100, y: 229}
+        - {x: 87, y: 244}
+        - {x: 76, y: 266}
+        - {x: 52, y: 283}
+        - {x: 29, y: 258}
+        - {x: 16, y: 266}
+        - {x: 5, y: 287}
+        - {x: -11, y: 313}
+        - {x: -19, y: 313}
+        - {x: -32, y: 288}
+        - {x: -55, y: 244}
+        - {x: -78, y: 263}
+        - {x: -90, y: 271}
+        - {x: -106, y: 240}
+        - {x: -128, y: 196}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 197}
+        - {x: 127, y: 201}
+      - - {x: 100, y: 238}
+        - {x: 102, y: 236}
+        - {x: 105, y: 237}
+        - {x: 105, y: 240}
+        - {x: 103, y: 242}
+        - {x: 100, y: 241}
+    - name: hexForestPineSnowCovered03
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 96, y: 225}
+        - {x: 91, y: 250}
+        - {x: 70, y: 278}
+        - {x: 47, y: 256}
+        - {x: 32, y: 282}
+        - {x: 27, y: 282}
+        - {x: 13, y: 275}
+        - {x: -33, y: 273}
+        - {x: -48, y: 281}
+        - {x: -55, y: 279}
+        - {x: -77, y: 234}
+        - {x: -76, y: 250}
+        - {x: -97, y: 277}
+        - {x: -114, y: 238}
+        - {x: -128, y: 203}
+        - {x: -128, y: 61}
+        - {x: -76, y: 34}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 197}
+        - {x: 116, y: 206}
+      - - {x: -20, y: 258}
+        - {x: -17, y: 259}
+        - {x: -17, y: 262}
+        - {x: -20, y: 263}
+        - {x: -22, y: 261}
+    - name: hexForestPineSnowTransition00
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 90, y: 232}
+        - {x: 90, y: 245}
+        - {x: 74, y: 265}
+        - {x: 71, y: 263}
+        - {x: 60, y: 261}
+        - {x: 47, y: 293}
+        - {x: 38, y: 293}
+        - {x: 20, y: 264}
+        - {x: 7, y: 259}
+        - {x: -8, y: 293}
+        - {x: -13, y: 293}
+        - {x: -33, y: 270}
+        - {x: -32, y: 246}
+        - {x: -58, y: 251}
+        - {x: -79, y: 264}
+        - {x: -85, y: 269}
+        - {x: -128, y: 207}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 197}
+        - {x: 124, y: 206}
+    - name: hexForestPineSnowTransition01
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 84, y: 230}
+        - {x: 73, y: 237}
+        - {x: 53, y: 256}
+        - {x: 38, y: 248}
+        - {x: 29, y: 263}
+        - {x: 23, y: 256}
+        - {x: 8, y: 294}
+        - {x: 2, y: 294}
+        - {x: -2, y: 292}
+        - {x: -22, y: 266}
+        - {x: -48, y: 288}
+        - {x: -54, y: 285}
+        - {x: -72, y: 256}
+        - {x: -84, y: 224}
+        - {x: -117, y: 209}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 204}
+        - {x: 116, y: 212}
+    - name: hexForestPineSnowTransition02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 104, y: 254}
+        - {x: 87, y: 234}
+        - {x: 80, y: 248}
+        - {x: 67, y: 269}
+        - {x: 57, y: 279}
+        - {x: 35, y: 324}
+        - {x: 23, y: 324}
+        - {x: 9, y: 303}
+        - {x: -7, y: 274}
+        - {x: -20, y: 305}
+        - {x: -33, y: 296}
+        - {x: -59, y: 266}
+        - {x: -72, y: 245}
+        - {x: -75, y: 230}
+        - {x: -118, y: 210}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 203}
+        - {x: 125, y: 217}
+    - name: hexForestPineSnowTransition03
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 896
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 105, y: 259}
+        - {x: 93, y: 281}
+        - {x: 87, y: 282}
+        - {x: 65, y: 250}
+        - {x: 46, y: 287}
+        - {x: 44, y: 287}
+        - {x: 30, y: 277}
+        - {x: 19, y: 287}
+        - {x: 6, y: 287}
+        - {x: -27, y: 248}
+        - {x: -27, y: 257}
+        - {x: -49, y: 248}
+        - {x: -68, y: 271}
+        - {x: -94, y: 236}
+        - {x: -126, y: 200}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 200}
+        - {x: 110, y: 232}
+      - - {x: -36, y: 260}
+        - {x: -33, y: 261}
+        - {x: -33, y: 264}
+        - {x: -36, y: 265}
+        - {x: -38, y: 263}
+      - - {x: 75, y: 275}
+        - {x: 75, y: 272}
+        - {x: 76, y: 270}
+        - {x: 78, y: 270}
+        - {x: 81, y: 273}
+        - {x: 80, y: 276}
+        - {x: 77, y: 276}
+    - name: hexHillsColdSnowCovered00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 88, y: 220}
+        - {x: 65, y: 246}
+        - {x: 61, y: 247}
+        - {x: 50, y: 246}
+        - {x: 6, y: 264}
+        - {x: -6, y: 289}
+        - {x: -12, y: 291}
+        - {x: -27, y: 291}
+        - {x: -53, y: 261}
+        - {x: -64, y: 240}
+        - {x: -86, y: 228}
+        - {x: -124, y: 201}
+        - {x: -128, y: 197}
+        - {x: -128, y: 60}
+        - {x: -23, y: 6}
+        - {x: -20, y: 6}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 196}
+        - {x: 114, y: 210}
+      - - {x: -95, y: 382}
+        - {x: -95, y: 384}
+        - {x: -100, y: 384}
+        - {x: -98, y: 381}
+      - - {x: 80, y: 382}
+        - {x: 80, y: 384}
+        - {x: 75, y: 384}
+        - {x: 77, y: 381}
+    - name: hexHillsColdSnowCovered01
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 99, y: 220}
+        - {x: 96, y: 229}
+        - {x: 87, y: 236}
+        - {x: 55, y: 271}
+        - {x: 48, y: 276}
+        - {x: 22, y: 276}
+        - {x: -10, y: 259}
+        - {x: -33, y: 249}
+        - {x: -48, y: 266}
+        - {x: -63, y: 260}
+        - {x: -86, y: 235}
+        - {x: -112, y: 215}
+        - {x: -128, y: 196}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 196}
+        - {x: 116, y: 212}
+      - - {x: -123, y: 384}
+        - {x: -122, y: 381}
+        - {x: -113, y: 381}
+        - {x: -111, y: 383}
+        - {x: -111, y: 384}
+      - - {x: -67, y: 382}
+        - {x: -67, y: 384}
+        - {x: -72, y: 384}
+        - {x: -70, y: 381}
+      - - {x: -11, y: 384}
+        - {x: -10, y: 381}
+        - {x: -5, y: 381}
+        - {x: -3, y: 383}
+        - {x: -3, y: 384}
+    - name: hexHillsColdSnowCovered02
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 126, y: 201}
+        - {x: 112, y: 212}
+        - {x: 94, y: 217}
+        - {x: 62, y: 247}
+        - {x: 42, y: 248}
+        - {x: 13, y: 282}
+        - {x: -18, y: 282}
+        - {x: -37, y: 272}
+        - {x: -66, y: 259}
+        - {x: -86, y: 251}
+        - {x: -109, y: 221}
+        - {x: -120, y: 216}
+        - {x: -128, y: 200}
+        - {x: -128, y: 61}
+        - {x: -108, y: 50}
+        - {x: -49, y: 21}
+        - {x: -32, y: 8}
+        - {x: -9, y: 0}
+        - {x: 13, y: 0}
+        - {x: 35, y: 12}
+        - {x: 128, y: 61}
+        - {x: 128, y: 197}
+    - name: hexHillsColdSnowCovered03
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 80, y: 231}
+        - {x: 44, y: 242}
+        - {x: 38, y: 254}
+        - {x: 33, y: 265}
+        - {x: 18, y: 285}
+        - {x: 7, y: 285}
+        - {x: -12, y: 270}
+        - {x: -29, y: 265}
+        - {x: -52, y: 240}
+        - {x: -70, y: 242}
+        - {x: -128, y: 200}
+        - {x: -128, y: 60}
+        - {x: -81, y: 35}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 197}
+        - {x: 115, y: 208}
+      - - {x: 119, y: 266}
+        - {x: 122, y: 267}
+        - {x: 122, y: 270}
+        - {x: 119, y: 271}
+        - {x: 117, y: 269}
+      - - {x: -108, y: 384}
+        - {x: -107, y: 381}
+        - {x: -104, y: 381}
+        - {x: -102, y: 383}
+        - {x: -102, y: 384}
+      - - {x: 40, y: 384}
+        - {x: 41, y: 381}
+        - {x: 44, y: 381}
+        - {x: 46, y: 383}
+        - {x: 46, y: 384}
+      - - {x: 58, y: 384}
+        - {x: 59, y: 381}
+        - {x: 62, y: 381}
+        - {x: 64, y: 383}
+        - {x: 64, y: 384}
+    - name: hexHillsColdSnowTransition00
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 103, y: 216}
+        - {x: 75, y: 232}
+        - {x: 70, y: 244}
+        - {x: 54, y: 248}
+        - {x: 29, y: 250}
+        - {x: 14, y: 256}
+        - {x: -9, y: 291}
+        - {x: -24, y: 291}
+        - {x: -30, y: 289}
+        - {x: -55, y: 254}
+        - {x: -61, y: 243}
+        - {x: -85, y: 227}
+        - {x: -101, y: 216}
+        - {x: -122, y: 204}
+        - {x: -128, y: 199}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 112, y: 212}
+      - - {x: -95, y: 382}
+        - {x: -95, y: 384}
+        - {x: -100, y: 384}
+        - {x: -98, y: 381}
+    - name: hexHillsColdSnowTransition01
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 98, y: 223}
+        - {x: 88, y: 236}
+        - {x: 57, y: 269}
+        - {x: 49, y: 276}
+        - {x: 44, y: 277}
+        - {x: 23, y: 277}
+        - {x: -32, y: 245}
+        - {x: -43, y: 261}
+        - {x: -53, y: 263}
+        - {x: -66, y: 256}
+        - {x: -86, y: 237}
+        - {x: -95, y: 222}
+        - {x: -113, y: 221}
+        - {x: -117, y: 214}
+        - {x: -126, y: 199}
+        - {x: -128, y: 196}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 199}
+        - {x: 121, y: 207}
+    - name: hexHillsColdSnowTransition02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 86, y: 222}
+        - {x: 62, y: 247}
+        - {x: 42, y: 246}
+        - {x: 34, y: 256}
+        - {x: 12, y: 277}
+        - {x: 6, y: 280}
+        - {x: -4, y: 280}
+        - {x: -27, y: 277}
+        - {x: -42, y: 268}
+        - {x: -49, y: 256}
+        - {x: -59, y: 258}
+        - {x: -71, y: 257}
+        - {x: -86, y: 251}
+        - {x: -117, y: 215}
+        - {x: -128, y: 201}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 198}
+        - {x: 115, y: 212}
+    - name: hexHillsColdSnowTransition03
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 512
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 88, y: 224}
+        - {x: 79, y: 230}
+        - {x: 61, y: 237}
+        - {x: 46, y: 241}
+        - {x: 30, y: 270}
+        - {x: 17, y: 284}
+        - {x: 6, y: 284}
+        - {x: -29, y: 266}
+        - {x: -52, y: 241}
+        - {x: -75, y: 240}
+        - {x: -90, y: 228}
+        - {x: -93, y: 220}
+        - {x: -127, y: 201}
+        - {x: -128, y: 198}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 123, y: 201}
+    - name: hexOceanIceBergs00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 128, y: 60}
+        - {x: 128, y: 195}
+        - {x: 119, y: 200}
+        - {x: 120, y: 203}
+        - {x: 109, y: 214}
+        - {x: 99, y: 214}
+        - {x: 96, y: 212}
+        - {x: 95, y: 211}
+        - {x: 2, y: 258}
+        - {x: -2, y: 258}
+        - {x: -128, y: 195}
+        - {x: -128, y: 60}
+        - {x: -8, y: 0}
+        - {x: 8, y: 0}
+        - {x: 109, y: 51}
+        - {x: 112, y: 51}
+        - {x: 117, y: 54}
+      - - {x: -110, y: 382}
+        - {x: -110, y: 384}
+        - {x: -115, y: 384}
+        - {x: -113, y: 381}
+      - - {x: 104, y: 384}
+        - {x: 105, y: 381}
+        - {x: 110, y: 381}
+        - {x: 112, y: 383}
+        - {x: 112, y: 384}
+    - name: hexOceanIceBergs01
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 92, y: 214}
+        - {x: 87, y: 216}
+        - {x: 79, y: 220}
+        - {x: 77, y: 220}
+        - {x: 52, y: 233}
+        - {x: 48, y: 236}
+        - {x: 40, y: 240}
+        - {x: 37, y: 240}
+        - {x: 2, y: 258}
+        - {x: -2, y: 258}
+        - {x: -128, y: 195}
+        - {x: -128, y: 61}
+        - {x: -127, y: 59}
+        - {x: -8, y: 0}
+        - {x: 8, y: 0}
+        - {x: 128, y: 60}
+        - {x: 128, y: 195}
+        - {x: 94, y: 212}
+      - - {x: -111, y: 384}
+        - {x: -110, y: 381}
+        - {x: -106, y: 381}
+        - {x: -104, y: 383}
+        - {x: -104, y: 384}
+    - name: hexOceanIceBergs02
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -2, y: 258}
+        - {x: -128, y: 197}
+        - {x: -128, y: 60}
+        - {x: -8, y: 0}
+        - {x: 8, y: 0}
+        - {x: 128, y: 60}
+        - {x: 128, y: 195}
+        - {x: 7, y: 258}
+    - name: hexOceanIceBergs03
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -2, y: 258}
+        - {x: -128, y: 197}
+        - {x: -128, y: 60}
+        - {x: -8, y: 0}
+        - {x: 8, y: 0}
+        - {x: 128, y: 60}
+        - {x: 128, y: 195}
+        - {x: 7, y: 258}
+    - name: hexSnowField00
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 81, y: 230}
+        - {x: 63, y: 240}
+        - {x: 44, y: 242}
+        - {x: 8, y: 263}
+        - {x: 2, y: 264}
+        - {x: -8, y: 264}
+        - {x: -20, y: 257}
+        - {x: -45, y: 254}
+        - {x: -65, y: 243}
+        - {x: -83, y: 230}
+        - {x: -95, y: 229}
+        - {x: -127, y: 200}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -93, y: 42}
+        - {x: -83, y: 38}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 196}
+        - {x: 117, y: 207}
+    - name: hexSnowField01
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 100, y: 215}
+        - {x: 83, y: 226}
+        - {x: 67, y: 238}
+        - {x: 56, y: 245}
+        - {x: 36, y: 243}
+        - {x: 19, y: 259}
+        - {x: 6, y: 267}
+        - {x: -2, y: 267}
+        - {x: -21, y: 259}
+        - {x: -36, y: 246}
+        - {x: -63, y: 247}
+        - {x: -87, y: 225}
+        - {x: -95, y: 227}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 6, y: 0}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+        - {x: 110, y: 212}
+    - name: hexSnowField02
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 104, y: 221}
+        - {x: 66, y: 231}
+        - {x: 43, y: 254}
+        - {x: 34, y: 258}
+        - {x: 15, y: 257}
+        - {x: 7, y: 265}
+        - {x: -4, y: 265}
+        - {x: -13, y: 262}
+        - {x: -34, y: 250}
+        - {x: -62, y: 231}
+        - {x: -78, y: 235}
+        - {x: -81, y: 234}
+        - {x: -106, y: 215}
+        - {x: -126, y: 202}
+        - {x: -128, y: 198}
+        - {x: -128, y: 61}
+        - {x: -6, y: 0}
+        - {x: 8, y: 0}
+        - {x: 97, y: 44}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+    - name: hexSnowField03
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 128
+        width: 256
+        height: 384
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 117, y: 207}
+        - {x: 89, y: 222}
+        - {x: 70, y: 228}
+        - {x: 43, y: 242}
+        - {x: 21, y: 256}
+        - {x: 3, y: 261}
+        - {x: -3, y: 261}
+        - {x: -26, y: 253}
+        - {x: -55, y: 241}
+        - {x: -85, y: 230}
+        - {x: -103, y: 221}
+        - {x: -123, y: 204}
+        - {x: -128, y: 197}
+        - {x: -128, y: 61}
+        - {x: -101, y: 44}
+        - {x: -63, y: 25}
+        - {x: -6, y: 0}
+        - {x: 8, y: 0}
+        - {x: 96, y: 42}
+        - {x: 128, y: 61}
+        - {x: 128, y: 195}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
