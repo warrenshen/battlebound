@@ -35,7 +35,8 @@ public class FXManagerMock : IFXManager
         string effectName,
         Transform fromTransform,
         Transform toTransform,
-        UnityAction onEffectFinish
+        UnityAction onEffectFinish,
+        float delay = 0.0f
     )
     {
         onEffectFinish.Invoke();

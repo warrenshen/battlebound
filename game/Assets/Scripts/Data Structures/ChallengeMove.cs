@@ -17,6 +17,7 @@ public class ChallengeMove
     public const string MOVE_CATEGORY_PLAY_STRUCTURE = "MOVE_CATEGORY_PLAY_STRUCTURE";
     public const string MOVE_CATEGORY_CARD_ATTACK = "MOVE_CATEGORY_CARD_ATTACK";
     public const string MOVE_CATEGORY_RANDOM_TARGET = "MOVE_CATEGORY_RANDOM_TARGET";
+    public const string MOVE_CATEGORY_RANDOM_TARGETS = "MOVE_CATEGORY_RANDOM_TARGETS";
     public const string MOVE_CATEGORY_SUMMON_CREATURE = "MOVE_CATEGORY_SUMMON_CREATURE";
     public const string MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL = "MOVE_CATEGORY_SUMMON_CREATURE_FIELD_FULL";
     public const string MOVE_CATEGORY_CONVERT_CREATURE = "MOVE_CATEGORY_CONVERT_CREATURE";
@@ -76,6 +77,14 @@ public class ChallengeMove
         public string TargetId => targetId;
 
         [SerializeField]
+        private List<string> fieldIds;
+        public List<string> FieldIds => fieldIds;
+
+        [SerializeField]
+        private List<string> targetIds;
+        public List<string> TargetIds => targetIds;
+
+        [SerializeField]
         private int handIndex;
         public int HandIndex => handIndex;
 
@@ -104,6 +113,16 @@ public class ChallengeMove
         public void SetTargetId(string targetId)
         {
             this.targetId = targetId;
+        }
+
+        public void SetFieldIds(List<string> fieldIds)
+        {
+            this.fieldIds = fieldIds;
+        }
+
+        public void SetTargetIds(List<string> targetIds)
+        {
+            this.targetIds = targetIds;
         }
 
         public void SetHandIndex(int handIndex)

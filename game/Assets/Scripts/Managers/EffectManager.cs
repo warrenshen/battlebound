@@ -31,6 +31,7 @@ public class EffectManager : MonoBehaviour
     public const string EFFECT_CHANGE_TURN_DRAW_CARD = "EFFECT_CHANGE_TURN_DRAW_CARD";
     public const string EFFECT_DRAW_CARD = "EFFECT_DRAW_CARD";
     public const string EFFECT_SUMMON_CREATURE = "EFFECT_SUMMON_CREATURE";
+    public const string EFFECT_GOLDENVALLEY_MINE = "EFFECT_GOLDENVALLEY_MINE";
 
     private static readonly List<string> EFFECT_H_PRIORITY_ORDER = new List<string>
     {
@@ -98,6 +99,8 @@ public class EffectManager : MonoBehaviour
         Card.CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE,
         Card.CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
         Card.CARD_ABILITY_DEATH_RATTLE_DRAW_CARD,
+
+        EFFECT_GOLDENVALLEY_MINE,
 
         EFFECT_PLAYER_AVATAR_DIE,
     };
@@ -576,6 +579,7 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY:
             case Card.CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN:
             case Card.CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY:
+            case EFFECT_GOLDENVALLEY_MINE:
                 AbilityEndTurn(effect);
                 break;
             case Card.CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN:
@@ -798,6 +802,9 @@ public class EffectManager : MonoBehaviour
             case Card.CARD_ABILITY_END_TURN_HEAL_FACE_THIRTY:
                 AbilityHealFace(effect, 30);
                 break;
+            case EFFECT_GOLDENVALLEY_MINE:
+                EffectGoldenvalleyMine(effect);
+                break;
             default:
                 Debug.LogError(string.Format("Unhandled effect: {0}.", effect.Name));
                 break;
@@ -821,6 +828,65 @@ public class EffectManager : MonoBehaviour
         if (!FlagHelper.IsServerEnabled())
         {
             BattleState.Instance().MockChallengeEnd(playerId);
+        }
+    }
+
+    private void EffectGoldenvalleyMine(Effect effect)
+    {
+        string playerId = effect.PlayerId;
+        string cardId = effect.CardId;
+
+        BoardStructure boardStructure = Board.Instance().GetStructureByPlayerIdAndCardId(
+            playerId,
+            cardId
+        );
+        List<BoardCreature> boardCreatures = Board.Instance().GetAliveCreaturesByPlayerId(
+            playerId
+        );
+
+        if (boardCreatures.Count <= 0)
+        {
+            return;
+        }
+
+        ChallengeMove challengeMove = new ChallengeMove();
+        challengeMove.SetPlayerId(playerId);
+        challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGETS);
+        WaitForServerMove(BattleState.Instance().AddDeviceMove(challengeMove));
+
+        if (!FlagHelper.IsServerEnabled())
+        {
+            List<BoardCreature> randomCreatures = new List<BoardCreature>();
+
+            for (int i = 0; i < 4; i += 1)
+            {
+                BoardCreature randomCreature;
+                if (BattleSingleton.Instance.IsEnvironmentTest())
+                {
+                    randomCreature = boardCreatures[0];
+                }
+                else
+                {
+                    int randomIndex = UnityEngine.Random.Range(0, boardCreatures.Count);
+                    randomCreature = boardCreatures[randomIndex];
+                }
+                randomCreatures.Add(randomCreature);
+            }
+
+            List<string> fieldIds = new List<string>(randomCreatures.Select(boardCreature => boardCreature.GetPlayerId()));
+            List<string> cardIds = new List<string>(randomCreatures.Select(boardCreature => boardCreature.GetCardId()));
+
+            challengeMove = new ChallengeMove();
+            challengeMove.SetPlayerId(playerId);
+            challengeMove.SetCategory(ChallengeMove.MOVE_CATEGORY_RANDOM_TARGETS);
+
+            ChallengeMove.ChallengeMoveAttributes moveAttributes = new ChallengeMove.ChallengeMoveAttributes();
+            moveAttributes.SetCard(boardStructure.GetChallengeCard());
+            moveAttributes.SetFieldIds(fieldIds);
+            moveAttributes.SetTargetIds(cardIds);
+
+            challengeMove.SetMoveAttributes(moveAttributes);
+            BattleState.Instance().AddServerMove(challengeMove);
         }
     }
 
@@ -1659,10 +1725,26 @@ public class EffectManager : MonoBehaviour
             {
                 effects.Add(
                     new Effect(
-                        BattleState.Instance().GetOpponentIdByPlayerId(playerId),
+                        opponentCreature.GetPlayerId(),
                         Card.CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
                         opponentCreature.GetCardId(),
                         opponentCreature.SpawnRank
+                    )
+                );
+            }
+        }
+
+        List<BoardStructure> playerStructures = Board.Instance().GetAliveStructuresByPlayerId(playerId);
+        foreach (BoardStructure boardStructure in playerStructures)
+        {
+            if (boardStructure.GetCardName() == Card.CARD_NAME_GOLDENVALLEY_MINE)
+            {
+                effects.Add(
+                    new Effect(
+                        boardStructure.GetPlayerId(),
+                        EFFECT_GOLDENVALLEY_MINE,
+                        boardStructure.GetCardId(),
+                        boardStructure.SpawnRank
                     )
                 );
             }
@@ -2011,21 +2093,22 @@ public class EffectManager : MonoBehaviour
 
     public void OnRandomTarget(
         string playerId,
-        ChallengeCard card,
+        ChallengeCard challengeCard,
         string fieldId,
         string targetId
     )
     {
-        string cardId = card.Id;
+        string cardId = challengeCard.Id;
+
         if (fieldId == null || targetId == null)
         {
             Debug.LogError("Invalid parameters given to function.");
             return;
         }
 
-        if (card.Name == Card.CARD_NAME_BOMBSHELL_BOMBADIER)
+        if (challengeCard.Name == Card.CARD_NAME_BOMBSHELL_BOMBADIER)
         {
-            Targetable attackingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(playerId, card.Id);
+            Targetable attackingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(playerId, cardId);
             Targetable defendingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
 
             if (attackingTargetable.GetType() == typeof(PlayerAvatar))
@@ -2083,7 +2166,7 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError("Unsupported.");
             }
         }
-        else if (card.Name == Card.CARD_NAME_BOMBS_AWAY)
+        else if (challengeCard.Name == Card.CARD_NAME_BOMBS_AWAY)
         {
             PlayerAvatar attackingTargetable = BattleState.Instance().GetPlayerById(playerId).Avatar;
             Targetable defendingTargetable = Board.Instance().GetTargetableByPlayerIdAndCardId(fieldId, targetId);
@@ -2137,7 +2220,7 @@ public class EffectManager : MonoBehaviour
                 Debug.LogError("Unsupported.");
             }
         }
-        else if (card.Name == Card.CARD_NAME_BATTLE_ROYALE)
+        else if (challengeCard.Name == Card.CARD_NAME_BATTLE_ROYALE)
         {
             List<BoardCreature> playerCreatures = Board.Instance().GetAliveCreaturesByPlayerId(playerId);
             List<BoardCreature> opponentCreatures = Board.Instance().GetOpponentAliveCreaturesByPlayerId(playerId);
@@ -2163,7 +2246,7 @@ public class EffectManager : MonoBehaviour
 
             AddToQueues(effects);
         }
-        else if (card.Name == Card.CARD_NAME_BLUE_GIPSY_V3)
+        else if (challengeCard.Name == Card.CARD_NAME_BLUE_GIPSY_V3)
         {
             BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
@@ -2181,7 +2264,7 @@ public class EffectManager : MonoBehaviour
                 }
             );
         }
-        else if (card.Name == Card.CARD_NAME_FROSTLAND_THRASHER_8)
+        else if (challengeCard.Name == Card.CARD_NAME_FROSTLAND_THRASHER_8)
         {
             BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
@@ -2199,7 +2282,7 @@ public class EffectManager : MonoBehaviour
                 }
             );
         }
-        else if (card.Name == Card.CARD_NAME_PAL_V1)
+        else if (challengeCard.Name == Card.CARD_NAME_PAL_V1)
         {
             BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
@@ -2216,7 +2299,7 @@ public class EffectManager : MonoBehaviour
                 }
             );
         }
-        else if (card.Name == Card.CARD_NAME_FIRESMITH_APPRENTICE)
+        else if (challengeCard.Name == Card.CARD_NAME_FIRESMITH_APPRENTICE)
         {
             BoardCreature boardCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(playerId, cardId);
             BoardCreature targetedCreature = Board.Instance().GetCreatureByPlayerIdAndCardId(fieldId, targetId);
@@ -2236,6 +2319,57 @@ public class EffectManager : MonoBehaviour
         else
         {
             Debug.LogError("Invalid card for move random target.");
+        }
+
+        DecrementIsWaiting();
+    }
+
+    public void OnRandomTargets(
+        string playerId,
+        ChallengeCard challengeCard,
+        List<string> fieldIds,
+        List<string> targetIds
+    )
+    {
+        string cardId = challengeCard.Id;
+
+        if (fieldIds == null || targetIds == null)
+        {
+            Debug.LogError("Invalid parameters given to function.");
+            return;
+        }
+
+        if (challengeCard.Name == Card.CARD_NAME_GOLDENVALLEY_MINE)
+        {
+            BoardStructure boardStructure = Board.Instance().GetStructureByPlayerIdAndCardId(
+                challengeCard.PlayerId,
+                challengeCard.Id
+            );
+            List<BoardCreature> boardCreatures = Board.Instance().GetCreaturesByPlayerIdsAndCardIds(
+                fieldIds,
+                targetIds
+            );
+
+            for (int i = 0; i < boardCreatures.Count; i += 1)
+            {
+                BoardCreature boardCreature = boardCreatures[i];
+                IncrementIsWaiting();
+                this.fXManager.ThrowEffectWithCallback(
+                    "ExplosivePropVFX",
+                    boardStructure.GetTargetableTransform(),
+                    boardCreature.GetTargetableTransform(),
+                    () =>
+                    {
+                        boardCreature.AddBuff(Card.BUFF_CATEGORY_TEN_TEN);
+                        DecrementIsWaiting();
+                    },
+                    0.75f * i
+                );
+            }
+        }
+        else
+        {
+            Debug.LogError("Invalid card for move random targets.");
         }
 
         DecrementIsWaiting();

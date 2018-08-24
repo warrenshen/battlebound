@@ -770,6 +770,22 @@ public class BattleState
         SetIsLocked(false);
     }
 
+    private void ReceiveMoveRandomTargets(
+        string playerId,
+        ChallengeCard challengeCard,
+        List<string> fieldIds,
+        List<string> targetIds
+    )
+    {
+        EffectManager.Instance.OnRandomTargets(
+            playerId,
+            challengeCard,
+            fieldIds,
+            targetIds
+        );
+        SetIsLocked(false);
+    }
+
     private void ReceiveMoveSummonCreature(
         string playerId,
         ChallengeCard challengeCard,
@@ -1184,6 +1200,15 @@ public class BattleState
                 serverMove.Attributes.Card,
                 serverMove.Attributes.FieldId,
                 serverMove.Attributes.TargetId
+            );
+        }
+        else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_RANDOM_TARGETS)
+        {
+            ReceiveMoveRandomTargets(
+                serverMove.PlayerId,
+                serverMove.Attributes.Card,
+                serverMove.Attributes.FieldIds,
+                serverMove.Attributes.TargetIds
             );
         }
         else if (serverMove.Category == ChallengeMove.MOVE_CATEGORY_SUMMON_CREATURE)
