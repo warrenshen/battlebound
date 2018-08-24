@@ -86,6 +86,12 @@ contract('CardTreasury', function(accounts) {
       const supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
 
+      const limit = await contract.mintLimitByTemplate.call(0);
+      assert.equal(limit.toNumber(), 3);
+
+      const count = await contract.mintCountByTemplate.call(0);
+      assert.equal(count.toNumber(), 1);
+
       const owner = await contract.ownerOf.call(0);
       assert.equal(owner, recipient, "owner is not correct");
     });
@@ -101,6 +107,12 @@ contract('CardTreasury', function(accounts) {
 
       const supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
+
+      const limit = await contract.mintLimitByTemplate.call(0);
+      assert.equal(limit.toNumber(), 3);
+
+      const count = await contract.mintCountByTemplate.call(0);
+      assert.equal(count.toNumber(), 1);
 
       const owner = await contract.ownerOf.call(0);
       assert.equal(owner, recipient, "owner is not correct");
@@ -144,6 +156,12 @@ contract('CardTreasury', function(accounts) {
 
       owner = await contract.ownerOf.call(2);
       assert.equal(owner, recipient, "owner is not correct");
+
+      const limit = await contract.mintLimitByTemplate.call(0);
+      assert.equal(limit.toNumber(), 3);
+
+      const count = await contract.mintCountByTemplate.call(0);
+      assert.equal(count.toNumber(), 3);
     });
 
     it ("should allow privileged address to mint multiple cards with multiple templates", async function() {

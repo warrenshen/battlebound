@@ -48,8 +48,12 @@ contract LootBox is Pausable {
   function calculatePrice(uint256 basePrice, uint256 boxCount) public view returns (uint) {
     uint256 blocksPassed = block.number - blockStart;
     uint256 daysPassed = blocksPassed / blocksPerDay;
-    if (28 > daysPassed) {
-      return (basePrice - (((21 - daysPassed) * basePrice) / 100)) * boxCount;
+    // 7-day discount period
+    // 1st day = 21% discount
+    // 2nd day = 18% discount
+    // ...
+    if (daysPassed < 7) {
+      return (basePrice - (((21 - (daysPassed * 3)) * basePrice) / 100)) * boxCount;
     }
     return basePrice * boxCount;
   }

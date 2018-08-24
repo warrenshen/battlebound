@@ -518,9 +518,14 @@ contract CardTreasury is CardAuction {
     return cards.length;
   }
 
-  function instanceLimit(uint256 _templateId) external view returns(uint256) {
+  function mintLimitByTemplate(uint256 _templateId) external view returns(uint256) {
     require(_templateId < templates.length);
     return templateIdToMintLimit[_templateId];
+  }
+
+  function mintCountByTemplate(uint256 _templateId) external view returns(uint256) {
+    require(_templateId < templates.length);
+    return templateIdToMintCount[_templateId];
   }
 
   function name() external pure returns (string) {

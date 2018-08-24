@@ -37,7 +37,7 @@ contract('LootBox', function(accounts) {
           1,
           {
             from: buyer,
-            value: 12e+5,
+            value: 12e+3,
           }
         );
       } catch (error) {
@@ -62,7 +62,7 @@ contract('LootBox', function(accounts) {
       assert.equal(price, categoryOnePrice * (1 - 0.21));
     });
 
-    it ("should have full discount for multiple boxes on first day", async function() {
+    it ("should have full discount for multiple box on first day", async function() {
       const price = await contract.calculatePrice.call(
         categoryOnePrice,
         6
@@ -86,31 +86,79 @@ contract('LootBox', function(accounts) {
       }
     });
 
-    it ("should have less than full discount for multiple boxes after first day", async function() {
+    it ("should have less than full discount for one boxes after first day", async function() {
       const price = await contract.calculatePrice.call(
-        categoryThreePrice,
-        6
+        categoryOnePrice,
+        1
       );
-      assert.equal(price, categoryThreePrice * (1 - 0.20) * 6);
+      assert.equal(price, categoryOnePrice * (1 - 0.18));
 
       for (var i = 0; i < blocksPerDay; i += 1) {
         transaction = await miner.mine();
       }
     });
 
-    it ("should have even less than full discount for multiple boxes after first two days", async function() {
+    it ("should have even less than full discount for one box after first two days", async function() {
       const price = await contract.calculatePrice.call(
-        categoryTwoPrice,
-        6
+        categoryOnePrice,
+        1
       );
-      assert.equal(price, categoryTwoPrice * (1 - 0.19) * 6);
+      assert.equal(price, categoryOnePrice * (1 - 0.15));
 
-      for (var i = 0; i < blocksPerDay * 19; i += 1) {
+      for (var i = 0; i < blocksPerDay; i += 1) {
         transaction = await miner.mine();
       }
     });
 
-    it ("should have no discount for multiple boxes after 19 days", async function() {
+    it ("should have correct discount for one box after first three days", async function() {
+      const price = await contract.calculatePrice.call(
+        categoryTwoPrice,
+        1
+      );
+      assert.equal(price, categoryTwoPrice * (1 - 0.12));
+
+      for (var i = 0; i < blocksPerDay; i += 1) {
+        transaction = await miner.mine();
+      }
+    });
+
+    it ("should have correct discount for multiple boxes after first four days", async function() {
+      const price = await contract.calculatePrice.call(
+        categoryTwoPrice,
+        6
+      );
+      assert.equal(price, categoryTwoPrice * (1 - 0.09) * 6);
+
+      for (var i = 0; i < blocksPerDay; i += 1) {
+        transaction = await miner.mine();
+      }
+    });
+
+    it ("should have correct discount for multiple boxes after first five days", async function() {
+      const price = await contract.calculatePrice.call(
+        categoryTwoPrice,
+        6
+      );
+      assert.equal(price, categoryTwoPrice * (1 - 0.06) * 6);
+
+      for (var i = 0; i < blocksPerDay; i += 1) {
+        transaction = await miner.mine();
+      }
+    });
+
+    it ("should have correct discount for multiple boxes after first six days", async function() {
+      const price = await contract.calculatePrice.call(
+        categoryTwoPrice,
+        6
+      );
+      assert.equal(price, categoryTwoPrice * (1 - 0.03) * 6);
+
+      for (var i = 0; i < blocksPerDay; i += 1) {
+        transaction = await miner.mine();
+      }
+    });
+
+    it ("should have no discount for multiple boxes after 7 days", async function() {
       const price = await contract.calculatePrice.call(
         categoryTwoPrice,
         6
