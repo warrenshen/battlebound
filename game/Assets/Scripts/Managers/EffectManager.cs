@@ -2355,7 +2355,7 @@ public class EffectManager : MonoBehaviour
                 BoardCreature boardCreature = boardCreatures[i];
                 IncrementIsWaiting();
                 this.fXManager.ThrowEffectWithCallback(
-                    "ExplosivePropVFX",
+                    "CoinPropVFX",
                     boardStructure.GetTargetableTransform(),
                     boardCreature.GetTargetableTransform(),
                     () =>

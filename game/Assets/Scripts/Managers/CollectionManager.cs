@@ -263,6 +263,7 @@ public class CollectionManager : MonoBehaviour
             collectionCardObject.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
             collectionCardObject.SetBothResetValues();
             collectionCardObject.visual.Redraw();
+            collectionCardObject.visual.gameObject.SetActive(true);  //to-do: figure out what is causing this...
             CreateGrayed(collectionCardObject.transform, card).parent = grayed;
 
             createdCardObjects.Add(collectionCardObject);
@@ -282,8 +283,9 @@ public class CollectionManager : MonoBehaviour
         }
         grayedCardObject.visual.SetGrayscale(true);
         grayedCardObject.visual.SetOpacity(0.7f);
+        grayedCardObject.visual.gameObject.SetActive(true);  //to-do: figure out how to refactor this, maybe just set this in initialize func
         grayedCardObject.gameObject.transform.position = source.position;
-        grayedCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Board"));
+        grayedCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
 
         return grayedCardObject.gameObject.transform;
     }

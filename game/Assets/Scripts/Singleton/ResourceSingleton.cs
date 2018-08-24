@@ -94,6 +94,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
     public GameObject GetPrefabByName(string creatureName)
     {
+        creatureName = creatureName.Replace(",", "~"); //to-do: find a less hacky way to do this.., or just update server
         if (!this.nameToPrefab.ContainsKey(creatureName))
         {
             Debug.LogError(string.Format("Creature name {0} does not exist in resource cache.", creatureName));
@@ -114,6 +115,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
     public CardTemplate GetCardTemplateByName(string cardName)
     {
+        cardName = cardName.Replace(",", "~"); //to-do: find a less hacky way to do this.., or just update server
         if (!this.cardNametoTemplate.ContainsKey(cardName))
         {
             Debug.LogError(string.Format("Card name {0} does not exist in resource cache.", cardName));

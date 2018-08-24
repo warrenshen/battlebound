@@ -146,8 +146,12 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
             .setOnComplete(
                 () =>
                 {
-                    //to-do: should try to refactor this to include avatar?
-                    EZCameraShake.CameraShaker.Instance.ShakeOnce(boardCreature.GetAttack() / 20f, boardCreature.GetAttack() / 20f, 0.25f, 2.5f);
+                    int attack = boardCreature.GetAttack();
+                    if (attack > 40)
+                    {
+                        //to-do: should try to refactor this to include avatar?
+                        EZCameraShake.CameraShaker.Instance.ShakeOnce((attack - 40) / 20f, (attack - 40) / 20f, 0.25f, 2.5f);
+                    }
 
                     LeanTween
                         .move(this.summoned, originalPosition, 0.3F)

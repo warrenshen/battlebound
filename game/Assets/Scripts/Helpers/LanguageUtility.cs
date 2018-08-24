@@ -124,7 +124,6 @@ public class LanguageUtility
         {
             foreach (Match match in token.Matches(output))
             {
-                Debug.LogWarning("Found match!");
                 output = token.Replace(output, "<b>$0</b>");
             }
         }
