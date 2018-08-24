@@ -119,7 +119,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (BattleSingleton.Instance.ChallengeStarted)
         {
-            enemyDeckTransform.Rotate(0, 180, 0);  //to-do: reconsider this hack
+            //enemyDeckTransform.Rotate(0, 180, 0);  //to-do: reconsider this hack
             enemyDrawCardFixedTransform.Rotate(0, 180, 0);
 
             BattleState.InstantiateWithState(
@@ -1264,7 +1264,6 @@ public class BattleManager : MonoBehaviour
                            });
                     });
             });
-
         //if (won)
         //{
         //    endOverlay.transform.Find("WinFX").gameObject.SetActive(true);
