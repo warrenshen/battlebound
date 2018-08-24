@@ -2128,6 +2128,7 @@ public class EffectManager : MonoBehaviour
                     defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
+                        FXPoolManager.Instance.PlayEffect("SmallToonExplosionVFX", defendingTargetable.GetTargetableTransform().position);
                         int damageDone = defendingCreature.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnCreatureDamageTaken(
                             defendingCreature,
@@ -2150,6 +2151,7 @@ public class EffectManager : MonoBehaviour
                     defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
+                        FXPoolManager.Instance.PlayEffect("SmallToonExplosionVFX", defendingTargetable.GetTargetableTransform().position);
                         int damageDone = defendingAvatar.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnFaceDamageTaken(
                             defendingAvatar.GetPlayer(),
@@ -2182,6 +2184,7 @@ public class EffectManager : MonoBehaviour
                     defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
+                        FXPoolManager.Instance.PlayEffect("SmallToonExplosionVFX", defendingTargetable.GetTargetableTransform().position);
                         int damageDone = defendingCreature.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnCreatureDamageTaken(
                             defendingCreature,
@@ -2204,6 +2207,7 @@ public class EffectManager : MonoBehaviour
                     defendingTargetable.GetTargetableTransform(),
                     () =>
                     {
+                        FXPoolManager.Instance.PlayEffect("SmallToonExplosionVFX", defendingTargetable.GetTargetableTransform().position);
                         int damageDone = defendingAvatar.TakeDamage(10);
                         List<Effect> effects = GetEffectsOnFaceDamageTaken(
                             defendingAvatar.GetPlayer(),

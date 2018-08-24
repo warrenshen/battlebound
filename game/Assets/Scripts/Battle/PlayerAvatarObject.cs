@@ -45,7 +45,7 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
 
         RectTransform textContainer = assignTo.GetComponent<RectTransform>();
         textContainer.sizeDelta = new Vector2(2, 1);
-        textContainer.anchoredPosition = new Vector3(0, 2.6F, -0.5F) + offset;
+        textContainer.anchoredPosition = new Vector3(0, 0, -0.5F) + offset;
         textHolder.transform.SetParent(this.transform, false);
         textHolder.layer = textHolder.transform.parent.gameObject.layer;
         textHolder.transform.rotation = Quaternion.identity;
