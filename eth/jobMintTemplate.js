@@ -16,7 +16,7 @@ var web3 = new Web3(new Web3.providers.HttpProvider(
 
 web3.eth.getTransactionCount(ownerAddress, function (err, nonce) {
   var data = new web3.eth.Contract(contractAbi, contractAddress)
-    .methods.mintTemplate(50, 0, 0, 27, "Kronos, Timewarp Kingpin").encodeABI();
+    .methods.mintTemplate(10, 0, 0, 2, "Cat").encodeABI();
 
   var txParams = {
     nonce: web3.utils.toHex(nonce),
@@ -32,7 +32,6 @@ web3.eth.getTransactionCount(ownerAddress, function (err, nonce) {
   tx.sign(ownerPrivateKey);
 
   var rawTx = '0x' + tx.serialize().toString('hex');
-  console.log(rawTx);
   web3.eth.sendSignedTransaction(rawTx, function (err, transactionHash) {
     console.log(transactionHash);
   });
