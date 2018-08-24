@@ -133,9 +133,7 @@ public class CardGridGenerator : MonoBehaviour
             battleCardObject.Initialize(null, card);
             battleCardObject.visual.Redraw();
 
-            battleCardObject.visual.gameObject.SetActive(true);
             cardGameObject.SetActive(true);
-
             index += 1;
         }
 

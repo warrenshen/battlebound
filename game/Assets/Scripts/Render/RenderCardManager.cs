@@ -91,7 +91,6 @@ public class RenderCardManager : MonoBehaviour
             battleCardObject.Initialize(null, card);
             battleCardObject.visual.Redraw();
 
-            battleCardObject.visual.gameObject.SetActive(true);
             cardGameObject.SetActive(true);
 
             yield return new WaitForEndOfFrame();
@@ -100,7 +99,6 @@ public class RenderCardManager : MonoBehaviour
 
             yield return StartCoroutine(Capture(card.Name));
 
-            battleCardObject.visual.gameObject.SetActive(false);
             cardGameObject.SetActive(false);
         }
 

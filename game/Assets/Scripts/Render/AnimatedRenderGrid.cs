@@ -197,15 +197,13 @@ public class AnimatedRenderGrid : MonoBehaviour
             battleCardObject.Initialize(null, card);
             battleCardObject.visual.Redraw();
 
-            battleCardObject.visul.gameObject.SetActive(true);
             cardGameObject.SetActive(true);
-
             index += 1;
         }
 
         yield return new WaitForSeconds(2);
 
-        LeanTween.moveY(this.gameObject, this.gameObject.transform.position.y - 76.5f, 25).setEaseInQuad();
+        LeanTween.moveY(this.gameObject, this.gameObject.transform.position.y - 76.5f, 100).setEaseInQuad();
         //#if UNITY_EDITOR
         //        UnityEditor.EditorApplication.isPlaying = false;
         //#endif

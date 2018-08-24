@@ -41,7 +41,6 @@ GameObject:
   - component: {fileID: 33121835558709424}
   - component: {fileID: 23321776538211036}
   - component: {fileID: 114156553326784768}
-  - component: {fileID: 114859729221608470}
   m_Layer: 12
   m_Name: Creature Card
   m_TagString: Untagged
@@ -289,7 +288,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1108527505075166}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 3.6}
+  m_LocalPosition: {x: -16.059456, y: 7.5174217, z: -5.358054}
   m_LocalScale: {x: 3.85, y: 3.2, z: 1}
   m_Children:
   - {fileID: 224863642606757850}
@@ -1258,7 +1257,7 @@ MonoBehaviour:
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
   m_isInputParsingRequired: 0
-  m_inputSource: 3
+  m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 23713619611431156}
   m_subTextObjects:
@@ -1514,18 +1513,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_maskType: 0
---- !u!114 &114859729221608470
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1108527505075166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c8e15f4a2d4c41a8abffc881a8c5a7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hide: 1
 --- !u!212 &212039432874872050
 SpriteRenderer:
   m_ObjectHideFlags: 1

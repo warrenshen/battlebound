@@ -263,7 +263,6 @@ public class CollectionManager : MonoBehaviour
             collectionCardObject.transform.localPosition = topLeft + index % rowSize * horizontalOffset + index / rowSize * verticalOffset;
             collectionCardObject.SetBothResetValues();
             collectionCardObject.visual.Redraw();
-            collectionCardObject.visual.gameObject.SetActive(true);  //to-do: figure out what is causing this...
             CreateGrayed(collectionCardObject.transform, card).parent = grayed;
 
             createdCardObjects.Add(collectionCardObject);
@@ -283,7 +282,6 @@ public class CollectionManager : MonoBehaviour
         }
         grayedCardObject.visual.SetGrayscale(true);
         grayedCardObject.visual.SetOpacity(0.7f);
-        grayedCardObject.visual.gameObject.SetActive(true);  //to-do: figure out how to refactor this, maybe just set this in initialize func
         grayedCardObject.gameObject.transform.position = source.position;
         grayedCardObject.gameObject.SetLayer(LayerMask.NameToLayer("Ignore Raycast"));
 
@@ -377,10 +375,6 @@ public class CollectionManager : MonoBehaviour
 
     private void RemoveCard(CardCutout source)
     {
-        //int removeIndex = this.sortedCardCutouts.FindIndex(
-        //    cardCutout => cardCutout.GetId() == source.GetId()
-        //);
-        //this.sortedCardCutouts.RemoveAt(removeIndex);
         this.sortedCardCutouts.Remove(source);
 
         LeanTween
@@ -421,10 +415,20 @@ public class CollectionManager : MonoBehaviour
         this.collectionCardObjectPools[Card.CardType.Structure] = new Stack<CollectionCardObject>();
         this.collectionCardObjectPools[Card.CardType.Weapon] = new Stack<CollectionCardObject>();
 
-        for (int i = 0; i < REQUIRED_DECK_SIZE * 2; i++)
+        for (int i = 0; i < REQUIRED_DECK_SIZE; i++)
         {
             InstantiateCreatureCardGameObject();
         }
+
+        //for (int i = 0; i < REQUIRED_DECK_SIZE; i++)
+        //{
+        //    InstantiateSpellCardGameObject();
+        //}
+
+        //for (int i = 0; i < REQUIRED_DECK_SIZE; i++)
+        //{
+        //    InstantiateStructureCardGameObject();
+        //}
 
         this.cardCutoutPool = new Stack<CardCutout>();
         for (int i = 0; i < REQUIRED_DECK_SIZE; i++)
@@ -493,7 +497,7 @@ public class CollectionManager : MonoBehaviour
         weaponCardGameObject.transform.parent = this.transform;
         weaponCardGameObject.SetActive(false);
         CollectionCardObject collectionCardObject = weaponCardGameObject.GetComponent<CollectionCardObject>();
-        this.collectionCardObjectPools[Card.CardType.Structure].Push(collectionCardObject);
+        this.collectionCardObjectPools[Card.CardType.Weapon].Push(collectionCardObject);
         return collectionCardObject;
     }
 
@@ -514,26 +518,23 @@ public class CollectionManager : MonoBehaviour
             switch (cardType)
             {
                 case Card.CardType.Creature:
-                    collectionCardObject = InstantiateCreatureCardGameObject();
+                    InstantiateCreatureCardGameObject();
                     break;
                 case Card.CardType.Spell:
-                    collectionCardObject = InstantiateSpellCardGameObject();
+                    InstantiateSpellCardGameObject();
                     break;
                 case Card.CardType.Structure:
-                    collectionCardObject = InstantiateStructureCardGameObject();
+                    InstantiateStructureCardGameObject();
                     break;
                 case Card.CardType.Weapon:
-                    collectionCardObject = InstantiateWeaponCardGameObject();
+                    InstantiateWeaponCardGameObject();
                     break;
                 default:
                     Debug.LogError("Unsupported card type.");
                     return null;
             }
         }
-        else
-        {
-            collectionCardObject = this.collectionCardObjectPools[cardType].Pop();
-        }
+        collectionCardObject = this.collectionCardObjectPools[cardType].Pop();
 
         if (isHollow)
         {

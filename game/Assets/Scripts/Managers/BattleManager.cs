@@ -1535,26 +1535,24 @@ public class BattleManager : MonoBehaviour
             switch (cardType)
             {
                 case Card.CardType.Creature:
-                    battleCardObject = InstantiateCreatureCardGameObject();
+                    InstantiateCreatureCardGameObject();
                     break;
                 case Card.CardType.Spell:
-                    battleCardObject = InstantiateSpellCardGameObject();
+                    InstantiateSpellCardGameObject();
                     break;
                 case Card.CardType.Structure:
-                    battleCardObject = InstantiateStructureCardGameObject();
+                    InstantiateStructureCardGameObject();
                     break;
                 default:
                     Debug.LogError("Unsupported card type.");
                     return null;
             }
         }
-
         battleCardObject = this.battleCardObjectPools[cardType].Pop();
 
         battleCardObject.Initialize(player, card);
         battleCardObject.transform.parent = player.GetHandTransform();
         battleCardObject.gameObject.SetActive(true);
-        battleCardObject.visual.gameObject.SetActive(true);
         return battleCardObject;
     }
 
