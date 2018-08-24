@@ -87,6 +87,12 @@ public class LanguageUtility
 
     public string GetLocalizedDescription(string description)
     {
+        if (description == null)
+        {
+            Debug.LogError("GetLocalizedDescription called on null.");
+            return description;
+        }
+
         if (!this.cardDescriptions.ContainsKey(description))
         {
             Debug.LogWarning(string.Format("Missing translation for: {0}", description));

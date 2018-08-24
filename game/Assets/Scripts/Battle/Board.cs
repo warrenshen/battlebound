@@ -266,6 +266,32 @@ public class Board
         return playingField.GetCreatureByCardId(cardId);
     }
 
+    public List<BoardCreature> GetCreaturesByPlayerIdsAndCardIds(
+        List<string> playerIds,
+        List<string> cardIds
+    )
+    {
+        if (playerIds.Count != cardIds.Count)
+        {
+            Debug.LogError("Invalid arguments.");
+            return new List<BoardCreature>();
+        }
+        else
+        {
+            List<BoardCreature> boardCreatures = new List<BoardCreature>();
+            for (int i = 0; i < playerIds.Count; i += 1)
+            {
+                boardCreatures.Add(
+                    GetCreatureByPlayerIdAndCardId(
+                        playerIds[i],
+                        cardIds[i]
+                    )
+                );
+            }
+            return boardCreatures;
+        }
+    }
+
     public BoardCreature GetCreatureByPlayerIdAndIndex(string playerId, int index)
     {
         PlayingField playingField = GetFieldByPlayerId(playerId);
