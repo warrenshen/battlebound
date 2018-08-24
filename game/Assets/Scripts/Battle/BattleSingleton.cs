@@ -506,7 +506,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         request.SetEventKey("ChallengePlaySpellUntargeted");
         request.SetEventAttribute("challengeInstanceId", this.challengeId);
         request.SetEventAttribute("cardId", cardId);
-        request.Send(OnChallengePlaySpellTargetedSuccess, OnChallengePlaySpellTargetedError);
+        request.Send(OnChallengePlaySpellUntargetedSuccess, OnChallengePlaySpellUntargetedError);
     }
 
     private void OnChallengePlaySpellUntargetedSuccess(LogChallengeEventResponse response)

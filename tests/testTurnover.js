@@ -15,8 +15,8 @@ describe("challenge turnover", function() {
           "ID_PLAYER": {
             "hasTurn": 1,
             "turnCount": 0,
-            "manaCurrent": 20,
-            "manaMax": 30,
+            "manaCurrent": 10,
+            "manaMax": 10,
             "health": 100,
             "healthMax": 100,
             "armor": 0,
@@ -103,8 +103,8 @@ describe("challenge turnover", function() {
           "ID_OPPONENT": {
             "hasTurn": 0,
             "turnCount": 0,
-            "manaCurrent": 20,
-            "manaMax": 20,
+            "manaCurrent": 10,
+            "manaMax": 10,
             "health": 100,
             "healthMax": 100,
             "armor": 0,
@@ -171,8 +171,8 @@ describe("challenge turnover", function() {
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.turnCount, 0);
-            assert.equal(opponentState.manaCurrent, 20);
-            assert.equal(opponentState.manaMax, 20);
+            assert.equal(opponentState.manaCurrent, 10);
+            assert.equal(opponentState.manaMax, 10);
 
             const opponentHand = opponentState.hand;
             assert.equal(opponentHand.length, 0);
@@ -191,7 +191,7 @@ describe("challenge turnover", function() {
       });
     });
 
-    it("should not increase max mana on 0th turn", function() {
+    it("should increase max mana on 1st turn", function() {
       const challengeStateData = {
         "current": {
           "ID_PLAYER": {
@@ -285,8 +285,8 @@ describe("challenge turnover", function() {
           "ID_OPPONENT": {
             "hasTurn": 0,
             "turnCount": 1,
-            "manaCurrent": 20,
-            "manaMax": 20,
+            "manaCurrent": 10,
+            "manaMax": 10,
             "health": 100,
             "healthMax": 100,
             "armor": 0,
@@ -353,8 +353,8 @@ describe("challenge turnover", function() {
 
             const opponentState = challengeStateData.current["ID_OPPONENT"];
             assert.equal(opponentState.turnCount, 1);
-            assert.equal(opponentState.manaCurrent, 30);
-            assert.equal(opponentState.manaMax, 30);
+            assert.equal(opponentState.manaCurrent, 20);
+            assert.equal(opponentState.manaMax, 20);
 
             const opponentHand = opponentState.hand;
             assert.equal(opponentHand.length, 0);
