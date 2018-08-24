@@ -130,8 +130,8 @@ public class BattleState
 
         this.spawnCount = 0;
 
-        this.you = new Player("Player", "Player", "pl4y3r");
-        this.opponent = new Player("Enemy", "Enemy", "3n3my");
+        this.you = new Player("Player", "Player", "HODLer");
+        this.opponent = new Player("Enemy", "Enemy", "Weak Hand");
 
         this.playerIdToPlayer[this.you.Id] = this.you;
         this.playerIdToPlayer[this.opponent.Id] = this.opponent;

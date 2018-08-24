@@ -13,10 +13,12 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
     public BoardWeapon Weapon => weapon;
 
     [SerializeField]
-    TextMeshPro healthLabel;
+    private TextMeshPro healthLabel;
     [SerializeField]
     public OrbFill orbFill;
-    TextMeshPro nameLabel;
+
+    [SerializeField]
+    private TextMeshPro nameLabel;
 
     [SerializeField]
     private SpriteRenderer emoteRenderer;
@@ -28,27 +30,9 @@ public class PlayerAvatarObject : TargetableObject, IPlayerAvatarObject
         this.playerAvatar = playerAvatar;
 
         this.audioSource = GetComponent<AudioSource>();
-
-        CreateLabelOnAvatar(ref this.nameLabel, Vector3.zero);
         this.nameLabel.text = this.playerAvatar.GetDisplayName();
         //already has cylinder collider in scene
         UpdateStatText();
-    }
-
-    private void CreateLabelOnAvatar(ref TextMeshPro assignTo, Vector3 offset)
-    {
-        GameObject textHolder = new GameObject("Label");
-        assignTo = textHolder.AddComponent<TextMeshPro>();
-        assignTo.fontSize = 4;
-        assignTo.fontStyle = FontStyles.Bold;
-        assignTo.alignment = TextAlignmentOptions.Center;
-
-        RectTransform textContainer = assignTo.GetComponent<RectTransform>();
-        textContainer.sizeDelta = new Vector2(2, 1);
-        textContainer.anchoredPosition = new Vector3(0, 0, -0.5F) + offset;
-        textHolder.transform.SetParent(this.transform, false);
-        textHolder.layer = textHolder.transform.parent.gameObject.layer;
-        textHolder.transform.rotation = Quaternion.identity;
     }
 
     public override bool IsAvatar()
