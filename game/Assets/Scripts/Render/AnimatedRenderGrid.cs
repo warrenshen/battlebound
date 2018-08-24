@@ -64,10 +64,12 @@ public class AnimatedRenderGrid : MonoBehaviour
         Card.CARD_NAME_RHYNOKARP,
         Card.CARD_NAME_THE_SEVEN,
         Card.CARD_NAME_LIGHTHUNTER,
+        Card.CARD_NAME_CURSED_EGG,
         Card.CARD_NAME_HOOFED_LUSH,
         Card.CARD_NAME_TRAINING_YARD,
         Card.CARD_NAME_IMBUE_FLIGHT,
         Card.CARD_NAME_ABYSSAL_EEL,
+        Card.CARD_NAME_CINDERBRUSH_SHAMAN,
         Card.CARD_NAME_MANA_STORM,
         Card.CARD_NAME_CHAR_BOT_451,
         Card.CARD_NAME_CEREBOAROUS,
@@ -75,7 +77,9 @@ public class AnimatedRenderGrid : MonoBehaviour
         Card.CARD_NAME_TOUCH_OF_ZEUS,
         Card.CARD_NAME_REFRESHMENTS,
         Card.CARD_NAME_TALUSREAVER,
+        Card.CARD_NAME_RELENTLESS_WINDMILL,
         Card.CARD_NAME_BUBBLE_SQUIRTER,
+        Card.CARD_NAME_NESSA_NATURES_CHAMPION,
         Card.CARD_NAME_ARMORED_WARDEN,
         Card.CARD_NAME_CLIFFSIDE_VISTA,
         Card.CARD_NAME_MARSHWATER_SQUEALER,
@@ -84,6 +88,10 @@ public class AnimatedRenderGrid : MonoBehaviour
         Card.CARD_NAME_SEAHORSE_SQUIRE,
         Card.CARD_NAME_TEMPLE_GUARDIAN,
         Card.CARD_NAME_RESTORATION_WELL,
+        Card.CARD_NAME_WOODLAND_SHAMAN,
+        Card.CARD_NAME_FLOATWOOD,
+        Card.CARD_STARBABE,
+        Card.CARD_NAME_THIEF_OF_NIGHT,
         Card.CARD_NAME_RITUAL_HATCHLING,
         Card.CARD_NAME_CELESTIAL_PALETTE,
         Card.CARD_NAME_FORESTRY_MOUND,
@@ -92,8 +100,9 @@ public class AnimatedRenderGrid : MonoBehaviour
         Card.CARD_NAME_ARC_KNIGHT,
         Card.CARD_NAME_UNKINDLED_JUNIOR,
         Card.CARD_NAME_DUSK_DWELLER,
-        Card.CARD_NAME_TRIDENT_BATTLEMAGE,
+        Card.CARD_NAME_MOONLIGHT_THEFT,
         Card.CARD_NAME_SENTIENT_SEAKING,
+        Card.CARD_NAME_SHURIKANA,
         Card.CARD_NAME_GUPPEA,
         Card.CARD_NAME_SABRE_CRYSTALLINE_DRAGON,
         Card.CARD_NAME_RALLY_TO_THE_QUEEN,
@@ -117,7 +126,13 @@ public class AnimatedRenderGrid : MonoBehaviour
         Card.CARD_NAME_PAL_V1,
         Card.CARD_NAME_PEARL_NYMPH,
         Card.CARD_NAME_FLAMEBELCHER,
-        Card.CARD_NAME_WAVE_CHARMER
+        Card.CARD_NAME_WAVE_CHARMER,
+        Card.CARD_NAME_TEA_GREENLEAF,
+        Card.CARD_NAME_SWIFT_DECAPITATION,
+        Card.CARD_NAME_THUNDEROUS_DESPERADO,
+        Card.CARD_NAME_TRIDENT_BATTLEMAGE,
+
+
     };
 
     public void Start()
@@ -190,7 +205,7 @@ public class AnimatedRenderGrid : MonoBehaviour
 
         yield return new WaitForSeconds(2);
 
-        LeanTween.moveY(this.gameObject, this.gameObject.transform.position.y - 68.8f, 20).setEaseInQuad();
+        LeanTween.moveY(this.gameObject, this.gameObject.transform.position.y - 76.5f, 25).setEaseInQuad();
         //#if UNITY_EDITOR
         //        UnityEditor.EditorApplication.isPlaying = false;
         //#endif

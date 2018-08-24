@@ -79,6 +79,11 @@ public abstract class Card
     public const string CARD_NAME_ANGELIC_EGG = "Angelic Egg";
     public const string CARD_NAME_CURSED_EGG = "Cursed Egg";
     public const string CARD_NAME_FOXY_APPRENTICE = "Foxy Apprentice";
+    public const string CARD_NAME_WOODLAND_SHAMAN = "Woodland Shaman";
+    public const string CARD_NAME_CINDERBRUSH_SHAMAN = "Cinderbrush Shaman";
+    public const string CARD_NAME_FLOATWOOD = "Floatwood";
+    public const string CARD_STARBABE = "Starbabe";
+    public const string CARD_NAME_SHURIKANA = "Shurikana";
 
     // Spells targeted.
     public const string CARD_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
@@ -223,6 +228,11 @@ public abstract class Card
         CARD_NAME_ANGELIC_EGG,
         CARD_NAME_CURSED_EGG,
         CARD_NAME_FOXY_APPRENTICE,
+        CARD_NAME_WOODLAND_SHAMAN,
+        CARD_NAME_CINDERBRUSH_SHAMAN,
+        CARD_NAME_FLOATWOOD,
+        CARD_STARBABE,
+        CARD_NAME_SHURIKANA
     };
 
     public static readonly List<string> CARD_NAMES_SPELL = new List<string>

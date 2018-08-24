@@ -36,7 +36,7 @@ public class PlayerAvatar : Targetable
     public PlayerAvatar(Player player)
     {
         this.armor = 0;
-        this.maxHealth = 100;
+        this.maxHealth = 300;
         this.health = this.maxHealth;
 
         //this.weapon = null;

@@ -146,6 +146,9 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
             .setOnComplete(
                 () =>
                 {
+                    //to-do: should try to refactor this to include avatar?
+                    EZCameraShake.CameraShaker.Instance.ShakeOnce(boardCreature.GetAttack() / 20f, boardCreature.GetAttack() / 20f, 0.25f, 2.5f);
+
                     LeanTween
                         .move(this.summoned, originalPosition, 0.3F)
                         .setEaseInCubic();
@@ -194,6 +197,7 @@ public class BoardCreatureObject : TargetableObject, IBoardCreatureObject
             this.summoned,
             this.summoned.transform.localScale * 1.1f, 1F
         ).setEasePunch();
+
         PlayAudioTakeDamage();
         TextManager.Instance.ShowTextAtTarget(
             this.transform,
