@@ -1,17 +1,49 @@
 exports.handler = async (event, context, callback) => {
-  const nonce = parseInt(event.nonce);
-  const gasPriceInGWei = parseInt(event.gasPrice);
-  const gasLimit = parseInt(event.gasLimit);
-  const chainId = parseInt(event.chainId);
-  const contractAddress = event.contractAddress;
-  const privateKey = event.privateKey;
+  let argsBody;
+
+  let nonce;
+  let gasPriceInGWei;
+  let gasLimit;
+  let chainId;
+  let contractAddress;
+  let privateKey;
+
+  let templateIds;
+  let variations;
+  let recipientAddress;
+
+  if (event.body) {
+    argsBody = JSON.parse(event.body);
+
+    nonce = argsBody.nonce;
+    gasPriceInGWei = argsBody.gasPrice;
+    gasLimit = argsBody.gasLimit;
+    chainId = argsBody.chainId;
+    contractAddress = argsBody.contractAddress;
+    privateKey = argsBody.privateKey;
+
+    templateIds = argsBody.templateIds;
+    variations = argsBody.variations;
+    recipientAddress = argsBody.recipientAddress;
+  } else {
+    nonce = event.nonce;
+    gasPriceInGWei = event.gasPrice;
+    gasLimit = event.gasLimit;
+    chainId = event.chainId;
+    contractAddress = event.contractAddress;
+    privateKey = event.privateKey;
+
+    templateIds = event.templateIds;
+    variations = event.variations;
+    recipientAddress = event.recipientAddress;
+  }
 
   let error = null;
 
   if (!nonce) {
     error = "ERROR: invalid nonce param: " + nonce;
   } else if (!gasPriceInGWei || !gasLimit) {
-    error = "ERROR: gasPrice or gasLimit param";
+    error = "ERROR: invalid gasPrice or gasLimit param";
   } else if (gasPriceInGWei > 10) {
     error = "ERROR: gasPrice param should not be greater than 10";
   } else if (!chainId ||chainId != 4 && chainId != 1) {
@@ -23,19 +55,16 @@ exports.handler = async (event, context, callback) => {
   }
 
   if (error) {
+    argsBody
     var response = {
       "statusCode": 400,
-      "body": JSON.stringify({ "error": error }),
+      "body": JSON.stringify({ error: error, event: event }),
       "isBase64Encoded": false
     };
 
     callback(null, response);
     return;
   }
-
-  const templateIds = JSON.parse(event.templateIds);
-  const variations = JSON.parse(event.variations);
-  const recipientAddress = event.recipientAddress;
 
   if (!Array.isArray(templateIds) || !Array.isArray(variations)) {
     error = "ERROR: invalid templateIds or variations param";
@@ -48,7 +77,7 @@ exports.handler = async (event, context, callback) => {
   if (error) {
     var response = {
       "statusCode": 400,
-      "body": JSON.stringify({ "error": error }),
+      "body": JSON.stringify({ error: error, event: event }),
       "isBase64Encoded": false
     };
 
@@ -84,7 +113,7 @@ exports.handler = async (event, context, callback) => {
   const signedTx = await account.signTransaction(txParams)
 
   const responseBody = {
-    "rawTransaction": signedTx.rawTransaction,
+    rawTransaction: signedTx.rawTransaction,
   };
 
   var response = {
