@@ -1806,7 +1806,7 @@ const SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
 const SPELL_NAME_SHIELDS_UP = "Shields Up!";
 const SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
 const SPELL_NAME_GREEDY_FINGERS = "Greedy Fingers";
-const SPELL_NAME_SILENCE_OF_THE_LAMBS = "Silence of the Lambs";
+const SPELL_NAME_SILENCE_THE_MEEK = "Silence the Meek";
 const SPELL_NAME_RALLY_TO_THE_QUEEN = "Rally to the Queen";
 const SPELL_NAME_BOMBS_AWAY = "Bombs Away";
 const SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
@@ -1954,7 +1954,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
             var move = drawCardForPlayer(playerId, playerState);
             addChallengeMove(challengeStateData, move);
         }
-    } else if (playedCard.name === SPELL_NAME_SILENCE_OF_THE_LAMBS) {
+    } else if (playedCard.name === SPELL_NAME_SILENCE_THE_MEEK) {
         playerField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;

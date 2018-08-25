@@ -59,7 +59,7 @@ const displayData = challengeStateData.displayData = {};
 //
 
 const HEALTH_START = 300;
-const MANA_START = 20;
+const MANA_START = 10;
 const ARMOR_START = 0;
 
 const challengerData = {

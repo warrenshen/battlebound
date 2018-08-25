@@ -12,10 +12,52 @@ const INFURA_URL = "https://rinkeby.infura.io/kBLFY7NMU7NrFMdpvDR8";
 const RECOVER_CONTRACT_ADDRESS = "0xF17e2999b7eF0F42E454c5093ECC54d6e2d5c134";
 const TREASURY_CONTRACT_ADDRESS = "0x7525106192a90D039Bfe79b39dAFF86123C5850b";
 const AUCTION_CONTRACT_ADDRESS = "0x673188286d4da734a23738cad9339e5fc3bb4947";
+const LOOT_BOX_CONTRACT_ADDRESS = "0xbca850e75f5e5dc02Dcb345461bE392af906F7C3";
 
 const BLOCKCHAIN_EVENT_AUCTION_CREATED = "BLOCKCHAIN_EVENT_AUCTION_CREATED";
 const BLOCKCHAIN_EVENT_AUCTION_CANCELED = "BLOCKCHAIN_EVENT_AUCTION_CANCELED";
 const BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL = "BLOCKCHAIN_EVENT_AUCTION_SUCCESSFUL";
+
+function fetchStatusByTransactionHash(txHash, latestBlockNumber) {
+    const formattedTxHash = prefixHex(txHash);
+    const json = {
+        jsonrpc: "2.0",
+        method: "eth_getTransactionReceipt",
+        id: 1,
+        params: [
+            formattedTxHash
+        ]
+    };
+
+    const jsonString = JSON.stringify(json);
+    const response = Spark.getHttp(INFURA_URL).postString(jsonString);
+    const responseCode = response.getResponseCode();
+    const responseJson = response.getResponseJson();
+    
+    if (responseJson.error) {
+        setScriptError("JSON RPC request error: " + responseJson.error);
+    } else if (responseCode === 200) {
+        const result = responseJson.result;
+        const z = "z";
+        
+        if (result == null) {
+            return 2;
+        } else if (result.status === "0x0") {
+            return 0;
+        } else if (result.status === "0x1") {
+            const txBlockNumber = result.blockNumber;
+            if (parseInt(latestBlockNumber, 16)  - parseInt(txBlockNumber, 16) > 4) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } else {
+            return 2;
+        }
+    } else {
+        setScriptError("JSON RPC request error - recoverAddressBySignature.");
+    }
+}
 
 function recoverAddressBySignature(challenge, signature) {
     const cleanSignature = cleanHex(signature);
@@ -210,7 +252,7 @@ function _getTopicForEvent(event) {
  *    }
  * ]
  **/
-function _parseLogs(event, rawLogs) {
+function _parseLogsAuction(event, rawLogs) {
     return rawLogs.map(function(rawLog) {
         const data = convertHexToIntFixedLength(rawLog.data);
         
@@ -268,11 +310,63 @@ function fetchLogsByBlockRange(event, fromBlock, toBlock) {
     const responseJson = response.getResponseJson();
     
     if (responseCode === 200) {
-        const logs = _parseLogs(event, responseJson.result);
+        const logs = _parseLogsAuction(event, responseJson.result);
         const z = "z";
         return logs;
     } else {
         setScriptError("JSON RPC request error - fetchLogsByBlockRange.");
+    }
+}
+
+function _parseLogsLootBox(rawLogs) {
+    return rawLogs.map(function(rawLog) {
+        const topics = rawLog.topics;
+        const recipientAddress = parseAddress(topics[1]);
+        const referrerAddress = parseAddress(topics[2]);
+        const category = convertHexToIntFixedLength(topics[3]);
+        const quantity = convertHexToIntFixedLength(rawLog.data);
+        
+        return {
+            recipientAddress: recipientAddress,
+            referrerAddress: referrerAddress,
+            category: category,
+            quantity: quantity,
+            blockNumber: rawLog.blockNumber,
+            transactionHash: rawLog.transactionHash,
+            transactionIndex: rawLog.transactionIndex,
+            logIndex: rawLog.logIndex,
+        };
+    });
+}
+
+function fetchLogsByBlockRangeLootBox(fromBlock, toBlock) {
+    const json = {
+        jsonrpc: "2.0",
+        method: "eth_getLogs",
+        id: 74,
+        params: [
+            {
+                "address": LOOT_BOX_CONTRACT_ADDRESS,
+                "fromBlock": fromBlock,
+                "toBlock": toBlock,
+                "topics": ["0xf20405de859a7188253a3ee9359a07873bc40a87b78b50a37767e4c1929c6427"],
+            }
+        ],
+    };
+    
+    const jsonString = JSON.stringify(json);
+    const response = Spark.getHttp(INFURA_URL).postString(jsonString);
+    const responseCode = response.getResponseCode();
+    const responseJson = response.getResponseJson();
+    
+    if (responseJson.error) {
+        setScriptError("JSON RPC request error: " + responseJson.error);
+    } else if (responseCode === 200) {
+        const logs = _parseLogsLootBox(responseJson.result);
+        const z = "z";
+        return logs;
+    } else {
+        setScriptError("JSON RPC request error - fetchLogsByBlockRangeLootBox.");
     }
 }
         
@@ -353,6 +447,41 @@ function fetchAuctionCurrentPriceByTokenId(cardInt) {
     }
 }
 
+/**
+ * @param string signedTx - signed transaction
+ * @return string - transaction hash of submitted transaction
+ **/
+function submitSignedTransaction(signedTx) {
+    const formattedSignedTx = prefixHex(signedTx);
+    const json = {
+        jsonrpc: "2.0",
+        method: "eth_sendRawTransaction",
+        id: 1,
+        params: [formattedSignedTx],
+    };
+    
+    const jsonString = JSON.stringify(json);
+    const response = Spark.getHttp(INFURA_URL).postString(jsonString);
+    const responseCode = response.getResponseCode();
+    const responseJson = response.getResponseJson();
+    
+    if (responseCode === 200) {
+        const error = responseJson.error;
+        if (error && error.code) {
+            Spark.getLog().error({
+                errorMessage: "Submit signed transaction error: " + error.message,
+                json: json,
+            });
+            return null;
+        }
+        
+        return responseJson.result;
+    } else {
+        setScriptError("JSON RPC request error - submitCreateAuctionTransaction.");
+    }
+}
+
+// TODO: probably don't need all these submit functions can share one.
 /**
  * @param string signedTx - signed transaction
  * @return string - transaction hash of submitted transaction
