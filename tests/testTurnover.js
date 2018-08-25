@@ -1898,6 +1898,12 @@ describe("challenge turnover", function() {
   });
 
   describe("triggered effects", function() {
+    it("should support recover health", function() {
+
+    });
+  });
+
+  describe("triggered effects", function() {
     it("should support buff random friendly", function() {
       const challengeStateData = {
         "current": {
