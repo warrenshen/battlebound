@@ -67,7 +67,7 @@ contract('CardTreasury', function(accounts) {
         let transaction = null;
 
         try {
-          transaction = await contract.mintCards([0], [0], god, { from: god });
+          transaction = await contract.mintCards([0], god, { from: god });
         } catch (error) {
           err = error
         }
@@ -125,11 +125,11 @@ contract('CardTreasury', function(accounts) {
       it ("should allow minter to mint card", async function() {
         const recipient = accounts[1];
 
-        const transaction = await contract.mintCard(0, 0, recipient, { from: minter });
+        const transaction = await contract.mintCard(0, recipient, { from: minter });
         assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-        assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-        assert.equal(transaction.logs[1].args._owner, recipient);
-        assert.equal(transaction.logs[1].args._cardId, 0);
+        assert.equal(transaction.logs[0].args._from, 0);
+        assert.equal(transaction.logs[0].args._to, recipient);
+        assert.equal(transaction.logs[0].args._tokenId, 0);
 
         const supply = await contract.totalSupply.call();
         assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
@@ -141,15 +141,15 @@ contract('CardTreasury', function(accounts) {
       it ("should allow minter to mint cards", async function() {
         const recipient = minter;
 
-        transaction = await contract.mintCards([0, 0], [0, 0], recipient, { from: minter });
+        transaction = await contract.mintCards([0, 0], recipient, { from: minter });
         assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-        assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-        assert.equal(transaction.logs[1].args._owner, recipient);
-        assert.equal(transaction.logs[1].args._cardId, 0);
-        assert.equal(transaction.logs[2].event, "Transfer", "expected a Transfer event");
-        assert.equal(transaction.logs[3].event, "CardMinted", "expected an CardMinted event");
-        assert.equal(transaction.logs[3].args._owner, recipient);
-        assert.equal(transaction.logs[3].args._cardId, 1);
+        assert.equal(transaction.logs[0].args._from, 0);
+        assert.equal(transaction.logs[0].args._to, recipient);
+        assert.equal(transaction.logs[0].args._tokenId, 0);
+        assert.equal(transaction.logs[1].event, "Transfer", "expected a Transfer event");
+        assert.equal(transaction.logs[1].args._from, 0);
+        assert.equal(transaction.logs[1].args._to, recipient);
+        assert.equal(transaction.logs[1].args._tokenId, 1);
       });
     });
   });

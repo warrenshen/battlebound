@@ -14,7 +14,7 @@ contract('CardTreasury', function(accounts) {
       await contract.mintTemplate(1, 0, 0, 8, "T1", { from: minter });
       await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
       await contract.setMinter(minter, { from: minter });
-      await contract.mintCard(0, 0, buyer, { from: minter });
+      await contract.mintCard(0, buyer, { from: minter });
     });
 
     it ("should not allow non-owner of card to approve account address", async function() {
@@ -59,7 +59,7 @@ contract('CardTreasury', function(accounts) {
       contract = await CardTreasury.new();
       await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
       await contract.setMinter(minter, { from: minter });
-      await contract.mintCard(0, 0, buyer, { from: minter });
+      await contract.mintCard(0, buyer, { from: minter });
     });
 
     it ("should allow owner of card to approve account address", async function() {

@@ -13,7 +13,7 @@ contract('CardTreasury', function(accounts) {
 
   it ("should allow privileged address to mint a template", async function() {
     const transaction = await contract.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
-    assert.equal(transaction.logs[0].event, "TemplateMinted");
+    assert.equal(transaction.logs[0].event, "TemplateMint");
     assert.equal(transaction.logs[0].args._templateId, 0);
 
     const supply = await contract.templateSupply.call();
@@ -39,14 +39,14 @@ contract('CardTreasury', function(accounts) {
     let supply;
 
     transaction = await contract.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
-    assert.equal(transaction.logs[0].event, "TemplateMinted");
+    assert.equal(transaction.logs[0].event, "TemplateMint");
     assert.equal(transaction.logs[0].args._templateId, 0);
 
     supply = await contract.templateSupply.call();
     assert.equal(supply.valueOf(), 1, "supply of templates is not 1");
 
     transaction = await contract.mintTemplate(1, 0, 0, 9, "Talusreaver", { from: minter });
-    assert.equal(transaction.logs[0].event, "TemplateMinted");
+    assert.equal(transaction.logs[0].event, "TemplateMint");
     assert.equal(transaction.logs[0].args._templateId, 1);
 
     supply = await contract.templateSupply.call();
@@ -73,7 +73,7 @@ contract('CardTreasury', function(accounts) {
     let count;
 
     transaction = await contract.mintTemplate(3, 0, 0, 9, "Lux", { from: minter });
-    assert.equal(transaction.logs[0].event, "TemplateMinted");
+    assert.equal(transaction.logs[0].event, "TemplateMint");
     assert.equal(transaction.logs[0].args._templateId, 0);
 
     limit = await contract.mintLimitByTemplate.call(0);
@@ -83,7 +83,7 @@ contract('CardTreasury', function(accounts) {
     assert.equal(count.toNumber(), 0);
 
     transaction = await contract.mintTemplate(8, 0, 0, 9, "Talusreaver", { from: minter });
-    assert.equal(transaction.logs[0].event, "TemplateMinted");
+    assert.equal(transaction.logs[0].event, "TemplateMint");
     assert.equal(transaction.logs[0].args._templateId, 1);
 
     count = await contract.mintCountByTemplate.call(1);
@@ -98,5 +98,17 @@ contract('CardTreasury', function(accounts) {
 
     count = await contract.mintCountByTemplate.call(0);
     assert.equal(count.toNumber(), 0);
+  });
+
+  it ("should allow mint many templates", async function() {
+    let transaction;
+    let limit;
+    let count;
+
+    for (var i = 0; i < 256; i += 1) {
+      transaction = await contract.mintTemplate(3, 0, 0, 9, "Lux", { from: minter });
+      assert.equal(transaction.logs[0].event, "TemplateMint");
+      assert.equal(transaction.logs[0].args._templateId, i);
+    }
   });
 });

@@ -33,31 +33,31 @@ contract('CardTreasury', function(accounts) {
   describe ("shoulds", function() {
     before(async function() {
       contract = await CardTreasury.new();
-      await contract.mintTemplate(1, 0, 0, 8, "Lux", { from: minter });
-      await contract.mintTemplate(2, 0, 0, 8, "Talusreaver", { from: minter });
+      await contract.mintTemplate(1, 0, 0, 0, "Lux", { from: minter });
+      await contract.mintTemplate(2, 1, 1, 1, "Talusreaver", { from: minter });
       await contract.setMinter(minter, { from: minter });
       // Create a card for the sake of testing function when cards exist.
-      await contract.mintCard(0, 0, minter, { from: minter });
+      await contract.mintCard(0, minter, { from: minter });
     });
 
     it ("should return correct template information", async function() {
       let response;
       let generation;
-      let power;
+      let variation;
       let name;
 
       response = await contract.getTemplate.call(0, { from: minter });
-      [generation, category, power, name] = response;
+      [generation, category, variation, name] = response;
       assert.equal(generation, 0, "response generation is incorrect");
       assert.equal(category, 0, "response category is incorrect");
-      assert.equal(power, 8, "response power is incorrect");
+      assert.equal(variation, 0, "response variation is incorrect");
       assert.equal(name, "Lux", "response name is incorrect");
 
       response = await contract.getTemplate.call(1, { from: minter });
-      [generation, category, power, name] = response;
-      assert.equal(generation, 0, "response generation is incorrect");
-      assert.equal(category, 0, "response category is incorrect");
-      assert.equal(power, 8, "response power is incorrect");
+      [generation, category, variation, name] = response;
+      assert.equal(generation, 1, "response generation is incorrect");
+      assert.equal(category, 1, "response category is incorrect");
+      assert.equal(variation, 1, "response variation is incorrect");
       assert.equal(name, "Talusreaver", "response name is incorrect");
     });
   });

@@ -14,7 +14,7 @@ contract('CardTreasury', function(accounts) {
         contract = await CardTreasury.new();
         await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
         await contract.setMinter(minter, { from: minter });
-        await contract.mintCard(0, 0, buyer, { from: minter });
+        await contract.mintCard(0, buyer, { from: minter });
       });
 
       it ("should not allow operator to be self", async function() {
@@ -34,7 +34,7 @@ contract('CardTreasury', function(accounts) {
         contract = await CardTreasury.new();
         await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
         await contract.setMinter(minter, { from: minter });
-        await contract.mintCard(0, 0, buyer, { from: minter });
+        await contract.mintCard(0, buyer, { from: minter });
         await contract.setApprovalForAll(
           buyerTwo,
           true,
@@ -66,7 +66,7 @@ contract('CardTreasury', function(accounts) {
         contract = await CardTreasury.new();
         await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
         await contract.setMinter(minter, { from: minter });
-        await contract.mintCard(0, 0, buyer, { from: minter });
+        await contract.mintCard(0, buyer, { from: minter });
       });
 
       it ("should allow set approval by all to true", async function() {
@@ -115,7 +115,7 @@ contract('CardTreasury', function(accounts) {
         contract = await CardTreasury.new();
         await contract.mintTemplate(1, 0, 0, 9, "T1", { from: minter });
         await contract.setMinter(minter, { from: minter });
-        await contract.mintCard(0, 0, buyer, { from: minter });
+        await contract.mintCard(0, buyer, { from: minter });
         await contract.setApprovalForAll(
           buyerTwo,
           true,

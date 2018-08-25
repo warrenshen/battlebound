@@ -43,12 +43,12 @@ contract('CardTreasury', function(accounts) {
   describe ("contract with multiple instance owners", function() {
     before(async function() {
       contract = await CardTreasury.new();
-      await contract.mintTemplate(2, 0, 0, 9, "Lux", { from: minter });
-      await contract.mintTemplate(3, 0, 0, 9, "Talusreaver", { from: minter });
+      await contract.mintTemplate(2, 0, 0, 0, "Lux", { from: minter });
+      await contract.mintTemplate(3, 0, 0, 1, "Talusreaver", { from: minter });
       await contract.setMinter(minter, { from: minter });
-      await contract.mintCard(0, 0, buyerTwo, { from: minter });
-      await contract.mintCard(1, 1, buyer, { from: minter });
-      await contract.mintCard(0, 1, buyer, { from: minter });
+      await contract.mintCard(0, buyerTwo, { from: minter });
+      await contract.mintCard(1, buyer, { from: minter });
+      await contract.mintCard(0, buyer, { from: minter });
     });
 
     it ("should return correct supply of templates", async function() {
@@ -125,7 +125,7 @@ contract('CardTreasury', function(accounts) {
       variations = await contract.variationsOfOwner.call(buyer);
       assert.equal(variations.length, 2);
       assert.equal(variations[0], 1);
-      assert.equal(variations[1], 1);
+      assert.equal(variations[1], 0);
 
       tokens = await contract.tokensOfOwner.call(buyerTwo);
       assert.equal(tokens.length, 1, "number of tokens is incorrect");
