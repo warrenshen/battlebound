@@ -46,31 +46,36 @@ contract LootBox is Pausable {
   }
 
   function calculatePrice(uint256 basePrice, uint256 boxCount) public view returns (uint) {
-    uint256 blocksPassed = block.number - blockStart;
-    uint256 daysPassed = blocksPassed / blocksPerDay;
+    return (basePrice - ((discountPoints() * basePrice) / 100)) * boxCount;
+  }
+
+  function discountPoints() public view returns (uint256) {
     // 7-day discount period
     // 1st day = 21% discount
     // 2nd day = 18% discount
     // ...
+    uint256 blocksPassed = block.number - blockStart;
+    uint256 daysPassed = blocksPassed / blocksPerDay;
     if (daysPassed < 7) {
-      return (basePrice - (((21 - (daysPassed * 3)) * basePrice) / 100)) * boxCount;
+      return 21 - (daysPassed * 3);
+    } else {
+      return 0;
     }
-    return basePrice * boxCount;
   }
 
-  function priceByCategory(uint256 _category) public pure returns (uint) {
+  function priceByCategory(uint256 _category) public pure returns (uint256) {
     if (_category == 0) {
       return 50 finney;
     } else if (_category == 1) {
       return 100 finney;
     } else if (_category == 2) {
-      return 300 finney;
+      return 500 finney;
     } else {
-      return 5000 finney;
+      return 4000 finney;
     }
   }
 
-  function getBalance() external view returns (uint) {
+  function getBalance() external view returns (uint256) {
     return address(this).balance;
   }
 
