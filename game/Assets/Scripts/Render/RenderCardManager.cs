@@ -26,11 +26,11 @@ public class RenderCardManager : MonoBehaviour
     {
         cards = new List<Card>();
 
-        foreach (string creatureName in Card.CARD_NAMES_CREATURE)
-        {
-            CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
-            cards.Add(creatureCard);
-        }
+        //foreach (string creatureName in Card.CARD_NAMES_CREATURE)
+        //{
+        //    CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
+        //    cards.Add(creatureCard);
+        //}
 
         foreach (string spellName in Card.CARD_NAMES_SPELL)
         {
@@ -42,6 +42,12 @@ public class RenderCardManager : MonoBehaviour
         {
             StructureCard structureCard = new StructureCard("", structureName, 0);
             cards.Add(structureCard);
+        }
+
+        foreach (string weaponName in Card.CARD_NAMES_WEAPONS)
+        {
+            WeaponCard weaponCard = new WeaponCard("", weaponName, 0);
+            cards.Add(weaponCard);
         }
 
         StartCoroutine(RenderCards());
