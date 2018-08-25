@@ -100,18 +100,44 @@ contract('CardTreasury', function(accounts) {
 
     it ("should return tokens of owner correctly", async function() {
       let tokens;
+      let templateIds;
+      let variations;
 
       tokens = await contract.tokensOfOwner.call(minter);
       assert.equal(tokens.length, 0, "number of tokens is incorrect");
+
+      templateIds = await contract.templatesOfOwner.call(minter);
+      assert.equal(templateIds.length, 0);
+
+      variations = await contract.variationsOfOwner.call(minter);
+      assert.equal(variations.length, 0);
 
       tokens = await contract.tokensOfOwner.call(buyer);
       assert.equal(tokens.length, 2, "number of tokens is incorrect");
       assert.equal(tokens[0], 1, "token is incorrect");
       assert.equal(tokens[1], 2, "token is incorrect");
 
+      templateIds = await contract.templatesOfOwner.call(buyer);
+      assert.equal(templateIds.length, 2);
+      assert.equal(templateIds[0], 1);
+      assert.equal(templateIds[1], 0);
+
+      variations = await contract.variationsOfOwner.call(buyer);
+      assert.equal(variations.length, 2);
+      assert.equal(variations[0], 1);
+      assert.equal(variations[1], 1);
+
       tokens = await contract.tokensOfOwner.call(buyerTwo);
       assert.equal(tokens.length, 1, "number of tokens is incorrect");
       assert.equal(tokens[0], 0, "token is incorrect");
+
+      templateIds = await contract.templatesOfOwner.call(buyerTwo);
+      assert.equal(templateIds.length, 1);
+      assert.equal(templateIds[0], 0);
+
+      variations = await contract.variationsOfOwner.call(buyerTwo);
+      assert.equal(variations.length, 1);
+      assert.equal(variations[0], 0);
     });
 
     it ("should support erc interfaces", async function() {

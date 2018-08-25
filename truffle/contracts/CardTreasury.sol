@@ -555,4 +555,46 @@ contract CardTreasury is CardAuction {
       return result;
     }
   }
+
+  function templatesOfOwner(address _owner) external view returns (uint256[]) {
+    uint256 tokenCount = balanceOf(_owner);
+
+    if (tokenCount == 0) {
+      return new uint256[](0);
+    } else {
+      uint256[] memory result = new uint256[](tokenCount);
+      uint256 resultIndex = 0;
+
+      for (uint256 cardId = 0; cardId < cards.length; ++cardId) {
+        if (cardIdToOwner[cardId] == _owner) {
+          Card storage card = cards[cardId];
+          result[resultIndex] = card.templateId;
+          ++resultIndex;
+        }
+      }
+
+      return result;
+    }
+  }
+
+  function variationsOfOwner(address _owner) external view returns (uint256[]) {
+    uint256 tokenCount = balanceOf(_owner);
+
+    if (tokenCount == 0) {
+      return new uint256[](0);
+    } else {
+      uint256[] memory result = new uint256[](tokenCount);
+      uint256 resultIndex = 0;
+
+      for (uint256 cardId = 0; cardId < cards.length; ++cardId) {
+        if (cardIdToOwner[cardId] == _owner) {
+          Card storage card = cards[cardId];
+          result[resultIndex] = card.variation;
+          ++resultIndex;
+        }
+      }
+
+      return result;
+    }
+  }
 }
