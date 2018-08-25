@@ -40,32 +40,6 @@ contract ERC721Receiver {
 }
 
 /**
- * @title SafeMath
- * @dev Math operations with safety checks that revert on error
- */
-library SafeMath {
-  /**
-  * @dev Adds two numbers, reverts on overflow.
-  */
-  function add(uint256 _a, uint256 _b) internal pure returns (uint256) {
-    uint256 c = _a + _b;
-    require(c >= _a);
-
-    return c;
-  }
-
-  /**
-  * @dev Subtracts two numbers, reverts on overflow (i.e. if subtrahend is greater than minuend).
-  */
-  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {
-    require(_b <= _a);
-    uint256 c = _a - _b;
-
-    return c;
-  }
-}
-
-/**
  * Utility library of inline functions on addresses
  */
 library AddressUtils {
@@ -110,12 +84,11 @@ contract CardBase is Ownable {
 
 contract CardMint is CardBase {
 
-  using SafeMath for uint256;
   using AddressUtils for address;
 
   /* EVENTS */
-  event TemplateMinted(uint256 indexed _templateId);
-  event CardMinted(address indexed _owner, uint256 indexed _cardId);
+  event TemplateMint(uint256 _templateId);
+  // Transfer from address 0x0 = newly minted card.
   event Transfer(
     address indexed _from,
     address indexed _to,
@@ -134,16 +107,10 @@ contract CardMint is CardBase {
 
   /* DATA TYPES */
   struct Template {
-    uint128 generation;
-    uint64 category;
-    uint64 power;
-    string name;
-  }
-
-  // Each Card is a template ID (index of a template in `templates`) and a variation.
-  struct Card {
-    uint256 templateId;
+    uint256 generation;
+    uint256 category;
     uint256 variation;
+    string name;
   }
 
   /* STORAGE */
@@ -151,7 +118,8 @@ contract CardMint is CardBase {
   address public minter;
 
   Template[] internal templates;
-  Card[] internal cards;
+  // Each Card is a template ID (index of a template in `templates`).
+  uint256[] internal cards;
 
   // Template ID => max number of cards that can be minted with this template ID.
   mapping (uint256 => uint256) internal templateIdToMintLimit;
@@ -168,7 +136,6 @@ contract CardMint is CardBase {
 
   /* MODIFIERS */
   modifier onlyMinter() {
-    require(minter != address(0));
     require(msg.sender == minter);
     _;
   }
@@ -177,29 +144,8 @@ contract CardMint is CardBase {
   /** PRIVATE FUNCTIONS **/
   function _addTokenTo(address _to, uint256 _tokenId) internal {
     require(cardIdToOwner[_tokenId] == address(0));
-    ownerToCardCount[_to] = ownerToCardCount[_to].add(1);
+    ownerToCardCount[_to] = ownerToCardCount[_to] + 1;
     cardIdToOwner[_tokenId] = _to;
-  }
-
-  function _mintCard(
-    uint256 _templateId,
-    uint256 _variation,
-    address _owner
-  ) internal returns (uint256) {
-    require(templateIdToMintCount[_templateId] < templateIdToMintLimit[_templateId]);
-    templateIdToMintCount[_templateId] = templateIdToMintCount[_templateId].add(1);
-
-    Card memory newCard = Card({
-      templateId: _templateId,
-      variation: _variation
-    });
-
-    uint256 newCardId = cards.push(newCard).sub(1);
-    _addTokenTo(_owner, newCardId);
-
-    emit Transfer(0, _owner, newCardId);
-    emit CardMinted(_owner, newCardId);
-    return newCardId;
   }
 
   /** PUBLIC FUNCTIONS **/
@@ -209,51 +155,58 @@ contract CardMint is CardBase {
 
   function mintTemplate(
     uint256 _mintLimit,
-    uint128 _generation,
-    uint64 _category,
-    uint64 _power,
+    uint256 _generation,
+    uint256 _category,
+    uint256 _variation,
     string _name
-  ) external onlyOwner returns (uint256) {
+  ) external onlyOwner {
     require(_mintLimit > 0);
 
-    Template memory newTemplate = Template({
+    uint256 newTemplateId = templates.push(Template({
       generation: _generation,
       category: _category,
-      power: _power,
+      variation: _variation,
       name: _name
-    });
-    uint256 newTemplateId = templates.push(newTemplate).sub(1);
+    })) - 1;
     templateIdToMintLimit[newTemplateId] = _mintLimit;
 
-    emit TemplateMinted(newTemplateId);
-    return newTemplateId;
+    emit TemplateMint(newTemplateId);
   }
 
   function mintCard(
     uint256 _templateId,
-    uint256 _variation,
     address _owner
-  ) external onlyMinter returns (uint256) {
-    require(_owner != address(0));
-    return _mintCard(_templateId, _variation, _owner);
+  ) external onlyMinter {
+    require(templateIdToMintCount[_templateId] < templateIdToMintLimit[_templateId]);
+    templateIdToMintCount[_templateId] = templateIdToMintCount[_templateId] + 1;
+
+    uint256 newCardId = cards.push(_templateId) - 1;
+    _addTokenTo(_owner, newCardId);
+
+    emit Transfer(0, _owner, newCardId);
   }
 
   function mintCards(
     uint256[] _templateIds,
-    uint256[] _variations,
     address _owner
   ) external onlyMinter {
-    require(_owner != address(0));
-    require(_templateIds.length == _variations.length);
-
+    uint256 mintCount = _templateIds.length;
     uint256 templateId;
-    uint256 variation;
 
-    for (uint256 i = 0; i < _templateIds.length; ++i) {
+    for (uint256 i = 0; i < mintCount; ++i) {
       templateId = _templateIds[i];
-      variation = _variations[i];
-      _mintCard(templateId, variation, _owner);
+
+      require(templateIdToMintCount[templateId] < templateIdToMintLimit[templateId]);
+      templateIdToMintCount[templateId] = templateIdToMintCount[templateId] + 1;
+
+      uint256 newCardId = cards.push(templateId) - 1;
+      cardIdToOwner[newCardId] = _owner;
+
+      emit Transfer(0, _owner, newCardId);
     }
+
+    // Bulk add to ownerToCardCount.
+    ownerToCardCount[_owner] = ownerToCardCount[_owner] + mintCount;
   }
 }
 
@@ -275,7 +228,7 @@ contract CardOwnership is CardMint {
 
   function _removeTokenFrom(address _from, uint256 _tokenId) internal {
     require(ownerOf(_tokenId) == _from);
-    ownerToCardCount[_from] = ownerToCardCount[_from].sub(1);
+    ownerToCardCount[_from] = ownerToCardCount[_from] - 1;
     cardIdToOwner[_tokenId] = address(0);
   }
 
@@ -461,9 +414,9 @@ contract CardTreasury is CardAuction {
     external
     view
     returns (
-      uint128 generation,
-      uint64 category,
-      uint64 power,
+      uint256 generation,
+      uint256 category,
+      uint256 variation,
       string name
     )
   {
@@ -473,7 +426,7 @@ contract CardTreasury is CardAuction {
 
     generation = template.generation;
     category = template.category;
-    power = template.power;
+    variation = template.variation;
     name = template.name;
   }
 
@@ -481,28 +434,26 @@ contract CardTreasury is CardAuction {
     external
     view
     returns (
-      uint128 generation,
-      uint64 category,
-      uint64 power,
-      string name,
-      uint256 variation
+      uint256 generation,
+      uint256 category,
+      uint256 variation,
+      string name
     )
   {
     require(_cardId < cards.length);
 
-    Card storage card = cards[_cardId];
-    Template storage template = templates[card.templateId];
+    uint256 templateId = cards[_cardId];
+    Template storage template = templates[templateId];
 
     generation = template.generation;
     category = template.category;
-    power = template.power;
+    variation = template.variation;
     name = template.name;
-    variation = card.variation;
   }
 
   function templateIdOf(uint256 _cardId) external view returns (uint256) {
     require(_cardId < cards.length);
-    return cards[_cardId].templateId;
+    return cards[_cardId];
   }
 
   function balanceOf(address _owner) public view returns (uint256) {
@@ -567,8 +518,8 @@ contract CardTreasury is CardAuction {
 
       for (uint256 cardId = 0; cardId < cards.length; ++cardId) {
         if (cardIdToOwner[cardId] == _owner) {
-          Card storage card = cards[cardId];
-          result[resultIndex] = card.templateId;
+          uint256 templateId = cards[cardId];
+          result[resultIndex] = templateId;
           ++resultIndex;
         }
       }
@@ -588,8 +539,9 @@ contract CardTreasury is CardAuction {
 
       for (uint256 cardId = 0; cardId < cards.length; ++cardId) {
         if (cardIdToOwner[cardId] == _owner) {
-          Card storage card = cards[cardId];
-          result[resultIndex] = card.variation;
+          uint256 templateId = cards[cardId];
+          Template storage template = templates[templateId];
+          result[resultIndex] = template.variation;
           ++resultIndex;
         }
       }
