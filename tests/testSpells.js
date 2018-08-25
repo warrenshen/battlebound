@@ -668,7 +668,7 @@ describe("challenge spells", function() {
               "level": 1,
               "category": 1,
               "cost": 40,
-              "name": "Silence of the Lambs",
+              "name": "Silence the Meek",
               "description": "Silence all creatures",
               "baseId": "C25",
               "costStart": 40,
@@ -792,7 +792,7 @@ describe("challenge spells", function() {
       });
     });
 
-    it("should support silence of the lambs", function() {
+    it("should support silence the meek", function() {
       return new Promise((resolve) => {
         gamesparks.sendWithData(
           "LogEventRequest",
@@ -1010,7 +1010,7 @@ describe("challenge spells", function() {
               "level": 1,
               "category": 1,
               "cost": 40,
-              "name": "Silence of the Lambs",
+              "name": "Silence the Meek",
               "description": "Silence all creatures",
               "baseId": "C25",
               "costStart": 40,
@@ -1369,7 +1369,7 @@ describe("challenge spells", function() {
               "level": 1,
               "category": 1,
               "cost": 40,
-              "name": "Silence of the Lambs",
+              "name": "Silence the Meek",
               "description": "Silence all creatures",
               "baseId": "C25",
               "costStart": 40,
@@ -1380,7 +1380,7 @@ describe("challenge spells", function() {
               "level": 1,
               "category": 1,
               "cost": 40,
-              "name": "Silence of the Lambs",
+              "name": "Silence the Meek",
               "description": "Silence all creatures",
               "baseId": "C25",
               "costStart": 40,
