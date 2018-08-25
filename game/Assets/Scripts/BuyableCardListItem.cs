@@ -9,6 +9,8 @@ using Nethereum.Web3.Accounts;
 public class BuyableCardListItem : CardListItem
 {
     [SerializeField]
+    private Text nameText;
+    [SerializeField]
     private Text priceText;
     [SerializeField]
     private Button bidAuctionButton;
@@ -37,7 +39,7 @@ public class BuyableCardListItem : CardListItem
         this.cardAuction = cardAuction;
         this.card = cardAuction.Card;
 
-        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(cardAuction.Card.GetFrontImage());
+        Texture2D texture = ResourceSingleton.Instance.GetImageTextureByName(this.card.GetFrontImage());
         this.cardImage.sprite = Sprite.Create(
             texture,
             new Rect(0.0f, 0.0f, texture.width, texture.height),
@@ -45,7 +47,8 @@ public class BuyableCardListItem : CardListItem
             100.0f
         );
 
-        this.priceText.text = cardAuction.Auction.StartingPrice.ToString();
+        this.nameText.text = this.card.GetName();
+        this.priceText.text = this.cardAuction.Auction.StartingPrice.ToString();
     }
 
     public void OnBidAuctionButtonClick()
