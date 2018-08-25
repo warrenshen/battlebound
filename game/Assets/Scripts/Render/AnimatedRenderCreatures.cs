@@ -35,9 +35,16 @@ public class AnimatedRenderCreatures : MonoBehaviour
 
     private IEnumerator RenderCardGrid()
     {
+        yield return new WaitForSeconds(2);
+
         foreach (Card card in this.cards)
         {
             GameObject created = SummonPoolManager.Instance.GetSummonFromPool(card.Name);
+            if (created == null)
+            {
+                continue;
+            }
+
             created.transform.parent = null;
             created.transform.Rotate(Vector3.right, 45);
             created.transform.position = fixedPoint.transform.position +
@@ -49,7 +56,7 @@ public class AnimatedRenderCreatures : MonoBehaviour
 
         yield return new WaitForSeconds(2);
 
-        LeanTween.moveZ(this.gameObject, this.gameObject.transform.position.z + 60, 10).setEaseInQuad();
+        LeanTween.moveZ(this.gameObject, this.gameObject.transform.position.z + 60, 20).setEaseInQuad();
         //#if UNITY_EDITOR
         //        UnityEditor.EditorApplication.isPlaying = false;
         //#endif

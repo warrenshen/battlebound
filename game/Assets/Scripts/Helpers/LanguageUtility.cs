@@ -14,7 +14,7 @@ public class LanguageUtility
     };
 
     private static List<Regex> EnglishPatterns = new List<Regex>() {
-        new Regex(@"((Warcry)|(Deathwish)|(Doublestrike)|(Piercing)|(Lethal)|(Haste)|(Shielded)|(Protector)|(Lifesap)|(Turnover))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        new Regex(@"((Warcry)|(Deathwish)|(Doublestrike)|(Piercing)|(Lethal)|(Haste)|(Shielded)|(Protector)|(Lifesap)|(Turnover)|(Ranged))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new Regex(@"((Summon)|(Resurrect)|(Convert)|(Destroy)|(Condemn)|(Draw)|(Freeze)|(Restore)|(Recover))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         new Regex(@"((Creature)|(Spell)|(Weapon)|(Structure))", RegexOptions.Compiled)
     };

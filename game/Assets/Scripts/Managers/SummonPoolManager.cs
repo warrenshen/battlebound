@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,6 +40,14 @@ public class SummonPoolManager : MonoBehaviour
 
     public GameObject GetSummonFromPool(string name)
     {
-        return this.summonPool[name];
+        if (this.summonPool.ContainsKey(name))
+        {
+            return this.summonPool[name];
+        }
+        else
+        {
+            Debug.LogError(String.Format("Could not summon {0} from summon pool. {1} pooled.", name, summonPool.Count));
+            return null;
+        }
     }
 }
