@@ -49,13 +49,13 @@ contract('CardTreasury', function(accounts) {
       let transaction;
       let supply;
 
-      await contract.mintCards([0], [0], buyer, { from: minter });
-      await contract.mintCards([0], [0], buyer, { from: minter });
+      await contract.mintCards([0], buyer, { from: minter });
+      await contract.mintCards([0], buyer, { from: minter });
 
       transaction = null;
 
       try {
-        transaction = await contract.mintCards([0], [0], buyer, { from: buyer });
+        transaction = await contract.mintCards([0], buyer, { from: buyer });
       } catch (error) {
         err = error
       }
@@ -70,18 +70,18 @@ contract('CardTreasury', function(accounts) {
     beforeEach(async function() {
       contract = await CardTreasury.new();
       await contract.mintTemplate(3, 0, 0, 9, "Lux", { from: minter });
-      await contract.mintTemplate(4, 0, 0, 9, "Talusreaver", { from: minter });
+      await contract.mintTemplate(8, 0, 0, 9, "Talusreaver", { from: minter });
       await contract.setMinter(minter, { from: minter });
     });
 
     it ("should allow privileged address to mint a card for self", async function() {
       const recipient = minter;
 
-      const transaction = await contract.mintCards([0], [0], recipient, { from: minter });
+      const transaction = await contract.mintCards([0], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[1].args._owner, recipient);
-      assert.equal(transaction.logs[1].args._cardId, 0);
+      assert.equal(transaction.logs[0].args._from, 0);
+      assert.equal(transaction.logs[0].args._to, recipient);
+      assert.equal(transaction.logs[0].args._tokenId, 0);
 
       const supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
@@ -99,11 +99,11 @@ contract('CardTreasury', function(accounts) {
     it ("should allow privileged address to mint a card for other", async function() {
       const recipient = buyer;
 
-      const transaction = await contract.mintCards([0], [0], recipient, { from: minter });
+      const transaction = await contract.mintCards([0], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[1].args._owner, recipient);
-      assert.equal(transaction.logs[1].args._cardId, 0);
+      assert.equal(transaction.logs[0].args._from, 0);
+      assert.equal(transaction.logs[0].args._to, recipient);
+      assert.equal(transaction.logs[0].args._tokenId, 0);
 
       const supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 1, "supply of instances is not 1");
@@ -124,15 +124,15 @@ contract('CardTreasury', function(accounts) {
       let transaction;
       let supply;
 
-      transaction = await contract.mintCards([0, 0], [0, 0], recipient, { from: minter });
+      transaction = await contract.mintCards([0, 0], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[1].args._owner, recipient);
-      assert.equal(transaction.logs[1].args._cardId, 0);
-      assert.equal(transaction.logs[2].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[3].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[3].args._owner, recipient);
-      assert.equal(transaction.logs[3].args._cardId, 1);
+      assert.equal(transaction.logs[0].args._from, 0);
+      assert.equal(transaction.logs[0].args._to, recipient);
+      assert.equal(transaction.logs[0].args._tokenId, 0);
+      assert.equal(transaction.logs[1].event, "Transfer", "expected a Transfer event");
+      assert.equal(transaction.logs[1].args._from, 0);
+      assert.equal(transaction.logs[1].args._to, recipient);
+      assert.equal(transaction.logs[1].args._tokenId, 1);
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 2, "supply of instances is not 1");
@@ -145,11 +145,11 @@ contract('CardTreasury', function(accounts) {
 
       recipient = buyer;
 
-      transaction = await contract.mintCards([0], [0], recipient, { from: minter });
+      transaction = await contract.mintCards([0], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[1].args._owner, recipient);
-      assert.equal(transaction.logs[1].args._cardId, 2);
+      assert.equal(transaction.logs[0].args._from, 0);
+      assert.equal(transaction.logs[0].args._to, recipient);
+      assert.equal(transaction.logs[0].args._tokenId, 2);
 
       supply = await contract.totalSupply.call();
       assert.equal(supply.valueOf(), 3, "supply of instances is not 3");
@@ -170,20 +170,21 @@ contract('CardTreasury', function(accounts) {
       let transaction;
       let supply;
       let exists;
+      let balance;
 
-      transaction = await contract.mintCards([0, 0, 0], [0, 0, 0], recipient, { from: minter });
+      transaction = await contract.mintCards([0, 0, 0], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[1].args._owner, recipient);
-      assert.equal(transaction.logs[1].args._cardId, 0);
+      assert.equal(transaction.logs[0].args._from, 0);
+      assert.equal(transaction.logs[0].args._to, recipient);
+      assert.equal(transaction.logs[0].args._tokenId, 0);
+      assert.equal(transaction.logs[1].event, "Transfer", "expected a Transfer event");
+      assert.equal(transaction.logs[1].args._from, 0);
+      assert.equal(transaction.logs[1].args._to, recipient);
+      assert.equal(transaction.logs[1].args._tokenId, 1);
       assert.equal(transaction.logs[2].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[3].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[3].args._owner, recipient);
-      assert.equal(transaction.logs[3].args._cardId, 1);
-      assert.equal(transaction.logs[4].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[5].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[5].args._owner, recipient);
-      assert.equal(transaction.logs[5].args._cardId, 2);
+      assert.equal(transaction.logs[2].args._from, 0);
+      assert.equal(transaction.logs[2].args._to, recipient);
+      assert.equal(transaction.logs[2].args._tokenId, 2);
 
       exists = await contract.exists.call(0);
       assert.equal(exists, true, "exists is not correct");
@@ -206,25 +207,30 @@ contract('CardTreasury', function(accounts) {
       owner = await contract.ownerOf.call(2);
       assert.equal(owner, recipient, "owner is not correct");
 
+      balance = await contract.balanceOf.call(recipient);
+      assert.equal(balance, 3, "owner is not correct");
+
       recipient = buyer;
 
-      transaction = await contract.mintCards([1, 1, 1, 1], [0, 0, 0, 0], recipient, { from: minter });
+      transaction = await contract.mintCards([1, 1, 1, 1, 1, 1, 1, 1], recipient, { from: minter });
       assert.equal(transaction.logs[0].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[1].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[1].args._owner, recipient);
-      assert.equal(transaction.logs[1].args._cardId, 3);
+      assert.equal(transaction.logs[0].args._from, 0);
+      assert.equal(transaction.logs[0].args._to, recipient);
+      assert.equal(transaction.logs[0].args._tokenId, 3);
+      assert.equal(transaction.logs[1].event, "Transfer", "expected a Transfer event");
+      assert.equal(transaction.logs[1].args._from, 0);
+      assert.equal(transaction.logs[1].args._to, recipient);
+      assert.equal(transaction.logs[1].args._tokenId, 4);
       assert.equal(transaction.logs[2].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[3].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[3].args._owner, recipient);
-      assert.equal(transaction.logs[3].args._cardId, 4);
-      assert.equal(transaction.logs[4].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[5].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[5].args._owner, recipient);
-      assert.equal(transaction.logs[5].args._cardId, 5);
-      assert.equal(transaction.logs[6].event, "Transfer", "expected a Transfer event");
-      assert.equal(transaction.logs[7].event, "CardMinted", "expected an CardMinted event");
-      assert.equal(transaction.logs[7].args._owner, recipient);
-      assert.equal(transaction.logs[7].args._cardId, 6);
+      assert.equal(transaction.logs[2].args._from, 0);
+      assert.equal(transaction.logs[2].args._to, recipient);
+      assert.equal(transaction.logs[2].args._tokenId, 5);
+      assert.equal(transaction.logs[3].event, "Transfer", "expected a Transfer event");
+      assert.equal(transaction.logs[3].args._from, 0);
+      assert.equal(transaction.logs[3].args._to, recipient);
+      assert.equal(transaction.logs[3].args._tokenId, 6);
+
+      const gasUsed = transaction.receipt.gasUsed;
 
       exists = await contract.exists.call(3);
       assert.equal(exists, true, "exists is not correct");
@@ -234,6 +240,9 @@ contract('CardTreasury', function(accounts) {
 
       exists = await contract.exists.call(5);
       assert.equal(exists, true, "exists is not correct");
+
+      balance = await contract.balanceOf.call(recipient);
+      assert.equal(balance, 8, "owner is not correct");
     });
   });
 });

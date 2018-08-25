@@ -26,7 +26,7 @@ contract('ClockAuction', function(accounts) {
       await treasury.setMinter(minter, { from: minter });
 
       await treasury.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
-      await treasury.mintCard(tokenId, 0, seller, { from: minter });
+      await treasury.mintCard(tokenId, seller, { from: minter });
 
       await treasury.createSaleAuction(
         tokenId,
@@ -69,7 +69,7 @@ contract('ClockAuction', function(accounts) {
       await treasury.setMinter(minter, { from: minter });
 
       await treasury.mintTemplate(1, 0, 0, 9, "Lux", { from: minter });
-      await treasury.mintCard(tokenId, 0, seller, { from: minter });
+      await treasury.mintCard(tokenId, seller, { from: minter });
 
       await treasury.createSaleAuction(
         tokenId,
