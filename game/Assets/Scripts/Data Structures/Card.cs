@@ -48,7 +48,7 @@ public abstract class Card
     public const string CARD_NAME_PRICKLEPILLAR = "Pricklepillar";
     public const string CARD_NAME_ADDERSPINE_WEEVIL = "Adderspine Weevil";
     public const string CARD_NAME_THIEF_OF_NIGHT = "Thief of Night";
-    public const string CARD_NAME_POWER_SIPHONER = "POWER Siphoner";
+    public const string CARD_NAME_POWER_SIPHONER = "POWER SIPHONER";
     public const string CARD_NAME_LIL_RUSTY = "Lil' Rusty";
     public const string CARD_NAME_INFERNO_902 = "INFERNO-902";
     public const string CARD_NAME_CHAR_BOT_451 = "CHAR-BOT-451";
@@ -84,6 +84,7 @@ public abstract class Card
     public const string CARD_NAME_FLOATWOOD = "Floatwood";
     public const string CARD_STARBABE = "Starbabe";
     public const string CARD_NAME_SHURIKANA = "Shurikana";
+    public const string CARD_NAME_LEONA_THE_SUMMONER = "Leona the Summoner";
 
     // Spells targeted.
     public const string CARD_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
@@ -220,7 +221,7 @@ public abstract class Card
         CARD_NAME_TERRATANK,
         CARD_NAME_CULYSSA,
         CARD_NAME_SABRE_CRYSTALLINE_DRAGON,
-        //CARD_NAME_SAPLET,
+        CARD_NAME_SAPLET,
         CARD_NAME_FIRESMITH_APPRENTICE,
         CARD_NAME_FORGEMECH,
         CARD_NAME_LIGHTHUNTER,
@@ -237,7 +238,8 @@ public abstract class Card
         CARD_NAME_CINDERBRUSH_SHAMAN,
         CARD_NAME_FLOATWOOD,
         CARD_STARBABE,
-        CARD_NAME_SHURIKANA
+        CARD_NAME_SHURIKANA,
+        CARD_NAME_LEONA_THE_SUMMONER,
     };
 
     public static readonly List<string> CARD_NAMES_SPELL = new List<string>
@@ -303,7 +305,6 @@ public abstract class Card
         CARD_NAME_CLIFFSIDE_VISTA,
         CARD_NAME_TIMEBANK_TOWER,
         CARD_NAME_RESTORATION_WELL,
-        CARD_NAME_IMBUE_FLIGHT
     };
 
     public static readonly List<string> CARD_NAMES_WEAPONS = new List<string>

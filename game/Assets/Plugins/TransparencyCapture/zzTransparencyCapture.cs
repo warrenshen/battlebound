@@ -48,9 +48,9 @@ public class zzTransparencyCapture
     /// Capture a screenshot(not include GUI)
     /// </summary>
     /// <returns></returns>
-    public static Texture2D captureScreenshot(float horizontalCrop = 130)
+    public static Texture2D captureScreenshot(float horizontalCropRatio = 0.12f)
     {
-        return capture(new Rect(horizontalCrop, 0f, Screen.width - horizontalCrop * 2, Screen.height));
+        return capture(new Rect(horizontalCropRatio * Screen.width, 0f, Screen.width - horizontalCropRatio * Screen.width * 2, Screen.height));
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using UnityEngine;
 
@@ -103,7 +104,8 @@ public class RenderCardManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();  //give it some time to redraw
 
-            yield return StartCoroutine(Capture(card.Name));
+            string fileName = Regex.Replace(card.Name, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+            yield return StartCoroutine(Capture(fileName));
 
             cardGameObject.SetActive(false);
         }
