@@ -12,7 +12,6 @@ contract Pausable is Ownable {
 
   bool public paused = false;
 
-
   /**
    * @dev Modifier to make a function callable only when the contract is not paused.
    */
