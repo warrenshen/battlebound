@@ -153,7 +153,12 @@ public abstract class Card
     public const string CARD_NAME_FROSTBEARDS_DIRK = "Frostbeard's Dirk";
     public const string CARD_NAME_NECROMANCERS_TECPATL = "Necromancer's Tecpatl";
     public const string CARD_NAME_PIERCING_LIGHTSPEAR = "Piercing Lightspear";
-    //public const string CARD_NAME_SEAWORTHY_CUTLASS = 
+    public const string CARD_NAME_SEAWORTHY_CUTLASS = "Seafaring Cutlass";
+    public const string CARD_NAME_LAVAFORGED_BATTLEAXE = "Lavaforged Battleaxe";
+    public const string CARD_NAME_BROADSWORD = "Broadsword";
+    public const string CARD_NAME_REJUVENATION_STAFF = "Rejuvenation Staff";
+    public const string CARD_NAME_ELVEN_LONGBOW = "Elven Longbow";
+    public const string CARD_NAME_RALLYING_MACE = "Rallying Mace";
 
     public static readonly List<string> CARD_NAMES_CREATURE = new List<string>
     {
@@ -305,7 +310,13 @@ public abstract class Card
     {
         CARD_NAME_NECROMANCERS_TECPATL,
         CARD_NAME_PIERCING_LIGHTSPEAR,
-        CARD_NAME_FROSTBEARDS_DIRK
+        CARD_NAME_FROSTBEARDS_DIRK,
+        CARD_NAME_SEAWORTHY_CUTLASS,
+        CARD_NAME_LAVAFORGED_BATTLEAXE,
+        CARD_NAME_BROADSWORD,
+        CARD_NAME_REJUVENATION_STAFF,
+        CARD_NAME_ELVEN_LONGBOW,
+        CARD_NAME_RALLYING_MACE,
     };
 
     public enum CardType { Creature, Spell, Structure, Weapon };
@@ -334,9 +345,10 @@ public abstract class Card
     public const string CARD_ABILITY_END_TURN_SUMMON_SAPLET = "CARD_ABILITY_END_TURN_SUMMON_SAPLET";
     public const string CARD_ABILITY_END_TURN_SUMMON_IMP = "CARD_ABILITY_END_TURN_SUMMON_IMP";
     public const string CARD_ABILITY_END_TURN_DAMAGE_ALL_TEN = "CARD_ABILITY_END_TURN_DAMAGE_ALL_TEN";
-    public const string CARD_ABILITY_END_TURN_GRANT_DOMAIN_TWENTY_TWENTY = "CARD_ABILITY_END_TURN_GRANT_DOMAIN_TWENTY_TWENTY";
+    public const string CARD_ABILITY_END_TURN_GRANT_DOMAIN_TEN_TEN = "CARD_ABILITY_END_TURN_GRANT_DOMAIN_TEN_TEN";
     public const string CARD_ABILITY_END_TURN_GRANT_ALL_FRIENDLY_ZERO_TEN = "CARD_ABILITY_END_TURN_GRANT_ALL_FRIENDLY_ZERO_TEN";
     public const string CARD_ABILITY_END_TURN_REPEAT_FOUR_GRANT_RANDOM_FRIENDLY_TEN_TEN = "CARD_ABILITY_END_TURN_REPEAT_FOUR_GRANT_RANDOM_FRIENDLY_TEN_TEN";
+    public const string CARD_ABILITY_END_TURN_STORE_EXCESS_MANA = "CARD_ABILITY_END_TURN_STORE_EXCESS_MANA";
     public const string CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD = "CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD";
 
     public const string CARD_ABILITY_BATTLE_CRY_DRAW_CARD = "CARD_ABILITY_BATTLE_CRY_DRAW_CARD";
@@ -391,12 +403,16 @@ public abstract class Card
     public const string FLAVOR_ARC_KNIGHT = "FLAVOR_ARC_KNIGHT";
     public const string FLAVOR_ABYSSAL_EEL = "FLAVOR_ABYSSAL_EEL";
     public const string FLAVOR_GUPPEA = "FLAVOR_GUPPEA";
+    public const string FLAVOR_SEAFARING_CUTLASS = "FLAVOR_SEAFARING_CUTLASS";
+    public const string FLAVOR_BROADSWORD = "FLAVOR_BROADSWORD";
+    public const string FLAVOR_CRYSTAL_SNAPPER = "FLAVOR_CRYSTAL_SNAPPER";
 
     //Unused?
     public const string CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN = "CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_ONE";
     public const string CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX = "CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX";
     public const string CARD_ABILITY_PLAY_SPELL_DRAW_CARD = "CARD_ABILITY_PLAY_SPELL_DRAW_CARD";
     public const string CARD_ABILITY_EACH_KILL_DRAW_CARD = "CARD_ABILITY_EACH_KILL_DRAW_CARD";
+    public const string CARD_ABILITY_GAIN_TWENTY_TWENTY_AFTER_ATTACK = "CARD_ABILITY_GAIN_TWENTY_TWENTY_AFTER_ATTACK";
 
     public static readonly string[] VALID_ABILITIES = {
         CARD_EMPTY_ABILITY,
@@ -419,9 +435,10 @@ public abstract class Card
         CARD_ABILITY_END_TURN_SUMMON_SAPLET,
         CARD_ABILITY_END_TURN_SUMMON_IMP,
         CARD_ABILITY_END_TURN_DAMAGE_ALL_TEN,
-        CARD_ABILITY_END_TURN_GRANT_DOMAIN_TWENTY_TWENTY,
+        CARD_ABILITY_END_TURN_GRANT_DOMAIN_TEN_TEN,
         CARD_ABILITY_END_TURN_GRANT_ALL_FRIENDLY_ZERO_TEN,
         CARD_ABILITY_END_TURN_REPEAT_FOUR_GRANT_RANDOM_FRIENDLY_TEN_TEN,
+        CARD_ABILITY_END_TURN_STORE_EXCESS_MANA,
         CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD,
         CARD_ABILITY_BATTLE_CRY_DRAW_CARD,
         CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN,
@@ -469,6 +486,7 @@ public abstract class Card
         FLAVOR_ARC_KNIGHT,
         FLAVOR_ABYSSAL_EEL,
         FLAVOR_GUPPEA,
+        FLAVOR_CRYSTAL_SNAPPER,
         CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN,
         CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX,
         CARD_ABILITY_PLAY_SPELL_DRAW_CARD,
@@ -551,18 +569,19 @@ public abstract class Card
         { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TEN, "Turnover: Deal 10 damage to a creature directly in front of this one" },
         { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_TWENTY, "Turnover: Deal 20 damage to a creature directly in front of this one" },
         { CARD_ABILITY_END_TURN_ATTACK_IN_FRONT_BY_THIRTY, "Turnover: Deal 30 damage to a creature directly in front of this one" },
-        { CARD_ABILITY_END_TURN_DRAW_CARD, "Turnover: Draw a card" },
+        { CARD_ABILITY_END_TURN_DRAW_CARD, "Turnover: Draw 1 card" },
         { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_TEN_TEN, "Turnover: Grant a random friendly creature +10/+10" },
         { CARD_ABILITY_END_TURN_BOOST_RANDOM_FRIENDLY_ZERO_TWENTY, "Turnover: Grant a random friendly creature +0/+20" },
         { CARD_ABILITY_END_TURN_SUMMON_SAPLET, "Turnover: Summon a Saplet" },
         { CARD_ABILITY_END_TURN_SUMMON_IMP, "Turnover: Summon a Charming Imp on each empty tile in this domain" },
         { CARD_ABILITY_END_TURN_DAMAGE_ALL_TEN, "Turnover: Deal 10 damage to all opponent creatures" },
-        { CARD_ABILITY_END_TURN_GRANT_DOMAIN_TWENTY_TWENTY, "Turnover: Grant +20/+20 to any creature in this domain" },
+        { CARD_ABILITY_END_TURN_GRANT_DOMAIN_TEN_TEN, "Turnover: Grant +10/+10 to any creature in this domain" },
         { CARD_ABILITY_END_TURN_GRANT_ALL_FRIENDLY_ZERO_TEN, "Turnover: Grant +0/+10 to all friendly creatures" },
-        { CARD_ABILITY_END_TURN_REPEAT_FOUR_GRANT_RANDOM_FRIENDLY_TEN_TEN, "Turnover: Grant +10/+10 to a random friendly, repeat 4 times" },
-        { CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD, "Draw a card at the end of each player's turn"},
+        { CARD_ABILITY_END_TURN_REPEAT_FOUR_GRANT_RANDOM_FRIENDLY_TEN_TEN, "Turnover: Grant +10/+10 to a random friendly creature~ repeat 4 times" },
+        { CARD_ABILITY_END_TURN_STORE_EXCESS_MANA, "Turnover: Save any unused mana for your next turn (max 100)" },
+        { CARD_ABILITY_END_TURN_BOTH_PLAYERS_DRAW_CARD, "Draw 1 card at the end of each player's turn"},
 
-        { CARD_ABILITY_BATTLE_CRY_DRAW_CARD, "Warcry: Draw a card" },
+        { CARD_ABILITY_BATTLE_CRY_DRAW_CARD, "Warcry: Draw 1 card" },
         { CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TEN, "Warcry: Deal 10 damage to a creature directly in front of this one" },
         { CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_TWENTY, "Warcry: Deal 20 damage to a creature directly in front of this one" },
         { CARD_ABILITY_BATTLE_CRY_ATTACK_IN_FRONT_BY_THIRTY, "Warcry: Deal 30 damage to a creature directly in front of this one" },
@@ -581,21 +600,25 @@ public abstract class Card
         { CARD_ABILITY_BATTLE_CRY_ATTACK_RANDOM_FROZEN_BY_TWENTY, "Warcry: Deal 20 damage to a random frozen opponent creature" },
         { CARD_ABILITY_BATTLE_CRY_KILL_RANDOM_FROZEN, "Warcry: Destroy a random frozen opponent creature" },
         { CARD_ABILITY_BATTLE_CRY_REVIVE_HIGHEST_COST_CREATURE, "Warcry: Resurrect your highest cost fallen friendly creature" },
-        { CARD_ABILITY_BATTLE_CRY_SUMMON_TWO_TAUNT_SAPLET, "Warcry: Resurrect your highest cost fallen friendly creature" },
+        { CARD_ABILITY_BATTLE_CRY_SUMMON_TWO_TAUNT_SAPLET, "Warcry: Summon 2 Saplets with Protector" },
+        // oaken staff => Warcry: Grant +0/+20 to a friendly creature
+        // rallying mace => Warcry: Grant +20/+0 to a friendly creature
+        // rejuvenation staff => Warcry: Restore 20 health to a friendly creature
 
-        { CARD_ABILITY_DEATH_RATTLE_DRAW_CARD, "Deathwish: Draw a card" },
-        { CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TEN, "Deathwish: Throw three bombs at random opponents dealing 10 damage each" },
-        { CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN, "Deathwish: Deal 10 damage to opponent hero" },
+        { CARD_ABILITY_DEATH_RATTLE_DRAW_CARD, "Deathwish: Draw 1 card" },
+        { CARD_ABILITY_DEATH_RATTLE_ATTACK_RANDOM_THREE_BY_TEN, "Deathwish: Throw 3 bombs at random opponents dealing 10 damage each" },
+        { CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TEN, "Deathwish: Deal 10 damage to the opponent hero" },
         { CARD_ABILITY_DEATH_RATTLE_ATTACK_FACE_BY_TWENTY, "Deathwish: Deal 20 damage to the opponent hero" },
         { CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_CREATURES_BY_THIRTY, "Deathwish: Deal 30 damage to all creatures" },
         { CARD_ABILITY_DEATH_RATTLE_DAMAGE_ALL_OPPONENT_CREATURES_BY_TWENTY, "Deathwish: Deal 20 damage to all opponent creatures" },
         { CARD_ABILITY_DEATH_RATTLE_RESUMMON, "Deathwish: Resurrect this creature" },
-        { CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS, "Deathwish: Summon 2 copies of Dusk Dweller"},
-        { CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS, "Deathwish: Summon 2 copies of Talusreaver" },
+        { CARD_ABILITY_DEATH_RATTLE_SUMMON_DUSK_DWELLERS, "Deathwish: Summon 2 Dusk Dwellers"},
+        { CARD_ABILITY_DEATH_RATTLE_SUMMON_SUMMONED_DRAGONS, "Deathwish: Summon 2 Talusreavers" },
         { CARD_ABILITY_DEATH_RATTLE_REVIVE_HIGHEST_COST_CREATURE, "Deathwish: Resurrect your highest cost fallen friendly creature" },
         { CARD_ABILITY_DEATH_RATTLE_SHIELD_RANDOM_FRIENDLY, "Deathwish: Grant Shielded to a random friendly creature" },
-        { CARD_ABILITY_DEATH_RATTLE_GRANT_RANDOM_FRIENDLY_TEN_THIRTY, "Deathwish: Grant a random friendly creature +10/+30" },
+        { CARD_ABILITY_DEATH_RATTLE_GRANT_RANDOM_FRIENDLY_TEN_THIRTY, "Deathwish: Grant +10/+30 to a random friendly creature" },
         { CARD_ABILITY_DEATH_RATTLE_SUMMON_YETI, "Deathwish: Summon a Bipolar Yeti" },
+        // lavaforged battleaxe => Deathwish: Grant +20/+0 to a random friendly creature
 
         { FLAVOR_UNKINDLED_JUNIOR, "“Rawr-rrrr-Awr.”" },
         { FLAVOR_MEGAPUNK, "“Not to be confused with some other titular protagonist”" },
@@ -605,20 +628,24 @@ public abstract class Card
         { FLAVOR_ARC_KNIGHT, "“Powered by something other than humanity”" },
         { FLAVOR_ABYSSAL_EEL, "“Few survive the abyssal grip”" },
         { FLAVOR_GUPPEA, "“Poor thing~ being born into this harsh world.”" },
+        { FLAVOR_SEAFARING_CUTLASS, "“I curved me many a sweet soul with this here cutlass”"},
+        { FLAVOR_BROADSWORD, "“Nothing more reliable than a broad and a sword”" },
+        { FLAVOR_CRYSTAL_SNAPPER, "“Some say those crystals are worth more than gold”" },
 
         { CARD_ABILITY_DAMAGE_TAKEN_ATTACK_FACE_BY_TWENTY, "Whenever this creature takes damage~ deal 20 damage to opponent hero" },
-        { CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES, "Whenever this creature takes damage~ summon two Meadow Sprites" },
+        { CARD_ABILITY_DAMAGE_TAKEN_SUMMON_TWO_MEADOW_SPRITES, "Whenever this creature takes damage~ summon 2 Meadow Sprites" },
         { CARD_ABILITY_DAMAGE_TAKEN_DAMAGE_PLAYER_FACE_BY_THIRTY, "Whenever this creature takes damage~ deal 30 damage to its hero" },
 
-        { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN, "When attacking~ also deal 10 damage to any creatures adjacent to the target" },
-        { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK, "When attacking~ also deal full damage to any creatures adjacent to the target" },
+        { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_TEN, "When attacking~ also deal 10 damage to any creatures adjacent to the targeted creature" },
+        { CARD_ABILITY_ATTACK_DAMAGE_ADJACENT_BY_ATTACK, "When attacking~ also deal full damage to any creatures adjacent to the targeted creature" },
         { CARD_ABILITY_ICY, "When attacking~ freeze target for 1 turn" },
 
         //TODO: REVISE THESE, DOESNT LOOK LIKE ANYTHING USES THESE
-        { CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN, "Grant a friendly creature +10/+0" },
+        { CARD_ABILITY_BOOST_FRIENDLY_ATTACK_BY_TEN, "Grant +10/+0 to a friendly creature" },
         { CARD_ABILITY_DEATH_RATTLE_HEAL_FRIENDLY_MAX, "Deathwish: Heal all friendly creatures to max health" },
-        { CARD_ABILITY_PLAY_SPELL_DRAW_CARD, "Whenever you play a spell, draw a card" },
+        { CARD_ABILITY_PLAY_SPELL_DRAW_CARD, "Whenever you play a spell, draw 1 card" },
         { CARD_ABILITY_EACH_KILL_DRAW_CARD, "" },
+        { CARD_ABILITY_GAIN_TWENTY_TWENTY_AFTER_ATTACK, "Gain +20/+20 after each attack" }
     };
 
     public static string GetDecriptionByAbilities(List<string> abilities)

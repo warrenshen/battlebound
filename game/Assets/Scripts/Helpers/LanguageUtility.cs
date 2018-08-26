@@ -10,7 +10,11 @@ public class LanguageUtility
     private LanguageUtility.Language selectedLanguage;
 
     private static List<Regex> GlobalPatterns = new List<Regex>() {
-        new Regex(@"\+.*\/+.*", RegexOptions.Compiled | RegexOptions.IgnoreCase)  //stats
+        new Regex(@" \+.*\/+.+? ", RegexOptions.Compiled | RegexOptions.IgnoreCase)  //stats
+    };
+
+    private static List<Regex> ItalicPatterns = new List<Regex>() {
+        new Regex(@"“.*”", RegexOptions.Compiled | RegexOptions.IgnoreCase)  //flavor text
     };
 
     private static List<Regex> EnglishPatterns = new List<Regex>() {
@@ -117,6 +121,14 @@ public class LanguageUtility
             foreach (Match match in token.Matches(output))
             {
                 output = token.Replace(output, "<b>$0</b>");
+            }
+        }
+
+        foreach (Regex token in ItalicPatterns)
+        {
+            foreach (Match match in token.Matches(output))
+            {
+                output = token.Replace(output, "<i>$0</i>");
             }
         }
 

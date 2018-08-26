@@ -21,7 +21,7 @@ public class CardSingleton : Singleton<CardSingleton>
     public GameObject StructureCardObjectPrefab => structureCardObjectPrefab;
     [SerializeField]
     private GameObject weaponCardObjectPrefab;
-    public GameObject WeaponCardObjectPrefab => structureCardObjectPrefab;
+    public GameObject WeaponCardObjectPrefab => weaponCardObjectPrefab;
 
     [SerializeField]
     private Texture2D[] gems;
