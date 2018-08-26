@@ -65,13 +65,13 @@ contract LootBox is Pausable {
 
   function priceByCategory(uint256 _category) public pure returns (uint256) {
     if (_category == 0) {
-      return 50 finney;
+      return 30 finney;
     } else if (_category == 1) {
-      return 100 finney;
+      return 60 finney;
     } else if (_category == 2) {
-      return 500 finney;
+      return 240 finney;
     } else {
-      return 4000 finney;
+      return 1500 finney;
     }
   }
 
