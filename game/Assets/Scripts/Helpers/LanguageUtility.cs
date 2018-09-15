@@ -23,6 +23,12 @@ public class LanguageUtility
         new Regex(@"((Creature)|(Spell)|(Weapon)|(Structure))", RegexOptions.Compiled)
     };
 
+    private static List<Regex> ChinesePatterns = new List<Regex>() {
+        new Regex(@"((战嚎)|(亡愿)|(双击)|(穿刺)|(致命)|(冲锋)|(护盾)|(保卫)|(吸血)|(回合之后)|(远击))", RegexOptions.Compiled),
+        new Regex(@"((召唤)|(复活)|(转化)|(毁灭)|(诅咒)|(取)|(冰冻)|(恢复)|(回复))", RegexOptions.Compiled),
+        new Regex(@"((单位牌)|(Spell)|(武器牌)|(Structure))", RegexOptions.Compiled)
+    };
+
     public enum Language { EN, CN, KR, JP }
 
     public static LanguageUtility Instance()
@@ -67,30 +73,32 @@ public class LanguageUtility
 
     public string GetLocalizedName(string name)
     {
+        name = name.Replace("～", "~");
         if (name == null)
         {
             Debug.LogError("GetLocalizedName called on null.");
             return name;
         }
 
-        name = name.Replace("~", ",").Replace("～", ",");
-
         if (!this.cardNames.ContainsKey(name))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
+            Debug.LogError(string.Format("Missing translation for: {0}", name));
             return name;
         }
-        string value = cardNames[name][(int)this.selectedLanguage];
+        string value = this.cardNames[name][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", name));
+            Debug.LogError(string.Format("Empty translation for: {0}", name));
             return name;
         }
+
+        value = value.Replace("~", ",").Replace("～", ",");
         return value;
     }
 
     public string GetLocalizedDescription(string description)
     {
+        description = description.Replace("～", "~");
         if (description == null)
         {
             Debug.LogError("GetLocalizedDescription called on null.");
@@ -99,13 +107,13 @@ public class LanguageUtility
 
         if (!this.cardDescriptions.ContainsKey(description))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", description));
+            Debug.LogError(string.Format("Missing translation for: {0}", description));
             return Prettify(description);
         }
         string value = this.cardDescriptions[description][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogWarning(string.Format("Missing translation for: {0}", description));
+            Debug.LogError(string.Format("Empty translation for: {0}", description));
             return Prettify(description);
         }
         return Prettify(value);
@@ -132,6 +140,7 @@ public class LanguageUtility
             }
         }
 
+        //to-do put a conditional on card type
         foreach (Regex token in EnglishPatterns)
         {
             foreach (Match match in token.Matches(output))
@@ -139,6 +148,15 @@ public class LanguageUtility
                 output = token.Replace(output, "<b>$0</b>");
             }
         }
+
+        foreach (Regex token in ChinesePatterns)
+        {
+            foreach (Match match in token.Matches(output))
+            {
+                output = token.Replace(output, "<b>$0</b>");
+            }
+        }
+
         return output;
     }
 

@@ -479,7 +479,15 @@ public class Board
         {
             if (!BattleSingleton.Instance.IsEnvironmentTest())
             {
-                for (int i = 0; i < 9; i += 1)
+                int activeChildCount = 0;
+                GameObject boardParent = GameObject.Find(String.Format("{0} Board", player.Name));
+                foreach (Transform child in boardParent.transform)
+                {
+                    if (child.gameObject.activeSelf)
+                        activeChildCount++;
+                }
+
+                for (int i = 0; i < activeChildCount; i += 1)
                 {
                     Transform boardPlace = GameObject.Find(
                         String.Format("{0} {1}", player.Name, i)

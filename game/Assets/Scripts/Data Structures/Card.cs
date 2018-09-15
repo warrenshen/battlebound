@@ -621,14 +621,14 @@ public abstract class Card
         { CARD_ABILITY_DEATH_RATTLE_SUMMON_YETI, "Deathwish: Summon a Bipolar Yeti" },
         // lavaforged battleaxe => Deathwish: Grant +20/+0 to a random friendly creature
 
-        { FLAVOR_UNKINDLED_JUNIOR, "“Rawr-rrrr-Awr.”" },
+        { FLAVOR_UNKINDLED_JUNIOR, "“Rawr-rrrr-Awr”" },
         { FLAVOR_MEGAPUNK, "“Not to be confused with some other titular protagonist”" },
-        { FLAVOR_CHARBOT, "“All books must b-u-r-n.”" },
+        { FLAVOR_CHARBOT, "“All books must b-u-r-n”" },
         { FLAVOR_STARBABE, "“So innocent yet so fierce”" },
         { FLAVOR_SAPLET, "“I'm gr--saplet”" },
         { FLAVOR_ARC_KNIGHT, "“Powered by something other than humanity”" },
         { FLAVOR_ABYSSAL_EEL, "“Few survive the abyssal grip”" },
-        { FLAVOR_GUPPEA, "“Poor thing~ being born into this harsh world.”" },
+        { FLAVOR_GUPPEA, "“Poor thing~ being born into this harsh world”" },
         { FLAVOR_SEAFARING_CUTLASS, "“I curved me many a sweet soul with this here cutlass”"},
         { FLAVOR_BROADSWORD, "“Nothing more reliable than a broad and a sword”" },
         { FLAVOR_CRYSTAL_SNAPPER, "“Some say those crystals are worth more than gold”" },
