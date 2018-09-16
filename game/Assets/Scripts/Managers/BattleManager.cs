@@ -9,7 +9,7 @@ using TMPro;
 [System.Serializable]
 public class BattleManager : MonoBehaviour
 {
-    private const float CARD_DISPLACEMENT_THRESHOLD = 100;
+    private const float CARD_DISPLACEMENT_THRESHOLD = 50;
     private const float NORMAL_ATTACK_ARROW_WIDTH = 1.66f;
     private const float ACTIVE_ATTACK_ARROW_WIDTH = 2.22f;
 
@@ -218,7 +218,7 @@ public class BattleManager : MonoBehaviour
                     ActionManager.Instance.Freeze(true);
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit, 100f))
+                    if (Physics.Raycast(ray, out hit, 300f))
                     {
                         attackCommand.SetPointPositions(target.transform.position, hit.point);
 
