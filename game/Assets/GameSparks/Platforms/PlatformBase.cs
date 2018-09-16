@@ -47,6 +47,7 @@ namespace GameSparks.Platforms
 
         virtual protected void Start()
         {
+            this.isStaging = FlagHelper.IsServerStaging();
 
             DeviceName = SystemInfo.deviceName.ToString();
             DeviceType = SystemInfo.deviceType.ToString();
@@ -469,6 +470,8 @@ namespace GameSparks.Platforms
         public virtual String DeviceId { get; private set; }
         public String Platform { get; private set; }
 
+        private bool isStaging;
+
         /// <summary>
         /// Allow for extra debug output. To set it use the GameSparksSettings editor window. <see cref="GameSparksSettings.DebugBuild"/>
         /// </summary>
@@ -478,7 +481,7 @@ namespace GameSparks.Platforms
         {
             get
             {
-                return GameSparksSettings.ApiKey;
+                return this.isStaging ? GameSparksSettings.ApiKeyStaging : GameSparksSettings.ApiKey;
             }
         }
 
@@ -486,7 +489,7 @@ namespace GameSparks.Platforms
         {
             get
             {
-                return GameSparksSettings.ApiSecret;
+                return this.isStaging ? GameSparksSettings.ApiSecretStaging : GameSparksSettings.ApiSecret;
             }
         }
 

@@ -12,8 +12,8 @@ public class GameSparksSettings : ScriptableObject
     public const string gamesparksSettingsAssetName = "GameSparksSettings";
     public const string gamesparksSettingsPath = "GameSparks/Resources";
     public const string gamesparksSettingsAssetExtension = ".asset";
-	private static readonly string liveServiceUrlBase = "wss://live-{0}.ws.gamesparks.net/ws/{1}/{0}";
-	private static readonly string previewServiceUrlBase = "wss://preview-{0}.ws.gamesparks.net/ws/{1}/{0}";
+    private static readonly string liveServiceUrlBase = "wss://live-{0}.ws.gamesparks.net/ws/{1}/{0}";
+    private static readonly string previewServiceUrlBase = "wss://preview-{0}.ws.gamesparks.net/ws/{1}/{0}";
     private static GameSparksSettings instance;
 
     public static void SetInstance(GameSparksSettings settings)
@@ -39,24 +39,22 @@ public class GameSparksSettings : ScriptableObject
     }
 
     [SerializeField]
-    private string
-        sdkVersion;
+    private string sdkVersion;
     [SerializeField]
-    private string
-        apiKey = "";
-	[SerializeField]
-	private string
-		credential = "device";
+    private string apiKey = "";
     [SerializeField]
-    private string
-        apiSecret = "";
+    private string apiSecret = "";
     [SerializeField]
-    private bool
-        previewBuild = true;
+    private string apiKeyStaging = "";
     [SerializeField]
-    private bool
-        debugBuild = false;
-    
+    private string apiSecretStaging = "";
+    [SerializeField]
+    private string credential = "device";
+    [SerializeField]
+    private bool previewBuild = true;
+    [SerializeField]
+    private bool debugBuild = false;
+
     public static bool PreviewBuild
     {
         get { return Instance.previewBuild; }
@@ -71,44 +69,85 @@ public class GameSparksSettings : ScriptableObject
 
     public static string ApiSecret
     {
-        get{ return Instance.apiSecret;}
+        get { return Instance.apiSecret; }
         set { Instance.apiSecret = value; }
     }
-    
+
     public static string ApiKey
     {
-        get{ return Instance.apiKey;}
+        get { return Instance.apiKey; }
         set { Instance.apiKey = value; }
     }
 
-	public static string Credential
-	{
-		get{ return (Instance.credential == null || Instance.credential.Length == 0) ? "device" : Instance.credential ;}
-		set { Instance.credential = value; }
-	}
-    
+    public static string ApiSecretStaging
+    {
+        get { return Instance.apiSecretStaging; }
+        set { Instance.apiSecretStaging = value; }
+    }
+
+    public static string ApiKeyStaging
+    {
+        get { return Instance.apiKeyStaging; }
+        set { Instance.apiKeyStaging = value; }
+    }
+
+    public static string Credential
+    {
+        get { return (Instance.credential == null || Instance.credential.Length == 0) ? "device" : Instance.credential; }
+        set { Instance.credential = value; }
+    }
+
     public static bool DebugBuild
     {
         get { return Instance.debugBuild; }
         set { Instance.debugBuild = value; }
     }
-    
+
     public static string ServiceUrl
     {
         get
-        { 
-            String urlAddition = Instance.apiKey;
+        {
+            String urlAddition = ApiKeyFinal();
 
-            if (Instance.apiSecret.Contains(":"))
+            if (ApiSecretFinal().Contains(":"))
             {
-                urlAddition = Instance.apiSecret.Substring(0, Instance.apiSecret.IndexOf(":")) + "/" + urlAddition;
+                urlAddition = ApiSecretFinal().Substring(0, ApiSecretFinal().IndexOf(":")) + "/" + urlAddition;
             }
             if (Instance.previewBuild)
             {
-				return String.Format(previewServiceUrlBase, urlAddition, Instance.credential);   
+                return String.Format(previewServiceUrlBase, urlAddition, Instance.credential);
             }
-			return String.Format(liveServiceUrlBase, urlAddition, Instance.credential);
+            return String.Format(liveServiceUrlBase, urlAddition, Instance.credential);
         }
     }
- 
+
+    /*
+     * Returns api key to use based on developer flag for development vs staging.
+     */
+    public static string ApiKeyFinal()
+    {
+        if (FlagHelper.IsServerStaging())
+        {
+            return Instance.apiKeyStaging;
+        }
+        else
+        {
+            return Instance.apiKey;
+        }
+    }
+
+    /*
+     * Returns api secret to use based on developer flag for development vs staging.
+     */
+    public static string ApiSecretFinal()
+    {
+        if (FlagHelper.IsServerStaging())
+        {
+            return Instance.apiSecretStaging;
+        }
+        else
+        {
+            return Instance.apiSecret;
+        }
+    }
 }
