@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LanguageUtility
 {
+    private static bool LOG_STRICT = false;
+
     private static LanguageUtility instance;
     private Dictionary<string, List<string>> cardNames;
     private Dictionary<string, List<string>> cardDescriptions;
@@ -76,19 +78,40 @@ public class LanguageUtility
         name = name.Replace("～", "~");
         if (name == null)
         {
-            Debug.LogError("GetLocalizedName called on null.");
+            if (LOG_STRICT)
+            {
+                Debug.LogError("GetLocalizedName called on null.");
+            }
+            else
+            {
+                Debug.LogWarning("GetLocalizedName called on null.");
+            }
             return name;
         }
 
         if (!this.cardNames.ContainsKey(name))
         {
-            Debug.LogError(string.Format("Missing translation for: {0}", name));
+            if (LOG_STRICT)
+            {
+                Debug.LogError(string.Format("Missing translation for: {0}", name));
+            }
+            else
+            {
+                Debug.LogWarning(string.Format("Missing translation for: {0}", name));
+            }
             return name;
         }
         string value = this.cardNames[name][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogError(string.Format("Empty translation for: {0}", name));
+            if (LOG_STRICT)
+            {
+                Debug.LogError(string.Format("Empty translation for: {0}", name));
+            }
+            else
+            {
+                Debug.LogWarning(string.Format("Empty translation for: {0}", name));
+            }
             return name;
         }
 
@@ -101,19 +124,41 @@ public class LanguageUtility
         description = description.Replace("～", "~");
         if (description == null)
         {
-            Debug.LogError("GetLocalizedDescription called on null.");
+            if (LOG_STRICT)
+            {
+                Debug.LogError("GetLocalizedDescription called on null.");
+            }
+            else
+            {
+                Debug.LogWarning("GetLocalizedDescription called on null.");
+            }
             return description;
         }
 
         if (!this.cardDescriptions.ContainsKey(description))
         {
-            Debug.LogError(string.Format("Missing translation for: {0}", description));
+            if (LOG_STRICT)
+            {
+                Debug.LogError(string.Format("Missing translation for: {0}", description));
+            }
+            else
+            {
+                Debug.LogWarning(string.Format("Missing translation for: {0}", description));
+
+            }
             return Prettify(description);
         }
         string value = this.cardDescriptions[description][(int)this.selectedLanguage];
         if (value.Equals(""))
         {
-            Debug.LogError(string.Format("Empty translation for: {0}", description));
+            if (LOG_STRICT)
+            {
+                Debug.LogError(string.Format("Empty translation for: {0}", description));
+            }
+            else
+            {
+                Debug.LogWarning(string.Format("Empty translation for: {0}", description));
+            }
             return Prettify(description);
         }
         return Prettify(value);

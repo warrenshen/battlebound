@@ -96,6 +96,8 @@ public class CollectionManager : MonoBehaviour
 
         List<Card> cards = DeckStore.Instance().GetCards();
         this.collection = CreateCardObjects(cards);
+
+        EnterEditMode(0);
     }
 
     private void UpdateDecks()
@@ -185,7 +187,7 @@ public class CollectionManager : MonoBehaviour
 
     private void SaveCallback()
     {
-        ExitEditMode();
+        //ExitEditMode();
     }
 
     private void ScrollToVerticalPan()
@@ -196,9 +198,10 @@ public class CollectionManager : MonoBehaviour
 
     private void EnterEditMode(int deckId)
     {
+        Debug.Log("EnterEditMode() called.");
         LoadDecklist(deckId);
 
-        LeanTween.moveLocalX(deckSelection, -800, TWEEN_TIME).setEaseOutQuad();
+        //LeanTween.moveLocalX(deckSelection, -800, TWEEN_TIME).setEaseOutQuad();
         LeanTween.moveLocalX(rightSidebar, 320, TWEEN_TIME).setEaseInQuad();
         LeanTween
             .moveY(collectionObject, -0.5f, TWEEN_TIME)
