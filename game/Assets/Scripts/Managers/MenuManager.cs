@@ -42,10 +42,7 @@ public class MenuManager : MonoBehaviour
         SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
 
         this.galleryIndex = Random.Range(0, gallery.childCount);
-        SetGalleryCreature();
-
-        InvokeRepeating("RotateGalleryCreature", 2.0f, 4f);
-        this.galleryCard.gameObject.SetActive(true);
+        InvokeRepeating("RotateGalleryCreature", 0.0f, 4.0f);
     }
 
     private void SetGalleryCreature()

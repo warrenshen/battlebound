@@ -34,15 +34,8 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         this.imageNameToTexture = new Dictionary<string, Texture2D>();
         this.imageNameToSprite = new Dictionary<string, Sprite>();
 
-        foreach (string creatureName in Card.CARD_NAMES_CREATURE)
-        {
-            CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
-            string summonPrefabPath = creatureCard.GetSummonPrefab();
-            GameObject prefab = Resources.Load(summonPrefabPath) as GameObject;
-            this.nameToPrefab[creatureName] = prefab;
-        }
-
         StartCoroutine("LoadResourcesAsync");
+        StartCoroutine("LoadPrefabsAsync");
 
         //foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
         //{
@@ -55,6 +48,8 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
     private IEnumerator LoadResourcesAsync()
     {
+        Application.backgroundLoadingPriority = ThreadPriority.Low;
+
         foreach (string cardName in this.cardNametoTemplate.Keys)
         {
             CardTemplate cardTemplate = this.cardNametoTemplate[cardName];
@@ -62,23 +57,46 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             string frontImage = cardTemplate.frontImage;
             string backImage = cardTemplate.backImage;
 
-            ResourceRequest resourceRequest = Resources.LoadAsync(effectName);
-            yield return resourceRequest;
-            this.effectNameToPrefab[effectName] = (GameObject)resourceRequest.asset;
+            ResourceRequest resourceRequest;
 
-            resourceRequest = Resources.LoadAsync(frontImage);
-            yield return resourceRequest;
-            Texture2D frontTexture = (Texture2D)resourceRequest.asset;
-            this.imageNameToTexture[frontImage] = frontTexture;
-            CreateSprite(frontImage, frontTexture);
+            if (string.IsNullOrEmpty(effectName))
+            {
+                Debug.LogWarning(string.Format("Effect name for card {0} does not exist.", cardName));
+            }
+            else
+            {
+                resourceRequest = Resources.LoadAsync(effectName);
+                yield return resourceRequest;
+                this.effectNameToPrefab[effectName] = (GameObject)resourceRequest.asset;
+            }
 
-            resourceRequest = Resources.LoadAsync(backImage);
-            yield return resourceRequest;
-            Texture2D backTexture = (Texture2D)resourceRequest.asset;
-            this.imageNameToTexture[backImage] = backTexture;
-            CreateSprite(backImage, backTexture);
+            if (string.IsNullOrEmpty(frontImage))
+            {
+                Debug.LogWarning(string.Format("Front image for card {0} does not exist.", cardName));
+            }
+            else
+            {
+                resourceRequest = Resources.LoadAsync(frontImage);
+                yield return resourceRequest;
+                Texture2D frontTexture = (Texture2D)resourceRequest.asset;
+                this.imageNameToTexture[frontImage] = frontTexture;
+                CreateSprite(frontImage, frontTexture);
+            }
 
-            yield return new WaitForSeconds(0.1f);
+            if (string.IsNullOrEmpty(backImage))
+            {
+                Debug.LogWarning(string.Format("Back image for card {0} does not exist.", cardName));
+            }
+            else
+            {
+                resourceRequest = Resources.LoadAsync(backImage);
+                yield return resourceRequest;
+                Texture2D backTexture = (Texture2D)resourceRequest.asset;
+                this.imageNameToTexture[backImage] = backTexture;
+                CreateSprite(backImage, backTexture);
+            }
+
+            yield return new WaitForSeconds(0.01f);
         }
 
         yield return null;
@@ -103,13 +121,46 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         }
     }
 
+    private IEnumerator LoadPrefabsAsync()
+    {
+        Application.backgroundLoadingPriority = ThreadPriority.Low;
+
+        foreach (string creatureName in Card.CARD_NAMES_CREATURE)
+        {
+            CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
+            string summonPrefabPath = creatureCard.GetSummonPrefab();
+
+            if (string.IsNullOrEmpty(summonPrefabPath))
+            {
+                Debug.LogWarning("Summon prefab path does not exist.");
+                continue;
+            }
+
+            ResourceRequest resourceRequest = Resources.LoadAsync(summonPrefabPath);
+            yield return resourceRequest;
+            this.nameToPrefab[creatureName] = (GameObject)resourceRequest.asset;
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return null;
+    }
+
     public GameObject GetPrefabByName(string creatureName)
     {
         creatureName = creatureName.Replace(",", "~"); //to-do: find a less hacky way to do this.., or just update server
+        return GetPrefabByNameLazy(creatureName);
+    }
+
+    private GameObject GetPrefabByNameLazy(string creatureName)
+    {
         if (!this.nameToPrefab.ContainsKey(creatureName))
         {
-            Debug.LogError(string.Format("Creature name {0} does not exist in resource cache.", creatureName));
-            return null;
+            CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
+            string summonPrefabPath = creatureCard.GetSummonPrefab();
+
+            GameObject summonPrefab = (GameObject)Resources.Load(summonPrefabPath);
+            this.nameToPrefab[creatureName] = summonPrefab;
         }
         return this.nameToPrefab[creatureName];
     }
@@ -150,7 +201,6 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         {
             Texture2D imageTexture = Resources.Load(imageName) as Texture2D;
             this.imageNameToTexture[imageName] = imageTexture;
-            CreateSprite(imageName, imageTexture);
         }
         return this.imageNameToTexture[imageName];
     }
