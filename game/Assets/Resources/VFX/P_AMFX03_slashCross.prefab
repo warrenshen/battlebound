@@ -72,7 +72,6 @@ GameObject:
   - component: {fileID: 4000010601581966}
   - component: {fileID: 198000010225378216}
   - component: {fileID: 199000011527987740}
-  - component: {fileID: 114000012950884718}
   m_Layer: 0
   m_Name: P_AMFX03_slashCross
   m_TagString: Untagged
@@ -257,18 +256,6 @@ MonoBehaviour:
   flashingOff: 0
   flashingOffPower: 0
   flashingOffIntensity: 1
---- !u!114 &114000012950884718
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011295984666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a1604e0a78d84e6d92eb147a0c03f1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  time: 1
 --- !u!198 &198000010225378216
 ParticleSystem:
   m_ObjectHideFlags: 1

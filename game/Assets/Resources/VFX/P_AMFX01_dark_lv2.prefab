@@ -124,7 +124,6 @@ GameObject:
   - component: {fileID: 198000010609752936}
   - component: {fileID: 199000010430411378}
   - component: {fileID: 114000010046526068}
-  - component: {fileID: 114000010336640604}
   m_Layer: 0
   m_Name: P_AMFX01_dark_lv2
   m_TagString: Untagged
@@ -284,18 +283,6 @@ MonoBehaviour:
   fmodValue: 16
   isMatOffset: 0
   offsetSpd: {x: 0, y: 0}
---- !u!114 &114000010336640604
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014029615476}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf76de23b649e400e90fe60169c6769d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  time: 1.5
 --- !u!114 &114000013413377460
 MonoBehaviour:
   m_ObjectHideFlags: 1

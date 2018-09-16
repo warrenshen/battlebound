@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4000012906215306}
   - component: {fileID: 198000010333097028}
   - component: {fileID: 199000011893645882}
-  - component: {fileID: 114000012757018866}
   m_Layer: 0
   m_Name: P_AMFX01_darkFlare
   m_TagString: Untagged
@@ -202,18 +201,6 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &114000012757018866
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000010162729920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf76de23b649e400e90fe60169c6769d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  time: 1
 --- !u!114 &114000013839277400
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4991,7 +4978,7 @@ ParticleSystem:
         m_RotationOrder: 0
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -5044,7 +5031,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
