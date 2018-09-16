@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceSingleton : Singleton<ResourceSingleton>
@@ -33,48 +34,6 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         this.imageNameToTexture = new Dictionary<string, Texture2D>();
         this.imageNameToSprite = new Dictionary<string, Sprite>();
 
-        foreach (string cardName in this.cardNametoTemplate.Keys)
-        {
-            CardTemplate cardTemplate = this.cardNametoTemplate[cardName];
-            string frontImage = cardTemplate.frontImage;
-            string backImage = cardTemplate.backImage;
-            string effectName = cardTemplate.effectPrefab;
-
-            Texture2D frontTexture = Resources.Load(frontImage) as Texture2D;
-            Texture2D backTexture = Resources.Load(backImage) as Texture2D;
-            this.imageNameToTexture[frontImage] = frontTexture;
-            this.imageNameToTexture[backImage] = backTexture;
-            this.effectNameToPrefab[effectName] = Resources.Load(effectName) as GameObject;
-
-            if (frontTexture != null)
-            {
-                this.imageNameToSprite[frontImage] = Sprite.Create(
-                    frontTexture,
-                    new Rect(0.0f, 0.0f, frontTexture.width, frontTexture.height),
-                    new Vector2(0.5f, 0.5f),
-                    100.0f
-                );
-            }
-            else
-            {
-                this.imageNameToSprite[frontImage] = null;
-            }
-            if (backTexture != null)
-            {
-                this.imageNameToSprite[backImage] = Sprite.Create(
-                    backTexture,
-                    new Rect(0.0f, 0.0f, backTexture.width, backTexture.height),
-                    new Vector2(0.5f, 0.5f),
-                    100.0f
-                );
-            }
-            else
-            {
-                this.imageNameToSprite[backImage] = null;
-            }
-        }
-
-
         foreach (string creatureName in Card.CARD_NAMES_CREATURE)
         {
             CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
@@ -83,12 +42,64 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
             this.nameToPrefab[creatureName] = prefab;
         }
 
-        foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
+        StartCoroutine("LoadResourcesAsync");
+
+        //foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
+        //{
+        //    StructureCard structureCard = new StructureCard("", structureName, 0);
+        //    string summonPrefabPath = structureCard.GetSummonPrefab();
+        //    GameObject prefab = Resources.Load(summonPrefabPath) as GameObject;
+        //    this.nameToPrefab[structureName] = prefab;
+        //}
+    }
+
+    private IEnumerator LoadResourcesAsync()
+    {
+        foreach (string cardName in this.cardNametoTemplate.Keys)
         {
-            StructureCard structureCard = new StructureCard("", structureName, 0);
-            string summonPrefabPath = structureCard.GetSummonPrefab();
-            GameObject prefab = Resources.Load(summonPrefabPath) as GameObject;
-            this.nameToPrefab[structureName] = prefab;
+            CardTemplate cardTemplate = this.cardNametoTemplate[cardName];
+            string effectName = cardTemplate.effectPrefab;
+            string frontImage = cardTemplate.frontImage;
+            string backImage = cardTemplate.backImage;
+
+            ResourceRequest resourceRequest = Resources.LoadAsync(effectName);
+            yield return resourceRequest;
+            this.effectNameToPrefab[effectName] = (GameObject)resourceRequest.asset;
+
+            resourceRequest = Resources.LoadAsync(frontImage);
+            yield return resourceRequest;
+            Texture2D frontTexture = (Texture2D)resourceRequest.asset;
+            this.imageNameToTexture[frontImage] = frontTexture;
+            CreateSprite(frontImage, frontTexture);
+
+            resourceRequest = Resources.LoadAsync(backImage);
+            yield return resourceRequest;
+            Texture2D backTexture = (Texture2D)resourceRequest.asset;
+            this.imageNameToTexture[backImage] = backTexture;
+            CreateSprite(backImage, backTexture);
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return null;
+    }
+
+    private void CreateSprite(string imageName, Texture2D imageTexture)
+    {
+        if (imageTexture != null)
+        {
+            this.imageNameToSprite[imageName] = Sprite.Create(
+                imageTexture,
+                new Rect(0.0f, 0.0f, imageTexture.width, imageTexture.height),
+                new Vector2(0.5f, 0.5f),
+                100.0f,
+                0,
+                SpriteMeshType.FullRect
+            );
+        }
+        else
+        {
+            this.imageNameToSprite[imageName] = null;
         }
     }
 
@@ -130,13 +141,17 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         {
             return null;
         }
+        return GetImageTextureByNameLazy(imageName);
+    }
 
+    private Texture2D GetImageTextureByNameLazy(string imageName)
+    {
         if (!this.imageNameToTexture.ContainsKey(imageName))
         {
-            Debug.LogError(string.Format("Image name {0} does not exist in resource cache.", imageName));
-            return null;
+            Texture2D imageTexture = Resources.Load(imageName) as Texture2D;
+            this.imageNameToTexture[imageName] = imageTexture;
+            CreateSprite(imageName, imageTexture);
         }
-
         return this.imageNameToTexture[imageName];
     }
 
@@ -146,13 +161,16 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         {
             return null;
         }
+        return GetSpriteByNameLazy(imageName);
+    }
 
-        if (!this.imageNameToTexture.ContainsKey(imageName))
+    private Sprite GetSpriteByNameLazy(string imageName)
+    {
+        if (!this.imageNameToSprite.ContainsKey(imageName))
         {
-            Debug.LogError(string.Format("Image name {0} does not exist in resource cache.", imageName));
-            return null;
+            Texture2D imageTexture = GetImageTextureByName(imageName);
+            CreateSprite(imageName, imageTexture);
         }
-
         return this.imageNameToSprite[imageName];
     }
 }
