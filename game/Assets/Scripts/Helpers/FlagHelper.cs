@@ -4,6 +4,7 @@ public class FlagHelper : MonoBehaviour
 {
     public const string FLAG_USE_SERVER = "FLAG_USE_SERVER";
     public const string FLAG_USE_STAGING = "FLAG_USE_STAGING";
+    public const string FLAG_PLAY_CAMPAIGN = "FLAG_PLAY_CAMPAIGN";
     public const string FLAG_LOG_VERBOSE = "FLAG_LOG_VERBOSE";
     public const string FLAG_SKIP_MULLIGAN = "FLAG_SKIP_MULLIGAN";
 
@@ -28,6 +29,15 @@ public class FlagHelper : MonoBehaviour
         return GetFlag(FLAG_USE_STAGING);
 #else
         return true;
+#endif
+    }
+
+    public static bool IsPlayCampaign()
+    {
+#if UNITY_EDITOR
+        return GetFlag(FLAG_PLAY_CAMPAIGN);
+#else
+        return false;
 #endif
     }
 

@@ -75,7 +75,6 @@ public class LanguageUtility
 
     public string GetLocalizedName(string name)
     {
-        name = name.Replace("～", "~");
         if (name == null)
         {
             if (LOG_STRICT)
@@ -88,6 +87,8 @@ public class LanguageUtility
             }
             return name;
         }
+
+        name = name.Replace("～", "~");
 
         if (!this.cardNames.ContainsKey(name))
         {
@@ -121,7 +122,6 @@ public class LanguageUtility
 
     public string GetLocalizedDescription(string description)
     {
-        description = description.Replace("～", "~");
         if (description == null)
         {
             if (LOG_STRICT)
@@ -134,6 +134,8 @@ public class LanguageUtility
             }
             return description;
         }
+
+        description = description.Replace("～", "~");
 
         if (!this.cardDescriptions.ContainsKey(description))
         {
