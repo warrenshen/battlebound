@@ -9,6 +9,7 @@ public class DeveloperPanel : EditorWindow
 
     private bool useServer;
     private bool useStaging;
+    private bool playCampaign;
     private bool logVerbose;
     private bool skipMulligan;
     private bool showChinese;
@@ -29,6 +30,7 @@ public class DeveloperPanel : EditorWindow
             this.flagsFoldout = true;
             this.useServer = FlagHelper.GetFlag(FlagHelper.FLAG_USE_SERVER);
             this.useStaging = FlagHelper.GetFlag(FlagHelper.FLAG_USE_STAGING);
+            this.playCampaign = FlagHelper.GetFlag(FlagHelper.FLAG_PLAY_CAMPAIGN);
             this.logVerbose = FlagHelper.GetFlag(FlagHelper.FLAG_LOG_VERBOSE);
             this.skipMulligan = FlagHelper.GetFlag(FlagHelper.FLAG_SKIP_MULLIGAN);
             this.showChinese = FlagHelper.GetFlag("LANGUAGE");
@@ -42,6 +44,7 @@ public class DeveloperPanel : EditorWindow
         {
             this.useServer = EditorGUILayout.Toggle("Use server", this.useServer);
             this.useStaging = EditorGUILayout.Toggle("Use staging", this.useStaging);
+            this.playCampaign = EditorGUILayout.Toggle("Play campaign", this.playCampaign);
             this.logVerbose = EditorGUILayout.Toggle("Log verbose", this.logVerbose);
             this.skipMulligan = EditorGUILayout.Toggle("Skip mulligan", this.skipMulligan);
             this.showChinese = EditorGUILayout.Toggle("Show chinese", this.showChinese);
@@ -59,6 +62,7 @@ public class DeveloperPanel : EditorWindow
     {
         PlayerPrefs.SetInt(FlagHelper.FLAG_USE_SERVER, this.useServer ? 1 : 0);
         PlayerPrefs.SetInt(FlagHelper.FLAG_USE_STAGING, this.useStaging ? 1 : 0);
+        PlayerPrefs.SetInt(FlagHelper.FLAG_PLAY_CAMPAIGN, this.playCampaign ? 1 : 0);
         PlayerPrefs.SetInt(FlagHelper.FLAG_LOG_VERBOSE, this.logVerbose ? 1 : 0);
         PlayerPrefs.SetInt(FlagHelper.FLAG_SKIP_MULLIGAN, this.skipMulligan ? 1 : 0);
         PlayerPrefs.SetInt("LANGUAGE", this.showChinese ? 1 : 0);

@@ -11,6 +11,11 @@ public class BattleSingleton : Singleton<BattleSingleton>
     public const int ENVIRONMENT_NORMAL = 0;
     public const int ENVIRONMENT_TEST = 1;
 
+    private const int MODE_NONE = 0;
+    private const int MODE_SINGLEPLAYER = 1;
+    private const int MODE_MULTIPLAYER = 2;
+    private int mode;
+
     private int environment;
     public int Environment => environment;
 
@@ -58,6 +63,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
+        this.mode = MODE_NONE;
         this.environment = ENVIRONMENT_NORMAL;
 
         this.challengeStarted = false;
@@ -99,16 +105,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
             this.messageQueue.RemoveAt(0);
             ProcessChallengeScriptData(scriptData);
         }
-    }
-
-    public void SetEnvironmentTest()
-    {
-        this.environment = ENVIRONMENT_TEST;
-    }
-
-    public bool IsEnvironmentTest()
-    {
-        return this.environment == ENVIRONMENT_TEST;
     }
 
     private void ChallengeIssuedMessageHandler(ChallengeIssuedMessage message)
@@ -303,6 +299,36 @@ public class BattleSingleton : Singleton<BattleSingleton>
         }
     }
 
+    public void SetModeSingleplayer()
+    {
+        this.mode = MODE_SINGLEPLAYER;
+    }
+
+    public bool IsModeSingleplayer()
+    {
+        return this.mode == MODE_SINGLEPLAYER;
+    }
+
+    public void SetModeMultiplayer()
+    {
+        this.mode = MODE_MULTIPLAYER;
+    }
+
+    public bool IsModeMultiplayer()
+    {
+        return this.mode == MODE_MULTIPLAYER;
+    }
+
+    public void SetEnvironmentTest()
+    {
+        this.environment = ENVIRONMENT_TEST;
+    }
+
+    public bool IsEnvironmentTest()
+    {
+        return this.environment == ENVIRONMENT_TEST;
+    }
+
     public List<Card> GetMulliganCards(string playerId)
     {
         if (this.playerState.Id == playerId)
@@ -337,11 +363,19 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Cannot send ChallengeEndTurn request without challengeId set.");
             return;
         }
-
-        LogChallengeEventRequest request = new LogChallengeEventRequest();
-        request.SetEventKey("ChallengeEndTurn");
-        request.SetEventAttribute("challengeInstanceId", this.challengeId);
-        request.Send(OnChallengeEndTurnSuccess, OnChallengeEndTurnError);
+        else if (IsModeMultiplayer())
+        {
+            LogChallengeEventRequest request = new LogChallengeEventRequest();
+            request.SetEventKey("ChallengeEndTurn");
+            request.SetEventAttribute("challengeInstanceId", this.challengeId);
+            request.Send(OnChallengeEndTurnSuccess, OnChallengeEndTurnError);
+        }
+        else
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("CampaignEndTurn");
+            request.Send(OnCampaignEndTurnSuccess, OnCampaignEndTurnError);
+        }
     }
 
     private void OnChallengeEndTurnSuccess(LogChallengeEventResponse response)
@@ -355,6 +389,22 @@ public class BattleSingleton : Singleton<BattleSingleton>
         OnChallengeRequestError(response, "ChallengeEndTurn");
     }
 
+    private void OnCampaignEndTurnSuccess(LogEventResponse response)
+    {
+        Debug.Log("CampaignEndTurn request success.");
+        GSData scriptData = response.ScriptData;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            this.messageQueue.Add(scriptData);
+        }
+    }
+
+    private void OnCampaignEndTurnError(LogEventResponse response)
+    {
+        Debug.LogError("CampaignEndTurn request error.");
+        //OnChallengeRequestError(response, "ChallengeEndTurn");
+    }
+
     public void SendChallengePlayMulliganRequest(List<string> cardIds)
     {
         if (this.challengeId == null)
@@ -362,12 +412,21 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Cannot send ChallengeSurrender request without challengeId set.");
             return;
         }
-
-        LogEventRequest request = new LogEventRequest();
-        request.SetEventKey("ChallengePlayMulligan");
-        request.SetEventAttribute("challengeId", this.challengeId);
-        request.SetEventAttribute("cardIds", cardIds);
-        request.Send(OnChallengePlayMulliganSuccess, OnChallengePlayMulliganError);
+        else if (IsModeMultiplayer())
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("ChallengePlayMulligan");
+            request.SetEventAttribute("challengeId", this.challengeId);
+            request.SetEventAttribute("cardIds", cardIds);
+            request.Send(OnChallengePlayMulliganSuccess, OnChallengePlayMulliganError);
+        }
+        else
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("CampaignPlayMulligan");
+            request.SetEventAttribute("cardIds", cardIds);
+            request.Send(OnCampaignPlayMulliganSuccess, OnCampaignPlayMulliganError);
+        }
     }
 
     private void OnChallengePlayMulliganSuccess(LogEventResponse response)
@@ -378,6 +437,18 @@ public class BattleSingleton : Singleton<BattleSingleton>
     private void OnChallengePlayMulliganError(LogEventResponse response)
     {
         Debug.Log("ChallengePlayMulligan request error.");
+        //OnChallengeRequestError(response, "ChallengePlayMulligan");
+    }
+
+    private void OnCampaignPlayMulliganSuccess(LogEventResponse response)
+    {
+        Debug.Log("CampaignPlayMulligan request success.");
+    }
+
+    private void OnCampaignPlayMulliganError(LogEventResponse response)
+    {
+        Debug.Log("CampaignPlayMulligan request error.");
+        //OnChallengeRequestError(response, "ChallengePlayMulligan");
     }
 
     public void SendChallengeSurrenderRequest()
@@ -414,13 +485,23 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Cannot send ChallengePlayCard request without challengeId set.");
             return;
         }
-
-        LogChallengeEventRequest request = new LogChallengeEventRequest();
-        request.SetEventKey("ChallengePlayCard");
-        request.SetEventAttribute("challengeInstanceId", this.challengeId);
-        request.SetEventAttribute("cardId", cardId);
-        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
-        request.Send(OnChallengePlayCardSuccess, OnChallengePlayCardError);
+        else if (IsModeMultiplayer())
+        {
+            LogChallengeEventRequest request = new LogChallengeEventRequest();
+            request.SetEventKey("ChallengePlayCard");
+            request.SetEventAttribute("challengeInstanceId", this.challengeId);
+            request.SetEventAttribute("cardId", cardId);
+            request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+            request.Send(OnChallengePlayCardSuccess, OnChallengePlayCardError);
+        }
+        else
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("CampaignPlayCard");
+            request.SetEventAttribute("cardId", cardId);
+            request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+            request.Send(OnCampaignPlayCardSuccess, OnCampaignPlayCardError);
+        }
     }
 
     private void OnChallengePlayCardSuccess(LogChallengeEventResponse response)
@@ -432,6 +513,22 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         Debug.LogError("ChallengePlayCard request error.");
         OnChallengeRequestError(response, "ChallengePlayCard");
+    }
+
+    private void OnCampaignPlayCardSuccess(LogEventResponse response)
+    {
+        Debug.Log("CampaignEndTurn request success.");
+        GSData scriptData = response.ScriptData;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            this.messageQueue.Add(scriptData);
+        }
+    }
+
+    private void OnCampaignPlayCardError(LogEventResponse response)
+    {
+        Debug.LogError("CampaignEndTurn request error.");
+        //OnChallengeRequestError(response, "ChallengeEndTurn");
     }
 
     public void SendChallengePlayStructureRequest(
@@ -701,6 +798,28 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         Debug.LogError("GetActiveChallenge request error.");
         // Show prompt to user and ask what they want to do.
+    }
+
+    public void SendBeginCampaignLevelRequest()
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("CampaignBeginLevel");
+        request.Send(
+            OnCampaignBeginLevelSuccess,
+            OnCampaignBeginLevelError
+        );
+    }
+
+    private void OnCampaignBeginLevelSuccess(LogEventResponse response)
+    {
+        Debug.Log("CampaignBeginLevel request success.");
+        GSData scriptData = response.ScriptData;
+        InitializeChallenge(scriptData);
+    }
+
+    private void OnCampaignBeginLevelError(LogEventResponse response)
+    {
+        Debug.LogError("CampaignBeginLevel request error.");
     }
 
     public bool CompareChallengeState(

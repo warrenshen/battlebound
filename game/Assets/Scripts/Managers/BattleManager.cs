@@ -111,36 +111,85 @@ public class BattleManager : MonoBehaviour
         this.mulliganOverlay.SetActive(true);
         this.generalOverlay.SetActive(true);
 
-        if (!FlagHelper.IsServerEnabled())
+        if (FlagHelper.IsServerEnabled())
+        {
+            Debug.Log("Battle in Connected Development Mode.");
+
+            if (BattleSingleton.Instance.IsModeMultiplayer())
+            {
+                if (BattleSingleton.Instance.ChallengeStarted)
+                {
+                    //enemyDeckTransform.Rotate(0, 180, 0);  //to-do: reconsider this hack
+                    enemyDrawCardFixedTransform.Rotate(0, 180, 0);
+
+                    BattleState.InstantiateWithState(
+                        BattleSingleton.Instance.PlayerState,
+                        BattleSingleton.Instance.OpponentState,
+                        BattleSingleton.Instance.MoveCount,
+                        BattleSingleton.Instance.SpawnCount,
+                        BattleSingleton.Instance.InitDeadCards,
+                        BattleSingleton.Instance.InitServerMoves
+                    );
+                    Debug.Log("Battle in Connected Development Mode.");
+                    BattleState.Instance().GameStart();
+                }
+                else
+                {
+                    BattleState.Instantiate();
+                    SparkSingleton.Instance.AddAuthenticationCallback(SendFindMatchMultiplayerRequest);
+                }
+            }
+            else
+            {
+                if (!BattleSingleton.Instance.IsModeSingleplayer())
+                {
+                    Debug.LogWarning("Battle singleton mode not set - default to singleplayer.");
+                }
+
+                if (BattleSingleton.Instance.ChallengeStarted)
+                {
+                    //enemyDeckTransform.Rotate(0, 180, 0);  //to-do: reconsider this hack
+                    enemyDrawCardFixedTransform.Rotate(0, 180, 0);
+
+                    BattleState.InstantiateWithState(
+                        BattleSingleton.Instance.PlayerState,
+                        BattleSingleton.Instance.OpponentState,
+                        BattleSingleton.Instance.MoveCount,
+                        BattleSingleton.Instance.SpawnCount,
+                        BattleSingleton.Instance.InitDeadCards,
+                        BattleSingleton.Instance.InitServerMoves
+                    );
+                    Debug.Log("Battle in Connected Development Mode.");
+                    BattleState.Instance().GameStart();
+                }
+                else
+                {
+                    BattleState.Instantiate();
+                    SparkSingleton.Instance.AddAuthenticationCallback(SendBeginSingleplayerMatchRequest);
+                }
+            }
+        }
+        else
         {
             BattleState.Instantiate();
             Debug.Log("Battle in Local Development Mode.");
             EffectManager.Instance.ReadyUp();
         }
-        else if (BattleSingleton.Instance.ChallengeStarted)
-        {
-            //enemyDeckTransform.Rotate(0, 180, 0);  //to-do: reconsider this hack
-            enemyDrawCardFixedTransform.Rotate(0, 180, 0);
+    }
 
-            BattleState.InstantiateWithState(
-                BattleSingleton.Instance.PlayerState,
-                BattleSingleton.Instance.OpponentState,
-                BattleSingleton.Instance.MoveCount,
-                BattleSingleton.Instance.SpawnCount,
-                BattleSingleton.Instance.InitDeadCards,
-                BattleSingleton.Instance.InitServerMoves
-            );
-            Debug.Log("Battle in Connected Development Mode.");
-            BattleState.Instance().GameStart();
+    private void SendBeginSingleplayerMatchRequest()
+    {
+        if (SparkSingleton.Instance.IsAuthenticated)
+        {
+            BattleSingleton.Instance.SendBeginCampaignLevelRequest();
         }
         else
         {
-            BattleState.Instantiate();
-            SparkSingleton.Instance.AddAuthenticatedCallback(new UnityAction(SendFindMatchRequest));
+            Debug.LogError("In battle scene but not authenticated!");
         }
     }
 
-    private void SendFindMatchRequest()
+    private void SendFindMatchMultiplayerRequest()
     {
         if (SparkSingleton.Instance.IsAuthenticated)
         {
