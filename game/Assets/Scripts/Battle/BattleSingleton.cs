@@ -627,13 +627,23 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Cannot send ChallengeCardAttack request without challengeId set.");
             return;
         }
-
-        LogChallengeEventRequest request = new LogChallengeEventRequest();
-        request.SetEventKey("ChallengeCardAttack");
-        request.SetEventAttribute("challengeInstanceId", this.challengeId);
-        request.SetEventAttribute("cardId", cardId);
-        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
-        request.Send(OnChallengeCardAttackSuccess, OnChallengeCardAttackError);
+        else if (IsModeMultiplayer())
+        {
+            LogChallengeEventRequest request = new LogChallengeEventRequest();
+            request.SetEventKey("ChallengeCardAttack");
+            request.SetEventAttribute("challengeInstanceId", this.challengeId);
+            request.SetEventAttribute("cardId", cardId);
+            request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+            request.Send(OnChallengeCardAttackSuccess, OnChallengeCardAttackError);
+        }
+        else
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("CampaignCardAttack");
+            request.SetEventAttribute("cardId", cardId);
+            request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+            request.Send(OnCampaignCardAttackSuccess, OnCampaignCardAttackError);
+        }
     }
 
     private void OnChallengeCardAttackSuccess(LogChallengeEventResponse response)
@@ -645,6 +655,22 @@ public class BattleSingleton : Singleton<BattleSingleton>
     {
         Debug.LogError("ChallengeCardAttack request error.");
         OnChallengeRequestError(response, "ChallengeCardAttack");
+    }
+
+    private void OnCampaignCardAttackSuccess(LogEventResponse response)
+    {
+        Debug.Log("CampaignCardAttack request success.");
+        GSData scriptData = response.ScriptData;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            this.messageQueue.Add(scriptData);
+        }
+    }
+
+    private void OnCampaignCardAttackError(LogEventResponse response)
+    {
+        Debug.LogError("CampaignCardAttack request error.");
+        //OnChallengeRequestError(response, "ChallengePlayCard");
     }
 
     public void SendChallengeCardAttackStructureRequest(

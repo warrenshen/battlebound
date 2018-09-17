@@ -918,9 +918,17 @@ public class BattleState
 
         if (this.challengeEndState == null)
         {
-            Debug.LogError("Function should not be called unless challenge end state is set.");
-            return;
+            if (BattleSingleton.Instance.IsModeMultiplayer())
+            {
+                Debug.LogError("Function should not be called unless challenge end state is set.");
+                return;
+            }
+            else
+            {
+                this.challengeEndState = new ChallengeEndState(this.you.Id, 1, 1, new List<ExperienceCard>());
+            }
         }
+
 
         GameObject.Destroy(GameObject.Find("BattleSingleton"));
 
@@ -1307,14 +1315,7 @@ public class BattleState
 
     public void MockChallengeEnd(string loserId)
     {
-        ChallengeEndState challengeEndState = new ChallengeEndState(
-            this.you.Id,
-            2,
-            3
-        );
-
         List<ExperienceCard> experienceCards = new List<ExperienceCard>();
-
         foreach (ChallengeMove serverMove in GetServerMoves())
         {
             if (
@@ -1337,7 +1338,12 @@ public class BattleState
             }
         }
 
-        challengeEndState.SetExperienceCards(experienceCards);
+        ChallengeEndState challengeEndState = new ChallengeEndState(
+            this.you.Id,
+            2,
+            3,
+            experienceCards
+        );
 
         if (this.you.Id == loserId)
         {

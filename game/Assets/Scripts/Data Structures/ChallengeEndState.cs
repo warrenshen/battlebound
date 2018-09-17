@@ -22,15 +22,16 @@ public class ChallengeEndState
     private List<ExperienceCard> experienceCards;
     public List<ExperienceCard> ExperienceCards => experienceCards;
 
-    public ChallengeEndState(string id, int level, int levelPrevious)
+    public ChallengeEndState(
+        string id,
+        int level,
+        int levelPrevious,
+        List<ExperienceCard> experienceCards
+    )
     {
         this.id = id;
         this.level = level;
         this.levelPrevious = levelPrevious;
-    }
-
-    public void SetExperienceCards(List<ExperienceCard> experienceCards)
-    {
         this.experienceCards = experienceCards;
     }
 }
