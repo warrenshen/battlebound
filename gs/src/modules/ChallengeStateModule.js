@@ -123,7 +123,13 @@ function getChallengeStateForPlayer(playerId, challengeId) {
     }
 
     const challengeStateData = challenge.getPrivateData("data");
+    setChallengeStateForPlayer(playerId, challengeStateData);
+    
+    return challenge;
+}
 
+
+function setChallengeStateForPlayer(playerId, challengeStateData) {
     const response = getChallengeStateForPlayerNoSet(playerId, challengeStateData);
     
     Spark.setScriptData("challengeId", response.challengeId);
@@ -134,8 +140,6 @@ function getChallengeStateForPlayer(playerId, challengeId) {
     Spark.setScriptData("moveCount", response.moveCount);
     Spark.setScriptData("spawnCount", response.spawnCount);
     Spark.setScriptData("deadCount", response.deadCards.length);
-    
-    return challenge;
 }
 
 /**

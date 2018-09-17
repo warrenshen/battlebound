@@ -9,17 +9,21 @@ require("AttackModule");
 require("ChallengeCardModule");
 require("ChallengeEffectsModule");
 
-function handleChallengeEndTurn(challengeStateData, playerId) {
+/*
+ * @param bool shouldReset - whether to reset challenge state last moves
+ */
+function handleChallengeEndTurn(challengeStateData, playerId, shouldReset) {
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     
     // PLAYER STATE UPDATES //
     const playerState = challengeStateData.current[playerId];
-    if (playerState.mode !== PLAYER_STATE_MODE_NORMAL) {
+    if (playerState.mode != PLAYER_STATE_MODE_NORMAL) {
         setScriptError("Player state is not in normal mode.");
     }
 
-    // Reset `lastMoves` attribute in ChallengeState.
-    challengeStateData.lastMoves = [];
+    if (shouldReset) {
+        challengeStateData.lastMoves = [];
+    }
     
     var move = {
         playerId: playerId,

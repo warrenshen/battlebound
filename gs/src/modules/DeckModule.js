@@ -5,6 +5,7 @@
 // ====================================================================================================
 require("OnChainModule");
 require("ChallengeCardModule");
+require("InitializePlayerModule");
  
 const DEFAULT_CARD_FIELDS = [
     "id",
@@ -315,14 +316,17 @@ function getPlayerDecksByPlayerId(playerId) {
 }
 
 /**
- * Returns array of card objects of active deck of player.
+ * Returns array of challenge card objects of active deck of player.
  * 
  * @param playerId - GS player ID
- * @return array - array of card objects
+ * @return array - array of challenge card objects
  **/
 function getActiveDeckByPlayerId(playerId) {
     const API = Spark.getGameDataService();
-    const decksDataItem = API.getItem("PlayerDecks", playerId).document();
+    var decksDataItem = API.getItem("PlayerDecks", playerId).document();
+    if (decksDataItem == null) {
+        decksDataItem = initializePlayerByPlayerId(playerId);
+    }
     
     const decksData = decksDataItem.getData();
     const deckByName = decksData.deckByName;
@@ -342,7 +346,19 @@ function getActiveDeckByPlayerId(playerId) {
         return cardByCardId[cardId]; 
     });
     
-    const instances = getInstancesByCards(bCards.concat(cCards), DEFAULT_CARD_FIELDS);
+    return getChallengeDeckByPlayerIdAndCards(playerId, bCards.concat(cCards));
+}
+
+/**
+ * Returns array of challenge card objects from card objects.
+ * 
+ * @param playerId - GS player ID
+ * @param cards - array of card objects
+ * 
+ * @return array - array of challenge card objects
+ **/
+function getChallengeDeckByPlayerIdAndCards(playerId, cards) {
+    const instances = getInstancesByCards(cards, DEFAULT_CARD_FIELDS);
     instances.forEach(function(instance, index) {
         const name = instance.name;
         const level = instance.level;
