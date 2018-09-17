@@ -459,8 +459,11 @@ function winChallenge(challengeStateData, winnerId) {
     };
     addChallengeMove(challengeStateData, move);
     
+    
     // Hack to allow testing.
     if (winnerId === "ID_PLAYER" || winnerId === "ID_OPPONENT") {
+        return;
+    } else if (challengeStateData.id === "CAMPAIGN") {
         return;
     }
     
