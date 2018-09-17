@@ -634,13 +634,13 @@ exports.gamesparks = gamesparks;
 exports.initGS = function() {
   const password = "password";
   // STG
-  const key = "o353744GfN7z";
-  const secret = "TF0GGPC2YKf7CglgrE1M7RrmEDX86tDc";
-  const email = "testuser";
+  // const key = "o353744GfN7z";
+  // const secret = "TF0GGPC2YKf7CglgrE1M7RrmEDX86tDc";
+  // const email = "testuser";
   // DEV
-  // const key = "n368079bzKM2";
-  // const secret = "A2gxU3kNTjFBLtJ6JVmrVBbVS1MR0Ji5";
-  // const email = "test@playbattlebound.com";
+  const key = "n368079bzKM2";
+  const secret = "A2gxU3kNTjFBLtJ6JVmrVBbVS1MR0Ji5";
+  const email = "test@playbattlebound.com";
   return new Promise((resolve) => {
     gamesparks.initPreview({
       key: key,
