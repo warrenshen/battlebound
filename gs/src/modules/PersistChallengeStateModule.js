@@ -5,7 +5,7 @@
 // Sets a scriptData field and exits on error.
 //
 // ====================================================================================================
-if (challengeStateData.nonce === undefined) {
+if (challengeStateData.nonce == null) {
     challengeStateData.nonce = 0;
 } else {
     challengeStateData.nonce += 1;

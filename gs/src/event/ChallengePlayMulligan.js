@@ -48,9 +48,9 @@ if (challengeStateData.mode === CHALLENGE_STATE_MODE_NORMAL) {
     const opponentState = challengeStateData.current[opponentId];
     
     if (playerState.hasTurn === 1) {
-        startTurnTimeEvents(challengeId, playerId);
+        // startTurnTimeEvents(challengeId, playerId);
     } else if (opponentState.hasTurn === 1) {
-        startTurnTimeEvents(challengeId, opponentId);
+        // startTurnTimeEvents(challengeId, opponentId);
     } else {
         setScriptError("Neither player has turn after mulligan.");
     }
