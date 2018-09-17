@@ -331,29 +331,32 @@ public class ChallengeCard
 
     private static string GetAbilitiesDiff(List<string> abilityCodes, List<string> abilitiesTwo)
     {
-        if (abilityCodes == null)
-        {
-            abilityCodes = new List<string>();
-        }
-
-        List<string> abilitiesOne = Card.GetAbilityStringsByCodes(abilityCodes);
-
-        if (abilitiesTwo == null)
-        {
-            abilitiesTwo = new List<string>();
-        }
-
-        abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
-        abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
-
-        List<string> exceptOneAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
-        List<string> exceptTwoAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
-        if (exceptOneAbilities.Count > 0 || exceptTwoAbilities.Count > 0)
-        {
-            return string.Format("{0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
-        }
-
+        // TODO: handle flavor abilities.
         return null;
+
+        //if (abilityCodes == null)
+        //{
+        //    abilityCodes = new List<string>();
+        //}
+
+        //List<string> abilitiesOne = Card.GetAbilityStringsByCodes(abilityCodes);
+
+        //if (abilitiesTwo == null)
+        //{
+        //    abilitiesTwo = new List<string>();
+        //}
+
+        //abilitiesOne = new List<string>(abilitiesOne.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
+        //abilitiesTwo = new List<string>(abilitiesTwo.Where(ability => !string.IsNullOrEmpty(ability) && ability != Card.CARD_EMPTY_ABILITY));
+
+        //List<string> exceptOneAbilities = abilitiesOne.Except(abilitiesTwo).ToList();
+        //List<string> exceptTwoAbilities = abilitiesTwo.Except(abilitiesOne).ToList();
+        //if (exceptOneAbilities.Count > 0 || exceptTwoAbilities.Count > 0)
+        //{
+        //    return string.Format("{0} vs {1}", string.Join(",", abilitiesOne), string.Join(",", abilitiesTwo));
+        //}
+
+        //return null;
     }
 
     private static string GetBuffsHandDiff(List<string> buffsHandCodes, List<string> buffsHandTwo)
