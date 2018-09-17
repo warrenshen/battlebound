@@ -571,13 +571,23 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Cannot send SendChallengePlaySpellTargeted request without challengeId set.");
             return;
         }
-
-        LogChallengeEventRequest request = new LogChallengeEventRequest();
-        request.SetEventKey("ChallengePlaySpellTargeted");
-        request.SetEventAttribute("challengeInstanceId", this.challengeId);
-        request.SetEventAttribute("cardId", cardId);
-        request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
-        request.Send(OnChallengePlaySpellTargetedSuccess, OnChallengePlaySpellTargetedError);
+        else if (IsModeMultiplayer())
+        {
+            LogChallengeEventRequest request = new LogChallengeEventRequest();
+            request.SetEventKey("ChallengePlaySpellTargeted");
+            request.SetEventAttribute("challengeInstanceId", this.challengeId);
+            request.SetEventAttribute("cardId", cardId);
+            request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+            request.Send(OnChallengePlaySpellTargetedSuccess, OnChallengePlaySpellTargetedError);
+        }
+        else
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("CampaignPlaySpellTargeted");
+            request.SetEventAttribute("cardId", cardId);
+            request.SetEventAttribute("attributesString", JsonUtility.ToJson(attributes));
+            request.Send(OnCampaignPlaySpellTargetedSuccess, OnCampaignPlaySpellTargetedError);
+        }
     }
 
     private void OnChallengePlaySpellTargetedSuccess(LogChallengeEventResponse response)
@@ -591,6 +601,22 @@ public class BattleSingleton : Singleton<BattleSingleton>
         OnChallengeRequestError(response, "ChallengePlaySpellTargeted");
     }
 
+    private void OnCampaignPlaySpellTargetedSuccess(LogEventResponse response)
+    {
+        Debug.Log("CampaignPlaySpellTargeted request success.");
+        GSData scriptData = response.ScriptData;
+        if (IsMessageChallengeIdValid(scriptData))
+        {
+            this.messageQueue.Add(scriptData);
+        }
+    }
+
+    private void OnCampaignPlaySpellTargetedError(LogEventResponse response)
+    {
+        Debug.LogError("CampaignPlaySpellTargeted request error.");
+        //OnChallengeRequestError(response, "ChallengePlayCard");
+    }
+
     public void SendChallengePlaySpellUntargetedRequest(string cardId)
     {
         if (this.challengeId == null)
@@ -598,12 +624,21 @@ public class BattleSingleton : Singleton<BattleSingleton>
             Debug.LogWarning("Cannot send SendChallengePlaySpellUntargeted request without challengeId set.");
             return;
         }
-
-        LogChallengeEventRequest request = new LogChallengeEventRequest();
-        request.SetEventKey("ChallengePlaySpellUntargeted");
-        request.SetEventAttribute("challengeInstanceId", this.challengeId);
-        request.SetEventAttribute("cardId", cardId);
-        request.Send(OnChallengePlaySpellUntargetedSuccess, OnChallengePlaySpellUntargetedError);
+        else if (IsModeMultiplayer())
+        {
+            LogChallengeEventRequest request = new LogChallengeEventRequest();
+            request.SetEventKey("ChallengePlaySpellUntargeted");
+            request.SetEventAttribute("challengeInstanceId", this.challengeId);
+            request.SetEventAttribute("cardId", cardId);
+            request.Send(OnChallengePlaySpellUntargetedSuccess, OnChallengePlaySpellUntargetedError);
+        }
+        else
+        {
+            LogEventRequest request = new LogEventRequest();
+            request.SetEventKey("CampaignPlaySpellUntargeted");
+            request.SetEventAttribute("cardId", cardId);
+            request.Send(OnCampaignPlaySpellTargetedSuccess, OnCampaignPlaySpellTargetedError);
+        }
     }
 
     private void OnChallengePlaySpellUntargetedSuccess(LogChallengeEventResponse response)
