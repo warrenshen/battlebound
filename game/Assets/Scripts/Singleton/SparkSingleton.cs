@@ -39,7 +39,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private BigInteger balance;
     private int level;
 
-    private List<UnityAction> authenticatedCallbacks;
+    private List<UnityAction> authCallbacks;
 
     private UnityAction loginRegisterCallback;
     private string loginRegisterErrorMessage;
@@ -82,12 +82,11 @@ public class SparkSingleton : Singleton<SparkSingleton>
 
             if (!GS.Instance.Authenticated)
             {
-                foreach (UnityAction callback in this.authenticatedCallbacks)
+                foreach (UnityAction callback in this.authCallbacks)
                 {
                     callback.Invoke();
                 }
             }
-            Debug.LogWarning("GS availabe!");
         }
         else
         {
@@ -108,21 +107,21 @@ public class SparkSingleton : Singleton<SparkSingleton>
         }
     }
 
-    public void AddAuthenticatedCallback(UnityAction callback)
+    /*
+     * Callback will be invoked when authentication state changes.
+     */
+    public void AddAuthenticationCallback(UnityAction callback)
     {
         if (this.isAuthenticated)
         {
             callback.Invoke();
         }
-        else
-        {
-            this.authenticatedCallbacks.Add(callback);
-        }
+        this.authCallbacks.Add(callback);
     }
 
     public void ClearAuthenticatedCallbacks()
     {
-        this.authenticatedCallbacks = new List<UnityAction>();
+        this.authCallbacks = new List<UnityAction>();
     }
 
     private void SendGetPlayerDataRequest()
@@ -207,7 +206,7 @@ public class SparkSingleton : Singleton<SparkSingleton>
         }
 
         this.isAuthenticated = true;
-        foreach (UnityAction callback in this.authenticatedCallbacks)
+        foreach (UnityAction callback in this.authCallbacks)
         {
             callback.Invoke();
         }

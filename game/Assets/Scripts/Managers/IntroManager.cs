@@ -4,7 +4,7 @@ public class IntroManager : MonoBehaviour
 {
     private void Awake()
     {
-        SparkSingleton.Instance.AddAuthenticatedCallback(Callback);
+        SparkSingleton.Instance.AddAuthenticationCallback(Callback);
     }
 
     private void Callback()
