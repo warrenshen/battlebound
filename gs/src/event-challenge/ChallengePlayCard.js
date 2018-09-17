@@ -36,6 +36,7 @@ if (attributesJson.fieldIndex != null) {
     }
 }
 
+challengeStateData.lastMoves = [];
 handleChallengePlayCard(challengeStateData, playerId, cardId, attributes);
     
 require("PersistChallengeStateModule");

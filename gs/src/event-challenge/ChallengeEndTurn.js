@@ -49,6 +49,7 @@ if (isExpired && challengeStateData.moveTakenThisTurn === 0) {
 
 // We only do the following if challenge is not over.
 if (!isChallengeOver) {
+    challengeStateData.lastMoves = [];
     handleChallengeEndTurn(challengeStateData, playerId);
     
     // Finish player turn (without sending a ChallengeTurnTaken message)

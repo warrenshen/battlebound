@@ -619,7 +619,7 @@ function abilityEndTurnHeal(challengeStateData, effect, amount) {
     const playerField = playerState.field;
     const card = playerField.find(function(fieldCard) { return fieldCard.id === cardId });
 
-    healCard(card, 20);
+    healCard(card, amount);
     return [];
 }
 

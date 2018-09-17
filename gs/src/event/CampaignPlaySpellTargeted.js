@@ -1,13 +1,13 @@
 // ====================================================================================================
 //
-// Cloud Code for CampaignCardAttack, write your code here to customize the GameSparks platform.
+// Cloud Code for CampaignPlaySpellTargeted, write your code here to customize the GameSparks platform.
 //
 // For details of the GameSparks Cloud Code API see https://docs.gamesparks.com/
 //
 // ====================================================================================================
 require("ScriptDataModule");
 require("CampaignEventPrefix");
-require("ChallengeCardAttackCardModule");
+require("ChallengePlaySpellTargetedModule");
 
 const cardId = Spark.getData().cardId;
 const attributesJson = Spark.getData().attributesJson;
@@ -24,7 +24,7 @@ if (attributesJson.targetId) {
     }
 }
 
-handleChallengeCardAttackCard(challengeStateData, playerId, cardId, attributes);
+handleChallengePlaySpellTargeted(challengeStateData, playerId, cardId, attributes);
 
 campaignEventSuffix(challengeStateData);
 setScriptSuccess();

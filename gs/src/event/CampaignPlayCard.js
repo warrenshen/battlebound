@@ -37,6 +37,7 @@ const dexData = dexDataItem.getData();
 const challengeStateData = dexData.campaign;
 const challengeId = "CAMPAIGN";
 
+challengeStateData.lastMoves = [];
 handleChallengePlayCard(challengeStateData, playerId, cardId, attributes);
     
 if (challengeStateData.nonce == null) {
