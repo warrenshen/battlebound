@@ -8,6 +8,8 @@
 require("ScriptDataModule");
 require("ChallengeStateModule");
 require("ChallengeEndTurnModule");
+require("ChallengePlayCardModule");
+require("ChallengeCardAttackCardModule");
 
 // This is secure because the only thing a malicious actor
 // can do is send end turn's on time expired for themselves -
@@ -60,10 +62,89 @@ if (isExpired && challengeStateData.moveTakenThisTurn === 0) {
     challengeStateData.expiredStreakByPlayerId[playerId] = 0;
 }
 
+function handleCampaignBotTurn(challengeStateData, playerId) {
+    const playerState = challengeStateData.current[playerId];
+    // Opponent = campaign bot.
+    const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
+    const opponentState = challengeStateData.current[opponentId];
+    
+    var done = false;
+    var fieldIndex;
+    while (opponentState.manaCurrent > 0 && !done) {
+        fieldIndex = -1;
+        [2, 3, 1, 4, 0, 5].forEach(function(index) {
+            if (fieldIndex < 0 && opponentState.field[index].id === "EMPTY") {
+                fieldIndex = index;
+            }
+        });
+        if (fieldIndex < 0) {
+            done = true;
+        } else {
+            var cardId = null;
+            opponentState.hand.forEach(function(handCard) {
+                if (handCard.category === 0 && handCard.cost <= opponentState.manaCurrent) {
+                    cardId = handCard.id;
+                }
+            });
+            if (cardId == null) {
+                done = true;
+            } else {
+                handleChallengePlayCard(challengeStateData, opponentId, cardId, { fieldIndex: fieldIndex });
+            }
+        }
+    }
+    
+    done = false;
+    while (!done) {
+        var attackMade = false;
+        var targetId = null;
+        
+        var tauntTargets = playerState.field.filter(function(fieldCard) {
+            return fieldCard.id != "EMPTY" && fieldCard.abilities.indexOf(1) >= 0;
+        });
+        if (tauntTargets.length > 0) {
+            targetId = tauntTargets[0].id;
+        } else {
+            var normalTargets = playerState.field.filter(function(fieldCard) {
+                return fieldCard.id != "EMPTY";
+            });
+            if (normalTargets.length > 0) {
+                targetId = normalTargets[0].id;
+            }
+        }
+        
+        if (targetId == null) {
+            targetId = "TARGET_ID_FACE";
+        }
+        
+        opponentState.field.forEach(function(fieldCard) {
+            if (!attackMade && fieldCard.id != "EMPTY" && fieldCard.canAttack > 0) {
+                handleChallengeCardAttackCard(
+                    challengeStateData,
+                    opponentId,
+                    fieldCard.id,
+                    {
+                        fieldId: playerId,
+                        targetId: targetId,
+                    }
+                );
+                attackMade = true;
+            }
+        });
+        
+        if (!attackMade) {
+            done = true;
+        }
+    }
+    
+    handleChallengeEndTurn(challengeStateData, opponentId);
+}
+
 // We only do the following if challenge is not over.
 if (!isChallengeOver) {
-    handleChallengeEndTurn(challengeStateData, playerId, true);
-    handleChallengeEndTurn(challengeStateData, opponentId, false);
+    challengeStateData.lastMoves = [];
+    handleChallengeEndTurn(challengeStateData, playerId);
+    handleCampaignBotTurn(challengeStateData, playerId);
     // startTurnTimeEvents(challengeId, opponentId);
 }
 

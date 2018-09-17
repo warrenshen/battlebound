@@ -77,10 +77,6 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
     const spawnRank = getNewSpawnRank(challengeStateData);
     playedCard.spawnRank = spawnRank;
     
-    // Reset `lastMoves` attribute in ChallengeState.
-    challengeStateData.lastMoves = [];
-    challengeStateData.moveTakenThisTurn = 1;
-    
     const move = {
         playerId: playerId,
         category: MOVE_CATEGORY_PLAY_MINION,
@@ -92,6 +88,7 @@ function handleChallengePlayCard(challengeStateData, playerId, cardId, attribute
         },
     };
     addChallengeMove(challengeStateData, move);
+    challengeStateData.moveTakenThisTurn = 1;
     
     // Remove played card from hand.
     removeCardFromHandByIndex(playerState, handIndex);

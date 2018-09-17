@@ -32,6 +32,7 @@ if (attributesJson.targetId) {
     }
 }
 
+challengeStateData.lastMoves = [];
 handleChallengeCardAttackCard(challengeStateData, playerId, cardId, attributes);
 
 require("PersistChallengeStateModule");

@@ -43,10 +43,6 @@ function handleChallengeCardAttackCard(challengeStateData, playerId, cardId, att
         attackingCard.canAttack -= 1;
     }
     
-    // Reset `lastMoves` attribute in ChallengeState.
-    challengeStateData.lastMoves = [];
-    challengeStateData.moveTakenThisTurn = 1;
-    
     const move = {
         playerId: playerId,
         category: MOVE_CATEGORY_CARD_ATTACK,
@@ -57,6 +53,7 @@ function handleChallengeCardAttackCard(challengeStateData, playerId, cardId, att
         },
     };
     addChallengeMove(challengeStateData, move);
+    challengeStateData.moveTakenThisTurn = 1;
     
     var defendingIndex;
     var defendingCard;
