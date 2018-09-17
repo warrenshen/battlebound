@@ -39,7 +39,7 @@ public class MenuManager : MonoBehaviour
     private void Start()
     {
         this.currentView = "home";
-        SparkSingleton.Instance.AddAuthenticatedCallback(RenderUserData);
+        SparkSingleton.Instance.AddAuthenticationCallback(RenderUserData);
 
         this.galleryIndex = Random.Range(0, gallery.childCount);
         InvokeRepeating("RotateGalleryCreature", 0.0f, 4.0f);

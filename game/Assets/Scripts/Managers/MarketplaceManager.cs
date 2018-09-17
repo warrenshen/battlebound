@@ -78,7 +78,7 @@ public class MarketplaceManager : MonoBehaviour
         }
         else
         {
-            SparkSingleton.Instance.AddAuthenticatedCallback(GetMarketplaceData);
+            SparkSingleton.Instance.AddAuthenticationCallback(GetMarketplaceData);
         }
 
         buyableListItemPool = new Stack<BuyableCardListItem>();
