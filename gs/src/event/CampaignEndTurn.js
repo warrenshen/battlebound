@@ -68,34 +68,37 @@ function handleCampaignBotTurn(challengeStateData, playerId) {
     const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
     const opponentState = challengeStateData.current[opponentId];
     
-    var done = false;
-    var fieldIndex;
-    while (opponentState.manaCurrent > 0 && !done) {
-        fieldIndex = -1;
+    // Play cards from hand.
+    while (true) {
+        // Get cards in hand that are playable cost-wise.
+        var handCards = opponentState.hand.filter(function(handCard) {
+            return handCard.cost <= opponentState.manaCurrent;
+        });
+        if (handCards.length <= 0) {
+            break;
+        }
+        
+        var creatureCards = handCards.filter(function(handCard) {
+            return handCard.category === 0;
+        });
+        
+        var fieldIndex = -1;
         [2, 3, 1, 4, 0, 5].forEach(function(index) {
             if (fieldIndex < 0 && opponentState.field[index].id === "EMPTY") {
                 fieldIndex = index;
             }
         });
-        if (fieldIndex < 0) {
-            done = true;
+        
+        if (creatureCards.length > 0 && fieldIndex >= 0) {
+            var cardId = creatureCards[0].id;
+            handleChallengePlayCard(challengeStateData, opponentId, cardId, { fieldIndex: fieldIndex });
         } else {
-            var cardId = null;
-            opponentState.hand.forEach(function(handCard) {
-                if (handCard.category === 0 && handCard.cost <= opponentState.manaCurrent) {
-                    cardId = handCard.id;
-                }
-            });
-            if (cardId == null) {
-                done = true;
-            } else {
-                handleChallengePlayCard(challengeStateData, opponentId, cardId, { fieldIndex: fieldIndex });
-            }
+            break;
         }
     }
     
-    done = false;
-    while (!done) {
+    // Attack with creatures.
+    while (true) {
         var attackMade = false;
         var targetId = null;
         
@@ -118,7 +121,12 @@ function handleCampaignBotTurn(challengeStateData, playerId) {
         }
         
         opponentState.field.forEach(function(fieldCard) {
-            if (!attackMade && fieldCard.id != "EMPTY" && fieldCard.canAttack > 0) {
+            if (
+                !attackMade &&
+                fieldCard.id != "EMPTY" &&
+                fieldCard.canAttack > 0 &&
+                fieldCard.isFrozen <= 0
+            ) {
                 handleChallengeCardAttackCard(
                     challengeStateData,
                     opponentId,
@@ -133,7 +141,7 @@ function handleCampaignBotTurn(challengeStateData, playerId) {
         });
         
         if (!attackMade) {
-            done = true;
+            break;
         }
     }
     

@@ -17,6 +17,7 @@ const attributesJson = Spark.getData().attributesJson;
 GLOBAL_ENVIRONMENT = 1;
 
 const challengeStateData = JSON.parse(challengeStateString);
+challengeStateData.lastMoves = [];
 handleChallengeCardAttackStructure(challengeStateData, playerId, cardId, attributesJson);
 
 Spark.setScriptData("challengeStateData", challengeStateData);

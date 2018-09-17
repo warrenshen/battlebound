@@ -16,6 +16,7 @@ const cardIds = Spark.getData().cardIds;
 GLOBAL_ENVIRONMENT = 1;
 
 const challengeStateData = JSON.parse(challengeStateString);
+challengeStateData.lastMoves = [];
 handleChallengePlayMulligan(challengeStateData, playerId, cardIds);
 
 Spark.setScriptData("challengeStateData", challengeStateData);

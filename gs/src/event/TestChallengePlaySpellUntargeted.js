@@ -16,6 +16,7 @@ const cardId = Spark.getData().cardId;
 GLOBAL_ENVIRONMENT = 1;
 
 const challengeStateData = JSON.parse(challengeStateString);
+challengeStateData.lastMoves = [];
 handleChallengePlaySpellUntargeted(challengeStateData, playerId, cardId);
 
 Spark.setScriptData("challengeStateData", challengeStateData);

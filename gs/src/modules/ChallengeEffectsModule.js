@@ -383,7 +383,7 @@ function effectRandomTarget(challengeStateData, effect) {
 
     if (card.name === CARD_NAME_BOMBSHELL_BOMBADIER) {
         return _effectRandomBombshellBombadier(challengeStateData, effect);
-    } else if (card.name === SPELL_NAME_BOMBS_AWAY) {
+    } else if (card.name === CARD_NAME_BOMBS_AWAY) {
         return _effectRandomSprayNPray(challengeStateData, effect);
     } else {
         setScriptError("Invalid card for this effect.");
@@ -1777,50 +1777,14 @@ function processCardAttackStructure(challengeStateData, playerId, cardId, fieldI
     processEffectQueues(challengeStateData, queues[0], queues[1], queues[2]);
 }
 
-// Targeted spells.
-const SPELL_NAME_UNSTABLE_POWER = "Unstable Power";
-const SPELL_NAME_TOUCH_OF_ZEUS = "Touch of Zeus";
-const SPELL_NAME_DEEP_FREEZE = "Deep Freeze";
-const SPELL_NAME_WIDESPREAD_FROSTBITE = "Widespread Frostbite";
-const SPELL_NAME_DEATH_NOTE = "Death Note";
-const SPELL_NAME_BESTOWED_VIGOR = "Bestowed Vigor";
-const SPELL_NAME_CONDEMN = "Condemn";
-
-const TARGETED_SPELLS_OPPONENT_ONLY = [
-    SPELL_NAME_TOUCH_OF_ZEUS,
-    SPELL_NAME_DEEP_FREEZE,
-    SPELL_NAME_WIDESPREAD_FROSTBITE,
-    SPELL_NAME_DEATH_NOTE,
-    SPELL_NAME_CONDEMN,
-];
-const TARGETED_SPELLS_FRIENDLY_ONLY = [
-    SPELL_NAME_UNSTABLE_POWER,
-    SPELL_NAME_BESTOWED_VIGOR,
-];
-const TARGETED_SPELLS_BOTH = [
-
-];
-
-// Untargeted spells.
-const SPELL_NAME_BRR_BRR_BLIZZARD = "Brr Brr Blizzard";
-const SPELL_NAME_SHIELDS_UP = "Shields Up!";
-const SPELL_NAME_RAZE_TO_ASHES = "Raze to Ashes";
-const SPELL_NAME_GREEDY_FINGERS = "Greedy Fingers";
-const SPELL_NAME_SILENCE_THE_MEEK = "Silence the Meek";
-const SPELL_NAME_RALLY_TO_THE_QUEEN = "Rally to the Queen";
-const SPELL_NAME_BOMBS_AWAY = "Bombs Away";
-const SPELL_NAME_GRAVE_DIGGING = "Grave-digging";
-const SPELL_NAME_THE_SEVEN = "The Seven";
-const SPELL_NAME_BATTLE_ROYALE = "Battle Royale";
-
 function processSpellTargetedPlay(challengeStateData, playerId, playedCard, fieldId, targetId) {
     _addExpCard(challengeStateData, playedCard);
 
-    if (TARGETED_SPELLS_OPPONENT_ONLY.indexOf(playedCard.name) >= 0) {
+    if (CARD_SPELLS_TARGETED_OPPONENT_ONLY.indexOf(playedCard.name) >= 0) {
         _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedCard, fieldId, targetId);
-    } else if (TARGETED_SPELLS_FRIENDLY_ONLY.indexOf(playedCard.name) >= 0) {
+    } else if (CARD_SPELLS_TARGETED_FRIENDLY_ONLY.indexOf(playedCard.name) >= 0) {
         _processSpellTargetedPlayFriendly(challengeStateData, playerId, playedCard, fieldId, targetId);
-    } else if (TARGETED_SPELLS_BOTH.indexOf(playedCard.name) >= 0) {
+    } else if (CARD_SPELLS_TARGETED_BOTH.indexOf(playedCard.name) >= 0) {
         setScriptError("Unsupported.");
     } else {
         setScriptError("Spell name not in any targeted spell lists: " + playedCard.name);
@@ -1850,25 +1814,25 @@ function _processSpellTargetedPlayOpponent(challengeStateData, playerId, playedC
     var damageDone;
     var newEffects = [];
 
-    if (playedCard.name === SPELL_NAME_TOUCH_OF_ZEUS) {
+    if (playedCard.name === CARD_NAME_TOUCH_OF_ZEUS) {
         damageDone = damageCard(opponentCard, 30);
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, opponentCard, damageDone));
-    } else if (playedCard.name === SPELL_NAME_DEEP_FREEZE) {
+    } else if (playedCard.name === CARD_NAME_DEEP_FREEZE) {
         damageDone = damageCard(opponentCard, 10);
         if (opponentCard.health > 0) {
             freezeCard(opponentCard, 1);
         }
         newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, opponentCard, damageDone));
-    } else if (playedCard.name === SPELL_NAME_WIDESPREAD_FROSTBITE) {
+    } else if (playedCard.name === CARD_NAME_WIDESPREAD_FROSTBITE) {
         freezeCard(opponentCard, 2);
         const adjacentCards = _getAdjacentCardsByPlayerIdAndCardId(challengeStateData, fieldId, targetId);
         adjacentCards.forEach(function(adjacentCard) {
             freezeCard(adjacentCard, 1);
         });
-    } else if (playedCard.name === SPELL_NAME_DEATH_NOTE) {
+    } else if (playedCard.name === CARD_NAME_DEATH_NOTE) {
         damageCardMax(opponentCard);
         newEffects = newEffects.concat(_getEffectsOnCardDeath(challengeStateData, opponentCard));
-    } else if (playedCard.name === SPELL_NAME_CONDEMN) {
+    } else if (playedCard.name === CARD_NAME_CONDEMN) {
         silenceCard(opponentCard);
     } else {
         setScriptError("Unrecognized spell card name: " + playedCard.name);
@@ -1893,11 +1857,11 @@ function _processSpellTargetedPlayFriendly(challengeStateData, playerId, playedC
 
     const card = playerField[fieldIndex];
 
-    if (playedCard.name === SPELL_NAME_UNSTABLE_POWER) {
+    if (playedCard.name === CARD_NAME_UNSTABLE_POWER) {
         // Give a creature +30, it dies at start of next turn.
         card.attack += 30;
         card.buffsField.push(BUFF_CATEGORY_UNSTABLE_POWER);
-    } else if (playedCard.name === SPELL_NAME_BESTOWED_VIGOR) {
+    } else if (playedCard.name === CARD_NAME_BESTOWED_VIGOR) {
         card.attack += 20;
         card.health += 10;
         card.healthMax += 10;
@@ -1923,14 +1887,14 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
     var damageDone;
     var newEffects = [];
 
-    if (playedCard.name === SPELL_NAME_BRR_BRR_BLIZZARD) {
+    if (playedCard.name === CARD_NAME_BRR_BRR_BLIZZARD) {
         opponentField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
             }
             freezeCard(fieldCard, 1);
         });
-    } else if (playedCard.name === SPELL_NAME_SHIELDS_UP) {
+    } else if (playedCard.name === CARD_NAME_SHIELDS_UP) {
         playerField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
@@ -1940,7 +1904,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 fieldCard.abilities.push(CARD_ABILITY_SHIELD);
             }
         });
-    } else if (playedCard.name === SPELL_NAME_RAZE_TO_ASHES) {
+    } else if (playedCard.name === CARD_NAME_RAZE_TO_ASHES) {
         opponentField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
@@ -1949,12 +1913,12 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
             damageDone = damageCard(fieldCard, 50);
             newEffects = newEffects.concat(_getEffectsOnCardDamageTaken(challengeStateData, fieldCard, damageDone));
         });
-    } else if (playedCard.name === SPELL_NAME_GREEDY_FINGERS) {
+    } else if (playedCard.name === CARD_NAME_GREEDY_FINGERS) {
         for (var i = 0; i < 3; i += 1) {
             var move = drawCardForPlayer(playerId, playerState);
             addChallengeMove(challengeStateData, move);
         }
-    } else if (playedCard.name === SPELL_NAME_SILENCE_THE_MEEK) {
+    } else if (playedCard.name === CARD_NAME_SILENCE_THE_MEEK) {
         playerField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
@@ -1969,7 +1933,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
 
             silenceCard(fieldCard);
         });
-    } else if (playedCard.name === SPELL_NAME_RALLY_TO_THE_QUEEN) {
+    } else if (playedCard.name === CARD_NAME_RALLY_TO_THE_QUEEN) {
         playerField.forEach(function(fieldCard) {
             if (fieldCard.id === "EMPTY") {
                 return;
@@ -1979,7 +1943,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 fieldCard.abilities.push(CARD_ABILITY_TAUNT);
             }
         });
-    } else if (playedCard.name === SPELL_NAME_BOMBS_AWAY) {
+    } else if (playedCard.name === CARD_NAME_BOMBS_AWAY) {
         for (var i = 0; i < 3; i += 1) {
             newEffects.push({
                 playerId: playerId,
@@ -1988,13 +1952,13 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
                 spawnRank: i,
             });
         }
-    } else if (playedCard.name === SPELL_NAME_GRAVE_DIGGING) {
+    } else if (playedCard.name === CARD_NAME_GRAVE_DIGGING) {
         const deadCards = _getDeadCardsByPlayerId(challengeStateData, playerId);
         if (deadCards.length > 0) {
 			const deadCard = deadCards[deadCards.length - 1];
 			newEffects = newEffects.concat(_getEffectsForReviveCardRandomLocation(challengeStateData, playerId, deadCard));
         }
-    } else if (playedCard.name === SPELL_NAME_THE_SEVEN) {
+    } else if (playedCard.name === CARD_NAME_THE_SEVEN) {
         const opponentCards = _getOpponentCreatureCards(challengeStateData, playerId);
         if (opponentCards.length > 0) {
             var randomCard = _selectRandom(opponentCards);
@@ -2009,7 +1973,7 @@ function processSpellUntargetedPlay(challengeStateData, playerId, playedCard) {
             addChallengeMove(challengeStateData, move);
             newEffects = newEffects.concat(_getEffectsForConvertCard(challengeStateData, playerId, randomCard));
         }
-    } else if (playedCard.name === SPELL_NAME_BATTLE_ROYALE) {
+    } else if (playedCard.name === CARD_NAME_BATTLE_ROYALE) {
         const creatureCards = _getAllCreatureCards(challengeStateData, playerId);
         if (creatureCards.length > 0) {
             var randomCard = _selectRandom(creatureCards);

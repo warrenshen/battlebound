@@ -16,6 +16,7 @@ const playerId = Spark.getData().challengePlayerId;
 GLOBAL_ENVIRONMENT = 1;
 
 const challengeStateData = JSON.parse(challengeStateString);
+challengeStateData.lastMoves = [];
 handleChallengeEndTurn(challengeStateData, playerId);
 
 Spark.setScriptData("challengeStateData", challengeStateData);
