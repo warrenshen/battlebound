@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 public class CustomShaderGUI : ShaderGUI
@@ -99,3 +100,4 @@ public class CustomShaderGUI : ShaderGUI
         m.RenderQueueField();
     }
 }
+#endif
