@@ -637,9 +637,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 11.61499, y: 0.07501221}
-  m_SizeDelta: {x: -23.23, y: -0.15}
+  m_AnchorMax: {x: 0.9928937, y: 1}
+  m_AnchoredPosition: {x: 1.1800003, y: -0.000005722046}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &44641373
 MonoBehaviour:
@@ -663,10 +663,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: aa074c83586bd4d47a9cbcd3a090449e, type: 3}
-    m_FontSize: 38
+    m_FontSize: 15
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 3
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 3
     m_AlignByGeometry: 0
@@ -10371,7 +10371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -49.69, y: 7}
+  m_AnchoredPosition: {x: -49.690002, y: 7}
   m_SizeDelta: {x: -84.9, y: 26}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &68210399
@@ -13089,7 +13089,7 @@ RectTransform:
   m_GameObject: {fileID: 231579483}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.38797274, y: 0.38797274, z: 0.38797274}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2025802877}
   - {fileID: 561453676}
@@ -13099,7 +13099,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -73.9, y: 216.55}
-  m_SizeDelta: {x: 652.93, y: 419.71}
+  m_SizeDelta: {x: 255, y: 163.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!82 &231579485
 AudioSource:
@@ -14749,7 +14749,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 12.47, y: 0}
+  m_AnchoredPosition: {x: 12.470001, y: 0}
   m_SizeDelta: {x: -25.05, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &332279897
@@ -34002,8 +34002,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -90.1, y: -169}
-  m_SizeDelta: {x: 434.4, y: 49}
+  m_AnchoredPosition: {x: -34.64, y: -65}
+  m_SizeDelta: {x: 171.91, y: 19.23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &561453677
 MonoBehaviour:
@@ -35570,7 +35570,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 118}
+  m_AnchoredPosition: {x: 0, y: 118}
   m_SizeDelta: {x: 170, y: 22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &697196169
@@ -35650,6 +35650,102 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 697196167}
+--- !u!21 &701632346
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Hypercard_Sprite
+  m_Shader: {fileID: 4800000, guid: a34134d637a316648b224b08971054ea, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3100
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistortionMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - PixelSnap: 0
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DistortionAmp: 0
+    - _DistortionFreq: 0
+    - _DistortionSpeed: 0
+    - _DstBlend: 0
+    - _EnableExternalAlpha: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _Stencil: 21
+    - _StencilComp: 6
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _UVSec: 0
+    - _ZWrite: 1
+    - _Zoom: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DistortionDir: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &703869823
 GameObject:
   m_ObjectHideFlags: 0
@@ -38519,7 +38615,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 29.833, y: 173.52}
+  m_AnchoredPosition: {x: 29.833008, y: 173.52}
   m_SizeDelta: {x: -330.74, y: -347.06}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &846566947
@@ -38734,7 +38830,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 78.21, y: -19.949997}
+  m_AnchoredPosition: {x: 78.20999, y: -19.949997}
   m_SizeDelta: {x: 156.42, y: 39.899994}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &863383030
@@ -39140,7 +39236,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 68.9}
+  m_AnchoredPosition: {x: 0, y: 68.90001}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &892215253
@@ -39211,8 +39307,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.1, y: -1.87}
-  m_SizeDelta: {x: 499.91, y: 33.67}
+  m_AnchoredPosition: {x: 1.04, y: 0.0000047917}
+  m_SizeDelta: {x: 163.48, y: 13.11}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &892614398
 MonoBehaviour:
@@ -39754,7 +39850,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1659109127}
+      objectReference: {fileID: 1310376201}
     - target: {fileID: 23321776538211036, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Materials.Array.data[1]
@@ -39764,7 +39860,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212675064074670202, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39779,7 +39875,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212820857402067972, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39794,7 +39890,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212039432874872050, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39809,7 +39905,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212132795795452136, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39824,7 +39920,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212809414982442894, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39839,7 +39935,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212805190445899888, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39854,7 +39950,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212105099824136330, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39869,7 +39965,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212318891762655728, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -39899,7 +39995,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1607545152}
+      objectReference: {fileID: 701632346}
     - target: {fileID: 212601649913229144, guid: ebdb8ddda3cba4087a83e5c829941fc7,
         type: 2}
       propertyPath: m_Sprite
@@ -40286,7 +40382,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 4.09, y: -0.94}
+  m_AnchoredPosition: {x: 4.0899963, y: -0.9399996}
   m_SizeDelta: {x: 18, y: 18}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &917041888
@@ -40809,7 +40905,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 73.5, y: 5.8}
+  m_AnchoredPosition: {x: 73.5, y: 6}
   m_SizeDelta: {x: -129.51, y: 24.99}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &932808789
@@ -44278,6 +44374,258 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1035936535}
+--- !u!21 &1037111709
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: a2c84ca0-b606-4c65-8ff2-4c771ec744ce
+  m_Shader: {fileID: 4800000, guid: b3f791330e1cc824b90653b9591c6871, type: 3}
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BurningMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BurningTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardAlpha:
+        m_Texture: {fileID: 2800000, guid: fa9e691a9043548d3a028c7f33a89a0d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardBackground:
+        m_Texture: {fileID: 2800000, guid: f16aff39dc90d4762a67afc31b3ed409, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardDist0Mask:
+        m_Texture: {fileID: 2800000, guid: cfe4d47ac16ff7941b60a245c87ebb50, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardDist1Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardDist1Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardForeground:
+        m_Texture: {fileID: 2800000, guid: 80ecc8523999e45fc85f4ac5658c35cc, type: 3}
+        m_Scale: {x: 1.2, y: 1.04}
+        m_Offset: {x: -0.1, y: -0.02}
+    - _CardFrame:
+        m_Texture: {fileID: 2800000, guid: ad6ae2336337d401da0c19b75a73d175, type: 3}
+        m_Scale: {x: 0, y: 0}
+        m_Offset: {x: 0, y: 0}
+    - _CardMask:
+        m_Texture: {fileID: 2800000, guid: 07c3b0db62f9a4f84b44baf341edcb79, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardPicture:
+        m_Texture: {fileID: 2800000, guid: 3f7607008537d4b4a9099d68052418db, type: 3}
+        m_Scale: {x: 1.25, y: 2.52}
+        m_Offset: {x: -0.12, y: -0.4}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FXTex:
+        m_Texture: {fileID: 2800000, guid: 8ff548b6a1f67bb4f860e8843db0e003, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlitterMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlitterMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlitterSpecMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HoloCube:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HoloMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HoloMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: -1, y: 1}
+        m_Offset: {x: 1, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MixTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MixTextureMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlayTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PeriodicalFxMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PeriodicalFxTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PriceColor:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PriceTexture:
+        m_Texture: {fileID: 2800000, guid: 0e134b83ac68fcf489477eb0bb22ad0d, type: 3}
+        m_Scale: {x: 4, y: 6}
+        m_Offset: {x: -0.06, y: -5}
+    - _SpriteSheetTex:
+        m_Texture: {fileID: 2800000, guid: e3970863be7163741a9e7d86048f3366, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BlackAndWhite: 0
+    - _BumpScale: 1
+    - _BurningAmount: 0
+    - _BurningOutline: 0.4
+    - _BurningRotateSpeed: 0
+    - _CanvasOffsetX: 1
+    - _CanvasOffsetY: 1
+    - _CardOpacity: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _Dist0Amp: 1
+    - _Dist0Amp_Blue: 1
+    - _Dist0Amp_Green: 1
+    - _Dist0Amp_Red: 1
+    - _Dist0Freq: 100
+    - _Dist0Freq_Blue: 100
+    - _Dist0Freq_Green: 100
+    - _Dist0Freq_Red: 100
+    - _Dist0Speed: 1
+    - _Dist0Speed_Blue: 1
+    - _Dist0Speed_Green: 1
+    - _Dist0Speed_Red: 1
+    - _Dist0_Enabled: 0
+    - _Dist1AlphaMult: 0
+    - _Dist1Amp: 0.01
+    - _Dist1Freq: 10
+    - _Dist1Speed: 0.5
+    - _Dist1SpeedX: 0.2
+    - _Dist1SpeedY: 0
+    - _DstBlend: 10
+    - _FXAlpha: 1
+    - _FXAlphaMax: 0
+    - _FXAlphaMin: 0
+    - _FXSpeed: 0
+    - _GlitterContrast: 1
+    - _GlitterPower: 2
+    - _GlitterSpecContrast: 1
+    - _GlitterSpecPower: 2
+    - _GlitterSpeed: 1
+    - _Glitter_Enabled: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _HoloAlpha: 1
+    - _HoloCubeRotation: 0
+    - _HoloPower: 1
+    - _Holo_Debug: 0
+    - _Holo_Enabled: 0
+    - _Metallic: 0
+    - _MixAlpha: 1
+    - _MixTexture_Enabled: 0
+    - _Mode: 3
+    - _OcclusionStrength: 1
+    - _OutlineTrimOffset: 1
+    - _Parallax: 0.02
+    - _PeriodicalFxAlpha: 0
+    - _PriceAlphaMult: 1
+    - _PriceRotSpeed: 1
+    - _Seed: 13104
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SpriteSheetCols: 8
+    - _SpriteSheetIndex: 0
+    - _SpriteSheetRows: 4
+    - _SpriteSheet_Enabled: 1
+    - _SrcBlend: 1
+    - _Stencil: 9
+    - _UVSec: 0
+    - _ZWrite: 0
+    m_Colors:
+    - _BurnColor: {r: 1, g: 0.7599125, b: 0, a: 1}
+    - _CardFrameColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
+    - _Dist0Pos: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist0Pos_Blue: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist0Pos_Green: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist0Pos_Red: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist1Color: {r: 0.1254902, g: 0.74509805, b: 0.9490196, a: 0}
+    - _Dist1Pos: {r: 1, g: 1, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FXColor: {r: 0.28235295, g: 1, b: 0, a: 1}
+    - _GemColor: {r: 0.14761662, g: 0.52205884, b: 0, a: 1}
+    - _GlitterColor: {r: 1, g: 1, b: 1, a: 1}
+    - _HoloBBoxMax: {r: 1, g: 1, b: 1, a: 0}
+    - _HoloBBoxMin: {r: 1, g: 1, b: 1, a: 0}
+    - _HoloCubeColor: {r: 0, g: 0, b: 0, a: 0}
+    - _HoloEnviCubeMapPos: {r: 0, g: 0, b: 0, a: 0}
+    - _HoloMap_Scale: {r: 1, g: 1, b: 0, a: 0}
+    - _MixTextureColor: {r: 0, g: 0, b: 0, a: 0}
+    - _PeriodicalFxColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SchoolColor: {r: 0.066176474, g: 0.768154, b: 1, a: 0}
+    - _SpriteSheetOffset: {r: 0.256, g: 0.712, b: 0, a: 0}
+    - _SpriteSheetScale: {r: 2, g: 3, b: 0, a: 0}
 --- !u!1 &1038076285
 GameObject:
   m_ObjectHideFlags: 0
@@ -76494,8 +76842,8 @@ Canvas:
   m_GameObject: {fileID: 1120603745}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1974309383}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
   m_ReceivesEvents: 1
@@ -76504,7 +76852,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 50
   m_TargetDisplay: 0
 --- !u!1 &1121990192
 GameObject:
@@ -80683,6 +81031,258 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1310044978}
+--- !u!21 &1310376201
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: aad020d8-2047-496f-bb28-68c54340ea9b
+  m_Shader: {fileID: 4800000, guid: b3f791330e1cc824b90653b9591c6871, type: 3}
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BurningMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BurningTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardAlpha:
+        m_Texture: {fileID: 2800000, guid: fa9e691a9043548d3a028c7f33a89a0d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardBackground:
+        m_Texture: {fileID: 2800000, guid: f16aff39dc90d4762a67afc31b3ed409, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardDist0Mask:
+        m_Texture: {fileID: 2800000, guid: cfe4d47ac16ff7941b60a245c87ebb50, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardDist1Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardDist1Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardForeground:
+        m_Texture: {fileID: 2800000, guid: 80ecc8523999e45fc85f4ac5658c35cc, type: 3}
+        m_Scale: {x: 1.2, y: 1.04}
+        m_Offset: {x: -0.1, y: -0.02}
+    - _CardFrame:
+        m_Texture: {fileID: 2800000, guid: ad6ae2336337d401da0c19b75a73d175, type: 3}
+        m_Scale: {x: 0, y: 0}
+        m_Offset: {x: 0, y: 0}
+    - _CardMask:
+        m_Texture: {fileID: 2800000, guid: 07c3b0db62f9a4f84b44baf341edcb79, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CardPicture:
+        m_Texture: {fileID: 2800000, guid: 3f7607008537d4b4a9099d68052418db, type: 3}
+        m_Scale: {x: 1.25, y: 2.52}
+        m_Offset: {x: -0.12, y: -0.4}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FXTex:
+        m_Texture: {fileID: 2800000, guid: 8ff548b6a1f67bb4f860e8843db0e003, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlitterMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlitterMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlitterSpecMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HoloCube:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HoloMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HoloMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: -1, y: 1}
+        m_Offset: {x: 1, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MixTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MixTextureMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlayTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PeriodicalFxMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PeriodicalFxTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PriceColor:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PriceTexture:
+        m_Texture: {fileID: 2800000, guid: 0e134b83ac68fcf489477eb0bb22ad0d, type: 3}
+        m_Scale: {x: 4, y: 6}
+        m_Offset: {x: -0.06, y: -5}
+    - _SpriteSheetTex:
+        m_Texture: {fileID: 2800000, guid: e3970863be7163741a9e7d86048f3366, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BlackAndWhite: 0
+    - _BumpScale: 1
+    - _BurningAmount: 0
+    - _BurningOutline: 0.4
+    - _BurningRotateSpeed: 0
+    - _CanvasOffsetX: 1
+    - _CanvasOffsetY: 1
+    - _CardOpacity: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _Dist0Amp: 1
+    - _Dist0Amp_Blue: 1
+    - _Dist0Amp_Green: 1
+    - _Dist0Amp_Red: 1
+    - _Dist0Freq: 100
+    - _Dist0Freq_Blue: 100
+    - _Dist0Freq_Green: 100
+    - _Dist0Freq_Red: 100
+    - _Dist0Speed: 1
+    - _Dist0Speed_Blue: 1
+    - _Dist0Speed_Green: 1
+    - _Dist0Speed_Red: 1
+    - _Dist0_Enabled: 0
+    - _Dist1AlphaMult: 0
+    - _Dist1Amp: 0.01
+    - _Dist1Freq: 10
+    - _Dist1Speed: 0.5
+    - _Dist1SpeedX: 0.2
+    - _Dist1SpeedY: 0
+    - _DstBlend: 10
+    - _FXAlpha: 1
+    - _FXAlphaMax: 0
+    - _FXAlphaMin: 0
+    - _FXSpeed: 0
+    - _GlitterContrast: 1
+    - _GlitterPower: 2
+    - _GlitterSpecContrast: 1
+    - _GlitterSpecPower: 2
+    - _GlitterSpeed: 1
+    - _Glitter_Enabled: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _HoloAlpha: 1
+    - _HoloCubeRotation: 0
+    - _HoloPower: 1
+    - _Holo_Debug: 0
+    - _Holo_Enabled: 0
+    - _Metallic: 0
+    - _MixAlpha: 1
+    - _MixTexture_Enabled: 0
+    - _Mode: 3
+    - _OcclusionStrength: 1
+    - _OutlineTrimOffset: 1
+    - _Parallax: 0.02
+    - _PeriodicalFxAlpha: 0
+    - _PriceAlphaMult: 1
+    - _PriceRotSpeed: 1
+    - _Seed: 13104
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SpriteSheetCols: 8
+    - _SpriteSheetIndex: 0
+    - _SpriteSheetRows: 4
+    - _SpriteSheet_Enabled: 1
+    - _SrcBlend: 1
+    - _Stencil: 9
+    - _UVSec: 0
+    - _ZWrite: 0
+    m_Colors:
+    - _BurnColor: {r: 1, g: 0.7599125, b: 0, a: 1}
+    - _CardFrameColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
+    - _Dist0Pos: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist0Pos_Blue: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist0Pos_Green: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist0Pos_Red: {r: 0, g: 0, b: 0, a: 0}
+    - _Dist1Color: {r: 0.1254902, g: 0.74509805, b: 0.9490196, a: 0}
+    - _Dist1Pos: {r: 1, g: 1, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FXColor: {r: 0.28235295, g: 1, b: 0, a: 1}
+    - _GemColor: {r: 0.14761662, g: 0.52205884, b: 0, a: 1}
+    - _GlitterColor: {r: 1, g: 1, b: 1, a: 1}
+    - _HoloBBoxMax: {r: 1, g: 1, b: 1, a: 0}
+    - _HoloBBoxMin: {r: 1, g: 1, b: 1, a: 0}
+    - _HoloCubeColor: {r: 0, g: 0, b: 0, a: 0}
+    - _HoloEnviCubeMapPos: {r: 0, g: 0, b: 0, a: 0}
+    - _HoloMap_Scale: {r: 1, g: 1, b: 0, a: 0}
+    - _MixTextureColor: {r: 0, g: 0, b: 0, a: 0}
+    - _PeriodicalFxColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SchoolColor: {r: 0.066176474, g: 0.768154, b: 1, a: 0}
+    - _SpriteSheetOffset: {r: 0.256, g: 0.712, b: 0, a: 0}
+    - _SpriteSheetScale: {r: 2, g: 3, b: 0, a: 0}
 --- !u!1 &1312503340
 GameObject:
   m_ObjectHideFlags: 0
@@ -82858,7 +83458,7 @@ GameObject:
   - component: {fileID: 1466335621}
   - component: {fileID: 1466335623}
   - component: {fileID: 1466335622}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83428,7 +84028,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 50
+    maxNumParticles: 30
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -83635,7 +84235,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 50
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -87276,7 +87876,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 14.56, y: 7.2}
+  m_AnchoredPosition: {x: 14.559998, y: 7.199997}
   m_SizeDelta: {x: -13.83, y: 26}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1470138241
@@ -87796,7 +88396,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -24.1, y: -0.5}
+  m_AnchoredPosition: {x: -24.099998, y: -0.5}
   m_SizeDelta: {x: -54.05, y: 26.14}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1503812656
@@ -88631,7 +89231,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: 10
+  m_Depth: 100
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 32
@@ -89671,102 +90271,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1606971317}
---- !u!21 &1607545152
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Hypercard_Sprite
-  m_Shader: {fileID: 4800000, guid: a34134d637a316648b224b08971054ea, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3100
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _AlphaTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DistortionMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - PixelSnap: 0
-    - _BumpScale: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _DistortionAmp: 0
-    - _DistortionFreq: 0
-    - _DistortionSpeed: 0
-    - _DstBlend: 0
-    - _EnableExternalAlpha: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.5
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _Stencil: 21
-    - _StencilComp: 6
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _UVSec: 0
-    - _ZWrite: 1
-    - _Zoom: 1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DistortionDir: {r: 0, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1609755436
 GameObject:
   m_ObjectHideFlags: 0
@@ -90604,8 +91108,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 8.21, y: -65}
-  m_SizeDelta: {x: 221.99, y: 19.23}
+  m_AnchoredPosition: {x: 5.7, y: -65}
+  m_SizeDelta: {x: 227.02, y: 19.23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1644251360
 MonoBehaviour:
@@ -91171,258 +91675,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1649881479}
---- !u!21 &1659109127
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 891811c0-a9b9-4734-8af9-7f00cc282591
-  m_Shader: {fileID: 4800000, guid: b3f791330e1cc824b90653b9591c6871, type: 3}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BurningMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BurningTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardAlpha:
-        m_Texture: {fileID: 2800000, guid: fa9e691a9043548d3a028c7f33a89a0d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardBackground:
-        m_Texture: {fileID: 2800000, guid: f16aff39dc90d4762a67afc31b3ed409, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardDist0Mask:
-        m_Texture: {fileID: 2800000, guid: cfe4d47ac16ff7941b60a245c87ebb50, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardDist1Mask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardDist1Tex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardForeground:
-        m_Texture: {fileID: 2800000, guid: 80ecc8523999e45fc85f4ac5658c35cc, type: 3}
-        m_Scale: {x: 1.2, y: 1.04}
-        m_Offset: {x: -0.1, y: -0.02}
-    - _CardFrame:
-        m_Texture: {fileID: 2800000, guid: ad6ae2336337d401da0c19b75a73d175, type: 3}
-        m_Scale: {x: 0, y: 0}
-        m_Offset: {x: 0, y: 0}
-    - _CardMask:
-        m_Texture: {fileID: 2800000, guid: 07c3b0db62f9a4f84b44baf341edcb79, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardPicture:
-        m_Texture: {fileID: 2800000, guid: 3f7607008537d4b4a9099d68052418db, type: 3}
-        m_Scale: {x: 1.25, y: 2.52}
-        m_Offset: {x: -0.12, y: -0.4}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _FXTex:
-        m_Texture: {fileID: 2800000, guid: 8ff548b6a1f67bb4f860e8843db0e003, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _GlitterMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _GlitterMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _GlitterSpecMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HoloCube:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HoloMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HoloMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: -1, y: 1}
-        m_Offset: {x: 1, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MixTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MixTextureMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OverlayTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PeriodicalFxMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PeriodicalFxTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PriceColor:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PriceTexture:
-        m_Texture: {fileID: 2800000, guid: 0e134b83ac68fcf489477eb0bb22ad0d, type: 3}
-        m_Scale: {x: 4, y: 6}
-        m_Offset: {x: -0.06, y: -5}
-    - _SpriteSheetTex:
-        m_Texture: {fileID: 2800000, guid: e3970863be7163741a9e7d86048f3366, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _BlackAndWhite: 0
-    - _BumpScale: 1
-    - _BurningAmount: 0
-    - _BurningOutline: 0.4
-    - _BurningRotateSpeed: 0
-    - _CanvasOffsetX: 1
-    - _CanvasOffsetY: 1
-    - _CardOpacity: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _Dist0Amp: 1
-    - _Dist0Amp_Blue: 1
-    - _Dist0Amp_Green: 1
-    - _Dist0Amp_Red: 1
-    - _Dist0Freq: 100
-    - _Dist0Freq_Blue: 100
-    - _Dist0Freq_Green: 100
-    - _Dist0Freq_Red: 100
-    - _Dist0Speed: 1
-    - _Dist0Speed_Blue: 1
-    - _Dist0Speed_Green: 1
-    - _Dist0Speed_Red: 1
-    - _Dist0_Enabled: 0
-    - _Dist1AlphaMult: 0
-    - _Dist1Amp: 0.01
-    - _Dist1Freq: 10
-    - _Dist1Speed: 0.5
-    - _Dist1SpeedX: 0.2
-    - _Dist1SpeedY: 0
-    - _DstBlend: 10
-    - _FXAlpha: 1
-    - _FXAlphaMax: 0
-    - _FXAlphaMin: 0
-    - _FXSpeed: 0
-    - _GlitterContrast: 1
-    - _GlitterPower: 2
-    - _GlitterSpecContrast: 1
-    - _GlitterSpecPower: 2
-    - _GlitterSpeed: 1
-    - _Glitter_Enabled: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.5
-    - _GlossyReflections: 1
-    - _HoloAlpha: 1
-    - _HoloCubeRotation: 0
-    - _HoloPower: 1
-    - _Holo_Debug: 0
-    - _Holo_Enabled: 0
-    - _Metallic: 0
-    - _MixAlpha: 1
-    - _MixTexture_Enabled: 0
-    - _Mode: 3
-    - _OcclusionStrength: 1
-    - _OutlineTrimOffset: 1
-    - _Parallax: 0.02
-    - _PeriodicalFxAlpha: 0
-    - _PriceAlphaMult: 1
-    - _PriceRotSpeed: 1
-    - _Seed: 13104
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SpriteSheetCols: 8
-    - _SpriteSheetIndex: 0
-    - _SpriteSheetRows: 4
-    - _SpriteSheet_Enabled: 1
-    - _SrcBlend: 1
-    - _Stencil: 9
-    - _UVSec: 0
-    - _ZWrite: 0
-    m_Colors:
-    - _BurnColor: {r: 1, g: 0.7599125, b: 0, a: 1}
-    - _CardFrameColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
-    - _Dist0Pos: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist0Pos_Blue: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist0Pos_Green: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist0Pos_Red: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist1Color: {r: 0.1254902, g: 0.74509805, b: 0.9490196, a: 0}
-    - _Dist1Pos: {r: 1, g: 1, b: 0, a: 0}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FXColor: {r: 0.28235295, g: 1, b: 0, a: 1}
-    - _GemColor: {r: 0.14761662, g: 0.52205884, b: 0, a: 1}
-    - _GlitterColor: {r: 1, g: 1, b: 1, a: 1}
-    - _HoloBBoxMax: {r: 1, g: 1, b: 1, a: 0}
-    - _HoloBBoxMin: {r: 1, g: 1, b: 1, a: 0}
-    - _HoloCubeColor: {r: 0, g: 0, b: 0, a: 0}
-    - _HoloEnviCubeMapPos: {r: 0, g: 0, b: 0, a: 0}
-    - _HoloMap_Scale: {r: 1, g: 1, b: 0, a: 0}
-    - _MixTextureColor: {r: 0, g: 0, b: 0, a: 0}
-    - _PeriodicalFxColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SchoolColor: {r: 0.066176474, g: 0.768154, b: 1, a: 0}
-    - _SpriteSheetOffset: {r: 0.256, g: 0.712, b: 0, a: 0}
-    - _SpriteSheetScale: {r: 2, g: 3, b: 0, a: 0}
 --- !u!1 &1660164547
 GameObject:
   m_ObjectHideFlags: 0
@@ -92581,8 +92833,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.13, y: -3.1}
-  m_SizeDelta: {x: 211.51, y: 16.03}
+  m_AnchoredPosition: {x: -0.0000030994, y: -0.08}
+  m_SizeDelta: {x: 211.51, y: 12.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1725934293
 MonoBehaviour:
@@ -127342,258 +127594,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1927586023}
---- !u!21 &1931941747
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: b4da0fc5-d039-4018-8650-a0b5385848f4
-  m_Shader: {fileID: 4800000, guid: b3f791330e1cc824b90653b9591c6871, type: 3}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BurningMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BurningTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardAlpha:
-        m_Texture: {fileID: 2800000, guid: fa9e691a9043548d3a028c7f33a89a0d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardBackground:
-        m_Texture: {fileID: 2800000, guid: f16aff39dc90d4762a67afc31b3ed409, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardDist0Mask:
-        m_Texture: {fileID: 2800000, guid: cfe4d47ac16ff7941b60a245c87ebb50, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardDist1Mask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardDist1Tex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardForeground:
-        m_Texture: {fileID: 2800000, guid: 80ecc8523999e45fc85f4ac5658c35cc, type: 3}
-        m_Scale: {x: 1.2, y: 1.04}
-        m_Offset: {x: -0.1, y: -0.02}
-    - _CardFrame:
-        m_Texture: {fileID: 2800000, guid: ad6ae2336337d401da0c19b75a73d175, type: 3}
-        m_Scale: {x: 0, y: 0}
-        m_Offset: {x: 0, y: 0}
-    - _CardMask:
-        m_Texture: {fileID: 2800000, guid: 07c3b0db62f9a4f84b44baf341edcb79, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CardPicture:
-        m_Texture: {fileID: 2800000, guid: 3f7607008537d4b4a9099d68052418db, type: 3}
-        m_Scale: {x: 1.25, y: 2.52}
-        m_Offset: {x: -0.12, y: -0.4}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _FXTex:
-        m_Texture: {fileID: 2800000, guid: 8ff548b6a1f67bb4f860e8843db0e003, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _GlitterMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _GlitterMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _GlitterSpecMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HoloCube:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HoloMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HoloMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: -1, y: 1}
-        m_Offset: {x: 1, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MixTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MixTextureMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OverlayTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PeriodicalFxMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PeriodicalFxTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PriceColor:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PriceTexture:
-        m_Texture: {fileID: 2800000, guid: 0e134b83ac68fcf489477eb0bb22ad0d, type: 3}
-        m_Scale: {x: 4, y: 6}
-        m_Offset: {x: -0.06, y: -5}
-    - _SpriteSheetTex:
-        m_Texture: {fileID: 2800000, guid: e3970863be7163741a9e7d86048f3366, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _BlackAndWhite: 0
-    - _BumpScale: 1
-    - _BurningAmount: 0
-    - _BurningOutline: 0.4
-    - _BurningRotateSpeed: 0
-    - _CanvasOffsetX: 1
-    - _CanvasOffsetY: 1
-    - _CardOpacity: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _Dist0Amp: 1
-    - _Dist0Amp_Blue: 1
-    - _Dist0Amp_Green: 1
-    - _Dist0Amp_Red: 1
-    - _Dist0Freq: 100
-    - _Dist0Freq_Blue: 100
-    - _Dist0Freq_Green: 100
-    - _Dist0Freq_Red: 100
-    - _Dist0Speed: 1
-    - _Dist0Speed_Blue: 1
-    - _Dist0Speed_Green: 1
-    - _Dist0Speed_Red: 1
-    - _Dist0_Enabled: 0
-    - _Dist1AlphaMult: 0
-    - _Dist1Amp: 0.01
-    - _Dist1Freq: 10
-    - _Dist1Speed: 0.5
-    - _Dist1SpeedX: 0.2
-    - _Dist1SpeedY: 0
-    - _DstBlend: 10
-    - _FXAlpha: 1
-    - _FXAlphaMax: 0
-    - _FXAlphaMin: 0
-    - _FXSpeed: 0
-    - _GlitterContrast: 1
-    - _GlitterPower: 2
-    - _GlitterSpecContrast: 1
-    - _GlitterSpecPower: 2
-    - _GlitterSpeed: 1
-    - _Glitter_Enabled: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.5
-    - _GlossyReflections: 1
-    - _HoloAlpha: 1
-    - _HoloCubeRotation: 0
-    - _HoloPower: 1
-    - _Holo_Debug: 0
-    - _Holo_Enabled: 0
-    - _Metallic: 0
-    - _MixAlpha: 1
-    - _MixTexture_Enabled: 0
-    - _Mode: 3
-    - _OcclusionStrength: 1
-    - _OutlineTrimOffset: 1
-    - _Parallax: 0.02
-    - _PeriodicalFxAlpha: 0
-    - _PriceAlphaMult: 1
-    - _PriceRotSpeed: 1
-    - _Seed: 13104
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SpriteSheetCols: 8
-    - _SpriteSheetIndex: 0
-    - _SpriteSheetRows: 4
-    - _SpriteSheet_Enabled: 1
-    - _SrcBlend: 1
-    - _Stencil: 9
-    - _UVSec: 0
-    - _ZWrite: 0
-    m_Colors:
-    - _BurnColor: {r: 1, g: 0.7599125, b: 0, a: 1}
-    - _CardFrameColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
-    - _Dist0Pos: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist0Pos_Blue: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist0Pos_Green: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist0Pos_Red: {r: 0, g: 0, b: 0, a: 0}
-    - _Dist1Color: {r: 0.1254902, g: 0.74509805, b: 0.9490196, a: 0}
-    - _Dist1Pos: {r: 1, g: 1, b: 0, a: 0}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FXColor: {r: 0.28235295, g: 1, b: 0, a: 1}
-    - _GemColor: {r: 0.14761662, g: 0.52205884, b: 0, a: 1}
-    - _GlitterColor: {r: 1, g: 1, b: 1, a: 1}
-    - _HoloBBoxMax: {r: 1, g: 1, b: 1, a: 0}
-    - _HoloBBoxMin: {r: 1, g: 1, b: 1, a: 0}
-    - _HoloCubeColor: {r: 0, g: 0, b: 0, a: 0}
-    - _HoloEnviCubeMapPos: {r: 0, g: 0, b: 0, a: 0}
-    - _HoloMap_Scale: {r: 1, g: 1, b: 0, a: 0}
-    - _MixTextureColor: {r: 0, g: 0, b: 0, a: 0}
-    - _PeriodicalFxColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SchoolColor: {r: 0.066176474, g: 0.768154, b: 1, a: 0}
-    - _SpriteSheetOffset: {r: 0.256, g: 0.712, b: 0, a: 0}
-    - _SpriteSheetScale: {r: 2, g: 3, b: 0, a: 0}
 --- !u!1 &1933643851
 GameObject:
   m_ObjectHideFlags: 0
@@ -129516,8 +129516,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -100, y: 11}
-  m_SizeDelta: {x: -164.61, y: 63.5}
+  m_AnchoredPosition: {x: -73.7, y: 6}
+  m_SizeDelta: {x: -130.75, y: 24.99}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2025802878
 MonoBehaviour:
@@ -131669,7 +131669,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -153.8}
+  m_AnchoredPosition: {x: 0, y: -153.79999}
   m_SizeDelta: {x: 0, y: -307.61}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2110060865

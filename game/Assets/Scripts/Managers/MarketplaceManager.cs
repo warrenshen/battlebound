@@ -314,7 +314,7 @@ public class MarketplaceManager : MonoBehaviour
     public void HoverEnterEffect(GameObject target)
     {
         //LeanTween.scale(target, Vector3.one * 1.1f, TWEEN_DURATION).setEaseInQuad();
-        target.transform.localScale = Vector3.one * 1.10f;
+        target.transform.localScale = Vector3.one * 1.15f;
     }
 
     public void HoverExitEffect(GameObject target)
