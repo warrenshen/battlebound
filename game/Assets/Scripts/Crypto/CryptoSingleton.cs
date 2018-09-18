@@ -56,10 +56,8 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             endingPrice,
             duration
         );
-#if UNITY_EDITOR
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
-#endif
 
         string publicAddress = GetPublicAddress();
         return (string)await SubmitCreateAuctionTransaction(
@@ -134,10 +132,8 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             tokenId,
             bidPrice
         );
-#if UNITY_EDITOR
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
-#endif
 
         string publicAddress = GetPublicAddress();
         return (string)await SubmitBidAuctionTransaction(
@@ -205,10 +201,8 @@ public class CryptoSingleton : Singleton<CryptoSingleton>
             nonce,
             tokenId
         );
-#if UNITY_EDITOR
         Debug.Log("Nonce: " + nonce.ToString());
         Debug.Log("Signed tx: " + signedTx);
-#endif
 
         string publicAddress = GetPublicAddress();
         return txHash = (string)await SubmitCancelAuctionTransaction(

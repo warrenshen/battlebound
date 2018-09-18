@@ -1,9 +1,8 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-
 using Nethereum.Web3.Accounts;
 
 public class BuyableCardListItem : CardListItem
@@ -57,7 +56,7 @@ public class BuyableCardListItem : CardListItem
             "Confirm Bid",
             "Are you sure you would like to bid for this card? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeBidAuction),
-            new UnityAction(CancelAction)
+            () => { }
         );
     }
 
@@ -67,18 +66,18 @@ public class BuyableCardListItem : CardListItem
             "Authorize Bid",
             "Please enter your password to verify the transaction.",
             new UnityAction<UMP_InputDialogUI, string>(SubmitBidAuction),
-            new UnityAction(CancelAction),
+            () => { },
             placeholderMessage: "Enter password...",
             contentType: InputField.ContentType.Password
         );
     }
 
-    private void CancelAction()
+    private void SubmitBidAuction(UMP_InputDialogUI dialog, string password)
     {
-
+        SubmitBidAuctionHelper(dialog, password);
     }
 
-    private void SubmitBidAuction(UMP_InputDialogUI dialog, string password)
+    private async Task SubmitBidAuctionHelper(UMP_InputDialogUI dialog, string password)
     {
         if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {
@@ -107,14 +106,22 @@ public class BuyableCardListItem : CardListItem
         }
         else
         {
-            //Actual end result/payload begin
-            CryptoSingleton.Instance.BidAuction(
+            dialog.Close();
+
+            string txHash = await CryptoSingleton.Instance.BidAuction(
                 account,
                 Int32.Parse(cardAuction.GetId().Substring(1)),
                 this.cardAuction.Auction.StartingPrice
             );
-            //Actual end result/payload end
+
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Transaction Hash",
+                txHash,
+                () => { },
+                null,
+                "Continue",
+                null
+            );
         }
-        dialog.Close();
     }
 }

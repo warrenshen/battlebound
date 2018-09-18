@@ -1,9 +1,8 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-
 using Nethereum.Web3.Accounts;
 
 public class CancelableListItem : CardListItem
@@ -45,7 +44,7 @@ public class CancelableListItem : CardListItem
             "Confirm Cancellation",
             "Are you sure you would like to cancel your auction? You'll be asked to authorize the transaction next.",
             new UnityAction(AuthorizeWithdrawAuction),
-            new UnityAction(CancelCancelAuction)
+            () => { }
         );
     }
 
@@ -55,13 +54,18 @@ public class CancelableListItem : CardListItem
             "Authorize Cancellation",
             "Please enter your password to verify the transaction.",
             new UnityAction<UMP_InputDialogUI, string>(SubmitCancelAuction),
-            new UnityAction(CancelCancelAuction),
+            () => { },
             placeholderMessage: "Enter password...",
             contentType: InputField.ContentType.Password
         );
     }
 
     private void SubmitCancelAuction(UMP_InputDialogUI dialog, string password)
+    {
+        SubmitCancelAuctionHelper(dialog, password);
+    }
+
+    private async Task SubmitCancelAuctionHelper(UMP_InputDialogUI dialog, string password)
     {
         if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {
@@ -87,18 +91,22 @@ public class CancelableListItem : CardListItem
         }
         else
         {
-            //Actual end result/payload begin
-            CryptoSingleton.Instance.CancelAuction(
+            dialog.Close();
+
+            string txHash = await CryptoSingleton.Instance.CancelAuction(
                 account,
                 Int32.Parse(cardAuction.GetId().Substring(1))
             );
-            //Actual end result/payload end
+
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Transaction Hash",
+                txHash,
+                () => { },
+                null,
+                "Continue",
+                null
+            );
         }
         dialog.Close();
-    }
-
-    private void CancelCancelAuction()
-    {
-
     }
 }

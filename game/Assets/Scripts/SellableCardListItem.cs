@@ -1,9 +1,8 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-
 using Nethereum.Web3.Accounts;
 
 public class SellableCardListItem : CardListItem
@@ -44,7 +43,7 @@ public class SellableCardListItem : CardListItem
             "Final Price",
             "Duration",
             new UnityAction<UMP_ThreeInputDialogUI, string, string, string>(SubmitCreateAuctionTransaction),
-            new UnityAction(() => { }),
+            () => { },
             contentTypeOne: InputField.ContentType.IntegerNumber,
             contentTypeTwo: InputField.ContentType.IntegerNumber,
             contentTypeThree: InputField.ContentType.IntegerNumber
@@ -69,7 +68,7 @@ public class SellableCardListItem : CardListItem
             new UnityAction<UMP_InputDialogUI, string>(
                 (UMP_InputDialogUI dialogUI, string password) => ProcessPassword(dialogUI, password, tokenId, startingPrice, endingPrice, duration)
             ),
-            new UnityAction(() => { }),
+            () => { },
             placeholderMessage: "Enter password...",
             contentType: InputField.ContentType.Password
         );
@@ -78,7 +77,26 @@ public class SellableCardListItem : CardListItem
     }
 
     private void ProcessPassword(
-        UMP_DialogUI dialogUI,
+        UMP_DialogUI dialog,
+        string password,
+        int tokenId,
+        long startingPrice,
+        long endingPrice,
+        int duration
+    )
+    {
+        ProcessPasswordHelper(
+            dialog,
+            password,
+            tokenId,
+            startingPrice,
+            endingPrice,
+            duration
+        );
+    }
+
+    private async Task ProcessPasswordHelper(
+        UMP_DialogUI dialog,
         string password,
         int tokenId,
         long startingPrice,
@@ -88,16 +106,16 @@ public class SellableCardListItem : CardListItem
     {
         if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_ENCRYPTED_KEY_STORE))
         {
-            dialogUI.SetMessage("Ethereum hot wallet not configured for this device.");
-            dialogUI.SetMessageColor(Color.red);
-            dialogUI.SetMessageStyle(FontStyle.Bold);
+            dialog.SetMessage("Ethereum hot wallet not configured for this device.");
+            dialog.SetMessageColor(Color.red);
+            dialog.SetMessageStyle(FontStyle.Bold);
             return;
         }
         else if (!PlayerPrefs.HasKey(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS))
         {
-            dialogUI.SetMessage("Ethereum hot wallet not configured for this device.");
-            dialogUI.SetMessageColor(Color.red);
-            dialogUI.SetMessageStyle(FontStyle.Bold);
+            dialog.SetMessage("Ethereum hot wallet not configured for this device.");
+            dialog.SetMessageColor(Color.red);
+            dialog.SetMessageStyle(FontStyle.Bold);
             return;
         }
 
@@ -106,20 +124,30 @@ public class SellableCardListItem : CardListItem
         string publicAddress = PlayerPrefs.GetString(CryptoSingleton.PLAYER_PREFS_PUBLIC_ADDRESS);
         if (publicAddress != account.Address)
         {
-            dialogUI.SetMessage("Entered password incorrect! Please try again.");
-            dialogUI.SetMessageColor(Color.red);
-            dialogUI.SetMessageStyle(FontStyle.Bold);
+            dialog.SetMessage("Entered password incorrect! Please try again.");
+            dialog.SetMessageColor(Color.red);
+            dialog.SetMessageStyle(FontStyle.Bold);
         }
         else
         {
-            CryptoSingleton.Instance.CreateAuction(
+            dialog.Close();
+
+            string txHash = await CryptoSingleton.Instance.CreateAuction(
                 account,
                 tokenId,
                 startingPrice,
                 endingPrice,
                 duration
             );
-            dialogUI.Close();
+
+            UMPSingleton.Instance.ShowConfirmationDialog(
+                "Transaction Hash",
+                txHash,
+                () => { },
+                null,
+                "Continue",
+                null
+            );
         }
     }
 }
