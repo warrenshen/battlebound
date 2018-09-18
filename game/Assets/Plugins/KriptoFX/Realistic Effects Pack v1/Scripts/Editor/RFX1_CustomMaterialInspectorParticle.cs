@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -10,9 +11,9 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
     private int dstMode = 1;
     private int cullMode = 2;
     private string[] blendMode = { "Additive", "Alpha Blend", "Mul", "Mul2" };
-    private string[] cullModeEnum = { "Cull Off", "Cull Front", "Cull Back"};
-    string[] lightOptions = { "Vert OFF", "Vert ON", "Vert Normal ON"};
-    string[] lightOptionsKeyWords = { "VertLight_OFF", "VertLight4_ON", "VertLight4Normal_ON"};
+    private string[] cullModeEnum = { "Cull Off", "Cull Front", "Cull Back" };
+    string[] lightOptions = { "Vert OFF", "Vert ON", "Vert Normal ON" };
+    string[] lightOptionsKeyWords = { "VertLight_OFF", "VertLight4_ON", "VertLight4Normal_ON" };
     private int lightIndex;
     //private Vector2 tiling = new Vector2(800, 800);
     private bool isSoftLight;
@@ -20,7 +21,7 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
     private float invFade;
     private float fresnelStr;
     private float cutout;
-    
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -31,7 +32,7 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
         if (tag != "Particle")
             return;
         var shaderKeyWords = targetMat.shaderKeywords;
-       
+
         foreach (var keyWord in shaderKeyWords)
         {
             var index = lightOptionsKeyWords.ToList().IndexOf(keyWord);
@@ -46,7 +47,7 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
         bool isClip = shaderKeyWords.Contains("Clip_ON");
         bool isClipAlpha = shaderKeyWords.Contains("Clip_ON_Alpha");
         if (isClipAlpha) isClip = true;
-      
+
         cutout = targetMat.GetFloat("_Cutout");
         invFade = targetMat.GetFloat("_InvFade");
         fresnelStr = targetMat.GetFloat("_FresnelStr");
@@ -57,7 +58,8 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
         isFresnel = shaderKeyWords.Contains("FresnelFade_ON");
 
         if (srcMode == (int)UnityEngine.Rendering.BlendMode.SrcAlpha &&
-            dstMode == (int)UnityEngine.Rendering.BlendMode.One) {
+            dstMode == (int)UnityEngine.Rendering.BlendMode.One)
+        {
             blendIndex = 0;
         }
         if (srcMode == (int)UnityEngine.Rendering.BlendMode.SrcAlpha &&
@@ -70,8 +72,9 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
         {
             blendIndex = 2;
         }
-        if (srcMode==(int) UnityEngine.Rendering.BlendMode.DstColor &&
-            dstMode==(int) UnityEngine.Rendering.BlendMode.SrcColor) {
+        if (srcMode == (int)UnityEngine.Rendering.BlendMode.DstColor &&
+            dstMode == (int)UnityEngine.Rendering.BlendMode.SrcColor)
+        {
             blendIndex = 3;
         }
 
@@ -84,7 +87,8 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
         isClip = EditorGUILayout.Toggle("Cutout", isClip);
         isSoftLight = EditorGUILayout.Toggle("Soft Particles", isSoftLight);
         isFresnel = EditorGUILayout.Toggle("Fresnel Fade", isFresnel);
-        if (frameBlend) {
+        if (frameBlend)
+        {
             //tiling = EditorGUILayout.Vector2Field("Tiling", tiling);
             //tileX = EditorGUILayout.FloatField("TileX", tileX);
             //tileY = EditorGUILayout.FloatField("TileY", tileY);
@@ -143,7 +147,7 @@ public class RFX1_CustomMaterialInspectorParticle : MaterialEditor
         if (isFresnel) targetMat.SetFloat("_FresnelStr", fresnelStr);
         EditorUtility.SetDirty(targetMat);
         //}
-        
-    }
 
+    }
 }
+#endif

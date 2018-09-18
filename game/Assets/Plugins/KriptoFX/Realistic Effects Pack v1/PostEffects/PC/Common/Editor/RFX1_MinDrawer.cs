@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace UnityStandardAssets.CinematicEffects
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            RFX1_MinAttribute attribute = (RFX1_MinAttribute) base.attribute;
+            RFX1_MinAttribute attribute = (RFX1_MinAttribute)base.attribute;
 
             if (property.propertyType == SerializedPropertyType.Integer)
             {
@@ -27,3 +28,4 @@ namespace UnityStandardAssets.CinematicEffects
         }
     }
 }
+#endif
