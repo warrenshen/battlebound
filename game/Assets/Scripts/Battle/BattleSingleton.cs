@@ -63,17 +63,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
             return;
         }
 
-        this.mode = MODE_NONE;
-        this.environment = ENVIRONMENT_NORMAL;
-
-        this.challengeStarted = false;
-
-        this.moveCount = 0;
-        this.spawnCount = 0;
-
-        this.moveRankToChallengeState = new Dictionary<int, ChallengeState>();
-        this.moveQueue = new List<ChallengeMove>();
-        this.messageQueue = new List<GSData>();
+        Reset();
 
         ChallengeIssuedMessage.Listener = ChallengeIssuedMessageHandler;
         ChallengeStartedMessage.Listener = ChallengeStartedMessageHandler;
@@ -302,6 +292,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
     public void Reset()
     {
         this.mode = MODE_NONE;
+        this.environment = ENVIRONMENT_NORMAL;
         this.playerState = null;
         this.opponentState = null;
         this.nonce = -1;
@@ -312,9 +303,9 @@ public class BattleSingleton : Singleton<BattleSingleton>
         this.deadCount = 0;
         this.initServerMoves = null;
         this.initDeadCards = null;
-        this.moveRankToChallengeState = null;
-        this.moveQueue = null;
-        this.messageQueue = null;
+        this.moveRankToChallengeState = new Dictionary<int, ChallengeState>();
+        this.moveQueue = new List<ChallengeMove>();
+        this.messageQueue = new List<GSData>();
     }
 
     public void SetModeSingleplayer()
