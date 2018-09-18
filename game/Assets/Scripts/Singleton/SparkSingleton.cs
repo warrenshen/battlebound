@@ -39,6 +39,9 @@ public class SparkSingleton : Singleton<SparkSingleton>
     private BigInteger balance;
     private int level;
 
+    private string activeDeck;
+    public string ActiveDeck => activeDeck;
+
     private List<UnityAction> authCallbacks;
 
     private UnityAction loginRegisterCallback;
@@ -203,6 +206,12 @@ public class SparkSingleton : Singleton<SparkSingleton>
         else
         {
             this.level = (int)scriptData.GetInt("level");
+        }
+
+        string activeDeck = scriptData.GetString("activeDeck");
+        if (activeDeck != null)
+        {
+            this.activeDeck = activeDeck;
         }
 
         this.isAuthenticated = true;

@@ -178,7 +178,7 @@ public class MenuManager : MonoBehaviour
     {
         LogEventRequest request = new LogEventRequest();
         request.SetEventKey("FindMatch");
-        request.SetEventAttribute("playerDeck", "Basic");
+        request.SetEventAttribute("playerDeck", SparkSingleton.Instance.ActiveDeck);
         request.SetEventAttribute("matchShortCode", MATCH_TYPE_CASUAL);
         request.Send(
             OnFindMatchSuccess,
