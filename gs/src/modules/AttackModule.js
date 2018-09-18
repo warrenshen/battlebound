@@ -238,7 +238,7 @@ function filterDeadCardsFromFields(playerField, opponentField) {
  **/
 function drawCard(deck) {
     if (!Array.isArray(deck) || deck.length === 0) {
-        setScriptError("Invalid deck parameter.");
+        setScriptError("Invalid deck parameter: " + JSON.stringify(deck));
     }
     
     if (GLOBAL_ENVIRONMENT === 1) {

@@ -22,8 +22,6 @@ cancelScheduledTimeEvents(challengeId, playerId);
 // time expiring messages for opponent.
 var isChallengeOver = false;
 
-const opponentId = challengeStateData.opponentIdByPlayerId[playerId];
-
 // If this is an end turn request from time expired and no move
 // has been taken this turn, increment player's expired streak.
 if (isExpired && challengeStateData.moveTakenThisTurn === 0) {

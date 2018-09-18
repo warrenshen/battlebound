@@ -23,26 +23,26 @@ if (!matchShortCode || !playerDeck) {
     setScriptError("Invalid parameter(s).");
 }
 
-const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
+// const playerDecksDataItem = API.getItem("PlayerDecks", playerId).document();
 
-if (playerDecksDataItem === null) {
-    setScriptError("PlayerDecks instance does not exist.");
-}
+// if (playerDecksDataItem === null) {
+//     setScriptError("PlayerDecks instance does not exist.");
+// }
 
-const playerDecksData = playerDecksDataItem.getData();
-if (!playerDecksData.deckByName[playerDeck]) {
-    setScriptError("Invalid player deck parameter.");
-}
+// const playerDecksData = playerDecksDataItem.getData();
+// if (!playerDecksData.deckByName[playerDeck]) {
+//     setScriptError("Invalid player deck parameter.");
+// }
 
 // Sync player's PlayerDecks instance with blockchain.
 syncPlayerDecksByPlayer(player);
 
-playerDecksData.activeDeck = playerDeck;
+// playerDecksData.activeDeck = playerDeck;
 
-const error = playerDecksDataItem.persistor().persist().error();
-if (error) {
-    setScriptError(error);
-}
+// const error = playerDecksDataItem.persistor().persist().error();
+// if (error) {
+//     setScriptError(error);
+// }
 
 var request;
 var response;

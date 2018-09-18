@@ -6,7 +6,7 @@
 //
 // ====================================================================================================
 require("ScriptDataModule");
-require("OnChainModule");
+require("DeckModule");
 
 const player = Spark.getPlayer();
 const playerId = player.getPlayerId();
@@ -30,6 +30,13 @@ if (leaderboardCursor.hasNext()) {
     rankElo = leaderboardEntry.getAttribute("SCORE_ATTR");
 }
 
+var activeDeck = player.getPrivateData("activeDeck");
+const validDecks = getDecksByPlayer(playerId);
+if (activeDeck == null || validDecks.indexOf(activeDeck) < 0) {
+    activeDeck = validDecks[0];
+    player.setPrivateData("activeDeck", activeDeck);
+}
+
 const GAME_VERSION_LATEST = "0.1";
 
 Spark.setScriptData("playerId", playerId);
@@ -42,5 +49,6 @@ Spark.setScriptData("level", player.getPrivateData("level"));
 Spark.setScriptData("rankGlobal", rankGlobal)
 Spark.setScriptData("rankElo", rankElo);
 Spark.setScriptData("latestVersion", GAME_VERSION_LATEST);
+Spark.setScriptData("activeDeck", activeDeck);
 
 setScriptSuccess();

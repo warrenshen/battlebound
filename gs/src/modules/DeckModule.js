@@ -269,6 +269,16 @@ function syncPlayerDecksByPlayer(player) {
 }
 
 /**
+ * @param playerId - string
+ * @return array - array of string deck names
+ **/
+function getDecksByPlayer(playerId) {
+    const decksData = getPlayerDecksByPlayerId(playerId);
+    const deckByName = decksData.deckByName;
+    return Object.keys(deckByName);
+}
+
+/**
  * Returns array of card objects of all cards player owns.
  * 
  * @param player - GS player
@@ -322,6 +332,9 @@ function getPlayerDecksByPlayerId(playerId) {
  * @return array - array of challenge card objects
  **/
 function getActiveDeckByPlayerId(playerId) {
+    const player = Spark.loadPlayer(playerId);
+    const activeDeck = player.getPrivateData("activeDeck");
+    
     const API = Spark.getGameDataService();
     var decksDataItem = API.getItem("PlayerDecks", playerId).document();
     if (decksDataItem == null) {
@@ -330,12 +343,12 @@ function getActiveDeckByPlayerId(playerId) {
     
     const decksData = decksDataItem.getData();
     const deckByName = decksData.deckByName;
-    const activeDeck = decksData.activeDeck;
+
     const cardIds = deckByName[activeDeck];
     const cardByCardId = decksData.cardByCardId;
     
     const bCardIds = cardIds.filter(function(cardId) { return cardId.indexOf("B") === 0 });
-    const cCardIds = cardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });;
+    const cCardIds = cardIds.filter(function(cardId) { return cardId.indexOf("C") === 0 });
     
     if (bCardIds.length + cCardIds.length !== cardIds.length) {
         setScriptError("Invalid card ID present in deck.");

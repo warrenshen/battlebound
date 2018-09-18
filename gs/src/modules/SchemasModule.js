@@ -18,7 +18,8 @@
  *       losses: int,
  *     },     
  *     ...
- *   }
+ *   },
+ *   activeDeck: string,
  * }
  * 
  * // PlayerDecks is a misnomer - should be PlayerMetadata.
@@ -36,7 +37,6 @@
  *   deckByName: {
  *     [name]: [int (card id), ...]
  *   },
- *   activeDeck: string,
  * }
  * 
  * Template schema: {

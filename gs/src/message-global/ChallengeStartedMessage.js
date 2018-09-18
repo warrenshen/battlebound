@@ -31,11 +31,11 @@ const challengedDeck = getActiveDeckByPlayerId(challengedId);
 const challengeStateData = initializeChallengeStateData(
     challengeId,
     challengerId,
-    challengerDeck,
     challenger.getDisplayName(),
+    challengerDeck,
     challengedId,
-    challengedDeck,
     challenged.getDisplayName(),
+    challengedDeck,
     Spark.getData().challenge.nextPlayer
 );
 
