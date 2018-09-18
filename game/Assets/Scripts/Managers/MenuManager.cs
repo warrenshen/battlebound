@@ -37,11 +37,6 @@ public class MenuManager : MonoBehaviour
         MatchFoundMessage.Listener = MatchFoundMessageHandler;
         MatchNotFoundMessage.Listener = MatchNotFoundMessageHandler;
 
-        if (!SparkSingleton.Instance.IsAuthenticated)
-        {
-            this.usernameText.text = "Not logged in";
-        }
-
         RenderRank(-1, -1);
     }
 
@@ -111,7 +106,7 @@ public class MenuManager : MonoBehaviour
 
         if (displayName == null && address == null)
         {
-            this.usernameText.text = "Not logged in";
+            LO_LoadingScreen.LoadScene("Login");
             return;
         }
 
