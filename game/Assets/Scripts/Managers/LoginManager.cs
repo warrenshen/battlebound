@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
@@ -14,8 +13,8 @@ public class LoginManager : MonoBehaviour
         UMPSingleton.Instance.ShowConfirmationDialog(
             "Welcome to Battlebound",
             "Please select an option below.",
-            new UnityAction(ShowLogin),
-            new UnityAction(ShowRegister),
+            ShowLogin,
+            ShowRegister,
             "Log in",
             "Create account"
         );
@@ -28,8 +27,8 @@ public class LoginManager : MonoBehaviour
             null,
             "email",
             "password",
-            new UnityAction<UMP_TwoInputDialogUI, string, string>(VerifyLogin),
-            new UnityAction(ShowRegister),
+            VerifyLogin,
+            ShowOptions,
             "Log in",
             "Cancel",
             InputField.ContentType.Standard,
@@ -97,8 +96,8 @@ public class LoginManager : MonoBehaviour
             "email",
             "password",
             "password confirmation",
-            new UnityAction<UMP_ThreeInputDialogUI, string, string, string>(VerifyRegister),
-            new UnityAction(ShowLogin),
+            VerifyRegister,
+            ShowOptions,
             "Create account",
             "Cancel",
             InputField.ContentType.Standard,
@@ -183,7 +182,7 @@ public class LoginManager : MonoBehaviour
         UMPSingleton.Instance.ShowInputFieldDialog(
             "Choose Username",
             "Please enter in a username for your account.",
-            new UnityAction<UMP_InputDialogUI, string>(UpdateDisplayName),
+            UpdateDisplayName,
             null,
             "Proceed",
             null,
@@ -198,7 +197,7 @@ public class LoginManager : MonoBehaviour
 
         SparkSingleton.Instance.SendUpdateDisplayNameRequest(
             displayName,
-            new UnityAction(() =>
+            () =>
             {
                 if (SparkSingleton.Instance.IsDisplayNameValid())
                 {
@@ -210,7 +209,7 @@ public class LoginManager : MonoBehaviour
                     dialogUI.SetMessage(SparkSingleton.Instance.LoginRegisterErrorMessage);
                     dialogUI.SetMessageColor(Color.red);
                 }
-            })
+            }
         );
     }
 }
