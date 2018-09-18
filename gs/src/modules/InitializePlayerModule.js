@@ -124,8 +124,9 @@ function initializePlayerByPlayerId(playerId) {
     const playerDecksData = playerDecksDataItem.getData();
     
     playerDecksData.cardByCardId = cardByCardId;
-    const deckByDeckName = playerDecksData.deckByName = {};
-    deckByDeckName["Basic"] = [
+    playerDecksData.activeDeck = "Basic";
+    const deckByName = playerDecksData.deckByName = {};
+    deckByName["Basic"] = [
         "C0",
         "C2",
         "C4",
@@ -158,12 +159,10 @@ function initializePlayerByPlayerId(playerId) {
         "C58"
     ];
     
-    playerDecksData.activeDeck = "Basic";
-    
     const error = playerDecksDataItem.persistor().persist().error();
     if (error) {
         setScriptError(error);
     }
     
-    return decksDataItem;
+    return playerDecksDataItem;
 }
