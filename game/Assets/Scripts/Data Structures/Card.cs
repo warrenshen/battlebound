@@ -764,7 +764,7 @@ public abstract class Card
                 cardVisual.SetSpriteWithKey("Rarity", CardSingleton.Instance.Gems[0]);
                 break;
         }
-        cardVisual.UpdateCustomSprites();
+        //cardVisual.UpdateCustomSprites();
 
         switch (card.GetCardType())
         {

@@ -35,7 +35,17 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
         this.imageNameToSprite = new Dictionary<string, Sprite>();
 
         StartCoroutine("LoadResourcesAsync");
+
+#if !UNITY_EDITOR
         StartCoroutine("LoadPrefabsAsync");
+#endif
+        //foreach (string creatureName in Card.CARD_NAMES_CREATURE)
+        //{
+        //    CreatureCard creatureCard = new CreatureCard("", creatureName, 0);
+        //    string summonPrefabPath = creatureCard.GetSummonPrefab();
+        //    GameObject prefab = Resources.Load(summonPrefabPath) as GameObject;
+        //    this.nameToPrefab[creatureName] = prefab;
+        //}
 
         //foreach (string structureName in Card.CARD_NAMES_STRUCTURES)
         //{
@@ -96,7 +106,7 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
                 CreateSprite(backImage, backTexture);
             }
 
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.1f);
         }
 
         yield return null;
