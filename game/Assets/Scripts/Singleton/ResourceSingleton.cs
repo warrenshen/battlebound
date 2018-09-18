@@ -71,7 +71,10 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
             if (string.IsNullOrEmpty(effectName))
             {
-                Debug.LogWarning(string.Format("Effect name for card {0} does not exist.", cardName));
+                if (FlagHelper.IsLogVerbose())
+                {
+                    //Debug.LogWarning(string.Format("Effect name for card {0} does not exist.", cardName));
+                }
             }
             else
             {
@@ -82,7 +85,10 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
             if (string.IsNullOrEmpty(frontImage))
             {
-                Debug.LogWarning(string.Format("Front image for card {0} does not exist.", cardName));
+                if (FlagHelper.IsLogVerbose())
+                {
+                    Debug.LogWarning(string.Format("Front image for card {0} does not exist.", cardName));
+                }
             }
             else
             {
@@ -95,7 +101,10 @@ public class ResourceSingleton : Singleton<ResourceSingleton>
 
             if (string.IsNullOrEmpty(backImage))
             {
-                Debug.LogWarning(string.Format("Back image for card {0} does not exist.", cardName));
+                if (FlagHelper.IsLogVerbose())
+                {
+                    Debug.LogWarning(string.Format("Back image for card {0} does not exist.", cardName));
+                }
             }
             else
             {
