@@ -342,7 +342,9 @@ namespace HyperCard
             }
 
             if (Seed == 0 || Seed > 99999)
+            {
                 Seed = UnityEngine.Random.Range(0, 99999);
+            }
 
             if (!gameObject.activeSelf || !gameObject.activeInHierarchy) return;
 
@@ -624,15 +626,22 @@ namespace HyperCard
             }
         }
 
-        public void UpdateCustomSprites()
+        private void UpdateCustomSprites()
         {
             foreach (var x in SpriteObjects.Where(x => x.Sprite != null))
             {
                 x.Sprite.color = x.Color;
 
-                if (x.Value != null)
+                if (x.Value != null && x.Sprite.sprite == null)
                 {
-                    x.Sprite.sprite = Sprite.Create(x.Value, new Rect(0.0f, 0.0f, x.Value.width, x.Value.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    x.Sprite.sprite = Sprite.Create(
+                        x.Value,
+                        new Rect(0.0f, 0.0f, x.Value.width, x.Value.height),
+                        new Vector2(0.5f, 0.5f),
+                        100.0f,
+                        0,
+                        SpriteMeshType.FullRect
+                    );
                 }
 
                 x.Sprite.gameObject.transform.localPosition = new Vector3(x.Position.x / 10, x.Position.y / 10, 0.01f + x.Position.z);
@@ -641,7 +650,7 @@ namespace HyperCard
             }
         }
 
-        public void ForceTextUpdate()
+        private void ForceTextUpdate()
         {
             foreach (var txt in TmpTextObjects.Where(x => x.TmpObject != null))
             {
