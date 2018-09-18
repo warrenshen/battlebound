@@ -54,6 +54,7 @@ public class MarketplaceManager : MonoBehaviour
     private object listItemObject;
 
     public GameObject marketplacePreviewSummon;
+    public List<Button> marketplaceButtons;
 
     public static MarketplaceManager Instance { get; private set; }
 
@@ -339,5 +340,28 @@ public class MarketplaceManager : MonoBehaviour
         this.marketplacePreviewSummon.transform.localScale = new Vector3(4, 5, 1);
         this.marketplacePreviewSummon.transform.LookAt(Camera.main.transform);
         this.marketplacePreviewSummon.SetActive(true);
+    }
+
+    public void MarketPillButton(GameObject source)
+    {
+        for (int i = 0; i < marketplaceButtons.Count; i++)
+        {
+            ColorBlock mcb = marketplaceButtons[i].colors;
+
+            if (i % 2 == 0)
+            {
+                mcb.normalColor = new Color(0.1f, 0.1f, 0.1f);
+            }
+            else
+            {
+                mcb.normalColor = Color.black;
+            }
+            marketplaceButtons[i].colors = mcb;
+        }
+
+        Button button = source.GetComponent<Button>();
+        ColorBlock cb = button.colors;
+        cb.normalColor = new Color(1f, 0.9f, 0f);
+        button.colors = cb;
     }
 }

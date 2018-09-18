@@ -17,6 +17,7 @@ public class MenuManager : MonoBehaviour
     private int galleryIndex;
 
     public Transform marketplacePreview;
+    public Transform cardPortal;
 
     [SerializeField]
     private string currentView;
@@ -141,6 +142,7 @@ public class MenuManager : MonoBehaviour
             galleryCard.gameObject.SetActive(false);
         }
         marketplacePreview.gameObject.SetActive(true);
+        cardPortal.gameObject.SetActive(false);
     }
 
     public void ViewMainMenu()
@@ -152,6 +154,7 @@ public class MenuManager : MonoBehaviour
         }
         galleryCard.gameObject.SetActive(true);
         gallery.gameObject.SetActive(true);
+        cardPortal.gameObject.SetActive(true);
     }
 
     public void StartSingleplayer()

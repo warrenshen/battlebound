@@ -66,6 +66,9 @@ public class CollectionManager : MonoBehaviour
     [SerializeField]
     private GameObject cardCutoutPrefab;
 
+    [SerializeField]
+    private Text usernameText;
+
     public static CollectionManager Instance { get; private set; }
 
     private void Awake()
@@ -76,11 +79,40 @@ public class CollectionManager : MonoBehaviour
         this.sortedCardCutouts = new List<CardCutout>();
 
         InitializeCollectionCardObjectPools();
+
+        if (!SparkSingleton.Instance.IsAuthenticated)
+        {
+            this.usernameText.text = "Not logged in";
+        }
     }
 
     private void Start()
     {
         DeckStore.Instance().GetDecksWithCallback(Callback);
+        SparkSingleton.Instance.AddAuthenticationCallback(RenderUserData);
+    }
+
+    private void RenderUserData()
+    {
+        string displayName = SparkSingleton.Instance.DisplayName;
+        string address = SparkSingleton.Instance.Address;
+        int rankGlobal = SparkSingleton.Instance.RankGlobal;
+        int rankElo = SparkSingleton.Instance.RankElo;
+
+        if (displayName == null && address == null)
+        {
+            this.usernameText.text = "Not logged in";
+            return;
+        }
+
+        if (address != null)
+        {
+            this.usernameText.text = string.Format("{0} {1}", displayName, address);
+        }
+        else
+        {
+            this.usernameText.text = displayName;
+        }
     }
 
     private void Callback()
