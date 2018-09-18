@@ -930,7 +930,7 @@ public class BattleState
         }
 
 
-        GameObject.Destroy(GameObject.Find("BattleSingleton"));
+        BattleSingleton.Instance.Reset();
 
         List<ExperienceCard> experienceCards = this.challengeEndState.ExperienceCards;
         if (this.you.Id == winnerId)

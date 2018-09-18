@@ -299,6 +299,24 @@ public class BattleSingleton : Singleton<BattleSingleton>
         }
     }
 
+    public void Reset()
+    {
+        this.mode = MODE_NONE;
+        this.playerState = null;
+        this.opponentState = null;
+        this.nonce = -1;
+        this.challengeId = null;
+        this.challengeStarted = false;
+        this.moveCount = 0;
+        this.spawnCount = 0;
+        this.deadCount = 0;
+        this.initServerMoves = null;
+        this.initDeadCards = null;
+        this.moveRankToChallengeState = null;
+        this.moveQueue = null;
+        this.messageQueue = null;
+    }
+
     public void SetModeSingleplayer()
     {
         this.mode = MODE_SINGLEPLAYER;
