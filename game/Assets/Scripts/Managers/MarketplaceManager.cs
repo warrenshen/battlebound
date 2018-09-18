@@ -361,7 +361,7 @@ public class MarketplaceManager : MonoBehaviour
 
         Button button = source.GetComponent<Button>();
         ColorBlock cb = button.colors;
-        cb.normalColor = new Color(1f, 0.9f, 0f);
+        cb.normalColor = new Color(0.08f, 0f, 0.63f);
         button.colors = cb;
     }
 }
