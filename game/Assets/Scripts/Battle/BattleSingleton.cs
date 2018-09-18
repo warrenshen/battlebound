@@ -820,7 +820,7 @@ public class BattleSingleton : Singleton<BattleSingleton>
         );
 
         // TODO: show something to user before doing this.
-        SceneManager.LoadScene("Battle");
+        LO_LoadingScreen.LoadScene("Battle");
     }
 
     private void OnChallengeLogDeviceErrorSuccess(LogEventResponse response)
@@ -981,6 +981,6 @@ public class BattleSingleton : Singleton<BattleSingleton>
         ProcessChallengeScriptData(scriptData, false);
         this.challengeStarted = true;
 
-        SceneManager.LoadScene("Battle");
+        LO_LoadingScreen.LoadScene("Battle");
     }
 }
