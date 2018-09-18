@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using GameSparks.Api.Requests;
+using GameSparks.Api.Responses;
+using GameSparks.Api.Messages;
 
 public class MenuManager : MonoBehaviour
 {
     public static float TWEEN_DURATION = 0.05f;
+
+    public const string MATCH_TYPE_CASUAL = "CasualMatch";
+    public const string MATCH_TYPE_RANKED = "RankedMatch";
 
     public UMP_Manager UMP;
 
@@ -27,6 +33,9 @@ public class MenuManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        MatchFoundMessage.Listener = MatchFoundMessageHandler;
+        MatchNotFoundMessage.Listener = MatchNotFoundMessageHandler;
 
         if (!SparkSingleton.Instance.IsAuthenticated)
         {
@@ -158,7 +167,70 @@ public class MenuManager : MonoBehaviour
 
     public void StartMultiplayer()
     {
+        if (!FlagHelper.IsServerEnabled())
+        {
+            Debug.LogError("Cannot play multiplayer when in local development mode.");
+            return;
+        }
+
         BattleSingleton.Instance.SetModeMultiplayer();
-        LO_LoadingScreen.LoadScene("Battle");
+        FindMatch();
+
+        // TODO: @nick
+    }
+
+    private void FindMatch()
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("FindMatch");
+        request.SetEventAttribute("playerDeck", "Basic");
+        request.SetEventAttribute("matchShortCode", MATCH_TYPE_CASUAL);
+        request.Send(
+            OnFindMatchSuccess,
+            OnFindMatchError
+        );
+    }
+
+    private void OnFindMatchSuccess(LogEventResponse response)
+    {
+        Debug.Log("FindMatch request success.");
+    }
+
+    private void OnFindMatchError(LogEventResponse response)
+    {
+        Debug.LogError("FindMatch request error.");
+        SendForfeitActiveChallengeRequest();
+    }
+
+    public void SendForfeitActiveChallengeRequest()
+    {
+        LogEventRequest request = new LogEventRequest();
+        request.SetEventKey("ForfeitActiveChallenge");
+
+        request.Send(
+            OnForfeitActiveChallengeSuccess,
+            OnForfeitActiveChallengeError
+        );
+    }
+
+    private void OnForfeitActiveChallengeSuccess(LogEventResponse response)
+    {
+        Debug.Log("ForfeitActiveChallenge request success.");
+        FindMatch();
+    }
+
+    private void OnForfeitActiveChallengeError(LogEventResponse response)
+    {
+        Debug.LogError("ForfeitActiveChallenge request error.");
+    }
+
+    private void MatchFoundMessageHandler(MatchFoundMessage message)
+    {
+        Debug.Log("MatchFoundMessage received.");
+    }
+
+    private void MatchNotFoundMessageHandler(MatchNotFoundMessage message)
+    {
+        Debug.Log("MatchNotFoundMessage received.");
     }
 }

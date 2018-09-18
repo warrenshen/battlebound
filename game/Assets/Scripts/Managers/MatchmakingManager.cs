@@ -33,8 +33,8 @@ public class MatchmakingManager : MonoBehaviour
 
     public void Awake()
     {
-        MatchFoundMessage.Listener += MatchFoundMessageHandler;
-        MatchNotFoundMessage.Listener += MatchNotFoundMessageHandler;
+        MatchFoundMessage.Listener = MatchFoundMessageHandler;
+        MatchNotFoundMessage.Listener = MatchNotFoundMessageHandler;
 
         casualMatchButton.onClick.AddListener(SelectCasualMatch);
         rankedMatchButton.onClick.AddListener(SelectRankedMatch);
