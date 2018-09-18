@@ -149,4 +149,16 @@ public class MenuManager : MonoBehaviour
         galleryCard.gameObject.SetActive(true);
         gallery.gameObject.SetActive(true);
     }
+
+    public void StartSingleplayer()
+    {
+        BattleSingleton.Instance.SetModeSingleplayer();
+        LO_LoadingScreen.LoadScene("Battle");
+    }
+
+    public void StartMultiplayer()
+    {
+        BattleSingleton.Instance.SetModeMultiplayer();
+        LO_LoadingScreen.LoadScene("Battle");
+    }
 }
